@@ -55,6 +55,8 @@ type Client struct {
 	sleep  func(context.Context, time.Duration) error
 	newKey func() string
 	random *rand.Rand
+
+	apiState
 }
 
 // Option configures a Client.
@@ -269,12 +271,34 @@ func (c *Client) Do(ctx context.Context, req *Request) (*Response, error) {
 	if key == "" && req.Method == http.MethodPost {
 		key = c.newKey()
 	}
+	resp, apiErr := c.exchange(ctx, req.Method, target, body,
+		func(httpReq *http.Request, token *Token) {
+			c.setHeaders(httpReq, req, token, key, contentType)
+		})
+	if apiErr != nil {
+		return nil, apiErr
+	}
+	if resp.StatusCode >= 300 {
+		return nil, errorFromResponse(resp.StatusCode, resp.Header, resp.Body)
+	}
+	return resp, nil
+}
+
+// exchange runs the attempt loop: a token per attempt, one
+// refresh on an expired token, retries on transport errors, 429
+// and server errors. It returns the last response whatever its
+// status, or the error that ended the attempts.
+func (c *Client) exchange(ctx context.Context, method, target string,
+	body []byte, set func(*http.Request, *Token)) (*Response, *Error) {
 	refreshed := false
 	attempts := max(c.retry.Attempts, 1)
 	for attempt := 1; ; attempt++ {
-		resp, apiErr := c.attempt(ctx, req, target, body, key, contentType)
-		if apiErr == nil {
+		resp, apiErr := c.attempt(ctx, method, target, body, set)
+		if apiErr == nil && resp.StatusCode < 300 {
 			return resp, nil
+		}
+		if apiErr == nil {
+			apiErr = errorFromResponse(resp.StatusCode, resp.Header, resp.Body)
 		}
 		if apiErr.Status == http.StatusUnauthorized && !refreshed &&
 			c.invalidate(apiErr) {
@@ -282,42 +306,45 @@ func (c *Client) Do(ctx context.Context, req *Request) (*Response, error) {
 			continue
 		}
 		if !apiErr.Retryable || attempt >= attempts {
-			return nil, apiErr
+			return settle(resp, apiErr)
 		}
 		if err := c.sleep(ctx, c.backoff(attempt, apiErr)); err != nil {
-			return nil, apiErr
+			return settle(resp, apiErr)
 		}
 	}
+}
+
+// settle ends the attempts: a refused status travels back as the
+// response itself, an error without a response as the error.
+func settle(resp *Response, apiErr *Error) (*Response, *Error) {
+	if resp != nil {
+		return resp, nil
+	}
+	return nil, apiErr
 }
 
 // attempt fetches a token and sends the request once. A token
 // endpoint failure is returned like any other, so a transient
 // one is retried by the same policy.
-func (c *Client) attempt(ctx context.Context, req *Request, target string,
-	body []byte, key, contentType string) (*Response, *Error) {
+func (c *Client) attempt(ctx context.Context, method, target string,
+	body []byte, set func(*http.Request, *Token)) (*Response, *Error) {
 	token, err := c.tokens.Token(ctx)
 	if err != nil {
 		var apiErr *Error
 		if errors.As(err, &apiErr) {
 			return nil, apiErr
 		}
-		return nil, &Error{Code: "TOKEN_ERROR", Message: err.Error(), cause: err}
+		return nil, &Error{Code: "TOKEN_ERROR", Message: err.Error(),
+			cause: err}
 	}
-	httpReq, err := http.NewRequestWithContext(ctx, req.Method, target,
+	httpReq, err := http.NewRequestWithContext(ctx, method, target,
 		bytes.NewReader(body))
 	if err != nil {
 		return nil, &Error{Code: "REQUEST_INVALID", Message: err.Error(),
 			cause: err}
 	}
-	c.setHeaders(httpReq, req, token, key, contentType)
-	resp, sendErr := c.send(httpReq)
-	if sendErr != nil {
-		return nil, sendErr
-	}
-	if resp.StatusCode >= 300 {
-		return nil, errorFromResponse(resp.StatusCode, resp.Header, resp.Body)
-	}
-	return resp, nil
+	set(httpReq, token)
+	return c.send(httpReq)
 }
 
 // invalidate discards the cached token when the API reports it
@@ -437,7 +464,8 @@ func encodeBody(req *Request) ([]byte, string, error) {
 		data, err := json.Marshal(body)
 		if err != nil {
 			return nil, "", &Error{Code: "REQUEST_INVALID",
-				Message: "encoding the request body: " + err.Error(), cause: err}
+				Message: "encoding the request body: " + err.Error(),
+				cause:   err}
 		}
 		return data, "application/json", nil
 	}

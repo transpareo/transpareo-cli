@@ -1,0 +1,9 @@
+# Configuration of the generated types and typed calls. Run
+# `go generate ./...` after spec/openapi.json changes.
+package: api
+output: api.gen.go
+generate:
+  models: true
+  client: true
+output-options:
+  skip-prune: true
