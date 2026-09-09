@@ -1769,7 +1769,7 @@ type DppBulkRowInput struct {
 	SerialIdentifier *string   `json:"serialIdentifier,omitempty"`
 
 	// UnlockableId Id of the product this passport describes
-	UnlockableId   *string                        `json:"unlockableId,omitempty"`
+	UnlockableId   *int                           `json:"unlockableId,omitempty"`
 	UnlockableType *DppBulkRowInputUnlockableType `json:"unlockableType,omitempty"`
 }
 
@@ -1863,7 +1863,7 @@ type DppInput struct {
 	SerialIdentifier *string `json:"serialIdentifier,omitempty"`
 
 	// UnlockableId Product ID to link
-	UnlockableId string `json:"unlockableId"`
+	UnlockableId int `json:"unlockableId"`
 
 	// UnlockableType Type of linked record (defaults to Product)
 	UnlockableType *string `json:"unlockableType,omitempty"`
@@ -1874,7 +1874,7 @@ type DppInputGranularity string
 
 // DppRequirements What a passport of one product needs at one granularity, and what the product still lacks, before anything is written. Field names throughout are the wire names, so a program copies them into a create or a bulk row as they are.
 //
-// Example: {"batch":{"description":"A lot is created from the product as it stands the first time its identifier is used; later passports of the same lot reuse it.","fields":["identifier","manufacturedOn"]},"defaultGranularity":"model","dynamicPropertyTypes":[{"id":812,"inputType":"list","name":"State of charge","namespace":"bpass:stateOfCharge","unit":"%"}],"granularities":{"batch":{"identifiers":["modelIdentifier","batchIdentifier"]},"item":{"identifiers":["modelIdentifier","batchIdentifier","serialIdentifier"]},"model":{"identifiers":["modelIdentifier"]}},"granularity":"item","identifiers":{"batchIdentifier":{"required":true},"modelIdentifier":{"required":true,"source":"product","value":"4006381333931"},"serialIdentifier":{"required":true}},"inheritedProperties":[{"mandatory":true,"name":"Chemistry","namespace":"bpass:batteryChemistry","propertyTypeId":804,"values":["LFP"]}],"outlook":{"must":[],"publishBlocked":false,"should":[]},"product":{"gtin":"4006381333931","id":4711,"modelIdentifier":"4006381333931","name":"Hydrating Face Cream"},"templates":{"bulkRow":{"batchIdentifier":"","granularity":"item","modelIdentifier":"4006381333931","serialIdentifier":"","unlockableId":"4711"},"create":{"dpp":{"batchIdentifier":"","dynamicData":{"bpass:stateOfCharge":""},"granularity":"item","locale":"de","serialIdentifier":"","unlockableId":"4711","unlockableType":"Product"}}}}
+// Example: {"batch":{"description":"A lot is created from the product as it stands the first time its identifier is used; later passports of the same lot reuse it.","fields":["identifier","manufacturedOn"]},"defaultGranularity":"model","dynamicPropertyTypes":[{"id":812,"inputType":"list","name":"State of charge","namespace":"bpass:stateOfCharge","unit":"%"}],"granularities":{"batch":{"identifiers":["modelIdentifier","batchIdentifier"]},"item":{"identifiers":["modelIdentifier","batchIdentifier","serialIdentifier"]},"model":{"identifiers":["modelIdentifier"]}},"granularity":"item","identifiers":{"batchIdentifier":{"required":true},"modelIdentifier":{"required":true,"source":"product","value":"4006381333931"},"serialIdentifier":{"required":true}},"inheritedProperties":[{"mandatory":true,"name":"Chemistry","namespace":"bpass:batteryChemistry","propertyTypeId":804,"values":["LFP"]}],"outlook":{"must":[],"publishBlocked":false,"should":[]},"product":{"gtin":"4006381333931","id":4711,"modelIdentifier":"4006381333931","name":"Hydrating Face Cream"},"templates":{"bulkRow":{"batchIdentifier":"","granularity":"item","modelIdentifier":"4006381333931","serialIdentifier":"","unlockableId":4711},"create":{"dpp":{"batchIdentifier":"","dynamicData":{"bpass:stateOfCharge":""},"granularity":"item","locale":"de","serialIdentifier":"","unlockableId":4711,"unlockableType":"Product"}}}}
 type DppRequirements struct {
 	// Batch The lot a batch or item passport freezes from. Null at model granularity, which has no lot.
 	Batch *struct {
@@ -2914,7 +2914,7 @@ type ProductDetail struct {
 type ProductInput struct {
 	CategoryIds *[]string `json:"categoryIds,omitempty"`
 
-	// ComponentsInput Component names as a comma-separated string or array of objects with name/component_id
+	// ComponentsInput Component names as a comma-separated string or array of objects with name/componentId
 	ComponentsInput *ProductInput_ComponentsInput `json:"componentsInput,omitempty"`
 	Gtin            *string                       `json:"gtin,omitempty"`
 
@@ -2930,11 +2930,11 @@ type ProductInputComponentsInput0 = string
 
 // ProductInputComponentsInput1 defines model for ProductInput.ComponentsInput.1.
 type ProductInputComponentsInput1 = []struct {
-	ComponentId *string `json:"componentId,omitempty"`
+	ComponentId *int    `json:"componentId,omitempty"`
 	Name        *string `json:"name,omitempty"`
 }
 
-// ProductInput_ComponentsInput Component names as a comma-separated string or array of objects with name/component_id
+// ProductInput_ComponentsInput Component names as a comma-separated string or array of objects with name/componentId
 type ProductInput_ComponentsInput struct {
 	union json.RawMessage
 }
@@ -3172,7 +3172,7 @@ type ValidationError struct {
 	Error  *string `json:"error,omitempty"`
 	Fields *map[string]struct {
 		Error       *string `json:"error,omitempty"`
-		FullMessage *string `json:"full_message,omitempty"`
+		FullMessage *string `json:"fullMessage,omitempty"`
 		Message     *string `json:"message,omitempty"`
 	} `json:"fields,omitempty"`
 	Message *string `json:"message,omitempty"`
@@ -3282,7 +3282,7 @@ type BulkCreateDppsParamsPrefer string
 // GetDppRequirementsParams defines parameters for GetDppRequirements.
 type GetDppRequirementsParams struct {
 	// ProductId The product a passport would describe. The snake_case spelling `product_id` is accepted as well.
-	ProductId string `form:"productId" json:"productId"`
+	ProductId int `form:"productId" json:"productId"`
 
 	// Granularity Which unit the passport would stand for. Defaults to the tenant's setting, which the answer repeats as `defaultGranularity`.
 	Granularity *GetDppRequirementsParamsGranularity `form:"granularity,omitempty" json:"granularity,omitempty"`
@@ -3383,7 +3383,7 @@ type SupersedeDppJSONBody struct {
 	Description *string `json:"description,omitempty"`
 
 	// SuccessorCode The public code of the passport that replaces this one
-	SuccessorCode *string `json:"successorCode,omitempty"`
+	SuccessorCode string `json:"successorCode"`
 }
 
 // SupersedeDppParams defines parameters for SupersedeDpp.
@@ -3461,16 +3461,16 @@ type CreateFeedbackJSONBody struct {
 		Email *string `json:"email,omitempty"`
 
 		// ItemId ID of the item
-		ItemId *string `json:"itemId,omitempty"`
+		ItemId int `json:"itemId"`
 
 		// ItemType Type of item the feedback is about
-		ItemType *CreateFeedbackJSONBodyFeedbackItemType `json:"itemType,omitempty"`
+		ItemType CreateFeedbackJSONBodyFeedbackItemType `json:"itemType"`
 
 		// Locale Locale for the feedback email (e.g. en, de)
 		Locale *string `json:"locale,omitempty"`
 
 		// UserId User ID (if logged in)
-		UserId *string `json:"userId,omitempty"`
+		UserId *int `json:"userId,omitempty"`
 	} `json:"feedback"`
 }
 
@@ -3587,6 +3587,9 @@ type CreateMediafileMultipartBody struct {
 
 	// MediafileName Optional display name
 	MediafileName *string `json:"mediafile[name],omitempty"`
+
+	// MediafileUpload The same file under the name the model uses; send either this or `mediafile[file]`
+	MediafileUpload *openapi_types.File `json:"mediafile[upload],omitempty"`
 }
 
 // ExchangeTokenFormdataBody defines parameters for ExchangeToken.
@@ -3659,7 +3662,7 @@ type ListProductsParams struct {
 	Term *string `form:"term,omitempty" json:"term,omitempty"`
 
 	// BrandId Filter by brand ID
-	BrandId *string `form:"brand_id,omitempty" json:"brand_id,omitempty"`
+	BrandId *int `form:"brand_id,omitempty" json:"brand_id,omitempty"`
 
 	// CategoryIds Filter by category IDs (comma-separated). Includes all child categories.
 	CategoryIds *string `form:"category_ids,omitempty" json:"category_ids,omitempty"`
@@ -9533,7 +9536,7 @@ func NewGetDppRequirementsRequest(server string, params *GetDppRequirementsParam
 		// per the OpenAPI spec (e.g. "color=blue,black,brown").
 		var rawQueryFragments []string
 
-		if queryFrag, err := runtime.StyleParamWithOptions("form", true, "productId", params.ProductId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+		if queryFrag, err := runtime.StyleParamWithOptions("form", true, "productId", params.ProductId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
 			return nil, err
 		} else {
 			for _, qp := range strings.Split(queryFrag, "&") {
@@ -12261,7 +12264,7 @@ func NewListProductsRequest(server string, params *ListProductsParams) (*http.Re
 
 		if params.BrandId != nil {
 
-			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "brand_id", *params.BrandId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "brand_id", *params.BrandId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
 				return nil, err
 			} else {
 				for _, qp := range strings.Split(queryFrag, "&") {

@@ -330,7 +330,7 @@
                       "message": {
                         "type": "string"
                       },
-                      "full_message": {
+                      "fullMessage": {
                         "type": "string"
                       }
                     }
@@ -1421,7 +1421,7 @@
             ]
           },
           "unlockableId": {
-            "type": "string",
+            "type": "integer",
             "description": "Id of the product this passport describes"
           },
           "description": {
@@ -1614,7 +1614,7 @@
             "description": "Type of linked record (defaults to Product)"
           },
           "unlockableId": {
-            "type": "string",
+            "type": "integer",
             "description": "Product ID to link"
           },
           "description": {
@@ -1944,7 +1944,7 @@
             "create": {
               "dpp": {
                 "unlockableType": "Product",
-                "unlockableId": "4711",
+                "unlockableId": 4711,
                 "locale": "de",
                 "granularity": "item",
                 "batchIdentifier": "",
@@ -1955,7 +1955,7 @@
               }
             },
             "bulkRow": {
-              "unlockableId": "4711",
+              "unlockableId": 4711,
               "granularity": "item",
               "modelIdentifier": "4006381333931",
               "batchIdentifier": "",
@@ -4070,7 +4070,7 @@
             "type": "string"
           },
           "componentsInput": {
-            "description": "Component names as a comma-separated string or array of objects with name/component_id",
+            "description": "Component names as a comma-separated string or array of objects with name/componentId",
             "oneOf": [
               {
                 "type": "string",
@@ -4085,7 +4085,7 @@
                       "type": "string"
                     },
                     "componentId": {
-                      "type": "string"
+                      "type": "integer"
                     }
                   }
                 }
@@ -5726,7 +5726,7 @@
               "example": {
                 "dpp": {
                   "unlockableType": "Product",
-                  "unlockableId": "507f1f77bcf86cd799439011",
+                  "unlockableId": 11,
                   "description": "Hydrating Face Cream 50ml",
                   "granularity": "item",
                   "batchIdentifier": "L2026-09",
@@ -5799,7 +5799,7 @@
               "example": {
                 "dpp": {
                   "unlockableType": "Product",
-                  "unlockableId": "507f1f77bcf86cd799439011",
+                  "unlockableId": 11,
                   "granularity": "item",
                   "batchIdentifier": "L2026-09",
                   "serialIdentifier": "000412"
@@ -5884,7 +5884,7 @@
                   "$ref": "#/components/schemas/DppBulkRowInput"
                 }
               },
-              "example": "{\"shared\":{\"granularity\":\"item\",\"unlockable_type\":\"Product\",\"unlockable_id\":\"507f1f77bcf86cd799439011\",\"model_identifier\":\"FC-50ML\",\"batch_identifier\":\"L2026-09\"}}\n{\"serialIdentifier\":\"000411\"}\n{\"serialIdentifier\":\"000412\",\"description\":\"Hydrating Face Cream 50ml\"}\n"
+              "example": "{\"shared\":{\"granularity\":\"item\",\"unlockableType\":\"Product\",\"unlockableId\":11,\"modelIdentifier\":\"FC-50ML\",\"batchIdentifier\":\"L2026-09\"}}\n{\"serialIdentifier\":\"000411\"}\n{\"serialIdentifier\":\"000412\",\"description\":\"Hydrating Face Cream 50ml\"}\n"
             }
           }
         },
@@ -6018,7 +6018,7 @@
                   "$ref": "#/components/schemas/DppBulkRowInput"
                 }
               },
-              "example": "{\"shared\":{\"granularity\":\"item\",\"unlockable_type\":\"Product\",\"unlockable_id\":\"507f1f77bcf86cd799439011\",\"model_identifier\":\"FC-50ML\",\"batch_identifier\":\"L2026-09\"}}\n{\"serialIdentifier\":\"000411\"}\n{\"serialIdentifier\":\"000412\",\"description\":\"Hydrating Face Cream 50ml\"}\n"
+              "example": "{\"shared\":{\"granularity\":\"item\",\"unlockableType\":\"Product\",\"unlockableId\":11,\"modelIdentifier\":\"FC-50ML\",\"batchIdentifier\":\"L2026-09\"}}\n{\"serialIdentifier\":\"000411\"}\n{\"serialIdentifier\":\"000412\",\"description\":\"Hydrating Face Cream 50ml\"}\n"
             }
           }
         },
@@ -6159,7 +6159,7 @@
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "integer"
             },
             "description": "The product a passport would describe. The snake_case spelling `product_id` is accepted as well."
           },
@@ -7096,7 +7096,7 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "successor_code"
+                  "successorCode"
                 ],
                 "properties": {
                   "successorCode": {
@@ -8048,8 +8048,8 @@
                   "feedback": {
                     "type": "object",
                     "required": [
-                      "item_type",
-                      "item_id",
+                      "itemType",
+                      "itemId",
                       "body"
                     ],
                     "properties": {
@@ -8063,7 +8063,7 @@
                         "description": "Type of item the feedback is about"
                       },
                       "itemId": {
-                        "type": "string",
+                        "type": "integer",
                         "description": "ID of the item"
                       },
                       "body": {
@@ -8075,7 +8075,7 @@
                         "description": "Sender email (for anonymous users)"
                       },
                       "userId": {
-                        "type": "string",
+                        "type": "integer",
                         "description": "User ID (if logged in)"
                       },
                       "locale": {
@@ -8089,7 +8089,7 @@
               "example": {
                 "feedback": {
                   "itemType": "Product",
-                  "itemId": "507f1f77bcf86cd799439011",
+                  "itemId": 11,
                   "body": "Great product!",
                   "email": "user@example.com"
                 }
@@ -9317,6 +9317,11 @@
                     "format": "binary",
                     "description": "Image file to upload"
                   },
+                  "mediafile[upload]": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "The same file under the name the model uses; send either this or `mediafile[file]`"
+                  },
                   "mediafile[name]": {
                     "type": "string",
                     "description": "Optional display name"
@@ -9324,8 +9329,8 @@
                 }
               },
               "example": {
-                "file": "(binary)",
-                "productId": "507f1f77bcf86cd799439011"
+                "mediafile[file]": "(binary)",
+                "mediafile[name]": "product-photo.jpg"
               }
             }
           }
@@ -10101,7 +10106,7 @@
             "name": "brand_id",
             "in": "query",
             "schema": {
-              "type": "string"
+              "type": "integer"
             },
             "description": "Filter by brand ID"
           },
