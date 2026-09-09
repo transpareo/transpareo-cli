@@ -34,5 +34,6 @@ Start with:
 		a.doctorCommand(),
 		a.versionCommand(),
 	)
+	a.addGeneratedCommands(root)
 	return root
 }

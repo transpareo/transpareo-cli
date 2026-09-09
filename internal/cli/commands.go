@@ -56,8 +56,9 @@ func (a *App) commandsCommand() *cobra.Command {
 		Long: `Prints the catalogue of the binary: the commands with their
 options and examples, and the operations of the API specification
 it was built with. Use --json to read it from a program.`,
-		Example: "  transpareo commands --json | jq '.operations[] | .operationId'",
-		Args:    cobra.NoArgs,
+		Example: "  transpareo commands --json | jq '.operations[] | " +
+			".operationId'",
+		Args: cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			catalogue, err := a.catalogue(cmd.Root())
 			if err != nil {
@@ -71,7 +72,8 @@ it was built with. Use --json to read it from a program.`,
 				fmt.Fprintf(a.Stdout, "%-36s %s\n", c.Path, c.Summary)
 			}
 			fmt.Fprintf(a.Stdout, "\n%d API operations in specification %s; "+
-				"see `transpareo commands --json` and `transpareo schema <operationId>`.\n",
+				"see `transpareo commands --json` and `transpareo schema"+
+				"<operationId>`.\n",
 				len(catalogue.Operations), catalogue.SpecVersion)
 			return nil
 		},
@@ -90,7 +92,8 @@ func (a *App) catalogue(root *cobra.Command) (*Catalogue, error) {
 	var walk func(cmd *cobra.Command)
 	walk = func(cmd *cobra.Command) {
 		if cmd.Runnable() && !cmd.Hidden && cmd.Name() != "help" {
-			catalogue.Commands = append(catalogue.Commands, describeCommand(cmd, reg))
+			catalogue.Commands = append(catalogue.Commands, describeCommand(cmd,
+				reg))
 		}
 		for _, child := range cmd.Commands() {
 			walk(child)
@@ -109,8 +112,7 @@ func describeCommand(cmd *cobra.Command, reg *registry.Registry) Command {
 		Summary: cmd.Short,
 		Example: strings.TrimSpace(cmd.Example),
 	}
-	use := strings.TrimPrefix(cmd.Use, cmd.Name())
-	if use = strings.TrimSpace(use); use != "" {
+	if use := argsOf(cmd); use != "" {
 		c.Args = use
 	}
 	cmd.LocalFlags().VisitAll(func(f *pflag.Flag) {
@@ -120,11 +122,20 @@ func describeCommand(cmd *cobra.Command, reg *registry.Registry) Command {
 		c.Flags = append(c.Flags, Flag{Name: f.Name, Type: f.Value.Type(),
 			Description: f.Usage})
 	})
-	if id, ok := operationOf[c.Path]; ok {
+	id, ok := operationOf[c.Path]
+	if !ok {
+		id, ok = cmd.Annotations[annotationOperation]
+	}
+	if ok {
 		c.OperationID = id
 		if op := reg.Find(id); op != nil {
 			c.Permission = op.Permission
 		}
 	}
 	return c
+}
+
+// argsOf returns the argument part of a command's Use line.
+func argsOf(cmd *cobra.Command) string {
+	return strings.TrimSpace(strings.TrimPrefix(cmd.Use, cmd.Name()))
 }
