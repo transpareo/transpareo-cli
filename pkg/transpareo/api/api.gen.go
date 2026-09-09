@@ -210,6 +210,21 @@ func (e DppGranularity) Valid() bool {
 	}
 }
 
+// Defines values for DppPassportStatus.
+const (
+	Withdrawn DppPassportStatus = "Withdrawn"
+)
+
+// Valid indicates whether the value is a known member of the DppPassportStatus enum.
+func (e DppPassportStatus) Valid() bool {
+	switch e {
+	case Withdrawn:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for DppBulkRowInputGranularity.
 const (
 	DppBulkRowInputGranularityBatch DppBulkRowInputGranularity = "batch"
@@ -1244,7 +1259,7 @@ type AsyncTask struct {
 		} `json:"fields,omitempty"`
 
 		// Id Passport id. On `created` and `duplicate`, and on an `error` whose passport row was written but whose publish failed.
-		Id *string `json:"id,omitempty"`
+		Id *int `json:"id,omitempty"`
 
 		// Message Human-readable detail. On `DPP_INVALID_LINE` and `DPP_PUBLISH_FAILED`.
 		Message         *string `json:"message,omitempty"`
@@ -1274,9 +1289,9 @@ type AsyncTaskErrorsStatus string
 // AsyncTaskStatus defines model for AsyncTask.Status.
 type AsyncTaskStatus string
 
-// Brand Example: {"id":"507f1f77bcf86cd799439012","name":"NaturaCare","permalink":"/brands/naturacare","productsCount":12,"type":"Brand"}
+// Brand Example: {"id":12,"name":"NaturaCare","permalink":"/brands/naturacare","productsCount":12,"type":"Brand"}
 type Brand struct {
-	Id *string `json:"id,omitempty"`
+	Id *int `json:"id,omitempty"`
 
 	// Name Example: Nivea
 	Name *string `json:"name,omitempty"`
@@ -1304,7 +1319,7 @@ type BrandInput struct {
 
 // BulkRow One line of the NDJSON response to a synchronous bulk create. `status` discriminates the three outcomes: `created` (a passport was written and its first version published), `duplicate` (the row's natural key already maps to a published passport, which is returned unchanged) and `error` (the row was rejected or its publish failed). Rows come back in completion order, not input order - correlate them by `serialIdentifier` / `batchIdentifier` / `modelIdentifier`, which every outcome echoes.
 //
-// Example: {"batchIdentifier":"L2026-09","code":"A1B2C3D4E","id":"507f1f77bcf86cd799439014","modelIdentifier":"FC-50ML","serialIdentifier":"000412","status":"created","url":"https://example.com/A1B2C3D4E"}
+// Example: {"batchIdentifier":"L2026-09","code":"A1B2C3D4E","id":14,"modelIdentifier":"FC-50ML","serialIdentifier":"000412","status":"created","url":"https://example.com/A1B2C3D4E"}
 type BulkRow struct {
 	BatchIdentifier *string `json:"batchIdentifier,omitempty"`
 
@@ -1322,7 +1337,7 @@ type BulkRow struct {
 	} `json:"fields,omitempty"`
 
 	// Id Passport id. On `created` and `duplicate`, and on an `error` whose passport row was written but whose publish failed.
-	Id *string `json:"id,omitempty"`
+	Id *int `json:"id,omitempty"`
 
 	// Message Human-readable detail. On `DPP_INVALID_LINE` and `DPP_PUBLISH_FAILED`.
 	Message          *string       `json:"message,omitempty"`
@@ -1360,7 +1375,7 @@ type BulkValidateRow struct {
 	} `json:"fields,omitempty"`
 
 	// Id On `duplicate`: the id of the passport the natural key maps to.
-	Id *string `json:"id,omitempty"`
+	Id *int `json:"id,omitempty"`
 
 	// Message Human-readable detail, on `error`.
 	Message *string `json:"message,omitempty"`
@@ -1392,7 +1407,7 @@ type BulkValidateRowStatus string
 type Category struct {
 	// Categories Child categories (recursive, only present when children exist)
 	Categories *[]Category `json:"categories,omitempty"`
-	Id         *string     `json:"id,omitempty"`
+	Id         *int        `json:"id,omitempty"`
 
 	// Name Example: Skincare
 	Name *string `json:"name,omitempty"`
@@ -1403,13 +1418,13 @@ type Category struct {
 
 // Citation defines model for Citation.
 type Citation struct {
-	Id   *string `json:"id,omitempty"`
+	Id   *int    `json:"id,omitempty"`
 	Name *string `json:"name,omitempty"`
 	Page *string `json:"page,omitempty"`
 
 	// Source Citation source reference
 	Source *struct {
-		Id   *string `json:"id,omitempty"`
+		Id   *int    `json:"id,omitempty"`
 		Name *string `json:"name,omitempty"`
 		Type *string `json:"type,omitempty"`
 	} `json:"source,omitempty"`
@@ -1421,9 +1436,9 @@ type Citation struct {
 
 // Component Component summary (returned in list endpoints)
 //
-// Example: {"id":"507f1f77bcf86cd799439013","name":"Shea Butter","permalink":"/components/shea-butter","publishedAt":"2026-01-10T08:00:00Z","rating":"A","type":"Component"}
+// Example: {"id":13,"name":"Shea Butter","permalink":"/components/shea-butter","publishedAt":"2026-01-10T08:00:00Z","rating":"A","type":"Component"}
 type Component struct {
-	Id *string `json:"id,omitempty"`
+	Id *int `json:"id,omitempty"`
 
 	// Name Example: Glycerin
 	Name      *string `json:"name,omitempty"`
@@ -1441,10 +1456,12 @@ type Component struct {
 }
 
 // ComponentDetail Full component details (returned by show action)
+//
+// Example: {"citations":[],"id":13,"mediafiles":[],"name":"Shea Butter","permalink":"/components/shea-butter","properties":{"Origin":{"rated":true,"values":[{"rating":"A","value":"West Africa"}]}},"published":true,"publishedAt":"2026-01-10T08:00:00Z","rating":"A","type":"Component"}
 type ComponentDetail struct {
 	// Citations Scientific citations. Only present when citations are enabled in tenant config and the user has access (citations may be protected behind login).
 	Citations *[]Citation `json:"citations,omitempty"`
-	Id        *string     `json:"id,omitempty"`
+	Id        *int        `json:"id,omitempty"`
 
 	// Mediafiles Component images. Only present in show action.
 	Mediafiles *[]Mediafile `json:"mediafiles,omitempty"`
@@ -1510,10 +1527,9 @@ type ComponentInput struct {
 type ComponentName struct {
 	// Component Component summary (returned in list endpoints)
 	//
-	// Example: {"id":"507f1f77bcf86cd799439013","name":"Shea Butter","permalink":"/components/shea-butter","publishedAt":"2026-01-10T08:00:00Z","rating":"A","type":"Component"}
+	// Example: {"id":13,"name":"Shea Butter","permalink":"/components/shea-butter","publishedAt":"2026-01-10T08:00:00Z","rating":"A","type":"Component"}
 	Component *Component `json:"component,omitempty"`
-	Id        *string    `json:"id,omitempty"`
-	Name      *string    `json:"name,omitempty"`
+	Id        *int       `json:"id,omitempty"`
 	Type      *string    `json:"type,omitempty"`
 
 	// Value The component name value
@@ -1623,16 +1639,16 @@ type Country struct {
 	Name *string `json:"name,omitempty"`
 }
 
-// Coupon Example: {"amount":20,"code":"SAVE20","id":"507f1f77bcf86cd799439017","requiresDataTransfer":false,"type":"Coupon"}
+// Coupon Example: {"amount":20,"code":"SAVE20","id":17,"requiresDataTransfer":false}
 type Coupon struct {
 	Affiliate *struct {
-		Id   *string `json:"id,omitempty"`
+		Id   *int    `json:"id,omitempty"`
 		Name *string `json:"name,omitempty"`
 		Type *string `json:"type,omitempty"`
 	} `json:"affiliate,omitempty"`
 	Amount               *float32 `json:"amount,omitempty"`
 	Code                 *string  `json:"code,omitempty"`
-	Id                   *string  `json:"id,omitempty"`
+	Id                   *int     `json:"id,omitempty"`
 	RequiresDataTransfer *bool    `json:"requiresDataTransfer,omitempty"`
 }
 
@@ -1640,7 +1656,7 @@ type Coupon struct {
 type Currency struct {
 	// Code Example: EUR
 	Code *string `json:"code,omitempty"`
-	Id   *string `json:"id,omitempty"`
+	Id   *int    `json:"id,omitempty"`
 	Name *string `json:"name,omitempty"`
 
 	// Symbol Example: €
@@ -1650,7 +1666,7 @@ type Currency struct {
 
 // Dpp Digital Product Passport with QR code and linked product
 //
-// Example: {"code":"A1B2C3D4E","counter":142,"createdAt":"2026-02-01T12:00:00Z","description":"Hydrating Face Cream 50ml","id":"507f1f77bcf86cd799439014","locale":"de","type":"Dpp","unlockable":{"id":"507f1f77bcf86cd799439011","name":"Hydrating Face Cream","type":"Product"},"url":"https://example.com/A1B2C3D4E"}
+// Example: {"code":"A1B2C3D4E","counter":142,"createdAt":"2026-02-01T12:00:00Z","description":"Hydrating Face Cream 50ml","id":14,"locale":"de","type":"Dpp","unlockable":{"id":11,"name":"Hydrating Face Cream","type":"Product"},"url":"https://example.com/A1B2C3D4E"}
 type Dpp struct {
 	// BatchIdentifier Only present when set. Carried at batch and item granularity.
 	BatchIdentifier *string `json:"batchIdentifier,omitempty"`
@@ -1675,11 +1691,14 @@ type Dpp struct {
 
 	// Granularity Which unit the passport stands for
 	Granularity *DppGranularity `json:"granularity,omitempty"`
-	Id          *string         `json:"id,omitempty"`
+	Id          *int            `json:"id,omitempty"`
 	Locale      *string         `json:"locale,omitempty"`
 
 	// ModelIdentifier Only present when set. Inherited from the product when the create named none.
 	ModelIdentifier *string `json:"modelIdentifier,omitempty"`
+
+	// PassportStatus The EN 18223 status of a carrier taken out of circulation. Only present once the passport is voided or superseded.
+	PassportStatus *DppPassportStatus `json:"passportStatus,omitempty"`
 
 	// PdfUrl URL to download QR code as PDF
 	PdfUrl *string `json:"pdfUrl,omitempty"`
@@ -1701,12 +1720,15 @@ type Dpp struct {
 	// SerialIdentifier Only present when set. Carried at item granularity.
 	SerialIdentifier *string `json:"serialIdentifier,omitempty"`
 
+	// SupersededBy The code of the passport that replaced this one. Only present on a superseded passport.
+	SupersededBy *string `json:"supersededBy,omitempty"`
+
 	// Type Example: Dpp
 	Type *string `json:"type,omitempty"`
 
 	// Unlockable Product summary (returned in list endpoints). The `show` action returns ProductDetail with additional nested data.
 	//
-	// Example: {"brandName":"NaturaCare","gtin":"4006381333931","id":"507f1f77bcf86cd799439011","name":"Hydrating Face Cream","permalink":"/products/naturacare-hydrating-face-cream","publishedAt":"2026-01-15T10:30:00Z","rating":"A","type":"Product"}
+	// Example: {"brandName":"NaturaCare","gtin":"4006381333931","id":11,"name":"Hydrating Face Cream","permalink":"/products/naturacare-hydrating-face-cream","publishedAt":"2026-01-15T10:30:00Z","rating":"A","type":"Product"}
 	Unlockable *Product `json:"unlockable,omitempty"`
 
 	// Url Full URL that the QR code resolves to
@@ -1716,10 +1738,19 @@ type Dpp struct {
 	//
 	// Example: {"must":[{"constraint":"min_count","field":"Issuer name","message":"issuer.name requires at least 1 value(s), got 0","path":"issuer.name"}],"should":[],"validatorVersion":"shacl-v1"}
 	Validation *DppValidationReport `json:"validation,omitempty"`
+
+	// VoidedAt When the passport was voided. Only present on a voided passport.
+	VoidedAt *time.Time `json:"voidedAt,omitempty"`
+
+	// VoidedReason Why the passport was voided. Only present on a voided passport.
+	VoidedReason *string `json:"voidedReason,omitempty"`
 }
 
 // DppGranularity Which unit the passport stands for
 type DppGranularity string
+
+// DppPassportStatus The EN 18223 status of a carrier taken out of circulation. Only present once the passport is voided or superseded.
+type DppPassportStatus string
 
 // DppBulkRowInput One row of a bulk passport body. Read the same way by the bulk create and the bulk dry run, so a batch that validates is the batch that will be created.
 type DppBulkRowInput struct {
@@ -2060,7 +2091,7 @@ type Error struct {
 
 // EventFeed One page of the workspace-wide event feed. Each entry is a `DppEvent` with the id that serves as cursor and the passport it belongs to.
 //
-// Example: {"events":[{"dppCode":"A1B2C3D4E","dppId":"4711","dppVersionNumber":3,"eventType":"published","id":"68bea2f8a3c1d40011e5f0b2","occurredAt":"2026-09-08T09:12:44Z"},{"actorLabel":"Workshop Meier","actorType":"ApiConsumer","description":"Annual safety inspection passed","dppCode":"F6G7H8J9K","dppId":"4712","eventType":"inspection","id":"68bea31ca3c1d40011e5f0b9","occurredAt":"2026-09-08T09:13:20Z"}],"nextCursor":"68bea31ca3c1d40011e5f0b9"}
+// Example: {"events":[{"dppCode":"A1B2C3D4E","dppId":4711,"dppVersionNumber":3,"eventType":"published","id":"68bea2f8a3c1d40011e5f0b2","occurredAt":"2026-09-08T09:12:44Z"},{"actorLabel":"Workshop Meier","actorType":"ApiConsumer","description":"Annual safety inspection passed","dppCode":"F6G7H8J9K","dppId":4712,"eventType":"inspection","id":"68bea31ca3c1d40011e5f0b9","occurredAt":"2026-09-08T09:13:20Z"}],"nextCursor":"68bea31ca3c1d40011e5f0b9"}
 type EventFeed struct {
 	Events []struct {
 		// ActorLabel Denormalised actor name, kept readable after the actor row is gone
@@ -2077,7 +2108,7 @@ type EventFeed struct {
 		DppCode *string `json:"dppCode,omitempty"`
 
 		// DppId Id of the passport the event belongs to
-		DppId string `json:"dppId"`
+		DppId int `json:"dppId"`
 
 		// DppVersionNumber The version this event was sealed into. Absent on a local event and on a pending draft.
 		DppVersionNumber *int `json:"dppVersionNumber,omitempty"`
@@ -2108,7 +2139,7 @@ type EventFeedEventsEventType string
 
 // Export One export and where it stands. The archive fields appear once `status` is `completed`; `failure` once it is `failed`.
 //
-// Example: {"archiveSize":184320,"code":"k7m2pq","completedAt":"2026-09-08T09:13:01Z","componentCount":40,"createdAt":"2026-09-08T09:12:44Z","dataType":"dpps","downloadUrl":"https://example.com/api/exports/42/download","expiresAt":"2026-09-15T09:13:01Z","filename":"transpareo-export-20260908-091301.tar.gz","format":"jsonld","id":"42","includeMedia":false,"normalize":false,"productCount":12,"progress":100,"recordCount":64,"status":"completed","statusUrl":"https://example.com/api/exports/42"}
+// Example: {"archiveSize":184320,"code":"k7m2pq","completedAt":"2026-09-08T09:13:01Z","componentCount":40,"createdAt":"2026-09-08T09:12:44Z","dataType":"dpps","downloadUrl":"https://example.com/api/exports/42/download","expiresAt":"2026-09-15T09:13:01Z","filename":"transpareo-export-20260908-091301.tar.gz","format":"jsonld","id":42,"includeMedia":false,"normalize":false,"productCount":12,"progress":100,"recordCount":64,"status":"completed","statusUrl":"https://example.com/api/exports/42"}
 type Export struct {
 	// ArchiveSize Archive bytes. On `completed`.
 	ArchiveSize *int `json:"archiveSize,omitempty"`
@@ -2132,7 +2163,7 @@ type Export struct {
 	// Filename The archive's file name. On `completed`.
 	Filename     *string       `json:"filename,omitempty"`
 	Format       *ExportFormat `json:"format,omitempty"`
-	Id           string        `json:"id"`
+	Id           int           `json:"id"`
 	IncludeMedia *bool         `json:"includeMedia,omitempty"`
 	Normalize    *bool         `json:"normalize,omitempty"`
 	ProductCount *int          `json:"productCount,omitempty"`
@@ -2180,14 +2211,13 @@ type ExportInputDataType string
 // ExportInputFormat `jsonld` packs one document per passport, product and component into a tar archive; the tabular formats flatten the catalogue into one sheet each
 type ExportInputFormat string
 
-// Favorite defines model for Favorite.
+// Favorite Example: {"createdAt":"2026-02-03T09:15:00Z","favorable":{"id":11,"name":"Hydrating Face Cream","permalink":"/products/naturacare-hydrating-face-cream","type":"Product"},"id":19,"type":"Favorite"}
 type Favorite struct {
 	CreatedAt *time.Time `json:"createdAt,omitempty"`
 
 	// Favorable The favorited item (Product or Component)
 	Favorable *Favorite_Favorable `json:"favorable,omitempty"`
-	Id        *string             `json:"id,omitempty"`
-	Name      *string             `json:"name,omitempty"`
+	Id        *int                `json:"id,omitempty"`
 	Type      *string             `json:"type,omitempty"`
 }
 
@@ -2262,7 +2292,7 @@ type Import struct {
 		Samples *[]struct {
 			Label       *string `json:"label,omitempty"`
 			RecordClass *string `json:"recordClass,omitempty"`
-			RecordId    *string `json:"recordId,omitempty"`
+			RecordId    *int    `json:"recordId,omitempty"`
 		} `json:"samples,omitempty"`
 	} `json:"errorGroups,omitempty"`
 	FailedCount *int              `json:"failedCount,omitempty"`
@@ -2417,9 +2447,8 @@ type Language struct {
 	CurrencyCode *string `json:"currencyCode,omitempty"`
 
 	// Default Whether this is the default language
-	Default *bool   `json:"default,omitempty"`
-	Email   *string `json:"email,omitempty"`
-	Id      *string `json:"id,omitempty"`
+	Default *bool `json:"default,omitempty"`
+	Id      *int  `json:"id,omitempty"`
 
 	// Label Example: English
 	Label *string `json:"label,omitempty"`
@@ -2437,6 +2466,8 @@ type Language struct {
 }
 
 // Leadgen Lead generation campaign with overlay and form
+//
+// Example: {"body":"Two minutes, and the warranty runs for three years.","code":"autumn-2026","createdAt":"2026-03-04T11:20:00Z","dpps":[],"headline":"Register your product","id":31,"inputs":[{"label":"Email","name":"email","required":true,"typ":"email"}],"link":"https://example.com/register","locale":"en","message":"Thank you, the registration is in.","name":"Autumn campaign","popup":true,"published":true,"recipient":"leads@example.com","requestsCount":42,"submitButtonLabel":"Register","type":"Leadgen"}
 type Leadgen struct {
 	// Body Overlay body text
 	Body *string `json:"body,omitempty"`
@@ -2450,7 +2481,7 @@ type Leadgen struct {
 
 	// Headline Overlay headline
 	Headline *string `json:"headline,omitempty"`
-	Id       *string `json:"id,omitempty"`
+	Id       *int    `json:"id,omitempty"`
 
 	// Inputs Form input fields
 	Inputs *[]FormField `json:"inputs,omitempty"`
@@ -2506,7 +2537,7 @@ type LeadgenInput struct {
 
 // Mediafile defines model for Mediafile.
 type Mediafile struct {
-	Id *string `json:"id,omitempty"`
+	Id *int `json:"id,omitempty"`
 
 	// Image Whether the file is an image
 	Image *bool   `json:"image,omitempty"`
@@ -2542,12 +2573,12 @@ type Overlay struct {
 	// Body HTML body content
 	Body     *string `json:"body,omitempty"`
 	Headline *string `json:"headline,omitempty"`
-	Id       *string `json:"id,omitempty"`
+	Id       *int    `json:"id,omitempty"`
 	Link     *string `json:"link,omitempty"`
 	Popup    *bool   `json:"popup,omitempty"`
 }
 
-// Payment defines model for Payment.
+// Payment Example: {"amount":199,"currency":{"code":"EUR","id":44,"name":"Euro","symbol":"€","type":"Currency"},"durationLabel":"Monthly","fullAmount":199,"id":41,"method":{"code":"card","id":42,"name":"Card","providers":[{"apiKey":"pk_live_ZXhhbXBsZQ","code":"stripe","id":43,"name":"Stripe","type":"PaymentProvider"}],"type":"PaymentMethod"},"open":true,"paid":false,"priceIdent":"professional-monthly","status":"open","type":"Payment","validFrom":"2026-03-01T00:00:00Z","validUntil":"2026-04-01T00:00:00Z","variantName":"Professional"}
 type Payment struct {
 	Amount        *float32  `json:"amount,omitempty"`
 	CouponAmount  *float32  `json:"couponAmount,omitempty"`
@@ -2556,7 +2587,7 @@ type Payment struct {
 	Currency      *Currency `json:"currency,omitempty"`
 	DurationLabel *string   `json:"durationLabel,omitempty"`
 	FullAmount    *float32  `json:"fullAmount,omitempty"`
-	Id            *string   `json:"id,omitempty"`
+	Id            *int      `json:"id,omitempty"`
 	Invoice       *struct {
 		CreatedAt *time.Time `json:"createdAt,omitempty"`
 		Number    *string    `json:"number,omitempty"`
@@ -2573,7 +2604,7 @@ type Payment struct {
 		// ApiKey Public API key for client-side integration
 		ApiKey *string `json:"apiKey,omitempty"`
 		Code   *string `json:"code,omitempty"`
-		Id     *string `json:"id,omitempty"`
+		Id     *int    `json:"id,omitempty"`
 		Name   *string `json:"name,omitempty"`
 		Type   *string `json:"type,omitempty"`
 	} `json:"provider,omitempty"`
@@ -2591,12 +2622,12 @@ type Payment struct {
 type PaymentMethod struct {
 	// Code Example: card
 	Code      *string `json:"code,omitempty"`
-	Id        *string `json:"id,omitempty"`
+	Id        *int    `json:"id,omitempty"`
 	Name      *string `json:"name,omitempty"`
 	Providers *[]struct {
 		ApiKey *string `json:"apiKey,omitempty"`
 		Code   *string `json:"code,omitempty"`
-		Id     *string `json:"id,omitempty"`
+		Id     *int    `json:"id,omitempty"`
 		Name   *string `json:"name,omitempty"`
 		Type   *string `json:"type,omitempty"`
 	} `json:"providers,omitempty"`
@@ -2605,7 +2636,7 @@ type PaymentMethod struct {
 
 // Plan Subscription plan with features and pricing variants
 //
-// Example: {"features":[],"id":"507f1f77bcf86cd799439016","name":"Professional","tagline":"For growing teams","tier":2,"type":"Plan","variants":[]}
+// Example: {"features":[],"id":16,"name":"Professional","tagline":"For growing teams","tier":2,"type":"Plan","variants":[]}
 type Plan struct {
 	// Description HTML description
 	Description *string `json:"description,omitempty"`
@@ -2613,7 +2644,7 @@ type Plan struct {
 		// Label HTML feature label
 		Label *string `json:"label,omitempty"`
 	} `json:"features,omitempty"`
-	Id *string `json:"id,omitempty"`
+	Id *int `json:"id,omitempty"`
 
 	// Name Example: Professional
 	Name    *string `json:"name,omitempty"`
@@ -2631,7 +2662,7 @@ type PlanVariant struct {
 	Durations              *[]PlanVariantDuration `json:"durations,omitempty"`
 	EnableComponentFilters *bool                  `json:"enableComponentFilters,omitempty"`
 	EnableDashboardFilters *bool                  `json:"enableDashboardFilters,omitempty"`
-	Id                     *string                `json:"id,omitempty"`
+	Id                     *int                   `json:"id,omitempty"`
 	Name                   *string                `json:"name,omitempty"`
 	TrialDuration          *PlanVariantDuration   `json:"trialDuration,omitempty"`
 	Type                   *string                `json:"type,omitempty"`
@@ -2640,8 +2671,8 @@ type PlanVariant struct {
 // PlanVariantDuration defines model for PlanVariantDuration.
 type PlanVariantDuration struct {
 	// Amount Duration amount
-	Amount *int    `json:"amount,omitempty"`
-	Id     *string `json:"id,omitempty"`
+	Amount *int `json:"amount,omitempty"`
+	Id     *int `json:"id,omitempty"`
 
 	// Interval Duration interval (e.g. month, year)
 	Interval *string `json:"interval,omitempty"`
@@ -2651,7 +2682,7 @@ type PlanVariantDuration struct {
 		// Amount Price amount
 		Amount   *float32  `json:"amount,omitempty"`
 		Currency *Currency `json:"currency,omitempty"`
-		Id       *string   `json:"id,omitempty"`
+		Id       *int      `json:"id,omitempty"`
 
 		// Ident Price identifier used in plan selection
 		Ident *string `json:"ident,omitempty"`
@@ -2662,8 +2693,13 @@ type PlanVariantDuration struct {
 }
 
 // PrivateProperties The confidential rows of one passport version, as an ecdsa-sd-2023 derived Verifiable Credential. The Vault holds the full credential; what comes back here is the view this reader is entitled to - the mandatory public statements plus the restricted rows the reader may see. `legitimateInterest` rows survive only while the reader's access-group membership admits them, `onDemand` rows go to any authenticated reader, and `authorities` rows are never served here. The derived proof is the filter, so the response stays verifiable against the issuer keys and no confidential statement is signed away. JSON-LD keys (`@context`, `@type`) pass through unchanged.
+//
+// Example: {"@context":["https://transpareo.com/vocab/vc/v1","https://transpareo.com/vocab/transpareo/v1"],"@id":"https://example.com/dpp/A1B2C3D4E#credential","credentialSubject":{"@id":"https://example.com/dpp/A1B2C3D4E","@type":"dpp:DigitalProductPassport","product":{"@id":"https://example.com/dpp/A1B2C3D4E#product","@type":"Product","properties":[{"@id":"https://example.com/dpp/A1B2C3D4E#property/21","@type":"PropertyValue","name":[{"@language":"en","@value":"Cell supplier"}],"propertyID":"21","value":"Nordic Cells AB","valueDataType":"xsd:string"}]},"version":3},"issuer":"did:web:nordic-wear.002.fsn.transpareo.com","proof":[{"cryptosuite":"ecdsa-sd-2023","proofPurpose":"assertionMethod","proofValue":"u2V0BhVhAn1sBcx9k...","type":"DataIntegrityProof","verificationMethod":"did:web:nordic-wear.002.fsn.transpareo.com#key-1"}],"type":["VerifiableCredential","dpp:DigitalProductPassport"]}
 type PrivateProperties struct {
 	Context *[]string `json:"@context,omitempty"`
+
+	// Id The credential's own IRI, the passport URL with a `#credential` fragment
+	Id *string `json:"@id,omitempty"`
 
 	// CredentialSubject The revealed statements, in the shape the passport snapshot uses
 	CredentialSubject *map[string]interface{} `json:"credentialSubject,omitempty"`
@@ -2684,13 +2720,12 @@ type PrivateProperties struct {
 		Type               *string `json:"type,omitempty"`
 		VerificationMethod *string `json:"verificationMethod,omitempty"`
 	} `json:"proof,omitempty"`
-	Type      *[]string  `json:"type,omitempty"`
-	ValidFrom *time.Time `json:"validFrom,omitempty"`
+	Type *[]string `json:"type,omitempty"`
 }
 
 // Product Product summary (returned in list endpoints). The `show` action returns ProductDetail with additional nested data.
 //
-// Example: {"brandName":"NaturaCare","gtin":"4006381333931","id":"507f1f77bcf86cd799439011","name":"Hydrating Face Cream","permalink":"/products/naturacare-hydrating-face-cream","publishedAt":"2026-01-15T10:30:00Z","rating":"A","type":"Product"}
+// Example: {"brandName":"NaturaCare","gtin":"4006381333931","id":11,"name":"Hydrating Face Cream","permalink":"/products/naturacare-hydrating-face-cream","publishedAt":"2026-01-15T10:30:00Z","rating":"A","type":"Product"}
 type Product struct {
 	// BrandName Brand name (returned in list views)
 	//
@@ -2701,7 +2736,7 @@ type Product struct {
 	//
 	// Example: 4005808920310
 	Gtin *string `json:"gtin,omitempty"`
-	Id   *string `json:"id,omitempty"`
+	Id   *int    `json:"id,omitempty"`
 
 	// Name Example: Nivea Creme
 	Name *string `json:"name,omitempty"`
@@ -2722,17 +2757,23 @@ type Product struct {
 
 	// Type Example: Product
 	Type *string `json:"type,omitempty"`
+
+	// Weight Product weight (only when present)
+	Weight *float32 `json:"weight,omitempty"`
 }
 
 // ProductComponent A component as it appears within a product (includes rating and properties when unlocked)
 type ProductComponent struct {
 	// ComponentId Reference to the canonical component
-	ComponentId *string `json:"componentId,omitempty"`
-	Id          *string `json:"id,omitempty"`
+	ComponentId *int `json:"componentId,omitempty"`
+	Id          *int `json:"id,omitempty"`
 
 	// Name Example: Aqua
-	Name      *string `json:"name,omitempty"`
-	Permalink *string `json:"permalink,omitempty"`
+	Name *string `json:"name,omitempty"`
+
+	// Percentage The share of the product the component makes up. Only present when the product names one.
+	Percentage *float32 `json:"percentage,omitempty"`
+	Permalink  *string  `json:"permalink,omitempty"`
 
 	// Properties Rated properties (only when unlocked)
 	Properties *[]Property `json:"properties,omitempty"`
@@ -2743,8 +2784,10 @@ type ProductComponent struct {
 }
 
 // ProductDetail Full product details (returned by show action and permalink resolution). Includes nested brand, components, properties, categories, and mediafiles.
+//
+// Example: {"brand":{"id":12,"name":"NaturaCare","permalink":"/brands/naturacare","productsCount":12,"published":true,"type":"Brand"},"categories":[{"id":20,"name":"Skincare","type":"ProductCategory"}],"components":[{"componentId":13,"id":13,"name":"Shea Butter","permalink":"/components/shea-butter","rating":"A","type":"Component"}],"gtin":"4006381333931","id":11,"mediafiles":[],"name":"Hydrating Face Cream","permalink":"/products/naturacare-hydrating-face-cream","properties":{"Capacity":{"id":21,"inputType":"text","values":[{"value":"50 ml"}]}},"publishedAt":"2026-01-15T10:30:00Z","rating":"A","type":"Product"}
 type ProductDetail struct {
-	// Brand Example: {"id":"507f1f77bcf86cd799439012","name":"NaturaCare","permalink":"/brands/naturacare","productsCount":12,"type":"Brand"}
+	// Brand Example: {"id":12,"name":"NaturaCare","permalink":"/brands/naturacare","productsCount":12,"type":"Brand"}
 	Brand *Brand `json:"brand,omitempty"`
 
 	// Categories Product categories. Only present in show/permalink actions.
@@ -2752,6 +2795,9 @@ type ProductDetail struct {
 
 	// Components Product components with ratings. Only present in show/permalink actions.
 	Components *[]ProductComponent `json:"components,omitempty"`
+
+	// ComponentsIds The ids of the components the product carries. The dashboard answers these in place of the components themselves.
+	ComponentsIds *[]int `json:"componentsIds,omitempty"`
 
 	// CreatedAt Only present when the API consumer has the include_dates context flag.
 	CreatedAt *time.Time `json:"createdAt,omitempty"`
@@ -2761,7 +2807,7 @@ type ProductDetail struct {
 
 	// Gtin Global Trade Item Number. Only present when the product has a GTIN assigned.
 	Gtin *string `json:"gtin,omitempty"`
-	Id   *string `json:"id,omitempty"`
+	Id   *int    `json:"id,omitempty"`
 
 	// Mediafiles Product images. Only present when product mediafiles feature is enabled in tenant config and in show/permalink actions.
 	Mediafiles *[]Mediafile `json:"mediafiles,omitempty"`
@@ -2781,14 +2827,32 @@ type ProductDetail struct {
 		// AllowedValues The closed set of values a templated property type accepts (battery chemistries, for example). Only present when the type carries one; a value outside the set is refused.
 		AllowedValues *[]string `json:"allowedValues,omitempty"`
 
+		// Columns The columns a structured composition is filled in, in display order. Only present on structured composition types; their values carry `compositionRows` instead of a plain value.
+		Columns *[]struct {
+			// EnumValues The closed set the column accepts. Only present on enumerated columns.
+			EnumValues *[]string `json:"enumValues,omitempty"`
+			InputType  *string   `json:"inputType,omitempty"`
+			Key        *string   `json:"key,omitempty"`
+			Label      *string   `json:"label,omitempty"`
+
+			// Primary Whether the column names the row. Only present when true.
+			Primary *bool `json:"primary,omitempty"`
+		} `json:"columns,omitempty"`
+
 		// Dynamic Whether the value changes over a unit's life. A dynamic value rides on the passport's separately signed dynamic surface and never enters a signed per-version snapshot. Only present when true.
 		Dynamic *bool `json:"dynamic,omitempty"`
 
 		// HideName Whether to hide the property type name in display
 		HideName *bool `json:"hideName,omitempty"`
 
+		// Hint Explanatory note shown with the field. Only present when the type carries one.
+		Hint *string `json:"hint,omitempty"`
+
+		// Icon Name of the icon shown with the field. Only present when the type carries one.
+		Icon *string `json:"icon,omitempty"`
+
 		// Id Property type ID
-		Id *string `json:"id,omitempty"`
+		Id *int `json:"id,omitempty"`
 
 		// InputLimit Maximum number of values (only when limited)
 		InputLimit *int    `json:"inputLimit,omitempty"`
@@ -2811,17 +2875,11 @@ type ProductDetail struct {
 		// Example: bpass:batteryChemistry
 		Namespace *string `json:"namespace,omitempty"`
 
-		// Note Explanatory note for the property type
-		Note *string `json:"note,omitempty"`
-
 		// RestrictedByGroup Restricted to specific user groups
 		RestrictedByGroup *bool `json:"restrictedByGroup,omitempty"`
 
 		// RestrictedByParam Requires the show parameter to display
 		RestrictedByParam *bool `json:"restrictedByParam,omitempty"`
-
-		// Secondary Whether this is a secondary property type
-		Secondary *bool `json:"secondary,omitempty"`
 
 		// Unit The physical unit values are given in. Only present on quantitative property types.
 		//
@@ -2847,6 +2905,9 @@ type ProductDetail struct {
 
 	// UpdatedAt Only present when the API consumer has the include_dates context flag.
 	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
+
+	// Weight Product weight. Only present when the product carries one.
+	Weight *float32 `json:"weight,omitempty"`
 }
 
 // ProductInput defines model for ProductInput.
@@ -2880,6 +2941,12 @@ type ProductInput_ComponentsInput struct {
 
 // Property defines model for Property.
 type Property struct {
+	// CompositionRows The rows of a structured composition, each keyed by the column keys the property type declares. Only present when the property carries rows.
+	CompositionRows *[]map[string]interface{} `json:"compositionRows,omitempty"`
+
+	// Percentage The share of the product the value stands for. Only present when the property carries one.
+	Percentage *float32 `json:"percentage,omitempty"`
+
 	// Rating Property rating A-D (only for rated properties when unlocked)
 	Rating *string `json:"rating,omitempty"`
 
@@ -2897,7 +2964,7 @@ type Subscription struct {
 	CurrencyCode *string    `json:"currencyCode,omitempty"`
 	Expired      *bool      `json:"expired,omitempty"`
 	ExpiresAt    *time.Time `json:"expiresAt,omitempty"`
-	Id           *string    `json:"id,omitempty"`
+	Id           *int       `json:"id,omitempty"`
 	Name         *string    `json:"name,omitempty"`
 	Paid         *bool      `json:"paid,omitempty"`
 	PriceIdent   *string    `json:"priceIdent,omitempty"`
@@ -2930,7 +2997,7 @@ type TokenResponse struct {
 // TokenResponseTokenType defines model for TokenResponse.TokenType.
 type TokenResponseTokenType string
 
-// User Example: {"activeMember":true,"alias":"jdoe","allowedDppProducts":50,"confirmed":true,"countryCode":"DE","dppCount":5,"dppViews":1423,"email":"user@example.com","id":"507f1f77bcf86cd799439015","name":"Jane Doe","remainingDppProducts":45,"type":"User"}
+// User Example: {"activeMember":true,"alias":"jdoe","allowedDppProducts":50,"confirmed":true,"countryCode":"DE","dppCount":5,"dppViews":1423,"email":"user@example.com","id":15,"name":"Jane Doe","remainingDppProducts":45,"type":"User"}
 type User struct {
 	ActiveMember *bool `json:"activeMember,omitempty"`
 
@@ -2964,7 +3031,7 @@ type User struct {
 
 	// FreeUntil Free access expiry date. Only present when memberships are required and user has free access.
 	FreeUntil *time.Time `json:"freeUntil,omitempty"`
-	Id        *string    `json:"id,omitempty"`
+	Id        *int       `json:"id,omitempty"`
 	Name      *string    `json:"name,omitempty"`
 
 	// PaidUntil Membership paid expiry date. Only present when memberships are required.
@@ -3076,7 +3143,7 @@ type WebhookTest struct {
 }
 
 // Id defines model for id.
-type Id = string
+type Id = int
 
 // IdempotencyKey defines model for idempotency_key.
 type IdempotencyKey = string
@@ -3374,10 +3441,10 @@ type CreateExportParams struct {
 type CreateFavoriteJSONBody struct {
 	Favorite struct {
 		// FavorableId ID of the item
-		FavorableId *string `json:"favorableId,omitempty"`
+		FavorableId int `json:"favorableId"`
 
 		// FavorableType Type of item to favorite
-		FavorableType *CreateFavoriteJSONBodyFavoriteFavorableType `json:"favorableType,omitempty"`
+		FavorableType CreateFavoriteJSONBodyFavoriteFavorableType `json:"favorableType"`
 	} `json:"favorite"`
 }
 
@@ -3541,7 +3608,7 @@ type ExchangeTokenFormdataBodyGrantType string
 // AssignPaymentCouponJSONBody defines parameters for AssignPaymentCoupon.
 type AssignPaymentCouponJSONBody struct {
 	// CouponId Coupon ID to apply
-	CouponId *string `json:"couponId,omitempty"`
+	CouponId int `json:"couponId"`
 }
 
 // PreparePaymentJSONBody defines parameters for PreparePayment.
@@ -3572,6 +3639,12 @@ type ListProductPropertiesParams struct {
 
 	// PerPage Records per page (default: 100, max: 500)
 	PerPage *PerPage `form:"per_page,omitempty" json:"per_page,omitempty"`
+
+	// PropertyTypeId The property type whose values to list. Without it, and for a type that does not exist, the list is empty.
+	PropertyTypeId *int `form:"property_type_id,omitempty" json:"property_type_id,omitempty"`
+
+	// Term Filter the values by their text
+	Term *string `form:"term,omitempty" json:"term,omitempty"`
 }
 
 // ListProductsParams defines parameters for ListProducts.
@@ -3648,7 +3721,7 @@ type UpdateProductJSONBody struct {
 // UpdateProductMediafilesJSONBody defines parameters for UpdateProductMediafiles.
 type UpdateProductMediafilesJSONBody struct {
 	// MediafileIds Ordered list of mediafile IDs to assign
-	MediafileIds *[]string `json:"mediafileIds,omitempty"`
+	MediafileIds *[]int `json:"mediafileIds,omitempty"`
 }
 
 // ResetPasswordJSONBody defines parameters for ResetPassword.
@@ -3656,8 +3729,8 @@ type ResetPasswordJSONBody struct {
 	// Token Reset token from email
 	Token string `json:"token"`
 	User  struct {
-		Password             string  `json:"password"`
-		PasswordConfirmation *string `json:"passwordConfirmation,omitempty"`
+		Password             string `json:"password"`
+		PasswordConfirmation string `json:"passwordConfirmation"`
 	} `json:"user"`
 }
 
@@ -3718,7 +3791,7 @@ type UpdateUserJSONBody struct {
 // ChoosePlanJSONBody defines parameters for ChoosePlan.
 type ChoosePlanJSONBody struct {
 	// PriceIdent Price identifier from plan variant duration
-	PriceIdent *string `json:"priceIdent,omitempty"`
+	PriceIdent string `json:"priceIdent"`
 }
 
 // ConfirmUserChangesParams defines parameters for ConfirmUserChanges.
@@ -3729,7 +3802,7 @@ type ConfirmUserChangesParams struct {
 
 // UpgradePlanJSONBody defines parameters for UpgradePlan.
 type UpgradePlanJSONBody struct {
-	PriceIdent *string `json:"priceIdent,omitempty"`
+	PriceIdent string `json:"priceIdent"`
 }
 
 // ListWebhooksParams defines parameters for ListWebhooks.
@@ -5066,7 +5139,7 @@ type ClientInterface interface {
 
 	// ListProductProperties List product properties
 	//
-	// Returns product property types. Requires the analyses feature to be enabled.
+	// Returns the values products carry for one property type, named by `property_type_id`. Requires the analyses feature to be enabled.
 	//
 	// Corresponds with GET /product_properties (the `ListProductProperties` operationId).
 	ListProductProperties(ctx context.Context, params *ListProductPropertiesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -5339,7 +5412,7 @@ type ClientInterface interface {
 
 	// ListUserProducts Get user's product dashboard
 	//
-	// Returns the cached product dashboard data for the authenticated user, including their products and DPPs.
+	// Returns the cached dashboard of the signed-in person. It carries their products, each with its brand, its categories and the ids of its components, the category tree those products fall into, and the brands they belong to.
 	//
 	// Corresponds with GET /users/{id}/products (the `ListUserProducts` operationId).
 	ListUserProducts(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -7456,7 +7529,7 @@ func (c *Client) ListProductGtins(ctx context.Context, params *ListProductGtinsP
 
 // ListProductProperties List product properties
 //
-// Returns product property types. Requires the analyses feature to be enabled.
+// Returns the values products carry for one property type, named by `property_type_id`. Requires the analyses feature to be enabled.
 //
 // Corresponds with GET /product_properties (the `ListProductProperties` operationId).
 func (c *Client) ListProductProperties(ctx context.Context, params *ListProductPropertiesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -8059,7 +8132,7 @@ func (c *Client) ConfirmUserChanges(ctx context.Context, id Id, params *ConfirmU
 
 // ListUserProducts Get user's product dashboard
 //
-// Returns the cached product dashboard data for the authenticated user, including their products and DPPs.
+// Returns the cached dashboard of the signed-in person. It carries their products, each with its brand, its categories and the ids of its components, the category tree those products fall into, and the brands they belong to.
 //
 // Corresponds with GET /users/{id}/products (the `ListUserProducts` operationId).
 func (c *Client) ListUserProducts(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -8406,7 +8479,7 @@ func NewDeleteBrandRequest(server string, id Id) (*http.Request, error) {
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -8440,7 +8513,7 @@ func NewGetBrandRequest(server string, id Id) (*http.Request, error) {
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -8485,7 +8558,7 @@ func NewUpdateBrandRequestWithBody(server string, id Id, contentType string, bod
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -8849,7 +8922,7 @@ func NewDeleteComponentRequest(server string, id Id) (*http.Request, error) {
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -8883,7 +8956,7 @@ func NewGetComponentRequest(server string, id Id) (*http.Request, error) {
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -8928,7 +9001,7 @@ func NewUpdateComponentRequestWithBody(server string, id Id, contentType string,
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -8964,7 +9037,7 @@ func NewPublishComponentRequest(server string, id Id) (*http.Request, error) {
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -8998,7 +9071,7 @@ func NewUnpublishComponentRequest(server string, id Id) (*http.Request, error) {
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -9704,7 +9777,7 @@ func NewDeleteDppRequest(server string, id Id) (*http.Request, error) {
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -9738,7 +9811,7 @@ func NewGetDppRequest(server string, id Id, params *GetDppParams) (*http.Request
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -9822,7 +9895,7 @@ func NewUpdateDppRequestWithBody(server string, id Id, contentType string, body 
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -9869,7 +9942,7 @@ func NewUpdateDppDynamicDataRequestWithBody(server string, id Id, contentType st
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -9905,7 +9978,7 @@ func NewListDppEventsRequest(server string, id Id, params *ListDppEventsParams) 
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -9977,7 +10050,7 @@ func NewAppendDppEventRequestWithBody(server string, id Id, contentType string, 
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -10024,7 +10097,7 @@ func NewReissueDppRequestWithBody(server string, id Id, params *ReissueDppParams
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -10075,7 +10148,7 @@ func NewGetDppStatsRequest(server string, id Id, params *GetDppStatsParams) (*ht
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -10147,7 +10220,7 @@ func NewSupersedeDppRequestWithBody(server string, id Id, params *SupersedeDppPa
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -10198,7 +10271,7 @@ func NewListDppVersionsRequest(server string, id Id) (*http.Request, error) {
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -10243,7 +10316,7 @@ func NewVoidDppRequestWithBody(server string, id Id, params *VoidDppParams, cont
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -10439,7 +10512,7 @@ func NewGetExportRequest(server string, id Id) (*http.Request, error) {
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -10473,7 +10546,7 @@ func NewDownloadExportRequest(server string, id Id) (*http.Request, error) {
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -10574,7 +10647,7 @@ func NewDeleteFavoriteRequest(server string, id Id) (*http.Request, error) {
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -10926,7 +10999,7 @@ func NewGetImportRequest(server string, id Id) (*http.Request, error) {
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -10971,7 +11044,7 @@ func NewExecuteImportRequestWithBody(server string, id Id, contentType string, b
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -11018,7 +11091,7 @@ func NewMapImportRequestWithBody(server string, id Id, contentType string, body 
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -11065,7 +11138,7 @@ func NewRevertImportRequestWithBody(server string, id Id, contentType string, bo
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -11101,7 +11174,7 @@ func NewValidateImportRequest(server string, id Id) (*http.Request, error) {
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -11256,7 +11329,7 @@ func NewDeleteLeadgenRequest(server string, id Id) (*http.Request, error) {
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -11301,7 +11374,7 @@ func NewUpdateLeadgenRequestWithBody(server string, id Id, contentType string, b
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -11337,7 +11410,7 @@ func NewGetLeadgenRequestsRequest(server string, id Id, params *GetLeadgenReques
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -11660,7 +11733,7 @@ func NewAssignPaymentCouponRequestWithBody(server string, id Id, contentType str
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -11696,7 +11769,7 @@ func NewCancelPaymentRequest(server string, id Id) (*http.Request, error) {
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -11741,7 +11814,7 @@ func NewPreparePaymentRequestWithBody(server string, id Id, contentType string, 
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -11777,7 +11850,7 @@ func NewConfirmPaymentRequest(server string, id Id) (*http.Request, error) {
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -11899,7 +11972,7 @@ func NewGetPlanRequest(server string, id Id) (*http.Request, error) {
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -12075,6 +12148,30 @@ func NewListProductPropertiesRequest(server string, params *ListProductPropertie
 		if params.PerPage != nil {
 
 			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "per_page", *params.PerPage, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.PropertyTypeId != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "property_type_id", *params.PropertyTypeId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Term != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "term", *params.Term, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
 				return nil, err
 			} else {
 				for _, qp := range strings.Split(queryFrag, "&") {
@@ -12388,7 +12485,7 @@ func NewDeleteProductRequest(server string, id Id) (*http.Request, error) {
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -12422,7 +12519,7 @@ func NewGetProductRequest(server string, id Id, params *GetProductParams) (*http
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -12506,7 +12603,7 @@ func NewUpdateProductRequestWithBody(server string, id Id, contentType string, b
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -12553,7 +12650,7 @@ func NewUpdateProductMediafilesRequestWithBody(server string, id Id, contentType
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -12589,7 +12686,7 @@ func NewPublishProductRequest(server string, id Id) (*http.Request, error) {
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -12623,7 +12720,7 @@ func NewUnpublishProductRequest(server string, id Id) (*http.Request, error) {
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -12999,7 +13096,7 @@ func NewUpdateUserRequestWithBody(server string, id Id, contentType string, body
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -13035,7 +13132,7 @@ func NewCancelPlanRequest(server string, id Id) (*http.Request, error) {
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -13080,7 +13177,7 @@ func NewChoosePlanRequestWithBody(server string, id Id, contentType string, body
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -13116,7 +13213,7 @@ func NewConfirmUserChangesRequest(server string, id Id, params *ConfirmUserChang
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -13173,7 +13270,7 @@ func NewListUserProductsRequest(server string, id Id) (*http.Request, error) {
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -13218,7 +13315,7 @@ func NewUpgradePlanRequestWithBody(server string, id Id, contentType string, bod
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -13375,7 +13472,7 @@ func NewDeleteWebhookRequest(server string, id Id) (*http.Request, error) {
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -13409,7 +13506,7 @@ func NewGetWebhookRequest(server string, id Id) (*http.Request, error) {
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -13454,7 +13551,7 @@ func NewUpdateWebhookRequestWithBody(server string, id Id, contentType string, b
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -13490,7 +13587,7 @@ func NewRegenerateWebhookSecretRequest(server string, id Id) (*http.Request, err
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -13524,7 +13621,7 @@ func NewTestWebhookRequest(server string, id Id) (*http.Request, error) {
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -14636,7 +14733,7 @@ type ClientWithResponsesInterface interface {
 
 	// ListProductPropertiesWithResponse List product properties
 	//
-	// Returns product property types. Requires the analyses feature to be enabled.
+	// Returns the values products carry for one property type, named by `property_type_id`. Requires the analyses feature to be enabled.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
@@ -14935,7 +15032,7 @@ type ClientWithResponsesInterface interface {
 
 	// ListUserProductsWithResponse Get user's product dashboard
 	//
-	// Returns the cached product dashboard data for the authenticated user, including their products and DPPs.
+	// Returns the cached dashboard of the signed-in person. It carries their products, each with its brand, its categories and the ids of its components, the category tree those products fall into, and the brands they belong to.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
@@ -18084,7 +18181,9 @@ type ListFavoritesResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
-	JSON200 *map[string]interface{}
+	JSON200 *struct {
+		Favorites *[]Favorite `json:"favorites,omitempty"`
+	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
 	// JSON402 the response for an HTTP 402 `application/json` response
@@ -18092,7 +18191,9 @@ type ListFavoritesResponse struct {
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
-func (r ListFavoritesResponse) GetJSON200() *map[string]interface{} {
+func (r ListFavoritesResponse) GetJSON200() *struct {
+	Favorites *[]Favorite `json:"favorites,omitempty"`
+} {
 	return r.JSON200
 }
 
@@ -19801,6 +19902,7 @@ type GetPaymentDataResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
+		// Payment Example: {"amount":199,"currency":{"code":"EUR","id":44,"name":"Euro","symbol":"€","type":"Currency"},"durationLabel":"Monthly","fullAmount":199,"id":41,"method":{"code":"card","id":42,"name":"Card","providers":[{"apiKey":"pk_live_ZXhhbXBsZQ","code":"stripe","id":43,"name":"Stripe","type":"PaymentProvider"}],"type":"PaymentMethod"},"open":true,"paid":false,"priceIdent":"professional-monthly","status":"open","type":"Payment","validFrom":"2026-03-01T00:00:00Z","validUntil":"2026-04-01T00:00:00Z","variantName":"Professional"}
 		Payment        *Payment         `json:"payment,omitempty"`
 		PaymentMethods *[]PaymentMethod `json:"paymentMethods,omitempty"`
 
@@ -19817,6 +19919,7 @@ type GetPaymentDataResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r GetPaymentDataResponse) GetJSON200() *struct {
+	// Payment Example: {"amount":199,"currency":{"code":"EUR","id":44,"name":"Euro","symbol":"€","type":"Currency"},"durationLabel":"Monthly","fullAmount":199,"id":41,"method":{"code":"card","id":42,"name":"Card","providers":[{"apiKey":"pk_live_ZXhhbXBsZQ","code":"stripe","id":43,"name":"Stripe","type":"PaymentProvider"}],"type":"PaymentMethod"},"open":true,"paid":false,"priceIdent":"professional-monthly","status":"open","type":"Payment","validFrom":"2026-03-01T00:00:00Z","validUntil":"2026-04-01T00:00:00Z","variantName":"Professional"}
 	Payment        *Payment         `json:"payment,omitempty"`
 	PaymentMethods *[]PaymentMethod `json:"paymentMethods,omitempty"`
 
@@ -20123,18 +20226,22 @@ type ResolvePermalinkResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		// Brand Example: {"id":"507f1f77bcf86cd799439012","name":"NaturaCare","permalink":"/brands/naturacare","productsCount":12,"type":"Brand"}
+		// Brand Example: {"id":12,"name":"NaturaCare","permalink":"/brands/naturacare","productsCount":12,"type":"Brand"}
 		Brand *Brand `json:"brand,omitempty"`
 
 		// Component Full component details (returned by show action)
-		Component *ComponentDetail `json:"component,omitempty"`
-
-		// Overlay DPP overlay content displayed on scan
-		Overlay *Overlay                `json:"overlay,omitempty"`
-		Page    *map[string]interface{} `json:"page,omitempty"`
+		//
+		// Example: {"citations":[],"id":13,"mediafiles":[],"name":"Shea Butter","permalink":"/components/shea-butter","properties":{"Origin":{"rated":true,"values":[{"rating":"A","value":"West Africa"}]}},"published":true,"publishedAt":"2026-01-10T08:00:00Z","rating":"A","type":"Component"}
+		Component *ComponentDetail        `json:"component,omitempty"`
+		Page      *map[string]interface{} `json:"page,omitempty"`
 
 		// Product Full product details (returned by show action and permalink resolution). Includes nested brand, components, properties, categories, and mediafiles.
+		//
+		// Example: {"brand":{"id":12,"name":"NaturaCare","permalink":"/brands/naturacare","productsCount":12,"published":true,"type":"Brand"},"categories":[{"id":20,"name":"Skincare","type":"ProductCategory"}],"components":[{"componentId":13,"id":13,"name":"Shea Butter","permalink":"/components/shea-butter","rating":"A","type":"Component"}],"gtin":"4006381333931","id":11,"mediafiles":[],"name":"Hydrating Face Cream","permalink":"/products/naturacare-hydrating-face-cream","properties":{"Capacity":{"id":21,"inputType":"text","values":[{"value":"50 ml"}]}},"publishedAt":"2026-01-15T10:30:00Z","rating":"A","type":"Product"}
 		Product *ProductDetail `json:"product,omitempty"`
+
+		// Redirect The current path of the record, present when the permalink asked for is an alias the record has moved on from
+		Redirect *string `json:"redirect,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Error
@@ -20148,18 +20255,22 @@ type ResolvePermalinkResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ResolvePermalinkResponse) GetJSON200() *struct {
-	// Brand Example: {"id":"507f1f77bcf86cd799439012","name":"NaturaCare","permalink":"/brands/naturacare","productsCount":12,"type":"Brand"}
+	// Brand Example: {"id":12,"name":"NaturaCare","permalink":"/brands/naturacare","productsCount":12,"type":"Brand"}
 	Brand *Brand `json:"brand,omitempty"`
 
 	// Component Full component details (returned by show action)
-	Component *ComponentDetail `json:"component,omitempty"`
-
-	// Overlay DPP overlay content displayed on scan
-	Overlay *Overlay                `json:"overlay,omitempty"`
-	Page    *map[string]interface{} `json:"page,omitempty"`
+	//
+	// Example: {"citations":[],"id":13,"mediafiles":[],"name":"Shea Butter","permalink":"/components/shea-butter","properties":{"Origin":{"rated":true,"values":[{"rating":"A","value":"West Africa"}]}},"published":true,"publishedAt":"2026-01-10T08:00:00Z","rating":"A","type":"Component"}
+	Component *ComponentDetail        `json:"component,omitempty"`
+	Page      *map[string]interface{} `json:"page,omitempty"`
 
 	// Product Full product details (returned by show action and permalink resolution). Includes nested brand, components, properties, categories, and mediafiles.
+	//
+	// Example: {"brand":{"id":12,"name":"NaturaCare","permalink":"/brands/naturacare","productsCount":12,"published":true,"type":"Brand"},"categories":[{"id":20,"name":"Skincare","type":"ProductCategory"}],"components":[{"componentId":13,"id":13,"name":"Shea Butter","permalink":"/components/shea-butter","rating":"A","type":"Component"}],"gtin":"4006381333931","id":11,"mediafiles":[],"name":"Hydrating Face Cream","permalink":"/products/naturacare-hydrating-face-cream","properties":{"Capacity":{"id":21,"inputType":"text","values":[{"value":"50 ml"}]}},"publishedAt":"2026-01-15T10:30:00Z","rating":"A","type":"Product"}
 	Product *ProductDetail `json:"product,omitempty"`
+
+	// Redirect The current path of the record, present when the permalink asked for is an alias the record has moved on from
+	Redirect *string `json:"redirect,omitempty"`
 } {
 	return r.JSON200
 }
@@ -20453,7 +20564,7 @@ type ListProductPropertiesResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		ProductProperties *[]map[string]interface{} `json:"productProperties,omitempty"`
+		ProductProperties *[]Property `json:"productProperties,omitempty"`
 	}
 	// Headers200 the parsed response headers for an HTTP 200 response
 	Headers200 *ListProductPropertiesResponse200Headers
@@ -20461,7 +20572,7 @@ type ListProductPropertiesResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListProductPropertiesResponse) GetJSON200() *struct {
-	ProductProperties *[]map[string]interface{} `json:"productProperties,omitempty"`
+	ProductProperties *[]Property `json:"productProperties,omitempty"`
 } {
 	return r.JSON200
 }
@@ -21378,7 +21489,7 @@ type LoginSessionResponse struct {
 		// Token Bearer token prefixed with UR, e.g. `UR eyJ...`
 		Token *string `json:"token,omitempty"`
 
-		// User Example: {"activeMember":true,"alias":"jdoe","allowedDppProducts":50,"confirmed":true,"countryCode":"DE","dppCount":5,"dppViews":1423,"email":"user@example.com","id":"507f1f77bcf86cd799439015","name":"Jane Doe","remainingDppProducts":45,"type":"User"}
+		// User Example: {"activeMember":true,"alias":"jdoe","allowedDppProducts":50,"confirmed":true,"countryCode":"DE","dppCount":5,"dppViews":1423,"email":"user@example.com","id":15,"name":"Jane Doe","remainingDppProducts":45,"type":"User"}
 		User *User `json:"user,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
@@ -21397,7 +21508,7 @@ func (r LoginSessionResponse) GetJSON201() *struct {
 	// Token Bearer token prefixed with UR, e.g. `UR eyJ...`
 	Token *string `json:"token,omitempty"`
 
-	// User Example: {"activeMember":true,"alias":"jdoe","allowedDppProducts":50,"confirmed":true,"countryCode":"DE","dppCount":5,"dppViews":1423,"email":"user@example.com","id":"507f1f77bcf86cd799439015","name":"Jane Doe","remainingDppProducts":45,"type":"User"}
+	// User Example: {"activeMember":true,"alias":"jdoe","allowedDppProducts":50,"confirmed":true,"countryCode":"DE","dppCount":5,"dppViews":1423,"email":"user@example.com","id":15,"name":"Jane Doe","remainingDppProducts":45,"type":"User"}
 	User *User `json:"user,omitempty"`
 } {
 	return r.JSON201
@@ -21849,13 +21960,25 @@ type ListUserProductsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
-	JSON200 *map[string]interface{}
+	JSON200 *struct {
+		Brands *[]Brand `json:"brands,omitempty"`
+
+		// Categories The category tree the products fall into
+		Categories *[]Category      `json:"categories,omitempty"`
+		Products   *[]ProductDetail `json:"products,omitempty"`
+	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
-func (r ListUserProductsResponse) GetJSON200() *map[string]interface{} {
+func (r ListUserProductsResponse) GetJSON200() *struct {
+	Brands *[]Brand `json:"brands,omitempty"`
+
+	// Categories The category tree the products fall into
+	Categories *[]Category      `json:"categories,omitempty"`
+	Products   *[]ProductDetail `json:"products,omitempty"`
+} {
 	return r.JSON200
 }
 
@@ -24099,7 +24222,7 @@ func (c *ClientWithResponses) ListProductGtinsWithResponse(ctx context.Context, 
 
 // ListProductPropertiesWithResponse List product properties
 //
-// Returns product property types. Requires the analyses feature to be enabled.
+// Returns the values products carry for one property type, named by `property_type_id`. Requires the analyses feature to be enabled.
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -24596,7 +24719,7 @@ func (c *ClientWithResponses) ConfirmUserChangesWithResponse(ctx context.Context
 
 // ListUserProductsWithResponse Get user's product dashboard
 //
-// Returns the cached product dashboard data for the authenticated user, including their products and DPPs.
+// Returns the cached dashboard of the signed-in person. It carries their products, each with its brand, its categories and the ids of its components, the category tree those products fall into, and the brands they belong to.
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -27353,7 +27476,9 @@ func ParseListFavoritesResponse(rsp *http.Response) (*ListFavoritesResponse, err
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest map[string]interface{}
+		var dest struct {
+			Favorites *[]Favorite `json:"favorites,omitempty"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -28715,6 +28840,7 @@ func ParseGetPaymentDataResponse(rsp *http.Response) (*GetPaymentDataResponse, e
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
+			// Payment Example: {"amount":199,"currency":{"code":"EUR","id":44,"name":"Euro","symbol":"€","type":"Currency"},"durationLabel":"Monthly","fullAmount":199,"id":41,"method":{"code":"card","id":42,"name":"Card","providers":[{"apiKey":"pk_live_ZXhhbXBsZQ","code":"stripe","id":43,"name":"Stripe","type":"PaymentProvider"}],"type":"PaymentMethod"},"open":true,"paid":false,"priceIdent":"professional-monthly","status":"open","type":"Payment","validFrom":"2026-03-01T00:00:00Z","validUntil":"2026-04-01T00:00:00Z","variantName":"Professional"}
 			Payment        *Payment         `json:"payment,omitempty"`
 			PaymentMethods *[]PaymentMethod `json:"paymentMethods,omitempty"`
 
@@ -28956,18 +29082,22 @@ func ParseResolvePermalinkResponse(rsp *http.Response) (*ResolvePermalinkRespons
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			// Brand Example: {"id":"507f1f77bcf86cd799439012","name":"NaturaCare","permalink":"/brands/naturacare","productsCount":12,"type":"Brand"}
+			// Brand Example: {"id":12,"name":"NaturaCare","permalink":"/brands/naturacare","productsCount":12,"type":"Brand"}
 			Brand *Brand `json:"brand,omitempty"`
 
 			// Component Full component details (returned by show action)
-			Component *ComponentDetail `json:"component,omitempty"`
-
-			// Overlay DPP overlay content displayed on scan
-			Overlay *Overlay                `json:"overlay,omitempty"`
-			Page    *map[string]interface{} `json:"page,omitempty"`
+			//
+			// Example: {"citations":[],"id":13,"mediafiles":[],"name":"Shea Butter","permalink":"/components/shea-butter","properties":{"Origin":{"rated":true,"values":[{"rating":"A","value":"West Africa"}]}},"published":true,"publishedAt":"2026-01-10T08:00:00Z","rating":"A","type":"Component"}
+			Component *ComponentDetail        `json:"component,omitempty"`
+			Page      *map[string]interface{} `json:"page,omitempty"`
 
 			// Product Full product details (returned by show action and permalink resolution). Includes nested brand, components, properties, categories, and mediafiles.
+			//
+			// Example: {"brand":{"id":12,"name":"NaturaCare","permalink":"/brands/naturacare","productsCount":12,"published":true,"type":"Brand"},"categories":[{"id":20,"name":"Skincare","type":"ProductCategory"}],"components":[{"componentId":13,"id":13,"name":"Shea Butter","permalink":"/components/shea-butter","rating":"A","type":"Component"}],"gtin":"4006381333931","id":11,"mediafiles":[],"name":"Hydrating Face Cream","permalink":"/products/naturacare-hydrating-face-cream","properties":{"Capacity":{"id":21,"inputType":"text","values":[{"value":"50 ml"}]}},"publishedAt":"2026-01-15T10:30:00Z","rating":"A","type":"Product"}
 			Product *ProductDetail `json:"product,omitempty"`
+
+			// Redirect The current path of the record, present when the permalink asked for is an alias the record has moved on from
+			Redirect *string `json:"redirect,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -29245,7 +29375,7 @@ func ParseListProductPropertiesResponse(rsp *http.Response) (*ListProductPropert
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			ProductProperties *[]map[string]interface{} `json:"productProperties,omitempty"`
+			ProductProperties *[]Property `json:"productProperties,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -30049,7 +30179,7 @@ func ParseLoginSessionResponse(rsp *http.Response) (*LoginSessionResponse, error
 			// Token Bearer token prefixed with UR, e.g. `UR eyJ...`
 			Token *string `json:"token,omitempty"`
 
-			// User Example: {"activeMember":true,"alias":"jdoe","allowedDppProducts":50,"confirmed":true,"countryCode":"DE","dppCount":5,"dppViews":1423,"email":"user@example.com","id":"507f1f77bcf86cd799439015","name":"Jane Doe","remainingDppProducts":45,"type":"User"}
+			// User Example: {"activeMember":true,"alias":"jdoe","allowedDppProducts":50,"confirmed":true,"countryCode":"DE","dppCount":5,"dppViews":1423,"email":"user@example.com","id":15,"name":"Jane Doe","remainingDppProducts":45,"type":"User"}
 			User *User `json:"user,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -30391,7 +30521,13 @@ func ParseListUserProductsResponse(rsp *http.Response) (*ListUserProductsRespons
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest map[string]interface{}
+		var dest struct {
+			Brands *[]Brand `json:"brands,omitempty"`
+
+			// Categories The category tree the products fall into
+			Categories *[]Category      `json:"categories,omitempty"`
+			Products   *[]ProductDetail `json:"products,omitempty"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}

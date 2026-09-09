@@ -23,7 +23,7 @@ func TestTypedClientGoesThroughTheTransport(t *testing.T) {
 		}
 		w.Header().Set("API-Total", "1")
 		writeJSON(w, 200, map[string]any{"brands": []map[string]any{
-			{"id": "b1", "name": "Alpha"}}})
+			{"id": 1, "name": "Alpha"}}})
 	})
 	c := newTestClient(t, ts, newFakeClock(), WithUserAgent("typed/1"))
 	resp, err := c.API().ListBrandsWithResponse(context.Background(), nil)
@@ -58,7 +58,7 @@ func TestTypedClientSendsIdempotencyKeyAndBody(t *testing.T) {
 		key = r.Header.Get("Idempotency-Key")
 		b, _ := readBody(r)
 		body = b
-		writeJSON(w, 201, map[string]any{"id": "b2"})
+		writeJSON(w, 201, map[string]any{"id": 2})
 	})
 	c := newTestClient(t, ts, newFakeClock())
 	name := "Natura"
@@ -79,13 +79,13 @@ func TestTypedClientSendsIdempotencyKeyAndBody(t *testing.T) {
 
 func TestTypedClientReturnsRefusalsAsResponses(t *testing.T) {
 	ts := newTokenServer(t)
-	ts.Mux.HandleFunc("GET /api/brands/x", func(w http.ResponseWriter,
+	ts.Mux.HandleFunc("GET /api/brands/1", func(w http.ResponseWriter,
 		r *http.Request) {
 		writeJSON(w, 404, map[string]string{"error": "BRAND_NOT_FOUND",
 			"message": "no"})
 	})
 	c := newTestClient(t, ts, newFakeClock())
-	resp, err := c.API().GetBrandWithResponse(context.Background(), "x")
+	resp, err := c.API().GetBrandWithResponse(context.Background(), 1)
 	if err != nil {
 		t.Fatal(err)
 	}

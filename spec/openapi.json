@@ -223,7 +223,7 @@
         "in": "path",
         "required": true,
         "schema": {
-          "type": "string"
+          "type": "integer"
         },
         "description": "Record ID"
       },
@@ -426,7 +426,7 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "string"
+            "type": "integer"
           },
           "type": {
             "type": "string",
@@ -450,7 +450,7 @@
           }
         },
         "example": {
-          "id": "507f1f77bcf86cd799439012",
+          "id": 12,
           "type": "Brand",
           "name": "NaturaCare",
           "permalink": "/brands/naturacare",
@@ -498,7 +498,7 @@
             ]
           },
           "id": {
-            "type": "string",
+            "type": "integer",
             "description": "Passport id. On `created` and `duplicate`, and on an `error` whose passport row was written but whose publish failed."
           },
           "code": {
@@ -553,7 +553,7 @@
         },
         "example": {
           "status": "created",
-          "id": "507f1f77bcf86cd799439014",
+          "id": 14,
           "code": "A1B2C3D4E",
           "url": "https://example.com/A1B2C3D4E",
           "modelIdentifier": "FC-50ML",
@@ -605,7 +605,7 @@
             "description": "The report a publish of this row would produce. Absent when model errors stopped the row before the publish rules ran."
           },
           "id": {
-            "type": "string",
+            "type": "integer",
             "description": "On `duplicate`: the id of the passport the natural key maps to."
           },
           "code": {
@@ -656,7 +656,7 @@
         "description": "Hierarchical category node (used for product categories, component functions, types, and property categories)",
         "properties": {
           "id": {
-            "type": "string"
+            "type": "integer"
           },
           "type": {
             "type": "string",
@@ -679,7 +679,7 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "string"
+            "type": "integer"
           },
           "type": {
             "type": "string"
@@ -695,7 +695,7 @@
             "type": "object",
             "properties": {
               "id": {
-                "type": "string"
+                "type": "integer"
               },
               "type": {
                 "type": "string"
@@ -716,7 +716,7 @@
         "description": "Component summary (returned in list endpoints)",
         "properties": {
           "id": {
-            "type": "string"
+            "type": "integer"
           },
           "type": {
             "type": "string",
@@ -743,7 +743,7 @@
           }
         },
         "example": {
-          "id": "507f1f77bcf86cd799439013",
+          "id": 13,
           "type": "Component",
           "name": "Shea Butter",
           "permalink": "/components/shea-butter",
@@ -756,7 +756,7 @@
         "description": "Full component details (returned by show action)",
         "properties": {
           "id": {
-            "type": "string"
+            "type": "integer"
           },
           "type": {
             "type": "string",
@@ -825,6 +825,28 @@
             },
             "description": "Sample products containing this component. Only present when lists are enabled in tenant config."
           }
+        },
+        "example": {
+          "id": 13,
+          "type": "Component",
+          "name": "Shea Butter",
+          "permalink": "/components/shea-butter",
+          "published": true,
+          "publishedAt": "2026-01-10T08:00:00Z",
+          "rating": "A",
+          "properties": {
+            "Origin": {
+              "rated": true,
+              "values": [
+                {
+                  "value": "West Africa",
+                  "rating": "A"
+                }
+              ]
+            }
+          },
+          "citations": [],
+          "mediafiles": []
         }
       },
       "ComponentInput": {
@@ -914,12 +936,9 @@
         "description": "Component name for autocomplete",
         "properties": {
           "id": {
-            "type": "string"
+            "type": "integer"
           },
           "type": {
-            "type": "string"
-          },
-          "name": {
             "type": "string"
           },
           "value": {
@@ -1185,7 +1204,7 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "string"
+            "type": "integer"
           },
           "amount": {
             "type": "number"
@@ -1200,7 +1219,7 @@
             "type": "object",
             "properties": {
               "id": {
-                "type": "string"
+                "type": "integer"
               },
               "type": {
                 "type": "string"
@@ -1212,8 +1231,7 @@
           }
         },
         "example": {
-          "id": "507f1f77bcf86cd799439017",
-          "type": "Coupon",
+          "id": 17,
           "code": "SAVE20",
           "amount": 20,
           "requiresDataTransfer": false
@@ -1223,7 +1241,7 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "string"
+            "type": "integer"
           },
           "type": {
             "type": "string"
@@ -1246,7 +1264,7 @@
         "description": "Digital Product Passport with QR code and linked product",
         "properties": {
           "id": {
-            "type": "string"
+            "type": "integer"
           },
           "type": {
             "type": "string",
@@ -1297,6 +1315,26 @@
           "serialIdentifier": {
             "type": "string",
             "description": "Only present when set. Carried at item granularity."
+          },
+          "passportStatus": {
+            "type": "string",
+            "description": "The EN 18223 status of a carrier taken out of circulation. Only present once the passport is voided or superseded.",
+            "enum": [
+              "Withdrawn"
+            ]
+          },
+          "voidedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the passport was voided. Only present on a voided passport."
+          },
+          "voidedReason": {
+            "type": "string",
+            "description": "Why the passport was voided. Only present on a voided passport."
+          },
+          "supersededBy": {
+            "type": "string",
+            "description": "The code of the passport that replaced this one. Only present on a superseded passport."
           },
           "pdfUrl": {
             "type": "string",
@@ -1357,7 +1395,7 @@
           }
         },
         "example": {
-          "id": "507f1f77bcf86cd799439014",
+          "id": 14,
           "type": "Dpp",
           "code": "A1B2C3D4E",
           "description": "Hydrating Face Cream 50ml",
@@ -1365,7 +1403,7 @@
           "counter": 142,
           "url": "https://example.com/A1B2C3D4E",
           "unlockable": {
-            "id": "507f1f77bcf86cd799439011",
+            "id": 11,
             "type": "Product",
             "name": "Hydrating Face Cream"
           },
@@ -2185,7 +2223,7 @@
                       "description": "The event id, also the cursor that continues after it"
                     },
                     "dppId": {
-                      "type": "string",
+                      "type": "integer",
                       "description": "Id of the passport the event belongs to"
                     },
                     "dppCode": {
@@ -2207,7 +2245,7 @@
           "events": [
             {
               "id": "68bea2f8a3c1d40011e5f0b2",
-              "dppId": "4711",
+              "dppId": 4711,
               "dppCode": "A1B2C3D4E",
               "eventType": "published",
               "occurredAt": "2026-09-08T09:12:44Z",
@@ -2215,7 +2253,7 @@
             },
             {
               "id": "68bea31ca3c1d40011e5f0b9",
-              "dppId": "4712",
+              "dppId": 4712,
               "dppCode": "F6G7H8J9K",
               "eventType": "inspection",
               "occurredAt": "2026-09-08T09:13:20Z",
@@ -2237,7 +2275,7 @@
         ],
         "properties": {
           "id": {
-            "type": "string"
+            "type": "integer"
           },
           "code": {
             "type": "string",
@@ -2326,7 +2364,7 @@
           }
         },
         "example": {
-          "id": "42",
+          "id": 42,
           "code": "k7m2pq",
           "dataType": "dpps",
           "format": "jsonld",
@@ -2389,12 +2427,9 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "string"
+            "type": "integer"
           },
           "type": {
-            "type": "string"
-          },
-          "name": {
             "type": "string"
           },
           "createdAt": {
@@ -2411,6 +2446,17 @@
                 "$ref": "#/components/schemas/Component"
               }
             ]
+          }
+        },
+        "example": {
+          "id": 19,
+          "type": "Favorite",
+          "createdAt": "2026-02-03T09:15:00Z",
+          "favorable": {
+            "id": 11,
+            "type": "Product",
+            "name": "Hydrating Face Cream",
+            "permalink": "/products/naturacare-hydrating-face-cream"
           }
         }
       },
@@ -2601,7 +2647,7 @@
                         "type": "string"
                       },
                       "recordId": {
-                        "type": "string"
+                        "type": "integer"
                       },
                       "recordClass": {
                         "type": "string"
@@ -2930,7 +2976,7 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "string"
+            "type": "integer"
           },
           "type": {
             "type": "string",
@@ -2939,9 +2985,6 @@
           "locale": {
             "type": "string",
             "example": "en"
-          },
-          "email": {
-            "type": "string"
           },
           "siteName": {
             "type": "string"
@@ -2977,7 +3020,7 @@
         "description": "Lead generation campaign with overlay and form",
         "properties": {
           "id": {
-            "type": "string"
+            "type": "integer"
           },
           "type": {
             "type": "string"
@@ -3044,6 +3087,32 @@
             "type": "integer",
             "description": "Number of form submissions"
           }
+        },
+        "example": {
+          "id": 31,
+          "type": "Leadgen",
+          "name": "Autumn campaign",
+          "published": true,
+          "locale": "en",
+          "createdAt": "2026-03-04T11:20:00Z",
+          "headline": "Register your product",
+          "body": "Two minutes, and the warranty runs for three years.",
+          "popup": true,
+          "link": "https://example.com/register",
+          "dpps": [],
+          "code": "autumn-2026",
+          "message": "Thank you, the registration is in.",
+          "submitButtonLabel": "Register",
+          "inputs": [
+            {
+              "name": "email",
+              "typ": "email",
+              "required": true,
+              "label": "Email"
+            }
+          ],
+          "recipient": "leads@example.com",
+          "requestsCount": 42
         }
       },
       "LeadgenInput": {
@@ -3122,7 +3191,7 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "string"
+            "type": "integer"
           },
           "type": {
             "type": "string"
@@ -3184,7 +3253,7 @@
         "description": "DPP overlay content displayed on scan",
         "properties": {
           "id": {
-            "type": "string"
+            "type": "integer"
           },
           "popup": {
             "type": "boolean"
@@ -3205,7 +3274,7 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "string"
+            "type": "integer"
           },
           "type": {
             "type": "string"
@@ -3260,7 +3329,7 @@
             "type": "object",
             "properties": {
               "id": {
-                "type": "string"
+                "type": "integer"
               },
               "type": {
                 "type": "string"
@@ -3303,13 +3372,49 @@
               }
             }
           }
+        },
+        "example": {
+          "id": 41,
+          "type": "Payment",
+          "amount": 199.0,
+          "fullAmount": 199.0,
+          "priceIdent": "professional-monthly",
+          "status": "open",
+          "validFrom": "2026-03-01T00:00:00Z",
+          "validUntil": "2026-04-01T00:00:00Z",
+          "paid": false,
+          "open": true,
+          "method": {
+            "id": 42,
+            "type": "PaymentMethod",
+            "name": "Card",
+            "code": "card",
+            "providers": [
+              {
+                "id": 43,
+                "type": "PaymentProvider",
+                "name": "Stripe",
+                "code": "stripe",
+                "apiKey": "pk_live_ZXhhbXBsZQ"
+              }
+            ]
+          },
+          "currency": {
+            "id": 44,
+            "type": "Currency",
+            "name": "Euro",
+            "code": "EUR",
+            "symbol": "€"
+          },
+          "variantName": "Professional",
+          "durationLabel": "Monthly"
         }
       },
       "PaymentMethod": {
         "type": "object",
         "properties": {
           "id": {
-            "type": "string"
+            "type": "integer"
           },
           "type": {
             "type": "string"
@@ -3327,7 +3432,7 @@
               "type": "object",
               "properties": {
                 "id": {
-                  "type": "string"
+                  "type": "integer"
                 },
                 "type": {
                   "type": "string"
@@ -3351,7 +3456,7 @@
         "description": "Subscription plan with features and pricing variants",
         "properties": {
           "id": {
-            "type": "string"
+            "type": "integer"
           },
           "type": {
             "type": "string"
@@ -3391,7 +3496,7 @@
           }
         },
         "example": {
-          "id": "507f1f77bcf86cd799439016",
+          "id": 16,
           "type": "Plan",
           "name": "Professional",
           "tagline": "For growing teams",
@@ -3404,7 +3509,7 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "string"
+            "type": "integer"
           },
           "type": {
             "type": "string"
@@ -3437,7 +3542,7 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "string"
+            "type": "integer"
           },
           "type": {
             "type": "string"
@@ -3462,7 +3567,7 @@
               "type": "object",
               "properties": {
                 "id": {
-                  "type": "string"
+                  "type": "integer"
                 },
                 "type": {
                   "type": "string"
@@ -3497,6 +3602,11 @@
               "format": "uri"
             }
           },
+          "@id": {
+            "type": "string",
+            "format": "uri",
+            "description": "The credential's own IRI, the passport URL with a `#credential` fragment"
+          },
           "type": {
             "type": "array",
             "items": {
@@ -3506,10 +3616,6 @@
           "issuer": {
             "type": "string",
             "description": "DID of the issuing key"
-          },
-          "validFrom": {
-            "type": "string",
-            "format": "date-time"
           },
           "credentialSubject": {
             "type": "object",
@@ -3543,6 +3649,51 @@
               }
             }
           }
+        },
+        "example": {
+          "@context": [
+            "https://transpareo.com/vocab/vc/v1",
+            "https://transpareo.com/vocab/transpareo/v1"
+          ],
+          "@id": "https://example.com/dpp/A1B2C3D4E#credential",
+          "type": [
+            "VerifiableCredential",
+            "dpp:DigitalProductPassport"
+          ],
+          "issuer": "did:web:nordic-wear.002.fsn.transpareo.com",
+          "credentialSubject": {
+            "@id": "https://example.com/dpp/A1B2C3D4E",
+            "@type": "dpp:DigitalProductPassport",
+            "version": 3,
+            "product": {
+              "@id": "https://example.com/dpp/A1B2C3D4E#product",
+              "@type": "Product",
+              "properties": [
+                {
+                  "@id": "https://example.com/dpp/A1B2C3D4E#property/21",
+                  "@type": "PropertyValue",
+                  "propertyID": "21",
+                  "name": [
+                    {
+                      "@value": "Cell supplier",
+                      "@language": "en"
+                    }
+                  ],
+                  "valueDataType": "xsd:string",
+                  "value": "Nordic Cells AB"
+                }
+              ]
+            }
+          },
+          "proof": [
+            {
+              "type": "DataIntegrityProof",
+              "cryptosuite": "ecdsa-sd-2023",
+              "verificationMethod": "did:web:nordic-wear.002.fsn.transpareo.com#key-1",
+              "proofPurpose": "assertionMethod",
+              "proofValue": "u2V0BhVhAn1sBcx9k..."
+            }
+          ]
         }
       },
       "Product": {
@@ -3550,7 +3701,7 @@
         "description": "Product summary (returned in list endpoints). The `show` action returns ProductDetail with additional nested data.",
         "properties": {
           "id": {
-            "type": "string"
+            "type": "integer"
           },
           "type": {
             "type": "string",
@@ -3587,10 +3738,14 @@
           "token": {
             "type": "string",
             "description": "Claim token for unclaimed products (only when present)"
+          },
+          "weight": {
+            "type": "number",
+            "description": "Product weight (only when present)"
           }
         },
         "example": {
-          "id": "507f1f77bcf86cd799439011",
+          "id": 11,
           "type": "Product",
           "name": "Hydrating Face Cream",
           "permalink": "/products/naturacare-hydrating-face-cream",
@@ -3605,7 +3760,7 @@
         "description": "A component as it appears within a product (includes rating and properties when unlocked)",
         "properties": {
           "id": {
-            "type": "string"
+            "type": "integer"
           },
           "type": {
             "type": "string"
@@ -3618,12 +3773,16 @@
             "type": "string"
           },
           "componentId": {
-            "type": "string",
+            "type": "integer",
             "description": "Reference to the canonical component"
           },
           "rating": {
             "type": "string",
             "description": "A-D or 'protected'"
+          },
+          "percentage": {
+            "type": "number",
+            "description": "The share of the product the component makes up. Only present when the product names one."
           },
           "properties": {
             "type": "array",
@@ -3639,7 +3798,7 @@
         "description": "Full product details (returned by show action and permalink resolution). Includes nested brand, components, properties, categories, and mediafiles.",
         "properties": {
           "id": {
-            "type": "string"
+            "type": "integer"
           },
           "type": {
             "type": "string",
@@ -3687,6 +3846,13 @@
             },
             "description": "Product components with ratings. Only present in show/permalink actions."
           },
+          "componentsIds": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "The ids of the components the product carries. The dashboard answers these in place of the components themselves."
+          },
           "properties": {
             "type": "object",
             "description": "Product properties grouped by property type name. Only present in show/permalink actions. Filtered by the show parameter and user group access.",
@@ -3694,7 +3860,7 @@
               "type": "object",
               "properties": {
                 "id": {
-                  "type": "string",
+                  "type": "integer",
                   "description": "Property type ID"
                 },
                 "values": {
@@ -3757,13 +3923,42 @@
                     }
                   }
                 },
-                "note": {
+                "hint": {
                   "type": "string",
-                  "description": "Explanatory note for the property type"
+                  "description": "Explanatory note shown with the field. Only present when the type carries one."
                 },
-                "secondary": {
-                  "type": "boolean",
-                  "description": "Whether this is a secondary property type"
+                "icon": {
+                  "type": "string",
+                  "description": "Name of the icon shown with the field. Only present when the type carries one."
+                },
+                "columns": {
+                  "type": "array",
+                  "description": "The columns a structured composition is filled in, in display order. Only present on structured composition types; their values carry `compositionRows` instead of a plain value.",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "key": {
+                        "type": "string"
+                      },
+                      "label": {
+                        "type": "string"
+                      },
+                      "inputType": {
+                        "type": "string"
+                      },
+                      "enumValues": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "The closed set the column accepts. Only present on enumerated columns."
+                      },
+                      "primary": {
+                        "type": "boolean",
+                        "description": "Whether the column names the row. Only present when true."
+                      }
+                    }
+                  }
                 },
                 "restrictedByGroup": {
                   "type": "boolean",
@@ -3799,6 +3994,10 @@
             "description": "Rating distribution across components (e.g. {\"good\": 60, \"bad\": 20, \"neutral\": 20}). Only present when ratings are enabled and the product is unlocked.",
             "additionalProperties": true
           },
+          "weight": {
+            "type": "number",
+            "description": "Product weight. Only present when the product carries one."
+          },
           "createdAt": {
             "type": "string",
             "format": "date-time",
@@ -3809,6 +4008,52 @@
             "format": "date-time",
             "description": "Only present when the API consumer has the include_dates context flag."
           }
+        },
+        "example": {
+          "id": 11,
+          "type": "Product",
+          "name": "Hydrating Face Cream",
+          "permalink": "/products/naturacare-hydrating-face-cream",
+          "publishedAt": "2026-01-15T10:30:00Z",
+          "rating": "A",
+          "gtin": "4006381333931",
+          "brand": {
+            "id": 12,
+            "type": "Brand",
+            "name": "NaturaCare",
+            "published": true,
+            "permalink": "/brands/naturacare",
+            "productsCount": 12
+          },
+          "properties": {
+            "Capacity": {
+              "id": 21,
+              "inputType": "text",
+              "values": [
+                {
+                  "value": "50 ml"
+                }
+              ]
+            }
+          },
+          "components": [
+            {
+              "id": 13,
+              "type": "Component",
+              "name": "Shea Butter",
+              "permalink": "/components/shea-butter",
+              "componentId": 13,
+              "rating": "A"
+            }
+          ],
+          "categories": [
+            {
+              "id": 20,
+              "type": "ProductCategory",
+              "name": "Skincare"
+            }
+          ],
+          "mediafiles": []
         }
       },
       "ProductInput": {
@@ -3867,6 +4112,18 @@
             "type": "string",
             "description": "Rendered HTML value (or raw value when ?raw=true)"
           },
+          "percentage": {
+            "type": "number",
+            "description": "The share of the product the value stands for. Only present when the property carries one."
+          },
+          "compositionRows": {
+            "type": "array",
+            "description": "The rows of a structured composition, each keyed by the column keys the property type declares. Only present when the property carries rows.",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
           "rating": {
             "type": "string",
             "description": "Property rating A-D (only for rated properties when unlocked)"
@@ -3878,7 +4135,7 @@
         "description": "Current subscription status",
         "properties": {
           "id": {
-            "type": "string"
+            "type": "integer"
           },
           "type": {
             "type": "string"
@@ -3968,7 +4225,7 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "string"
+            "type": "integer"
           },
           "type": {
             "type": "string",
@@ -4075,7 +4332,7 @@
           }
         },
         "example": {
-          "id": "507f1f77bcf86cd799439015",
+          "id": 15,
           "type": "User",
           "alias": "jdoe",
           "name": "Jane Doe",
@@ -4335,15 +4592,18 @@
                     }
                   }
                 },
-                "example": [
-                  {
-                    "id": "507f1f77bcf86cd799439012",
-                    "type": "Brand",
-                    "name": "NaturaCare",
-                    "slug": "naturacare",
-                    "published": true
-                  }
-                ]
+                "example": {
+                  "brands": [
+                    {
+                      "id": 12,
+                      "type": "Brand",
+                      "name": "NaturaCare",
+                      "published": true,
+                      "permalink": "/brands/naturacare",
+                      "productsCount": 12
+                    }
+                  ]
+                }
               }
             },
             "headers": {
@@ -4368,7 +4628,7 @@
             }
           },
           "204": {
-            "description": "Lists not enabled for this tenant"
+            "description": "The storefront lists are switched off for this workspace. A consumer token holding `brand_access` or `brand_write` never receives this; it gets the list either way."
           }
         },
         "security": []
@@ -4470,7 +4730,7 @@
             }
           },
           "204": {
-            "description": "Lists not enabled for this tenant"
+            "description": "The storefront lists are switched off for this workspace. A consumer token holding `brand_access` or `brand_write` never receives this; it gets the list either way."
           },
           "404": {
             "$ref": "#/components/responses/NotFound"
@@ -4575,6 +4835,9 @@
                       "example": "OK"
                     }
                   }
+                },
+                "example": {
+                  "status": "OK"
                 }
               }
             }
@@ -4626,13 +4889,22 @@
                     }
                   }
                 },
-                "example": [
-                  {
-                    "id": "507f1f77bcf86cd799439020",
-                    "type": "ProductCategory",
-                    "name": "Skincare"
-                  }
-                ]
+                "example": {
+                  "productCategories": [
+                    {
+                      "id": 20,
+                      "type": "ProductCategory",
+                      "name": "Skincare",
+                      "categories": [
+                        {
+                          "id": 21,
+                          "type": "ProductCategory",
+                          "name": "Face Care"
+                        }
+                      ]
+                    }
+                  ]
+                }
               }
             },
             "headers": {
@@ -4711,16 +4983,19 @@
                     }
                   }
                 },
-                "example": [
-                  {
-                    "id": "507f1f77bcf86cd799439013",
-                    "type": "Component",
-                    "name": "Shea Butter",
-                    "slug": "shea-butter",
-                    "published": true,
-                    "rating": "A"
-                  }
-                ]
+                "example": {
+                  "components": [
+                    {
+                      "id": 13,
+                      "type": "Component",
+                      "name": "Shea Butter",
+                      "published": true,
+                      "permalink": "/components/shea-butter",
+                      "publishedAt": "2026-01-10T08:00:00Z",
+                      "rating": "A"
+                    }
+                  ]
+                }
               }
             },
             "headers": {
@@ -4745,7 +5020,7 @@
             }
           },
           "204": {
-            "description": "Lists not enabled for this tenant"
+            "description": "The storefront lists are switched off for this workspace. A consumer token holding `component_access` never receives this; it gets the list either way."
           }
         },
         "security": []
@@ -4951,6 +5226,9 @@
                       "example": "OK"
                     }
                   }
+                },
+                "example": {
+                  "status": "OK"
                 }
               }
             }
@@ -5136,14 +5414,22 @@
                     }
                   }
                 },
-                "example": [
-                  {
-                    "id": "507f1f77bcf86cd799439018",
-                    "locale": "en",
-                    "label": "English",
-                    "default": true
-                  }
-                ]
+                "example": {
+                  "languages": [
+                    {
+                      "id": 18,
+                      "type": "Language",
+                      "locale": "en",
+                      "label": "English",
+                      "nativeLabel": "English",
+                      "siteName": "NaturaCare",
+                      "default": true,
+                      "currencyCode": "EUR",
+                      "url": "https://example.com/en"
+                    }
+                  ],
+                  "total": 1
+                }
               }
             },
             "headers": {
@@ -5183,6 +5469,20 @@
                       "description": "Map of navigation key to item"
                     }
                   }
+                },
+                "example": {
+                  "navigation": {
+                    "contact": {
+                      "label": "Contact",
+                      "path": "/contact",
+                      "published": true
+                    },
+                    "imprint": {
+                      "label": "Imprint",
+                      "path": "/imprint",
+                      "published": true
+                    }
+                  }
                 }
               }
             }
@@ -5217,8 +5517,10 @@
                   }
                 },
                 "example": {
-                  "site.products": "Products",
-                  "site.components": "Components"
+                  "localization": {
+                    "site.products": "Products",
+                    "site.components": "Components"
+                  }
                 }
               }
             }
@@ -5330,6 +5632,29 @@
                       }
                     }
                   }
+                },
+                "example": {
+                  "dpps": [
+                    {
+                      "id": 14,
+                      "type": "Dpp",
+                      "code": "A1B2C3D4E",
+                      "description": "Hydrating Face Cream 50ml",
+                      "locale": "de",
+                      "counter": 142,
+                      "granularity": "batch",
+                      "batchIdentifier": "L2026-09",
+                      "url": "https://example.com/A1B2C3D4E",
+                      "pdfUrl": "https://example.com/api/dpps/14.pdf",
+                      "pngUrl": "https://example.com/api/dpps/14.png",
+                      "unlockable": {
+                        "id": 11,
+                        "type": "Product",
+                        "name": "Hydrating Face Cream"
+                      },
+                      "createdAt": "2026-02-01T12:00:00Z"
+                    }
+                  ]
                 }
               }
             },
@@ -5990,6 +6315,25 @@
                       "description": "The signed JSON-LD snapshot"
                     }
                   }
+                },
+                "example": {
+                  "code": "A1B2C3D4E",
+                  "version": 3,
+                  "hashValue": "9f2b1c4e8a7d6035b1e2c9f04a8d7e6152b3c4d5e6f708192a3b4c5d6e7f8091",
+                  "url": "https://cdn.example.com/nordic-wear/dpp/A1B2C3D4E/v/3.jsonld.gz",
+                  "publishedAt": "2026-09-08T09:12:44Z",
+                  "snapshot": {
+                    "@context": [
+                      "https://transpareo.com/vocab/vc/v1",
+                      "https://transpareo.com/vocab/transpareo/v1"
+                    ],
+                    "@id": "https://example.com/dpp/A1B2C3D4E#credential",
+                    "type": [
+                      "VerifiableCredential",
+                      "dpp:DigitalProductPassport"
+                    ],
+                    "issuer": "did:web:nordic-wear.002.fsn.transpareo.com"
+                  }
                 }
               }
             }
@@ -6197,6 +6541,33 @@
                       }
                     }
                   }
+                },
+                "example": {
+                  "stats": {
+                    "total": 142,
+                    "aggregations": {
+                      "requestsPerDay": [
+                        {
+                          "key": "2026-09-07",
+                          "count": 118
+                        },
+                        {
+                          "key": "2026-09-08",
+                          "count": 24
+                        }
+                      ],
+                      "requestsPerCountry": [
+                        {
+                          "key": "Germany",
+                          "count": 96
+                        },
+                        {
+                          "key": "Switzerland",
+                          "count": 46
+                        }
+                      ]
+                    }
+                  }
                 }
               }
             }
@@ -6256,6 +6627,22 @@
                       "type": "integer"
                     }
                   }
+                },
+                "example": {
+                  "versions": [
+                    {
+                      "number": 3,
+                      "publishedAt": "2026-09-08T09:12:44Z",
+                      "reason": "edit",
+                      "hashAlgorithm": "sha256",
+                      "hashCanonicalForm": "urdna2015",
+                      "hashValue": "9f2b1c4e8a7d6035b1e2c9f04a8d7e6152b3c4d5e6f708192a3b4c5d6e7f8091",
+                      "url": "https://cdn.example.com/nordic-wear/dpp/A1B2C3D4E/v/3.jsonld.gz",
+                      "sizeBytes": 8421,
+                      "schemaVersion": 1
+                    }
+                  ],
+                  "count": 1
                 }
               }
             }
@@ -6318,6 +6705,21 @@
                       }
                     }
                   }
+                },
+                "example": {
+                  "events": [
+                    {
+                      "eventType": "inspection",
+                      "occurredAt": "2026-09-08T09:12:44Z",
+                      "actorType": "ApiConsumer",
+                      "actorLabel": "Workshop Meier",
+                      "description": "Annual safety inspection passed",
+                      "data": {
+                        "workshopId": "DE-4711"
+                      },
+                      "dppVersionNumber": 3
+                    }
+                  ]
                 }
               }
             },
@@ -6407,6 +6809,19 @@
                     "event": {
                       "$ref": "#/components/schemas/DppEvent"
                     }
+                  }
+                },
+                "example": {
+                  "event": {
+                    "eventType": "inspection",
+                    "occurredAt": "2026-09-08T09:12:44Z",
+                    "actorType": "ApiConsumer",
+                    "actorLabel": "Workshop Meier",
+                    "description": "Annual safety inspection passed",
+                    "data": {
+                      "workshopId": "DE-4711"
+                    },
+                    "dppVersionNumber": 3
                   }
                 }
               }
@@ -6513,6 +6928,13 @@
                       "format": "date-time"
                     }
                   }
+                },
+                "example": {
+                  "dynamicData": {
+                    "stateOfHealth": 87.3,
+                    "cycleCount": 412
+                  },
+                  "dynamicDataUpdatedAt": "2026-09-08T09:12:44Z"
                 }
               }
             }
@@ -7023,6 +7445,36 @@
                       "description": "Map of version number to the derived credential"
                     }
                   }
+                },
+                "example": {
+                  "versions": {
+                    "3": {
+                      "@context": [
+                        "https://transpareo.com/vocab/vc/v1",
+                        "https://transpareo.com/vocab/transpareo/v1"
+                      ],
+                      "@id": "https://example.com/dpp/A1B2C3D4E#credential",
+                      "type": [
+                        "VerifiableCredential",
+                        "dpp:DigitalProductPassport"
+                      ],
+                      "issuer": "did:web:nordic-wear.002.fsn.transpareo.com",
+                      "credentialSubject": {
+                        "@id": "https://example.com/dpp/A1B2C3D4E",
+                        "@type": "dpp:DigitalProductPassport",
+                        "version": 3
+                      },
+                      "proof": [
+                        {
+                          "type": "DataIntegrityProof",
+                          "cryptosuite": "ecdsa-sd-2023",
+                          "verificationMethod": "did:web:nordic-wear.002.fsn.transpareo.com#key-1",
+                          "proofPurpose": "assertionMethod",
+                          "proofValue": "u2V0BhVhAn1sBcx9k..."
+                        }
+                      ]
+                    }
+                  }
                 }
               }
             },
@@ -7407,15 +7859,31 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "description": "Cached favorites data"
-                },
-                "example": [
-                  {
-                    "id": "507f1f77bcf86cd799439019",
-                    "type": "Favorite",
-                    "name": "Hydrating Face Cream"
+                  "description": "The favorites of the signed-in person, products and components alike",
+                  "properties": {
+                    "favorites": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Favorite"
+                      }
+                    }
                   }
-                ]
+                },
+                "example": {
+                  "favorites": [
+                    {
+                      "id": 19,
+                      "type": "Favorite",
+                      "createdAt": "2026-02-03T09:15:00Z",
+                      "favorable": {
+                        "id": 11,
+                        "type": "Product",
+                        "name": "Hydrating Face Cream",
+                        "permalink": "/products/naturacare-hydrating-face-cream"
+                      }
+                    }
+                  ]
+                }
               }
             }
           },
@@ -7452,8 +7920,8 @@
                   "favorite": {
                     "type": "object",
                     "required": [
-                      "favorable_type",
-                      "favorable_id"
+                      "favorableType",
+                      "favorableId"
                     ],
                     "properties": {
                       "favorableType": {
@@ -7465,7 +7933,7 @@
                         "description": "Type of item to favorite"
                       },
                       "favorableId": {
-                        "type": "string",
+                        "type": "integer",
                         "description": "ID of the item"
                       }
                     }
@@ -7475,7 +7943,7 @@
               "example": {
                 "favorite": {
                   "favorableType": "Product",
-                  "favorableId": "507f1f77bcf86cd799439011"
+                  "favorableId": 11
                 }
               }
             }
@@ -8434,6 +8902,32 @@
                       }
                     }
                   }
+                },
+                "example": {
+                  "leadgens": [
+                    {
+                      "id": 31,
+                      "type": "Leadgen",
+                      "name": "Autumn campaign",
+                      "published": true,
+                      "locale": "en",
+                      "createdAt": "2026-03-04T11:20:00Z",
+                      "headline": "Register your product",
+                      "popup": true,
+                      "dpps": [],
+                      "code": "autumn-2026",
+                      "inputs": [
+                        {
+                          "name": "email",
+                          "typ": "email",
+                          "required": true,
+                          "label": "Email"
+                        }
+                      ],
+                      "recipient": "leads@example.com",
+                      "requestsCount": 42
+                    }
+                  ]
                 }
               }
             },
@@ -8746,13 +9240,17 @@
                     }
                   }
                 },
-                "example": [
-                  {
-                    "id": "507f1f77bcf86cd799439024",
-                    "type": "Mediafile",
-                    "fileName": "product.jpg"
-                  }
-                ]
+                "example": {
+                  "mediafiles": [
+                    {
+                      "id": 24,
+                      "type": "Mediafile",
+                      "name": "product-photo.jpg",
+                      "url": "https://example.com/media/123/product-photo.jpg",
+                      "image": true
+                    }
+                  ]
+                }
               }
             },
             "headers": {
@@ -8847,10 +9345,10 @@
                 },
                 "example": {
                   "mediafile": {
-                    "id": "507f1f77bcf86cd799439060",
+                    "id": 60,
                     "type": "Mediafile",
                     "name": "product-photo.jpg",
-                    "url": "/media/123/product-photo.jpg",
+                    "url": "https://example.com/media/123/product-photo.jpg",
                     "image": true
                   }
                 }
@@ -9060,6 +9558,56 @@
                       "$ref": "#/components/schemas/Subscription"
                     }
                   }
+                },
+                "example": {
+                  "payment": {
+                    "id": 41,
+                    "type": "Payment",
+                    "amount": 199.0,
+                    "fullAmount": 199.0,
+                    "priceIdent": "professional-monthly",
+                    "status": "open",
+                    "validFrom": "2026-03-01T00:00:00Z",
+                    "validUntil": "2026-04-01T00:00:00Z",
+                    "paid": false,
+                    "open": true,
+                    "variantName": "Professional",
+                    "durationLabel": "Monthly"
+                  },
+                  "paymentMethods": [
+                    {
+                      "id": 42,
+                      "type": "PaymentMethod",
+                      "name": "Card",
+                      "code": "card",
+                      "providers": [
+                        {
+                          "id": 43,
+                          "type": "PaymentProvider",
+                          "name": "Stripe",
+                          "code": "stripe",
+                          "apiKey": "pk_live_ZXhhbXBsZQ"
+                        }
+                      ]
+                    }
+                  ],
+                  "subscription": {
+                    "id": 45,
+                    "type": "PaidSubscription",
+                    "name": "Professional",
+                    "changeable": true,
+                    "cancellable": true,
+                    "expired": false,
+                    "expiresAt": "2026-04-01T00:00:00Z",
+                    "priceIdent": "professional-monthly",
+                    "upgradable": true,
+                    "renew": true,
+                    "cancelled": false,
+                    "topPlan": false,
+                    "currencyCode": "EUR",
+                    "paid": true,
+                    "trial": false
+                  }
                 }
               }
             }
@@ -9255,17 +9803,17 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "coupon_id"
+                  "couponId"
                 ],
                 "properties": {
                   "couponId": {
-                    "type": "string",
+                    "type": "integer",
                     "description": "Coupon ID to apply"
                   }
                 }
               },
               "example": {
-                "couponId": "507f1f77bcf86cd799439017"
+                "couponId": 17
               }
             }
           }
@@ -9348,11 +9896,36 @@
                     "page": {
                       "type": "object"
                     },
-                    "overlay": {
-                      "$ref": "#/components/schemas/Overlay"
+                    "redirect": {
+                      "type": "string",
+                      "description": "The current path of the record, present when the permalink asked for is an alias the record has moved on from"
                     }
                   },
                   "description": "Only one of product/component/brand/page will be present"
+                },
+                "example": {
+                  "product": {
+                    "id": 11,
+                    "type": "Product",
+                    "name": "Hydrating Face Cream",
+                    "permalink": "/products/naturacare-hydrating-face-cream",
+                    "publishedAt": "2026-01-15T10:30:00Z",
+                    "rating": "A",
+                    "brand": {
+                      "id": 12,
+                      "type": "Brand",
+                      "name": "NaturaCare",
+                      "published": true
+                    },
+                    "categories": [
+                      {
+                        "id": 20,
+                        "type": "ProductCategory",
+                        "name": "Skincare"
+                      }
+                    ],
+                    "mediafiles": []
+                  }
                 }
               }
             }
@@ -9422,13 +9995,19 @@
                     }
                   }
                 },
-                "example": [
-                  {
-                    "id": "507f1f77bcf86cd799439016",
-                    "type": "Plan",
-                    "name": "Professional"
-                  }
-                ]
+                "example": {
+                  "plans": [
+                    {
+                      "id": 16,
+                      "type": "Plan",
+                      "name": "Professional",
+                      "tagline": "For growing teams",
+                      "tier": 2,
+                      "features": [],
+                      "variants": []
+                    }
+                  ]
+                }
               }
             },
             "headers": {
@@ -9592,16 +10171,20 @@
                     }
                   }
                 },
-                "example": [
-                  {
-                    "id": "507f1f77bcf86cd799439011",
-                    "type": "Product",
-                    "name": "Hydrating Face Cream",
-                    "slug": "hydrating-face-cream",
-                    "published": true,
-                    "rating": "A"
-                  }
-                ]
+                "example": {
+                  "products": [
+                    {
+                      "id": 11,
+                      "type": "Product",
+                      "name": "Hydrating Face Cream",
+                      "permalink": "/products/naturacare-hydrating-face-cream",
+                      "publishedAt": "2026-01-15T10:30:00Z",
+                      "rating": "A",
+                      "brandName": "NaturaCare",
+                      "gtin": "4006381333931"
+                    }
+                  ]
+                }
               }
             },
             "headers": {
@@ -9626,7 +10209,7 @@
             }
           },
           "204": {
-            "description": "Lists not enabled for this tenant"
+            "description": "The storefront lists are switched off for this workspace. A consumer token holding `product_access` never receives this; it gets the list either way."
           },
           "401": {
             "$ref": "#/components/responses/Unauthorized"
@@ -9766,6 +10349,37 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ProductDetail"
+                },
+                "example": {
+                  "type": "Product",
+                  "components": [],
+                  "properties": {
+                    "Chemistry": {
+                      "id": 21,
+                      "values": [],
+                      "inputType": "list",
+                      "mandatory": true,
+                      "namespace": "bpass:batteryChemistry",
+                      "allowedValues": [
+                        "LFP",
+                        "NMC"
+                      ],
+                      "mandatoryWhen": {
+                        "namespace": "bpass:batteryCategory",
+                        "values": [
+                          "EV"
+                        ]
+                      }
+                    },
+                    "Charge": {
+                      "id": 22,
+                      "values": [],
+                      "inputType": "text",
+                      "namespace": "bpass:stateOfCharge",
+                      "unit": "kWh",
+                      "dynamic": true
+                    }
+                  }
                 }
               }
             }
@@ -9836,7 +10450,7 @@
                 "example": {
                   "products": [
                     {
-                      "id": "507f1f77bcf86cd799439011",
+                      "id": 11,
                       "type": "Product",
                       "name": "Face Cream"
                     }
@@ -10190,7 +10804,7 @@
                   "mediafileIds": {
                     "type": "array",
                     "items": {
-                      "type": "string"
+                      "type": "integer"
                     },
                     "description": "Ordered list of mediafile IDs to assign"
                   }
@@ -10198,7 +10812,8 @@
               },
               "example": {
                 "mediafileIds": [
-                  "507f1f77bcf86cd799439024"
+                  24,
+                  25
                 ]
               }
             }
@@ -10247,7 +10862,7 @@
           "Products"
         ],
         "summary": "List product properties",
-        "description": "Returns product property types. Requires the analyses feature to be enabled.",
+        "description": "Returns the values products carry for one property type, named by `property_type_id`. Requires the analyses feature to be enabled.",
         "operationId": "list_product_properties",
         "parameters": [
           {
@@ -10255,6 +10870,22 @@
           },
           {
             "$ref": "#/components/parameters/per_page"
+          },
+          {
+            "name": "property_type_id",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "The property type whose values to list. Without it, and for a type that does not exist, the list is empty."
+          },
+          {
+            "name": "term",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter the values by their text"
           }
         ],
         "responses": {
@@ -10268,18 +10899,21 @@
                     "productProperties": {
                       "type": "array",
                       "items": {
-                        "type": "object"
+                        "$ref": "#/components/schemas/Property"
                       }
                     }
                   }
                 },
-                "example": [
-                  {
-                    "id": "507f1f77bcf86cd799439021",
-                    "type": "ProductPropertyType",
-                    "name": "Weight"
-                  }
-                ]
+                "example": {
+                  "productProperties": [
+                    {
+                      "value": "50 ml"
+                    },
+                    {
+                      "value": "100 ml"
+                    }
+                  ]
+                }
               }
             },
             "headers": {
@@ -10335,13 +10969,18 @@
                     }
                   }
                 },
-                "example": [
-                  {
-                    "id": "507f1f77bcf86cd799439011",
-                    "type": "Product",
-                    "name": "Hydrating Face Cream"
-                  }
-                ]
+                "example": {
+                  "featuredProducts": [
+                    {
+                      "id": 11,
+                      "type": "Product",
+                      "name": "Hydrating Face Cream",
+                      "permalink": "/products/naturacare-hydrating-face-cream",
+                      "publishedAt": "2026-01-15T10:30:00Z",
+                      "brandName": "NaturaCare"
+                    }
+                  ]
+                }
               }
             },
             "headers": {
@@ -10395,6 +11034,19 @@
                       }
                     }
                   }
+                },
+                "example": {
+                  "productGtins": [
+                    {
+                      "id": 11,
+                      "type": "Product",
+                      "name": "Hydrating Face Cream",
+                      "permalink": "/products/naturacare-hydrating-face-cream",
+                      "publishedAt": "2026-01-15T10:30:00Z",
+                      "brandName": "NaturaCare",
+                      "gtin": "4006381333931"
+                    }
+                  ]
                 }
               }
             },
@@ -10454,16 +11106,22 @@
                     }
                   }
                 },
-                "example": [
-                  {
+                "example": {
+                  "countries": [
+                    {
+                      "name": "Germany",
+                      "code": "DE"
+                    },
+                    {
+                      "name": "France",
+                      "code": "FR"
+                    }
+                  ],
+                  "current": {
                     "name": "Germany",
                     "code": "DE"
-                  },
-                  {
-                    "name": "France",
-                    "code": "FR"
                   }
-                ]
+                }
               }
             }
           }
@@ -10516,12 +11174,22 @@
                     }
                   }
                 },
-                "example": [
-                  {
-                    "id": "507f1f77bcf86cd799439025",
-                    "value": "Shea Butter"
-                  }
-                ]
+                "example": {
+                  "componentNames": [
+                    {
+                      "id": 25,
+                      "type": "ComponentName",
+                      "value": "Shea Butter",
+                      "component": {
+                        "id": 13,
+                        "type": "Component",
+                        "name": "Shea Butter",
+                        "permalink": "/components/shea-butter"
+                      }
+                    }
+                  ],
+                  "harmonizedInput": "shea"
+                }
               }
             },
             "headers": {
@@ -10573,12 +11241,15 @@
                     }
                   }
                 },
-                "example": [
-                  {
-                    "id": "507f1f77bcf86cd799439026",
-                    "name": "Moisturizer"
-                  }
-                ]
+                "example": {
+                  "componentFunctions": [
+                    {
+                      "id": 26,
+                      "type": "ComponentFunction",
+                      "name": "Moisturizer"
+                    }
+                  ]
+                }
               }
             },
             "headers": {
@@ -10618,12 +11289,15 @@
                     }
                   }
                 },
-                "example": [
-                  {
-                    "id": "507f1f77bcf86cd799439027",
-                    "name": "Ingredient"
-                  }
-                ]
+                "example": {
+                  "componentTypes": [
+                    {
+                      "id": 27,
+                      "type": "ComponentType",
+                      "name": "Ingredient"
+                    }
+                  ]
+                }
               }
             },
             "headers": {
@@ -10663,12 +11337,15 @@
                     }
                   }
                 },
-                "example": [
-                  {
-                    "id": "507f1f77bcf86cd799439028",
-                    "name": "Origin"
-                  }
-                ]
+                "example": {
+                  "componentProperties": [
+                    {
+                      "id": 28,
+                      "type": "ComponentPropertyCategory",
+                      "name": "Origin"
+                    }
+                  ]
+                }
               }
             },
             "headers": {
@@ -10743,7 +11420,7 @@
                 "example": {
                   "results": [
                     {
-                      "id": "507f1f77bcf86cd799439011",
+                      "id": 11,
                       "type": "Product",
                       "name": "Hydrating Face Cream"
                     }
@@ -10843,7 +11520,7 @@
                 "example": {
                   "token": "UR eyJhbGciOiJIUzI1NiJ9...",
                   "user": {
-                    "id": "507f1f77bcf86cd799439015",
+                    "id": 15,
                     "email": "user@example.com",
                     "alias": "jdoe"
                   },
@@ -11137,7 +11814,7 @@
           "Users"
         ],
         "summary": "Get user's product dashboard",
-        "description": "Returns the cached product dashboard data for the authenticated user, including their products and DPPs.",
+        "description": "Returns the cached dashboard of the signed-in person. It carries their products, each with its brand, its categories and the ids of its components, the category tree those products fall into, and the brands they belong to.",
         "operationId": "list_user_products",
         "security": [
           {
@@ -11156,15 +11833,74 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "description": "Cached dashboard data structure"
-                },
-                "example": [
-                  {
-                    "id": "507f1f77bcf86cd799439011",
-                    "type": "Product",
-                    "name": "Hydrating Face Cream"
+                  "description": "The cached dashboard, newest product first",
+                  "properties": {
+                    "products": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ProductDetail"
+                      }
+                    },
+                    "categories": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Category"
+                      },
+                      "description": "The category tree the products fall into"
+                    },
+                    "brands": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Brand"
+                      }
+                    }
                   }
-                ]
+                },
+                "example": {
+                  "products": [
+                    {
+                      "id": 11,
+                      "type": "Product",
+                      "name": "Hydrating Face Cream",
+                      "permalink": "/products/naturacare-hydrating-face-cream",
+                      "publishedAt": "2026-01-15T10:30:00Z",
+                      "rating": "A",
+                      "brand": {
+                        "id": 12,
+                        "type": "Brand",
+                        "name": "NaturaCare",
+                        "published": true
+                      },
+                      "componentsIds": [
+                        13
+                      ],
+                      "categories": [
+                        {
+                          "id": 20,
+                          "type": "ProductCategory",
+                          "name": "Skincare"
+                        }
+                      ],
+                      "createdAt": "2026-01-02T08:00:00Z",
+                      "updatedAt": "2026-01-15T10:30:00Z"
+                    }
+                  ],
+                  "categories": [
+                    {
+                      "id": 20,
+                      "type": "ProductCategory",
+                      "name": "Skincare"
+                    }
+                  ],
+                  "brands": [
+                    {
+                      "id": 12,
+                      "type": "Brand",
+                      "name": "NaturaCare",
+                      "published": true
+                    }
+                  ]
+                }
               }
             }
           },
@@ -11199,7 +11935,7 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "price_ident"
+                  "priceIdent"
                 ],
                 "properties": {
                   "priceIdent": {
@@ -11259,7 +11995,7 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "price_ident"
+                  "priceIdent"
                 ],
                 "properties": {
                   "priceIdent": {
@@ -11517,7 +12253,7 @@
                     "type": "object",
                     "required": [
                       "password",
-                      "password_confirmation"
+                      "passwordConfirmation"
                     ],
                     "properties": {
                       "password": {
@@ -11594,6 +12330,23 @@
                       }
                     }
                   }
+                },
+                "example": {
+                  "webhooks": [
+                    {
+                      "id": 7,
+                      "url": "https://hooks.example.com/transpareo",
+                      "active": true,
+                      "eventTypes": [
+                        "published",
+                        "voided"
+                      ],
+                      "resourceScopeDppCodes": [],
+                      "failureCount": 0,
+                      "lastDeliveryAt": "2026-09-08T09:14:02Z",
+                      "createdAt": "2026-09-08T09:12:44Z"
+                    }
+                  ]
                 }
               }
             },
@@ -11810,6 +12563,9 @@
                       "example": "OK"
                     }
                   }
+                },
+                "example": {
+                  "status": "OK"
                 }
               }
             }
