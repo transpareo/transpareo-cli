@@ -100,7 +100,7 @@ var curated = []Tool{
 	{Name: "get_dpp", Group: GroupDpps, Operation: "get_dpp", Kind: kindGet},
 	{Name: "validate_dpp", Group: GroupDpps, Operation: "validate_dpp",
 		Kind: kindWrite,
-		Description: "Runs the checks a publish runs, writes nothing. Call" +
+		Description: "Runs the checks a publish runs, writes nothing. Call " +
 			"it " +
 			"before create_dpp."},
 	{Name: "create_dpp", Group: GroupDpps, Operation: "create_dpp",
@@ -151,65 +151,44 @@ var curated = []Tool{
 // tell a decision from an omission.
 var viaCallAPIOnly = map[string]string{
 	"exchange_token": "the server logs in itself",
-	"create_grant": "issues credentials; a person" +
-		"hands them out with the command line",
-	"get_bulk_task": "polled by wait_for_task once the" +
-		"data tools exist",
-	"get_dpp_stats": "reporting, rarely part of a flow",
-	"list_dpp_versions": "history, reachable when a flow" +
-		"needs it",
-	"list_dpp_events": "history, reachable when a flow" +
-		"needs it",
-	"delete_dpp": "drafts only; voiding is the" +
-		"documented way out",
-	"get_dpp_private_properties": "restricted tier, read on purpose" +
+	"create_grant": "issues credentials; a person hands them out with the " +
+		"command line",
+	"get_bulk_task":     "wait_for_task polls the statusUrl",
+	"get_dpp_stats":     "reporting, rarely part of a flow",
+	"list_dpp_versions": "history, reachable when a flow needs it",
+	"list_dpp_events":   "history, reachable when a flow needs it",
+	"delete_dpp": "drafts only; voiding is the documented " +
+		"way out",
+	"get_dpp_private_properties": "restricted tier, read on purpose only",
+	"get_dpp_version_private_properties": "restricted tier, read on purpose " +
 		"only",
-	"get_dpp_version_private_properties": "restricted tier, read on purpose" +
-		"only",
-	"list_events": "covered by tail_events once the" +
-		"data tools exist",
-	"create_export": "covered by export_catalogue once" +
-		"the data tools exist",
-	"get_export": "covered by export_catalogue once" +
-		"the data tools exist",
-	"download_export": "binary download, for the command" +
-		"line",
-	"create_import": "covered by import_spreadsheet" +
-		"once the data tools exist",
-	"get_import": "covered by import_spreadsheet" +
-		"once the data tools exist",
-	"get_import_example": "binary download, for the command" +
-		"line",
-	"get_import_supplier_form": "binary download, for the command" +
-		"line",
-	"map_import": "covered by import_spreadsheet" +
-		"once the data tools exist",
-	"validate_import": "covered by import_spreadsheet" +
-		"once the data tools exist",
-	"execute_import": "covered by import_spreadsheet" +
-		"once the data tools exist",
-	"revert_import": "covered by import_spreadsheet" +
-		"once the data tools exist",
-	"get_webhook":    "list_webhooks shows every field",
-	"update_webhook": "rare; delete and create is clearer",
-	"delete_product": "unpublishing is the safe way;" +
-		"deletion stays a deliberate call",
-	"delete_component": "unpublishing is the safe way;" +
-		"deletion stays a deliberate call",
+	"list_events":              "tail_events reads the feed",
+	"create_export":            "export_catalogue runs the flow",
+	"get_export":               "export_catalogue runs the flow",
+	"download_export":          "binary download, for the command line",
+	"create_import":            "import_spreadsheet runs the flow",
+	"get_import":               "import_spreadsheet runs the flow",
+	"get_import_example":       "binary download, for the command line",
+	"get_import_supplier_form": "binary download, for the command line",
+	"map_import":               "import_spreadsheet runs the flow",
+	"validate_import":          "import_spreadsheet runs the flow",
+	"execute_import":           "import_spreadsheet runs the flow",
+	"revert_import":            "import_spreadsheet runs the flow",
+	"get_webhook":              "list_webhooks shows every field",
+	"update_webhook":           "rare; delete and create is clearer",
+	"delete_product": "unpublishing is the safe way; deletion stays a " +
+		"deliberate call",
+	"delete_component": "unpublishing is the safe way; deletion stays a " +
+		"deliberate call",
 	"delete_brand": "a brand goes with its products",
 	"get_brand":    "list_brands shows every field",
-	"update_brand": "a brand is its name; rename in" +
-		"the application manager",
-	"publish_component": "components publish with their" +
-		"products",
-	"unpublish_component": "components publish with their" +
-		"products",
-	"update_product_mediafiles": "media handling stays with the" +
-		"command line",
-	"list_mediafiles": "media handling stays with the" +
-		"command line",
-	"create_mediafile": "media handling stays with the" +
-		"command line",
+	"update_brand": "a brand is its name; rename in the " +
+		"application manager",
+	"publish_component":         "components publish with their products",
+	"unpublish_component":       "components publish with their products",
+	"update_product_mediafiles": "media handling stays with the command line",
+	"list_mediafiles":           "media handling stays with the command line",
+	"create_mediafile":          "media handling stays with the command line",
 	"list_product_properties":   "reference data, on demand",
 	"list_featured_products":    "storefront view, on demand",
 	"list_product_categories":   "reference data, on demand",
@@ -227,8 +206,8 @@ var viaCallAPIOnly = map[string]string{
 	"list_component_functions":  "reference data, on demand",
 	"list_component_types":      "reference data, on demand",
 	"list_component_properties": "reference data, on demand",
-	"search_catalogue": "list_products and list_components" +
-		"take a term",
+	"search_catalogue": "list_products and list_components take a " +
+		"term",
 }
 
 // Tools returns the curated tools, filtered to the groups asked
@@ -394,7 +373,7 @@ func (t Tool) inputSchema(op *registry.Operation) map[string]any {
 		required = append(required, "rows")
 		if op.ID == "bulk_create_dpps" {
 			props["async"] = map[string]any{"type": "boolean",
-				"description": "Process in the background and answer a" +
+				"description": "Process in the background and answer a " +
 					"statusUrl " +
 					"to poll; needed beyond 500 rows"}
 		}
