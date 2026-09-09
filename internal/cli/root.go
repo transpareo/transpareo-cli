@@ -35,7 +35,9 @@ Start with:
 		a.versionCommand(),
 		a.mcpCommand(),
 		a.setupCommand(),
+		a.upgradeCommand(),
 	)
 	a.addGeneratedCommands(root)
+	a.addCompositeCommands(root)
 	return root
 }
