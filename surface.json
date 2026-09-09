@@ -1,0 +1,804 @@
+[
+  {
+    "path": "transpareo api",
+    "args": "<METHOD> <path>",
+    "flags": [
+      "body",
+      "header",
+      "idempotency-key",
+      "query"
+    ]
+  },
+  {
+    "path": "transpareo auth grant",
+    "args": "--code <passport code>",
+    "flags": [
+      "batch",
+      "code",
+      "gtin",
+      "serial"
+    ]
+  },
+  {
+    "path": "transpareo auth login",
+    "args": "--host <workspace host> --client-id <key>",
+    "flags": [
+      "client-id",
+      "default",
+      "host",
+      "name",
+      "scope"
+    ]
+  },
+  {
+    "path": "transpareo auth logout"
+  },
+  {
+    "path": "transpareo auth status"
+  },
+  {
+    "path": "transpareo auth token",
+    "args": "[--scope a,b]",
+    "flags": [
+      "scope"
+    ]
+  },
+  {
+    "path": "transpareo brands create",
+    "flags": [
+      "file",
+      "output",
+      "set"
+    ],
+    "operationId": "create_brand"
+  },
+  {
+    "path": "transpareo brands delete",
+    "args": "<id>",
+    "flags": [
+      "output"
+    ],
+    "operationId": "delete_brand"
+  },
+  {
+    "path": "transpareo brands get",
+    "args": "<id>",
+    "flags": [
+      "output"
+    ],
+    "operationId": "get_brand"
+  },
+  {
+    "path": "transpareo brands list",
+    "flags": [
+      "output",
+      "page",
+      "per-page"
+    ],
+    "operationId": "list_brands"
+  },
+  {
+    "path": "transpareo brands update",
+    "args": "<id>",
+    "flags": [
+      "file",
+      "output",
+      "set"
+    ],
+    "operationId": "update_brand"
+  },
+  {
+    "path": "transpareo categories list",
+    "flags": [
+      "output"
+    ],
+    "operationId": "list_product_categories"
+  },
+  {
+    "path": "transpareo commands"
+  },
+  {
+    "path": "transpareo components create",
+    "flags": [
+      "file",
+      "output",
+      "set"
+    ],
+    "operationId": "create_component"
+  },
+  {
+    "path": "transpareo components delete",
+    "args": "<id>",
+    "flags": [
+      "output"
+    ],
+    "operationId": "delete_component"
+  },
+  {
+    "path": "transpareo components get",
+    "args": "<id>",
+    "flags": [
+      "output"
+    ],
+    "operationId": "get_component"
+  },
+  {
+    "path": "transpareo components list",
+    "flags": [
+      "function-ids",
+      "output",
+      "page",
+      "per-page",
+      "property-category-ids",
+      "term",
+      "type-ids"
+    ],
+    "operationId": "list_components"
+  },
+  {
+    "path": "transpareo components publish",
+    "args": "<id>",
+    "flags": [
+      "output"
+    ],
+    "operationId": "publish_component"
+  },
+  {
+    "path": "transpareo components unpublish",
+    "args": "<id>",
+    "flags": [
+      "output"
+    ],
+    "operationId": "unpublish_component"
+  },
+  {
+    "path": "transpareo components update",
+    "args": "<id>",
+    "flags": [
+      "file",
+      "output",
+      "set"
+    ],
+    "operationId": "update_component"
+  },
+  {
+    "path": "transpareo configuration config",
+    "flags": [
+      "output"
+    ],
+    "operationId": "get_config"
+  },
+  {
+    "path": "transpareo configuration languages list",
+    "flags": [
+      "output"
+    ],
+    "operationId": "list_languages"
+  },
+  {
+    "path": "transpareo configuration localization",
+    "flags": [
+      "output"
+    ],
+    "operationId": "get_localization"
+  },
+  {
+    "path": "transpareo configuration navigation",
+    "flags": [
+      "output"
+    ],
+    "operationId": "get_navigation"
+  },
+  {
+    "path": "transpareo coupons lookup",
+    "flags": [
+      "code",
+      "currency",
+      "output"
+    ],
+    "operationId": "lookup_coupon"
+  },
+  {
+    "path": "transpareo doctor"
+  },
+  {
+    "path": "transpareo dpps bulk create",
+    "flags": [
+      "file",
+      "output",
+      "prefer",
+      "wait"
+    ],
+    "operationId": "bulk_create_dpps"
+  },
+  {
+    "path": "transpareo dpps bulk validate",
+    "flags": [
+      "file",
+      "output"
+    ],
+    "operationId": "validate_dpps_bulk"
+  },
+  {
+    "path": "transpareo dpps bulk-task",
+    "args": "<taskId>",
+    "flags": [
+      "output"
+    ],
+    "operationId": "get_bulk_task"
+  },
+  {
+    "path": "transpareo dpps create",
+    "flags": [
+      "file",
+      "output",
+      "set"
+    ],
+    "operationId": "create_dpp"
+  },
+  {
+    "path": "transpareo dpps delete",
+    "args": "<id>",
+    "flags": [
+      "output"
+    ],
+    "operationId": "delete_dpp"
+  },
+  {
+    "path": "transpareo dpps dynamic-data update",
+    "args": "<id>",
+    "flags": [
+      "file",
+      "output",
+      "set"
+    ],
+    "operationId": "update_dpp_dynamic_data"
+  },
+  {
+    "path": "transpareo dpps events append",
+    "args": "<id>",
+    "flags": [
+      "file",
+      "output",
+      "set"
+    ],
+    "operationId": "append_dpp_event"
+  },
+  {
+    "path": "transpareo dpps events list",
+    "args": "<id>",
+    "flags": [
+      "output",
+      "version"
+    ],
+    "operationId": "list_dpp_events"
+  },
+  {
+    "path": "transpareo dpps get",
+    "args": "<id>",
+    "flags": [
+      "format",
+      "output",
+      "version"
+    ],
+    "operationId": "get_dpp"
+  },
+  {
+    "path": "transpareo dpps list",
+    "flags": [
+      "output",
+      "page",
+      "per-page",
+      "term"
+    ],
+    "operationId": "list_dpps"
+  },
+  {
+    "path": "transpareo dpps private-properties",
+    "args": "<code>",
+    "flags": [
+      "output",
+      "versions"
+    ],
+    "operationId": "get_dpp_private_properties"
+  },
+  {
+    "path": "transpareo dpps publish",
+    "args": "<code>",
+    "flags": [
+      "file",
+      "output",
+      "set"
+    ],
+    "operationId": "publish_dpp"
+  },
+  {
+    "path": "transpareo dpps reissue",
+    "args": "<id>",
+    "flags": [
+      "file",
+      "output",
+      "set"
+    ],
+    "operationId": "reissue_dpp"
+  },
+  {
+    "path": "transpareo dpps requirements",
+    "flags": [
+      "granularity",
+      "output",
+      "product-id"
+    ],
+    "operationId": "get_dpp_requirements"
+  },
+  {
+    "path": "transpareo dpps stats",
+    "args": "<id>",
+    "flags": [
+      "format",
+      "output"
+    ],
+    "operationId": "get_dpp_stats"
+  },
+  {
+    "path": "transpareo dpps supersede",
+    "args": "<id>",
+    "flags": [
+      "file",
+      "output",
+      "set"
+    ],
+    "operationId": "supersede_dpp"
+  },
+  {
+    "path": "transpareo dpps update",
+    "args": "<id>",
+    "flags": [
+      "file",
+      "output",
+      "set"
+    ],
+    "operationId": "update_dpp"
+  },
+  {
+    "path": "transpareo dpps validate",
+    "flags": [
+      "file",
+      "output",
+      "set"
+    ],
+    "operationId": "validate_dpp"
+  },
+  {
+    "path": "transpareo dpps version-private-properties",
+    "args": "<code> <version>",
+    "flags": [
+      "output"
+    ],
+    "operationId": "get_dpp_version_private_properties"
+  },
+  {
+    "path": "transpareo dpps versions list",
+    "args": "<id>",
+    "flags": [
+      "output"
+    ],
+    "operationId": "list_dpp_versions"
+  },
+  {
+    "path": "transpareo dpps void",
+    "args": "<id>",
+    "flags": [
+      "file",
+      "output",
+      "set"
+    ],
+    "operationId": "void_dpp"
+  },
+  {
+    "path": "transpareo events list",
+    "flags": [
+      "dpp-code",
+      "limit",
+      "output",
+      "since",
+      "types"
+    ],
+    "operationId": "list_events"
+  },
+  {
+    "path": "transpareo exports create",
+    "flags": [
+      "file",
+      "output",
+      "set",
+      "wait"
+    ],
+    "operationId": "create_export"
+  },
+  {
+    "path": "transpareo exports download",
+    "args": "<id>",
+    "flags": [
+      "output"
+    ],
+    "operationId": "download_export"
+  },
+  {
+    "path": "transpareo exports get",
+    "args": "<id>",
+    "flags": [
+      "output",
+      "wait"
+    ],
+    "operationId": "get_export"
+  },
+  {
+    "path": "transpareo grants create",
+    "flags": [
+      "file",
+      "output",
+      "set"
+    ],
+    "operationId": "create_grant"
+  },
+  {
+    "path": "transpareo guide"
+  },
+  {
+    "path": "transpareo imports create",
+    "flags": [
+      "data-type",
+      "file",
+      "mappings",
+      "options",
+      "output",
+      "value-separator",
+      "wait"
+    ],
+    "operationId": "create_import"
+  },
+  {
+    "path": "transpareo imports example",
+    "flags": [
+      "data-type",
+      "output"
+    ],
+    "operationId": "get_import_example"
+  },
+  {
+    "path": "transpareo imports execute",
+    "args": "<id>",
+    "flags": [
+      "file",
+      "output",
+      "set",
+      "wait"
+    ],
+    "operationId": "execute_import"
+  },
+  {
+    "path": "transpareo imports get",
+    "args": "<id>",
+    "flags": [
+      "output",
+      "wait"
+    ],
+    "operationId": "get_import"
+  },
+  {
+    "path": "transpareo imports map",
+    "args": "<id>",
+    "flags": [
+      "file",
+      "output",
+      "set",
+      "wait"
+    ],
+    "operationId": "map_import"
+  },
+  {
+    "path": "transpareo imports revert",
+    "args": "<id>",
+    "flags": [
+      "file",
+      "output",
+      "set",
+      "wait"
+    ],
+    "operationId": "revert_import"
+  },
+  {
+    "path": "transpareo imports supplier-form",
+    "flags": [
+      "data-type",
+      "output",
+      "sheet-locale"
+    ],
+    "operationId": "get_import_supplier_form"
+  },
+  {
+    "path": "transpareo imports validate",
+    "args": "<id>",
+    "flags": [
+      "output",
+      "wait"
+    ],
+    "operationId": "validate_import"
+  },
+  {
+    "path": "transpareo me"
+  },
+  {
+    "path": "transpareo mediafiles create",
+    "flags": [
+      "file",
+      "name",
+      "output"
+    ],
+    "operationId": "create_mediafile"
+  },
+  {
+    "path": "transpareo mediafiles list",
+    "flags": [
+      "output",
+      "page",
+      "per-page",
+      "term"
+    ],
+    "operationId": "list_mediafiles"
+  },
+  {
+    "path": "transpareo permalinks resolve",
+    "args": "<path>",
+    "flags": [
+      "output",
+      "show"
+    ],
+    "operationId": "resolve_permalink"
+  },
+  {
+    "path": "transpareo plans get",
+    "args": "<id>",
+    "flags": [
+      "output"
+    ],
+    "operationId": "get_plan"
+  },
+  {
+    "path": "transpareo plans list",
+    "flags": [
+      "output"
+    ],
+    "operationId": "list_plans"
+  },
+  {
+    "path": "transpareo products create",
+    "flags": [
+      "file",
+      "output",
+      "set"
+    ],
+    "operationId": "create_product"
+  },
+  {
+    "path": "transpareo products delete",
+    "args": "<id>",
+    "flags": [
+      "output"
+    ],
+    "operationId": "delete_product"
+  },
+  {
+    "path": "transpareo products featured list",
+    "flags": [
+      "output"
+    ],
+    "operationId": "list_featured_products"
+  },
+  {
+    "path": "transpareo products get",
+    "args": "<id>",
+    "flags": [
+      "output",
+      "raw",
+      "show"
+    ],
+    "operationId": "get_product"
+  },
+  {
+    "path": "transpareo products list",
+    "flags": [
+      "brand-id",
+      "category-ids",
+      "exact",
+      "function-ids",
+      "output",
+      "page",
+      "per-page",
+      "property-category-ids",
+      "rating",
+      "term",
+      "type-ids"
+    ],
+    "operationId": "list_products"
+  },
+  {
+    "path": "transpareo products mediafiles update",
+    "args": "<id>",
+    "flags": [
+      "file",
+      "output",
+      "set"
+    ],
+    "operationId": "update_product_mediafiles"
+  },
+  {
+    "path": "transpareo products new",
+    "flags": [
+      "output"
+    ],
+    "operationId": "get_new_product"
+  },
+  {
+    "path": "transpareo products properties list",
+    "flags": [
+      "output",
+      "page",
+      "per-page"
+    ],
+    "operationId": "list_product_properties"
+  },
+  {
+    "path": "transpareo products publish",
+    "args": "<id>",
+    "flags": [
+      "output"
+    ],
+    "operationId": "publish_product"
+  },
+  {
+    "path": "transpareo products unpublish",
+    "args": "<id>",
+    "flags": [
+      "output"
+    ],
+    "operationId": "unpublish_product"
+  },
+  {
+    "path": "transpareo products update",
+    "args": "<id>",
+    "flags": [
+      "file",
+      "output",
+      "set"
+    ],
+    "operationId": "update_product"
+  },
+  {
+    "path": "transpareo reference-data component-functions list",
+    "flags": [
+      "output"
+    ],
+    "operationId": "list_component_functions"
+  },
+  {
+    "path": "transpareo reference-data component-names list",
+    "flags": [
+      "output",
+      "page",
+      "per-page",
+      "term"
+    ],
+    "operationId": "list_component_names"
+  },
+  {
+    "path": "transpareo reference-data component-properties list",
+    "flags": [
+      "output"
+    ],
+    "operationId": "list_component_properties"
+  },
+  {
+    "path": "transpareo reference-data component-types list",
+    "flags": [
+      "output"
+    ],
+    "operationId": "list_component_types"
+  },
+  {
+    "path": "transpareo reference-data countries list",
+    "flags": [
+      "output"
+    ],
+    "operationId": "list_countries"
+  },
+  {
+    "path": "transpareo reference-data product-gtins list",
+    "flags": [
+      "output",
+      "page",
+      "per-page",
+      "term"
+    ],
+    "operationId": "list_product_gtins"
+  },
+  {
+    "path": "transpareo schema",
+    "args": "<operationId>"
+  },
+  {
+    "path": "transpareo search catalogue",
+    "flags": [
+      "models",
+      "output",
+      "page",
+      "per-page",
+      "query"
+    ],
+    "operationId": "search_catalogue"
+  },
+  {
+    "path": "transpareo version"
+  },
+  {
+    "path": "transpareo webhooks create",
+    "flags": [
+      "file",
+      "output",
+      "set"
+    ],
+    "operationId": "create_webhook"
+  },
+  {
+    "path": "transpareo webhooks delete",
+    "args": "<id>",
+    "flags": [
+      "output"
+    ],
+    "operationId": "delete_webhook"
+  },
+  {
+    "path": "transpareo webhooks get",
+    "args": "<id>",
+    "flags": [
+      "output"
+    ],
+    "operationId": "get_webhook"
+  },
+  {
+    "path": "transpareo webhooks list",
+    "flags": [
+      "output",
+      "page",
+      "per-page"
+    ],
+    "operationId": "list_webhooks"
+  },
+  {
+    "path": "transpareo webhooks secret regenerate",
+    "args": "<id>",
+    "flags": [
+      "output"
+    ],
+    "operationId": "regenerate_webhook_secret"
+  },
+  {
+    "path": "transpareo webhooks test",
+    "args": "<id>",
+    "flags": [
+      "output"
+    ],
+    "operationId": "test_webhook"
+  },
+  {
+    "path": "transpareo webhooks update",
+    "args": "<id>",
+    "flags": [
+      "file",
+      "output",
+      "set"
+    ],
+    "operationId": "update_webhook"
+  }
+]
