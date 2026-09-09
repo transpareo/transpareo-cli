@@ -1,0 +1,148 @@
+# Nightly drift checks against the vendored specification and the
+# command surface.
+#
+# The spec job downloads the live OpenAPI document from the test host
+# named by the TRANSPAREO_TEST_HOST secret, replaces the fields that
+# carry tenant-specific values with the neutral values used in
+# spec/openapi.json, and fails when the result differs from the vendored
+# file. Opening a pull request that regenerates the client from the new
+# document is not part of this workflow yet; today the failing job is
+# the signal to update spec/openapi.json and run `go generate ./...`.
+#
+# The surface job renders the command tree with `commands --json` and
+# compares it with surface.json when that snapshot exists.
+name: nightly
+
+on:
+  schedule:
+    - cron: "17 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  spec:
+    name: specification drift
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      # Forks and local mirrors usually do not have the secret. The job
+      # then reports that and finishes green instead of failing.
+      - name: Fetch the live specification
+        id: fetch
+        env:
+          TRANSPAREO_TEST_HOST: ${{ secrets.TRANSPAREO_TEST_HOST }}
+        run: |
+          set -euo pipefail
+          if [ -z "${TRANSPAREO_TEST_HOST}" ]; then
+            echo "TRANSPAREO_TEST_HOST is not set; skipping the" \
+              "specification comparison."
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          curl --fail --silent --show-error --location \
+            --output "$RUNNER_TEMP/live.json" \
+            "https://${TRANSPAREO_TEST_HOST}/apidocs/openapi.json"
+          echo "available=true" >> "$GITHUB_OUTPUT"
+
+      - name: Neutralise tenant-specific fields
+        if: steps.fetch.outputs.available == 'true'
+        run: |
+          python3 - "$RUNNER_TEMP/live.json" \
+            "$RUNNER_TEMP/live-normalised.json" <<'PY'
+          import json
+          import sys
+
+          source, target = sys.argv[1], sys.argv[2]
+          with open(source, encoding="utf-8") as handle:
+              document = json.load(handle)
+
+          document["info"]["title"] = "Transpareo API"
+          document["info"]["contact"] = {
+              "name": "Transpareo Support",
+              "url": "https://transpareo.com",
+          }
+          document["servers"] = [
+              {
+                  "url": "/api",
+                  "description": (
+                      "API root (the v1 version is selected via the "
+                      "Accept header, not the URL path)"
+                  ),
+              }
+          ]
+          flows = document["components"]["securitySchemes"]["oauth2"]["flows"]
+          flows["clientCredentials"]["tokenUrl"] = "/api/oauth/token"
+
+          with open(target, "w", encoding="utf-8") as handle:
+              json.dump(document, handle, indent=2, ensure_ascii=False)
+              handle.write("\n")
+          PY
+
+      - name: Compare with the vendored specification
+        if: steps.fetch.outputs.available == 'true'
+        run: |
+          if diff -u spec/openapi.json "$RUNNER_TEMP/live-normalised.json"; then
+            echo "spec/openapi.json matches the live specification."
+          else
+            echo "spec/openapi.json differs from the live specification." \
+              "Update the vendored file and run go generate ./..."
+            exit 1
+          fi
+
+  surface:
+    name: command surface drift
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Go
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      # Without a snapshot there is nothing to compare, so the job only
+      # says so. With one, any difference fails the job.
+      - name: Compare the command tree with surface.json
+        run: |
+          if [ ! -f surface.json ]; then
+            echo "no surface snapshot yet"
+            exit 0
+          fi
+          go run ./cmd/transpareo commands --json > "$RUNNER_TEMP/surface.json"
+          diff -u surface.json "$RUNNER_TEMP/surface.json"
+
+  # The end-to-end suite runs against the test tenant with the
+  # consumer stored as secrets. It creates and deletes its own
+  # records. Without the secrets it reports that and finishes
+  # green, like the specification job.
+  end-to-end:
+    name: end-to-end checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Go
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version: "1.27.x"
+          cache: true
+
+      - name: Run the end-to-end suite
+        env:
+          TRANSPAREO_TEST_HOST: ${{ secrets.TRANSPAREO_TEST_HOST }}
+          TRANSPAREO_TEST_CLIENT_ID: ${{ secrets.TRANSPAREO_TEST_CLIENT_ID }}
+          TRANSPAREO_TEST_CLIENT_SECRET: ${{ secrets.TRANSPAREO_TEST_CLIENT_SECRET }}
+        run: |
+          set -euo pipefail
+          if [ -z "${TRANSPAREO_TEST_CLIENT_ID}" ]; then
+            echo "TRANSPAREO_TEST_CLIENT_ID is not set; skipping."
+            exit 0
+          fi
+          go test -tags e2e -v ./test/e2e/

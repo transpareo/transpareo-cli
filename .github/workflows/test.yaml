@@ -1,0 +1,88 @@
+# Build, vet, test and lint on every pull request and on pushes to main.
+# The matrix covers the three release platforms and the current and
+# previous Go minor versions. The go directive in go.mod decides whether
+# the older toolchain runs the build itself or fetches the newer one
+# through GOTOOLCHAIN.
+name: test
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: test-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: go ${{ matrix.go }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
+        go:
+          - "1.27.x"
+          - "1.26.x"
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Go
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version: ${{ matrix.go }}
+          cache: true
+
+      - name: Download modules
+        run: go mod download
+
+      - name: Vet
+        run: go vet ./...
+
+      - name: Build
+        run: go build ./...
+
+      # The race detector needs a C toolchain on Windows, which the
+      # runner image does not guarantee, so Windows runs without it.
+      - name: Test with the race detector
+        if: runner.os != 'Windows'
+        run: go test -race -coverprofile=coverage.out ./...
+
+      - name: Test
+        if: runner.os == 'Windows'
+        run: go test -coverprofile=coverage.out ./...
+
+      - name: Run staticcheck
+        run: |
+          go install honnef.co/go/tools/cmd/staticcheck@latest
+          staticcheck ./...
+
+      # Vulnerability scanning depends on the module graph, not on the
+      # platform, so one runner per Go version is enough.
+      - name: Run govulncheck
+        if: runner.os == 'Linux'
+        run: |
+          go install golang.org/x/vuln/cmd/govulncheck@latest
+          govulncheck ./...
+
+      # Generated code is committed. Regenerating must not change any
+      # tracked file and must not leave new untracked files behind.
+      - name: Check that generated code is current
+        if: runner.os == 'Linux'
+        run: |
+          go generate ./...
+          git diff --exit-code
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "go generate produced files that are not committed:"
+            git status --porcelain
+            exit 1
+          fi

@@ -1,0 +1,189 @@
+# GoReleaser configuration for the transpareo command-line tool.
+# Driven by .github/workflows/release.yaml on every v* tag.
+#
+# SLSA provenance is not produced here. The release workflow feeds the
+# checksum file into the slsa-framework/slsa-github-generator generic
+# generator, which attaches the provenance to the same GitHub release.
+version: 2
+
+project_name: transpareo
+
+before:
+  hooks:
+    - go mod tidy
+    - go generate ./...
+
+builds:
+  - id: transpareo
+    main: ./cmd/transpareo
+    binary: transpareo
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    flags:
+      - -trimpath
+    ldflags:
+      - -s -w
+        -X github.com/transpareo/transpareo-cli/internal/version.Version={{.Version}}
+        -X github.com/transpareo/transpareo-cli/internal/version.Commit={{.Commit}}
+        -X github.com/transpareo/transpareo-cli/internal/version.Date={{.CommitDate}}
+    mod_timestamp: "{{ .CommitTimestamp }}"
+
+archives:
+  - id: default
+    formats:
+      - tar.gz
+    format_overrides:
+      - goos: windows
+        formats:
+          - zip
+    name_template: "transpareo_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    files:
+      - LICENSE
+      - README.md
+      - TRADEMARKS.md
+
+checksum:
+  name_template: "transpareo_{{ .Version }}_checksums.txt"
+
+# Keyless Sigstore signature of the checksum file. The binaries themselves
+# are not signed; verifying the checksum file and then the checksums covers
+# every archive. cosign v3 writes all verification material (signature,
+# certificate, transparency-log entry) into one bundle, so the release
+# carries a single <checksum file>.sigstore.json next to the checksum file.
+# Verify with:
+#   cosign verify-blob --bundle <checksum file>.sigstore.json <checksum file>
+signs:
+  - id: checksum-bundle
+    cmd: cosign
+    signature: "${artifact}.sigstore.json"
+    args:
+      - sign-blob
+      - "--bundle=${signature}"
+      - "--yes"
+      - "${artifact}"
+    artifacts: checksum
+    output: true
+
+# One SPDX SBOM per archive, generated with syft.
+sboms:
+  - id: archive-sbom
+    artifacts: archive
+
+nfpms:
+  - id: packages
+    package_name: transpareo
+    file_name_template: "{{ .ConventionalFileName }}"
+    vendor: Transpareo
+    homepage: https://transpareo.com
+    maintainer: Transpareo <hello@transpareo.com>
+    description: >-
+      Command-line tool, MCP server and Go client for the Transpareo API
+    license: MIT
+    bindir: /usr/bin
+    formats:
+      - deb
+      - rpm
+      - apk
+    contents:
+      - src: LICENSE
+        dst: /usr/share/doc/transpareo/LICENSE
+      - src: TRADEMARKS.md
+        dst: /usr/share/doc/transpareo/TRADEMARKS.md
+
+# Homebrew cask in the transpareo/homebrew-tap repository. Casks replace the
+# deprecated `brews` formula block in GoReleaser v2; the cask installs the
+# binary from the release archive instead of building a formula.
+homebrew_casks:
+  - name: transpareo
+    repository:
+      owner: transpareo
+      name: homebrew-tap
+      branch: main
+      token: "{{ .Env.HOMEBREW_TAP_TOKEN }}"
+    directory: Casks
+    commit_author:
+      name: transpareo-release
+      email: hello@transpareo.com
+    commit_msg_template: >-
+      Cask update for {{ .ProjectName }} version {{ .Tag }}
+    homepage: https://transpareo.com
+    description: >-
+      Command-line tool, MCP server and Go client for the Transpareo API
+    license: MIT
+    binaries:
+      - transpareo
+    # Runs `transpareo completion bash|zsh|fish` at install time and
+    # installs each result as the shell completion for that shell.
+    generate_completions_from_executable:
+      executable: transpareo
+      args:
+        - completion
+      shells:
+        - bash
+        - zsh
+        - fish
+    # The macOS binaries are not notarized with Apple, so Gatekeeper would
+    # quarantine them. Dropping the attribute after install is the pattern
+    # GoReleaser documents for unsigned cask binaries.
+    hooks:
+      post:
+        install: |
+          if system_command("/usr/bin/xattr", args: ["-h"]).exit_status == 0
+            system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}/transpareo"]
+          end
+
+scoops:
+  - name: transpareo
+    repository:
+      owner: transpareo
+      name: scoop-bucket
+      branch: main
+      token: "{{ .Env.SCOOP_BUCKET_TOKEN }}"
+    directory: bucket
+    commit_author:
+      name: transpareo-release
+      email: hello@transpareo.com
+    commit_msg_template: >-
+      Scoop update for {{ .ProjectName }} version {{ .Tag }}
+    homepage: https://transpareo.com
+    description: >-
+      Command-line tool, MCP server and Go client for the Transpareo API
+    license: MIT
+
+release:
+  github:
+    owner: transpareo
+    name: transpareo-cli
+  draft: false
+  prerelease: auto
+  mode: replace
+
+changelog:
+  use: git
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^ci:"
+      - "^chore:"
+      - "^test:"
+      - "^Merge "
+  groups:
+    - title: Features
+      regexp: '^.*?feat(\([[:word:]]+\))??!?:.+$'
+      order: 0
+    - title: Bug fixes
+      regexp: '^.*?fix(\([[:word:]]+\))??!?:.+$'
+      order: 1
+    - title: Other changes
+      order: 999
+
+snapshot:
+  version_template: "{{ incpatch .Version }}-next"
