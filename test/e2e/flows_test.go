@@ -213,17 +213,34 @@ func TestImportValidateWithTheTemplate(t *testing.T) {
 	}
 	path := filepath.Join(t.TempDir(), "template.xlsx")
 	os.WriteFile(path, resp.Body, 0o600)
-	imp, err := flows.Run(ctx, c, flows.RunOptions{Path: path,
-		DataType:          "products",
-		AcceptSuggestions: true})
-	if flows.IsMappingRequired(err) {
-		t.Fatalf("the template must map on its own: %v", err)
+	// The template names every core attribute, which resolves on
+	// its own, plus property columns the workspace may not define;
+	// those are skipped explicitly, as a person would.
+	opts := flows.RunOptions{Path: path, DataType: "products",
+		AcceptSuggestions: true}
+	imp, err := flows.Run(ctx, c, opts)
+	var required *flows.ErrMappingRequired
+	if errors.As(err, &required) {
+		opts.Mappings = map[string]flows.Mapping{}
+		for _, u := range required.Unresolved {
+			if u.Suggestion == nil || u.Suggestion.Action != "create_new" {
+				t.Fatalf("column %q is unresolved for another reason: %+v",
+					u.Header, u)
+			}
+			opts.Mappings[u.Column] = flows.Mapping{Action: "skip"}
+		}
+		imp, err = flows.Run(ctx, c, opts)
 	}
-	if err != nil && imp == nil {
+	var failed *flows.ErrValidationFailed
+	if errors.As(err, &failed) {
+		t.Logf("the empty template validates with row errors: %v", err)
+		err = nil
+	}
+	if err != nil {
 		t.Fatalf("import run: %v", err)
 	}
-	if imp.Status != "validated" && imp.Status != "mapped" {
-		t.Errorf("import status = %s (%v)", imp.Status, err)
+	if imp.Status != "validated" {
+		t.Errorf("import status = %s", imp.Status)
 	}
 }
 

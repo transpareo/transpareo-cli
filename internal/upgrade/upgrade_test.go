@@ -14,6 +14,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 
@@ -155,7 +156,7 @@ func TestRunInstallsAVerifiedRelease(t *testing.T) {
 		t.Errorf("binary = %q", data)
 	}
 	info, _ := os.Stat(filepath.Join(dir, "transpareo"))
-	if info.Mode().Perm() != 0o755 {
+	if info.Mode().Perm() != 0o755 && runtime.GOOS != "windows" {
 		t.Errorf("mode = %o", info.Mode().Perm())
 	}
 	if !verifier.called || len(steps) < 3 {
