@@ -548,3 +548,40 @@ func (c *Client) JSON(ctx context.Context, req *Request,
 	}
 	return resp, nil
 }
+
+// Download streams the answer of a GET to w, for archives that
+// should not sit in memory. It authenticates like every request
+// and refuses a different host, but does not retry once bytes
+// have flowed.
+func (c *Client) Download(ctx context.Context, path string, w io.Writer) (int64,
+	error) {
+	target, err := c.resolve(path, nil)
+	if err != nil {
+		return 0, err
+	}
+	token, err := c.tokens.Token(ctx)
+	if err != nil {
+		return 0, err
+	}
+	httpReq, err := http.NewRequestWithContext(ctx, http.MethodGet, target, nil)
+	if err != nil {
+		return 0, &Error{Code: "REQUEST_INVALID", Message: err.Error(),
+			cause: err}
+	}
+	httpReq.Header.Set("Authorization", "Bearer "+token.AccessToken)
+	httpReq.Header.Set("User-Agent", c.userAgent)
+	resp, err := c.http.Do(httpReq)
+	if err != nil {
+		return 0, transportError(err)
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode >= 300 {
+		body, _ := io.ReadAll(io.LimitReader(resp.Body, 1<<20))
+		return 0, errorFromResponse(resp.StatusCode, resp.Header, body)
+	}
+	n, err := io.Copy(w, resp.Body)
+	if err != nil {
+		return n, transportError(err)
+	}
+	return n, nil
+}
