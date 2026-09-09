@@ -44,9 +44,15 @@ func TestSurfaceSnapshotIsCurrent(t *testing.T) {
 		}
 	}
 	want, _ := SurfaceJSON(app.Root())
-	if strings.TrimSpace(string(want)) != strings.TrimSpace(string(data)) {
+	if strings.TrimSpace(string(want)) != strings.TrimSpace(unixLines(data)) {
 		t.Error("surface.json is stale; run go generate ./...")
 	}
+}
+
+// unixLines undoes the CRLF conversion a Windows checkout applies
+// to text files.
+func unixLines(data []byte) string {
+	return strings.ReplaceAll(string(data), "\r\n", "\n")
 }
 
 func contains(list []string, s string) bool {
@@ -74,7 +80,7 @@ func TestMarkdownReference(t *testing.T) {
 		}
 	}
 	current, _ := os.ReadFile("../../docs/cli.md")
-	if strings.TrimSpace(string(current)) != strings.TrimSpace(doc) {
+	if strings.TrimSpace(unixLines(current)) != strings.TrimSpace(doc) {
 		t.Error("docs/cli.md is stale; run go generate ./...")
 	}
 }

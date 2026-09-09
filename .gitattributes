@@ -1,0 +1,5 @@
+# Text files keep LF on every platform, so generated files compare
+# equal on a Windows checkout.
+* text=auto eol=lf
+*.png binary
+*.gz binary

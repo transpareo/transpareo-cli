@@ -10,7 +10,7 @@ every commit needs, and the style rules the repository follows.
 go build ./cmd/transpareo
 ```
 
-Go 1.27 or later is required. `mise.toml` pins the version used by the
+Go 1.26 or later is required. `mise.toml` pins the version used by the
 maintainers; `mise install` sets it up.
 
 ## Test

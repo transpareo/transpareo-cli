@@ -1,6 +1,6 @@
 module github.com/transpareo/transpareo-cli
 
-go 1.27
+go 1.26.0
 
 require (
 	github.com/oapi-codegen/runtime v1.7.0
