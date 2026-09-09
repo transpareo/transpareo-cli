@@ -7,6 +7,7 @@ import (
 	"log/slog"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"strings"
 	"sync"
 	"testing"
@@ -517,5 +518,100 @@ func TestEveryOperationIsClassified(t *testing.T) {
 			t.Errorf("%s is neither a tool nor classified in viaCallAPIOnly",
 				op.ID)
 		}
+	}
+}
+
+func TestDataTools(t *testing.T) {
+	host := newFakeHost(t)
+	mux := host.Config.Handler.(*http.ServeMux)
+	writeJSON := func(w http.ResponseWriter, status int, v any) {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(status)
+		json.NewEncoder(w).Encode(v)
+	}
+	polls := 0
+	mux.HandleFunc("GET /api/exports/42", func(w http.ResponseWriter,
+		r *http.Request) {
+		polls++
+		status := "running"
+		if polls > 1 {
+			status = "completed"
+		}
+		writeJSON(w, 200, map[string]any{"id": 42, "status": status,
+			"progress":    50 * polls,
+			"filename":    "x.tar.gz",
+			"downloadUrl": host.URL + "/api/exports/42/download"})
+	})
+	mux.HandleFunc("POST /api/exports", func(w http.ResponseWriter,
+		r *http.Request) {
+		polls = 0
+		writeJSON(w, 202, map[string]any{"id": 42, "status": "pending",
+			"statusUrl": host.URL + "/api/exports/42"})
+	})
+	mux.HandleFunc("GET /api/events", func(w http.ResponseWriter,
+		r *http.Request) {
+		writeJSON(w, 200,
+			map[string]any{"events": []map[string]any{{"id": "e1"}},
+				"nextCursor": "e1"})
+	})
+	mux.HandleFunc("POST /api/imports", func(w http.ResponseWriter,
+		r *http.Request) {
+		r.ParseMultipartForm(1 << 20)
+		writeJSON(w, 201, map[string]any{"id": 12, "status": "fresh",
+			"preview": map[string]any{"columns": []map[string]any{
+				{"header": "Farbe", "column": "farbe",
+					"suggestedAction": "create_new",
+					"typeName":        "Farbe", "matchType": "none"}},
+				"coreAttributes": []string{"name"}}})
+	})
+	session := connect(t, host, Options{})
+	tools := toolNames(t, session)
+	for _, want := range []string{"wait_for_task", "tail_events",
+		"export_catalogue",
+		"import_spreadsheet"} {
+		if _, ok := tools[want]; !ok {
+			t.Errorf("%s missing", want)
+		}
+	}
+
+	result := call(t, session, "wait_for_task",
+		map[string]any{"statusUrl": host.URL + "/api/exports/42"})
+	if result.IsError || structured(t, result)["status"] != "completed" {
+		t.Errorf("wait_for_task = %q %v", text(result), structured(t, result))
+	}
+	result = call(t, session, "export_catalogue",
+		map[string]any{"format": "csv"})
+	if result.IsError ||
+		!strings.Contains(text(result), "export 42 completed") {
+		t.Errorf("export_catalogue = %q", text(result))
+	}
+	result = call(t, session, "tail_events", map[string]any{"since": "x"})
+	if result.IsError || structured(t, result)["nextCursor"] != "e1" {
+		t.Errorf("tail_events = %v", structured(t, result))
+	}
+	file := t.TempDir() + "/c.xlsx"
+	os.WriteFile(file, []byte("X"), 0o600)
+	result = call(t, session, "import_spreadsheet", map[string]any{"path": file,
+		"dataType": "products", "acceptSuggestions": true})
+	if !result.IsError ||
+		!strings.Contains(text(result), "1 columns need a mapping") {
+		t.Errorf("import_spreadsheet = %q", text(result))
+	}
+	unresolved, _ := structured(t, result)["unresolved"].([]any)
+	if len(unresolved) != 1 {
+		t.Errorf("unresolved = %v", structured(t, result))
+	}
+
+	readOnly := connect(t, host, Options{ReadOnly: true})
+	tools = toolNames(t, readOnly)
+	if _, ok := tools["export_catalogue"]; ok {
+		t.Error("export_catalogue must not be served read-only")
+	}
+	if _, ok := tools["tail_events"]; !ok {
+		t.Error("tail_events must stay in read-only mode")
+	}
+	limited := connect(t, host, Options{Groups: []string{GroupDpps}})
+	if _, ok := toolNames(t, limited)["wait_for_task"]; ok {
+		t.Error("--tools dpps must not serve the data tools")
 	}
 }

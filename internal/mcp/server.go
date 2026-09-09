@@ -59,6 +59,7 @@ type Server struct {
 	opts   Options
 	reg    *registry.Registry
 	tools  []Tool
+	extra  []string
 	logger *slog.Logger
 
 	once   sync.Once
@@ -85,6 +86,7 @@ func New(opts Options) *Server {
 		s.addCurated(t)
 	}
 	s.addDiscovery()
+	s.addDataTools()
 	s.addResources()
 	return s
 }
@@ -106,6 +108,7 @@ func (s *Server) ToolNames() []string {
 	for _, t := range s.tools {
 		names = append(names, t.Name)
 	}
+	names = append(names, s.extra...)
 	sort.Strings(names)
 	return names
 }
@@ -442,7 +445,7 @@ func (s *Server) addDiscovery() {
 		"and query parameters and a body. Operations that cannot be undone " +
 		"need confirm equal to \"<operationId> <path value>\". "
 	if s.opts.ReadOnly {
-		description += "Read-only mode: only reads and validations are" +
+		description += "Read-only mode: only reads and validations are " +
 			"allowed. "
 	}
 	description += "Permission: the operation's, see search_operations. " +
