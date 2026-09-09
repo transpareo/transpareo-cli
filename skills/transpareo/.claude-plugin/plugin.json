@@ -1,0 +1,8 @@
+{
+  "name": "transpareo",
+  "description": "Drive a Transpareo workspace: products, components, brands and Digital Product Passports through the transpareo command line and its MCP server.",
+  "version": "0.1.0",
+  "author": { "name": "Transpareo" },
+  "homepage": "https://github.com/transpareo/transpareo-cli",
+  "license": "MIT"
+}

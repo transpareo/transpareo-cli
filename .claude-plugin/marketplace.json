@@ -1,0 +1,12 @@
+{
+  "name": "transpareo",
+  "owner": { "name": "Transpareo" },
+  "plugins": [
+    {
+      "name": "transpareo",
+      "source": "./skills/transpareo",
+      "description": "Skill and MCP server setup for the Transpareo API.",
+      "version": "0.1.0"
+    }
+  ]
+}

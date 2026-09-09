@@ -161,6 +161,12 @@ func writeJSON(w http.ResponseWriter, status int, v any) {
 // the exit code.
 func (h *harness) run(args ...string) (string, string, int) {
 	h.t.Helper()
+	return h.runWith(nil, args...)
+}
+
+// runWith lets a test adjust the App before the run.
+func (h *harness) runWith(adjust func(*App), args ...string) (string, string, int) {
+	h.t.Helper()
 	stdout, stderr := &bytes.Buffer{}, &bytes.Buffer{}
 	env := map[string]string{"TRANSPAREO_CONFIG_DIR": h.configDir}
 	for k, v := range h.env {
@@ -176,6 +182,9 @@ func (h *harness) run(args ...string) (string, string, int) {
 		WorkDir:    h.t.TempDir(),
 		Stores:     h.stores,
 		HTTPClient: h.server.Client(),
+	}
+	if adjust != nil {
+		adjust(app)
 	}
 	code := Main(context.Background(), app, args)
 	return stdout.String(), stderr.String(), code

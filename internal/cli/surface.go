@@ -2,6 +2,7 @@ package cli
 
 //go:generate go run ./gensurface
 //go:generate go run ./gendocs
+//go:generate go run ./genskill
 
 import (
 	"bytes"

@@ -1,10 +1,10 @@
 # transpareo
 
 One binary for the Transpareo API: a command-line tool for people
-and scripts, and an importable Go client. It logs in with the
-client credentials of an API consumer, reaches every endpoint of a
-workspace, and prints JSON that pipelines and AI assistants can
-read. An MCP server and an agent skill follow in the same binary.
+and scripts, an MCP server and an agent skill for assistants, and
+an importable Go client. It logs in with the client credentials of
+an API consumer, reaches every endpoint of a workspace, and prints
+JSON that pipelines and assistants can read.
 
 ## Install
 
@@ -69,6 +69,27 @@ example and the permission key it needs.
 operation; `transpareo schema create_dpp` prints the request
 schema and an example of one operation; `transpareo guide` prints
 the workspace's API guide; `transpareo doctor` checks the setup.
+
+## With an assistant
+
+The same binary is an MCP server. `transpareo setup claude` installs
+the agent skill and registers the server for Claude Code;
+`transpareo setup codex` does the same for Codex. The registration
+holds no secret, only the profile name:
+
+```json
+{ "mcpServers": { "transpareo": { "command": "transpareo",
+  "args": ["mcp", "--profile", "acme"] } } }
+```
+
+That snippet works in Claude Desktop (`claude_desktop_config.json`),
+Claude Code (`~/.claude.json`) and Cursor (`.cursor/mcp.json`).
+`--read-only` after the profile keeps the assistant to reads and
+validations; `--tools dpps,products` narrows the tools. The skill
+and the plugin manifest live under `skills/transpareo`; the
+repository is a plugin marketplace, so Claude Code can also install
+them with `/plugin marketplace add transpareo/transpareo-cli` and
+`/plugin install transpareo@transpareo`. See [docs/mcp.md](docs/mcp.md).
 
 ## Output, exit codes and safety
 

@@ -105,6 +105,17 @@ Print the workspace's API guide as Markdown
 transpareo guide | less
 ```
 
+### `transpareo mcp [--tools <group,...>] [--read-only]`
+
+Start the Model Context Protocol server over standard input and output
+
+```
+transpareo mcp --profile acme
+transpareo mcp --profile acme --tools dpps,products --read-only
+```
+
+- `--tools` `<stringSlice>`: tool groups to serve, comma separated (default: all)
+
 ### `transpareo me`
 
 Show what the current credential allows (GET /me)
@@ -124,6 +135,18 @@ Print the request schema and example of an operation
 transpareo schema create_dpp
 transpareo schema list_dpps --fields queryParams
 ```
+
+### `transpareo setup <assistant>`
+
+Install the skill and register the MCP server for claude or codex
+
+```
+transpareo setup claude --profile acme
+transpareo setup codex
+```
+
+- `--no-mcp`: install the skill only
+- `--no-skill`: register the MCP server only
 
 ### `transpareo version`
 
@@ -1038,6 +1061,8 @@ transpareo products properties list --page <page>
 - `--output` `<string>`: write the answer to this file instead of standard output
 - `--page` `<int>`: Page number
 - `--per-page` `<int>`: Records per page (default: 100, max: 500)
+- `--property-type-id` `<int>`: The property type whose values to list. Without it, and for a type that does not exist, the list is empty.
+- `--term` `<string>`: Filter the values by their text
 
 Operation `list_product_properties`, `GET /product_properties`. No permission needed; the endpoint is public.
 

@@ -55,15 +55,6 @@ func unixLines(data []byte) string {
 	return strings.ReplaceAll(string(data), "\r\n", "\n")
 }
 
-func contains(list []string, s string) bool {
-	for _, item := range list {
-		if item == s {
-			return true
-		}
-	}
-	return false
-}
-
 func TestMarkdownReference(t *testing.T) {
 	app := &App{Getenv: func(string) string { return "" }}
 	doc, err := Markdown(app.Root())

@@ -527,6 +527,13 @@
     "operationId": "validate_import"
   },
   {
+    "path": "transpareo mcp",
+    "args": "[--tools <group,...>] [--read-only]",
+    "flags": [
+      "tools"
+    ]
+  },
+  {
     "path": "transpareo me"
   },
   {
@@ -645,7 +652,9 @@
     "flags": [
       "output",
       "page",
-      "per-page"
+      "per-page",
+      "property-type-id",
+      "term"
     ],
     "operationId": "list_product_properties"
   },
@@ -737,6 +746,14 @@
       "query"
     ],
     "operationId": "search_catalogue"
+  },
+  {
+    "path": "transpareo setup",
+    "args": "<assistant>",
+    "flags": [
+      "no-mcp",
+      "no-skill"
+    ]
   },
   {
     "path": "transpareo version"

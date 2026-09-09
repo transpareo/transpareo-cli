@@ -48,6 +48,11 @@ type App struct {
 	// client with a timeout.
 	HTTPClient *http.Client
 
+	// LookPath and Run find and start an assistant's command line
+	// for setup; nil uses os/exec.
+	LookPath func(string) (string, error)
+	Run      func(string, ...string) error
+
 	// Flags set from the persistent options.
 	Profile  string
 	ReadOnly bool
