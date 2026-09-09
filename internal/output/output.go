@@ -251,6 +251,13 @@ func normalise(v any) (any, error) {
 	return out, nil
 }
 
+// Project keeps only the named fields of an object or of every
+// item of a list, on a value decoded from JSON. A name may reach
+// into nested objects with a dot.
+func Project(v any, fields []string) any {
+	return project(v, fields)
+}
+
 // project keeps only the named fields of an object or of every
 // item of a list. A name may reach into nested objects with a
 // dot.

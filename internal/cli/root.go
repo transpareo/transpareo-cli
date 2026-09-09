@@ -33,6 +33,8 @@ Start with:
 		a.guideCommand(),
 		a.doctorCommand(),
 		a.versionCommand(),
+		a.mcpCommand(),
+		a.setupCommand(),
 	)
 	a.addGeneratedCommands(root)
 	return root
