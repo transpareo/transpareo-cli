@@ -46,15 +46,25 @@ transpareo auth login --host acme.example.com --client-id <key>
 transpareo me
 ```
 
-`me` answers what the credential allows. Then anything the API
-does is one call away:
+`me` answers what the credential allows. Every operation of the
+API is a command, `transpareo <group> <verb>`, generated from the
+API specification the binary carries:
 
 ```
-transpareo api GET /products --query per_page=5
-transpareo api GET /dpps/requirements --query productId=<id> --query granularity=serial
-transpareo api POST /dpps/validate --body @passport.json
+transpareo products list --per-page 5
+transpareo dpps requirements --product-id <id> --granularity serial
+transpareo dpps validate --file passport.json
+transpareo dpps create --file passport.json
+transpareo dpps publish <code>
 ```
 
+Path parameters are positional, query parameters are options, and
+a request body comes from `--file <path>` (`-` for standard input)
+or, for flat bodies, from `--set key=value`. The full list is in
+[docs/cli.md](docs/cli.md); `--help` on any command shows an
+example and the permission key it needs.
+
+`transpareo api <METHOD> <path>` reaches any endpoint by hand.
 `transpareo commands --json` lists every command and every API
 operation; `transpareo schema create_dpp` prints the request
 schema and an example of one operation; `transpareo guide` prints
@@ -75,6 +85,9 @@ the workspace's API guide; `transpareo doctor` checks the setup.
 - `--read-only` refuses every operation that changes data and
   keeps the validations available, for a profile handed to an
   assistant. Operations that cannot be undone need `--yes`.
+- `--wait` on every command that starts background work polls
+  the `statusUrl` it answers, with progress on stderr and the
+  final document on stdout.
 
 ## Credentials
 
@@ -112,6 +125,14 @@ follows `Retry-After` on a rate limit. Lists are read with
 `transpareo.List` and `transpareo.ListAll`, background work with
 `client.WaitForTask`. `transpareo.FromProfile("acme")` reuses a
 stored login.
+
+`client.API()` returns the typed call per operation, generated
+from the specification into `pkg/transpareo/api` and sent through
+the same transport:
+
+```go
+resp, err := client.API().ListDppsWithResponse(ctx, &api.ListDppsParams{})
+```
 
 ## Privacy
 

@@ -47,14 +47,27 @@ go generate ./...
 Generated code is committed. The `test` workflow regenerates it on every
 pull request and fails when the committed files are stale, so run
 `go generate ./...` after changing anything it depends on and commit the
-result together with your change.
+result together with your change. It produces:
+
+- `pkg/transpareo/api/api.gen.go`, the types and typed calls, with
+  oapi-codegen (a Go tool dependency, no separate install)
+- `internal/registry/registry.gen.go`, the operation table
+- `surface.json`, the snapshot of the command tree; a removed or
+  renamed command fails the pull request unless it carries the
+  `major` label
+- `docs/cli.md`, the command reference
+
+The command tree itself is built at start from the registry; see
+`internal/cli/naming.go` for how an operation id becomes command
+words.
 
 ## The specification
 
 The OpenAPI document is vendored in `spec/openapi.json` and embedded into
 the binary. It is not edited by hand: the `nightly` workflow downloads the
-live document, neutralises the tenant-specific fields, and fails when the
-result differs from the vendored file. The API itself lives in the
+live document, neutralises the tenant-specific fields, and when the
+result differs from the vendored file opens a pull request that vendors
+it, regenerates the code and reports the test result. The API itself lives in the
 Transpareo platform and is not changed from this repository; if you need
 an API change, open an issue that describes it and it will be routed to
 the platform team.
