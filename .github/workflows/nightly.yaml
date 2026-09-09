@@ -1,16 +1,17 @@
 # Nightly drift checks against the vendored specification and the
-# command surface.
+# command surface, plus the end-to-end run.
 #
 # The spec job downloads the live OpenAPI document from the test host
 # named by the TRANSPAREO_TEST_HOST secret, replaces the fields that
 # carry tenant-specific values with the neutral values used in
-# spec/openapi.json, and fails when the result differs from the vendored
-# file. Opening a pull request that regenerates the client from the new
-# document is not part of this workflow yet; today the failing job is
-# the signal to update spec/openapi.json and run `go generate ./...`.
+# spec/openapi.json, and compares. On a difference it vendors the new
+# document, regenerates the code, runs the tests and opens a pull
+# request with the result, so the maintainer reviews a diff instead of
+# doing the update by hand. The repository setting "Allow GitHub
+# Actions to create and approve pull requests" must be on.
 #
 # The surface job renders the command tree with `commands --json` and
-# compares it with surface.json when that snapshot exists.
+# compares it with surface.json.
 name: nightly
 
 on:
@@ -25,6 +26,9 @@ jobs:
   spec:
     name: specification drift
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - name: Check out the repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -83,15 +87,74 @@ jobs:
           PY
 
       - name: Compare with the vendored specification
+        id: compare
         if: steps.fetch.outputs.available == 'true'
         run: |
           if diff -u spec/openapi.json "$RUNNER_TEMP/live-normalised.json"; then
             echo "spec/openapi.json matches the live specification."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
           else
-            echo "spec/openapi.json differs from the live specification." \
-              "Update the vendored file and run go generate ./..."
-            exit 1
+            echo "spec/openapi.json differs from the live specification."
+            cp "$RUNNER_TEMP/live-normalised.json" spec/openapi.json
+            version=$(python3 -c \
+              'import json,sys; print(json.load(open(sys.argv[1]))["info"]["version"])' \
+              spec/openapi.json)
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "version=${version}" >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Set up Go
+        if: steps.compare.outputs.changed == 'true'
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version: "1.27.x"
+          cache: true
+
+      # The tests may fail on a new specification, for example when a
+      # new operation is not yet classified for the MCP server. The
+      # result goes into the pull request body either way.
+      - name: Regenerate and test
+        id: regenerate
+        if: steps.compare.outputs.changed == 'true'
+        run: |
+          set -o pipefail
+          go generate ./...
+          if go test ./... 2>&1 | tee "$RUNNER_TEMP/test.log"; then
+            echo "result=passed" >> "$GITHUB_OUTPUT"
+          else
+            echo "result=failed" >> "$GITHUB_OUTPUT"
+          fi
+          {
+            echo "tests<<EOF"
+            tail -n 40 "$RUNNER_TEMP/test.log"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Open a pull request
+        if: steps.compare.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
+        with:
+          branch: spec/vendor-${{ steps.compare.outputs.version }}
+          title: "Vendor specification ${{ steps.compare.outputs.version }}"
+          commit-message: |
+            Vendor specification ${{ steps.compare.outputs.version }}
+
+            - spec/openapi.json fetched from the test tenant and
+              neutralised
+            - generated code, surface.json and docs/cli.md refreshed
+          body: |
+            The live specification differs from the vendored one. This
+            pull request vendors version ${{ steps.compare.outputs.version }},
+            regenerates the code, the surface snapshot and the command
+            reference.
+
+            Tests after regeneration: **${{ steps.regenerate.outputs.result }}**
+
+            ```
+            ${{ steps.regenerate.outputs.tests }}
+            ```
+          labels: specification
+          delete-branch: true
 
   surface:
     name: command surface drift

@@ -74,6 +74,41 @@ jobs:
           go install golang.org/x/vuln/cmd/govulncheck@latest
           govulncheck ./...
 
+      # A command that exists in the base branch's surface.json must
+      # still exist: removing or renaming one breaks scripts and needs
+      # a major version, which the "major" label on the pull request
+      # declares.
+      - name: Check the command surface against the base branch
+        if: runner.os == 'Linux' && github.event_name == 'pull_request'
+        run: |
+          git fetch --no-tags --depth=1 origin "${{ github.base_ref }}"
+          if ! git show "origin/${{ github.base_ref }}:surface.json" \
+              > "$RUNNER_TEMP/base-surface.json" 2>/dev/null; then
+            echo "No surface.json in the base branch; nothing to compare."
+            exit 0
+          fi
+          removed=$(python3 - "$RUNNER_TEMP/base-surface.json" surface.json <<'PY'
+          import json, sys
+          base = {c["path"] for c in json.load(open(sys.argv[1]))}
+          head = {c["path"] for c in json.load(open(sys.argv[2]))}
+          print("\n".join(sorted(base - head)))
+          PY
+          )
+          if [ -z "$removed" ]; then
+            echo "No command was removed."
+            exit 0
+          fi
+          echo "Commands removed or renamed:"
+          echo "$removed"
+          if echo '${{ toJSON(github.event.pull_request.labels.*.name) }}' \
+              | grep -q '"major"'; then
+            echo "The pull request carries the major label; allowed."
+            exit 0
+          fi
+          echo "Removing a command needs a major version: add the" \
+            "major label to the pull request."
+          exit 1
+
       # Generated code is committed. Regenerating must not change any
       # tracked file and must not leave new untracked files behind.
       - name: Check that generated code is current
