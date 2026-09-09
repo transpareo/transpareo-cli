@@ -3,6 +3,8 @@
 // server's catalogue and the documentation all read from it.
 package registry
 
+//go:generate go run ./gen
+
 import (
 	"encoding/json"
 	"fmt"
@@ -29,8 +31,9 @@ type Operation struct {
 	Summary     string `json:"summary,omitempty"`
 	Description string `json:"description,omitempty"`
 
-	PathParams  []Param `json:"pathParams,omitempty"`
-	QueryParams []Param `json:"queryParams,omitempty"`
+	PathParams   []Param `json:"pathParams,omitempty"`
+	QueryParams  []Param `json:"queryParams,omitempty"`
+	HeaderParams []Param `json:"headerParams,omitempty"`
 
 	// RequestBody is the JSON Schema of the body with every
 	// reference resolved; RequestContentType is its media type.
@@ -50,10 +53,12 @@ type Operation struct {
 
 	// Destructive marks an operation that cannot be undone; Safe
 	// marks a POST that changes nothing; NDJSON marks a response
-	// of one JSON object per line.
+	// of one JSON object per line; Task marks an operation whose
+	// answer can carry a statusUrl to poll.
 	Destructive bool `json:"destructive,omitempty"`
 	Safe        bool `json:"safe,omitempty"`
 	NDJSON      bool `json:"ndjson,omitempty"`
+	Task        bool `json:"task,omitempty"`
 
 	// Security lists the schemes that can authenticate the call;
 	// Public is set when the call needs none. UserOnly is set
@@ -74,6 +79,22 @@ type Registry struct {
 	Version    string      `json:"version"`
 	Operations []Operation `json:"operations"`
 	byID       map[string]*Operation
+}
+
+// Default returns the registry generated from the embedded
+// specification.
+func Default() *Registry {
+	reg := &Registry{Version: generatedVersion,
+		Operations: generatedOperations}
+	reg.index()
+	return reg
+}
+
+func (r *Registry) index() {
+	r.byID = make(map[string]*Operation, len(r.Operations))
+	for i := range r.Operations {
+		r.byID[r.Operations[i].ID] = &r.Operations[i]
+	}
 }
 
 // Find returns the operation with the id, or nil.
@@ -105,7 +126,7 @@ func Load(doc []byte) (*Registry, error) {
 	}
 	res := &resolver{root: root}
 	info, _ := root["info"].(map[string]any)
-	reg := &Registry{Version: str(info["version"]), byID: map[string]*Operation{}}
+	reg := &Registry{Version: str(info["version"])}
 	paths, _ := root["paths"].(map[string]any)
 	pathKeys := make([]string, 0, len(paths))
 	for path := range paths {
@@ -128,13 +149,15 @@ func Load(doc []byte) (*Registry, error) {
 			reg.Operations = append(reg.Operations, *op)
 		}
 	}
-	for i := range reg.Operations {
-		op := &reg.Operations[i]
-		if _, dup := reg.byID[op.ID]; dup {
-			return nil, fmt.Errorf("registry: operationId %q appears twice", op.ID)
+	seen := map[string]bool{}
+	for _, op := range reg.Operations {
+		if seen[op.ID] {
+			return nil, fmt.Errorf("registry: operationId %q appears twice",
+				op.ID)
 		}
-		reg.byID[op.ID] = op
+		seen[op.ID] = true
 	}
+	reg.index()
 	return reg, nil
 }
 
@@ -176,6 +199,10 @@ func (r *resolver) operation(method, path string, raw map[string]any,
 			op.PathParams = append(op.PathParams, param)
 		case "query":
 			op.QueryParams = append(op.QueryParams, param)
+		case "header":
+			if param.Name != "Idempotency-Key" {
+				op.HeaderParams = append(op.HeaderParams, param)
+			}
 		}
 	}
 	if err := r.requestBody(op, raw["requestBody"]); err != nil {
@@ -257,6 +284,12 @@ func (r *resolver) response(op *Operation, v any) error {
 			return err
 		}
 		resp, _ := resolved.(map[string]any)
+		if r.answersTask(resp) {
+			op.Task = true
+		}
+		if op.ResponseStatus != "" {
+			continue
+		}
 		op.ResponseStatus = code
 		contentType, media := firstMedia(resp["content"])
 		if media == nil {
@@ -271,9 +304,22 @@ func (r *resolver) response(op *Operation, v any) error {
 			op.ResponseSchema = marshal(schema)
 		}
 		op.ResponseExample = example(media, schema)
-		return nil
 	}
 	return nil
+}
+
+// answersTask reports whether a success response's JSON schema
+// carries a statusUrl property.
+func (r *resolver) answersTask(resp map[string]any) bool {
+	_, media := firstMedia(resp["content"])
+	if media == nil {
+		return false
+	}
+	schema, err := r.resolve(media["schema"], nil)
+	if err != nil {
+		return false
+	}
+	return strings.Contains(string(marshal(schema)), `"statusUrl"`)
 }
 
 // deref follows a $ref at the top of v only, for request bodies
@@ -338,7 +384,8 @@ func (r *resolver) lookup(ref string) (any, error) {
 	}
 	var node any = r.root
 	for _, part := range strings.Split(ref[2:], "/") {
-		part = strings.ReplaceAll(strings.ReplaceAll(part, "~1", "/"), "~0", "~")
+		part = strings.ReplaceAll(strings.ReplaceAll(part, "~1", "/"), "~0",
+			"~")
 		m, ok := node.(map[string]any)
 		if !ok {
 			return nil, fmt.Errorf("dangling reference %q", ref)

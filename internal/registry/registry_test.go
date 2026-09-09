@@ -192,6 +192,20 @@ func TestLoadVendoredSpecification(t *testing.T) {
 		!reg.Find("logout_session").UserOnly {
 		t.Error("logout_session must be user only")
 	}
+	bulk := reg.Find("bulk_create_dpps")
+	if len(bulk.HeaderParams) != 1 || bulk.HeaderParams[0].Name != "Prefer" {
+		t.Errorf("header params = %+v", bulk.HeaderParams)
+	}
+	if len(reg.Find("create_grant").HeaderParams) != 0 {
+		t.Error("Idempotency-Key must not be listed as a header parameter")
+	}
+	for id, want := range map[string]bool{"bulk_create_dpps": true,
+		"create_export": true, "get_import": true, "validate_import": true,
+		"list_dpps": false, "create_dpp": false} {
+		if reg.Find(id).Task != want {
+			t.Errorf("%s: task %v, want %v", id, reg.Find(id).Task, want)
+		}
+	}
 	if !reg.Find("void_dpp").Destructive || !reg.Find("validate_dpp").Safe {
 		t.Error("extensions not read from the vendored specification")
 	}
@@ -237,5 +251,32 @@ func TestMatch(t *testing.T) {
 		if got != tc.want {
 			t.Errorf("%s %s: got %q, want %q", tc.method, tc.path, got, tc.want)
 		}
+	}
+}
+
+func TestGeneratedRegistryMatchesTheSpecification(t *testing.T) {
+	loaded, err := Load(spec.JSON)
+	if err != nil {
+		t.Fatal(err)
+	}
+	generated := Default()
+	if generated.Version != loaded.Version {
+		t.Fatalf("generated version %q, loaded %q; run go generate ./...",
+			generated.Version, loaded.Version)
+	}
+	if len(generated.Operations) != len(loaded.Operations) {
+		t.Fatalf("generated %d operations, loaded %d; run go generate ./...",
+			len(generated.Operations), len(loaded.Operations))
+	}
+	for i, op := range loaded.Operations {
+		want, _ := json.Marshal(op)
+		got, _ := json.Marshal(generated.Operations[i])
+		if string(want) != string(got) {
+			t.Errorf("%s differs from the specification; run go generate ./...",
+				op.ID)
+		}
+	}
+	if generated.Find("get_me") == nil {
+		t.Error("the generated registry has no index")
 	}
 }
