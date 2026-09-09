@@ -139,9 +139,11 @@ func TestRateLimitHeaders(t *testing.T) {
 	}
 }
 
+// brand takes the id as a number because the platform answers
+// integer ids for brands.
 type brand struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
+	ID   json.Number `json:"id"`
+	Name string      `json:"name"`
 }
 
 // createBrand posts one brand and registers its deletion.
@@ -160,8 +162,8 @@ func createBrand(t *testing.T, c *transpareo.Client, name,
 		t.Fatalf("create brand %q answered no id: %s", name, resp.Body)
 	}
 	t.Cleanup(func() {
-		_, err := c.Delete(context.Background(), "/brands/"+out.ID, nil)
-		if err != nil {
+		path := "/brands/" + out.ID.String()
+		if _, err := c.Delete(context.Background(), path, nil); err != nil {
 			t.Errorf("delete brand %s: %v", out.ID, err)
 		}
 	})

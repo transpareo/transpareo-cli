@@ -2,6 +2,7 @@ package transpareo
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -33,7 +34,7 @@ func servePages(ts *tokenServer, total, perPage int) {
 				fmt.Sprintf(`<%s/api/dpps?page=%d&per_page=%d>; rel="next"`,
 					ts.URL, page+1, perPage))
 		}
-		writeJSON(w, 200, items)
+		writeJSON(w, 200, map[string]any{"dpps": items, "total": total})
 	})
 }
 
@@ -123,5 +124,59 @@ func TestNextLink(t *testing.T) {
 	h.Set("Link", `<https://x/a>; rel="prev", <https://x/b>; rel=next`)
 	if nextLink(h) != "https://x/b" {
 		t.Errorf("got %q", nextLink(h))
+	}
+}
+
+func TestListAcceptsBareArraysAndEmptyBodies(t *testing.T) {
+	ts := newTokenServer(t)
+	ts.Mux.HandleFunc("/api/bare", func(w http.ResponseWriter, r *http.Request) {
+		writeJSON(w, 200, []item{{ID: "a"}})
+	})
+	ts.Mux.HandleFunc("/api/empty", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(204)
+	})
+	ts.Mux.HandleFunc("/api/nolist", func(w http.ResponseWriter, r *http.Request) {
+		writeJSON(w, 200, map[string]any{"total": 3})
+	})
+	ts.Mux.HandleFunc("/api/scalar", func(w http.ResponseWriter, r *http.Request) {
+		writeJSON(w, 200, "x")
+	})
+	c := newTestClient(t, ts, newFakeClock())
+	ctx := context.Background()
+	page, err := List[item](ctx, c, "/bare", nil)
+	if err != nil || len(page.Items) != 1 || page.Items[0].ID != "a" {
+		t.Errorf("bare: %+v %v", page, err)
+	}
+	page, err = List[item](ctx, c, "/empty", nil)
+	if err != nil || len(page.Items) != 0 {
+		t.Errorf("empty: %+v %v", page, err)
+	}
+	_, err = List[item](ctx, c, "/nolist", nil)
+	if !IsCode(err, CodeInvalidResponse) {
+		t.Errorf("no list: %v", err)
+	}
+	_, err = List[item](ctx, c, "/scalar", nil)
+	if !IsCode(err, CodeInvalidResponse) {
+		t.Errorf("scalar: %v", err)
+	}
+}
+
+func TestListKeepsTheWholeBody(t *testing.T) {
+	ts := newTokenServer(t)
+	ts.Mux.HandleFunc("/api/events", func(w http.ResponseWriter, r *http.Request) {
+		writeJSON(w, 200, map[string]any{"events": []item{{ID: "e1"}},
+			"nextCursor": "abc"})
+	})
+	c := newTestClient(t, ts, newFakeClock())
+	page, err := List[item](context.Background(), c, "/events", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var extra struct {
+		NextCursor string `json:"nextCursor"`
+	}
+	json.Unmarshal(page.Body, &extra)
+	if extra.NextCursor != "abc" || page.Items[0].ID != "e1" {
+		t.Errorf("page = %+v extra %+v", page, extra)
 	}
 }
