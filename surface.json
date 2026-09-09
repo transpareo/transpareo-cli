@@ -407,11 +407,26 @@
     "operationId": "list_events"
   },
   {
-    "path": "transpareo exports create",
+    "path": "transpareo events tail",
+    "args": "[--since <cursor>] [--follow]",
     "flags": [
-      "file",
-      "output",
-      "set",
+      "dpp-code",
+      "follow",
+      "interval",
+      "limit",
+      "since",
+      "types"
+    ],
+    "operationId": "list_events"
+  },
+  {
+    "path": "transpareo exports create",
+    "args": "[--format jsonld|csv|xlsx|sql] [--wait] [--download <path>]",
+    "flags": [
+      "download",
+      "format",
+      "include-media",
+      "normalize",
       "wait"
     ],
     "operationId": "create_export"
@@ -490,10 +505,11 @@
     "path": "transpareo imports map",
     "args": "<id>",
     "flags": [
-      "file",
-      "output",
-      "set",
-      "wait"
+      "accept-suggestions",
+      "map",
+      "mappings",
+      "published",
+      "skip-backup"
     ],
     "operationId": "map_import"
   },
@@ -507,6 +523,22 @@
       "wait"
     ],
     "operationId": "revert_import"
+  },
+  {
+    "path": "transpareo imports run",
+    "args": "--file <path> --type <components|products|dpps>",
+    "flags": [
+      "accept-suggestions",
+      "execute",
+      "file",
+      "map",
+      "mappings",
+      "published",
+      "skip-backup",
+      "type",
+      "value-separator"
+    ],
+    "operationId": "execute_import"
   },
   {
     "path": "transpareo imports supplier-form",
@@ -541,7 +573,8 @@
     "flags": [
       "file",
       "name",
-      "output"
+      "output",
+      "upload"
     ],
     "operationId": "create_mediafile"
   },
@@ -753,6 +786,14 @@
     "flags": [
       "no-mcp",
       "no-skill"
+    ]
+  },
+  {
+    "path": "transpareo upgrade",
+    "args": "[--version <x.y.z>] [--check]",
+    "flags": [
+      "check",
+      "version"
     ]
   },
   {

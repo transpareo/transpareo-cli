@@ -267,7 +267,8 @@ func TestListFollowsLinkHeader(t *testing.T) {
 			page.PerPage, page.NextURL)
 	}
 	seen := 0
-	for w, err := range transpareo.ListAll[webhook](ctx, c, "/webhooks", query) {
+	for w, err := range transpareo.ListAll[webhook](ctx, c, "/webhooks",
+		query) {
 		if err != nil {
 			t.Fatal(err)
 		}

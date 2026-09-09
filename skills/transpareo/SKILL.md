@@ -165,7 +165,8 @@ any of them shows an example and the permission it needs;
 - `transpareo dpps versions list <id>`: List the registered versions of a DPP (dpp_read)
 - `transpareo dpps void <id>`: Void a DPP (dpp_lifecycle)
 - `transpareo events list`: Poll the feed of passport events (dpp_history)
-- `transpareo exports create`: Start a passport export (export_access)
+- `transpareo events tail [--since <cursor>] [--follow]`: Read the workspace's passport events, optionally as a live stream (dpp_history)
+- `transpareo exports create [--format jsonld|csv|xlsx|sql] [--wait] [--download <path>]`: Start a passport export, wait for it and download the archive (export_access)
 - `transpareo exports download <id>`: Download an export archive (export_access)
 - `transpareo exports get <id>`: Poll an export (export_access)
 - `transpareo grants create`: Issue a passport-scoped partner grant (dpp_events or dpp_history or dpp_dynamic)
@@ -174,8 +175,9 @@ any of them shows an example and the permission it needs;
 - `transpareo imports example`: Download the example spreadsheet (import_access)
 - `transpareo imports execute <id>`: Execute an import (import_access)
 - `transpareo imports get <id>`: Poll an import (import_access)
-- `transpareo imports map <id>`: Map the columns of an import (import_access)
+- `transpareo imports map <id>`: Send the column mapping of a fresh import (import_access)
 - `transpareo imports revert <id>`: Revert an import (import_access)
+- `transpareo imports run --file <path> --type <components|products|dpps>`: Upload, map, validate and, with --execute, run an import (import_access)
 - `transpareo imports supplier-form`: Download the blank supplier form (import_access)
 - `transpareo imports validate <id>`: Validate an import (import_access)
 - `transpareo mcp [--tools <group,...>] [--read-only]`: Start the Model Context Protocol server over standard input and output
@@ -205,6 +207,7 @@ any of them shows an example and the permission it needs;
 - `transpareo schema <operationId>`: Print the request schema and example of an operation
 - `transpareo search catalogue`: Search products and components
 - `transpareo setup <assistant>`: Install the skill and register the MCP server for claude or codex
+- `transpareo upgrade [--version <x.y.z>] [--check]`: Replace this binary with a verified release from GitHub
 - `transpareo version`: Print the version of the binary and of its API specification
 - `transpareo webhooks create`: Create a webhook subscription (webhook_access)
 - `transpareo webhooks delete <id>`: Delete a webhook subscription (webhook_access)

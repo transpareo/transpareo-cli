@@ -148,6 +148,19 @@ transpareo setup codex
 - `--no-mcp`: install the skill only
 - `--no-skill`: register the MCP server only
 
+### `transpareo upgrade [--version <x.y.z>] [--check]`
+
+Replace this binary with a verified release from GitHub
+
+```
+transpareo upgrade
+transpareo upgrade --check
+transpareo upgrade --version 1.2.0
+```
+
+- `--check`: report the latest version without installing
+- `--version` `<string>`: install this version instead of the latest
+
 ### `transpareo version`
 
 Print the version of the binary and of its API specification
@@ -585,7 +598,7 @@ transpareo dpps requirements --product-id <productId>
 
 - `--granularity` `<string>`: Which unit the passport would stand for. Defaults to the tenant's setting, which the answer repeats as 'defaultGranularity'.
 - `--output` `<string>`: write the answer to this file instead of standard output
-- `--product-id` `<string>`: The product a passport would describe. The snake_case spelling 'product_id' is accepted as well.
+- `--product-id` `<int>`: The product a passport would describe. The snake_case spelling 'product_id' is accepted as well.
 
 Operation `get_dpp_requirements`, `GET /dpps/requirements`. Permission: `dpp_read`.
 
@@ -700,20 +713,41 @@ transpareo events list --since <since>
 
 Operation `list_events`, `GET /events`. Permission: `dpp_history`.
 
+### `transpareo events tail [--since <cursor>] [--follow]`
+
+Read the workspace's passport events, optionally as a live stream
+
+```
+transpareo events tail --since 2026-09-01T00:00:00Z
+transpareo events tail --follow --types published,voided
+```
+
+- `--dpp-code` `<string>`: confine the feed to one passport
+- `--follow`: keep polling and print new events as they arrive
+- `--interval` `<duration>`: wait between polls with --follow
+- `--limit` `<int>`: events per answer (default 100, max 500)
+- `--since` `<string>`: cursor of the previous answer, or an ISO 8601 time
+- `--types` `<string>`: event types to keep, comma separated
+
+Operation `list_events`, `GET /events`. Permission: `dpp_history`.
+
 ## Exports
 
-### `transpareo exports create`
+### `transpareo exports create [--format jsonld|csv|xlsx|sql] [--wait] [--download <path>]`
 
-Start a passport export
+Start a passport export, wait for it and download the archive
 
 ```
-transpareo exports create --file body.json
+transpareo exports create --format jsonld --wait \
+    --download catalogue.tar.gz
+transpareo exports create --format csv --normalize
 ```
 
-- `--file` `<string>`: request body from a file, or - for standard input
-- `--output` `<string>`: write the answer to this file instead of standard output
-- `--set` `<stringArray>`: body field as key=value, nested with dots (repeatable)
-- `--wait`: poll the statusUrl until the work is done
+- `--download` `<string>`: write the finished archive to this path
+- `--format` `<string>`: jsonld (default), csv, xlsx or sql
+- `--include-media`: copy media files into the archive
+- `--normalize`: resolve references into the rows
+- `--wait`: poll until the export is done
 
 Operation `create_export`, `POST /exports`. Permission: `export_access`.
 
@@ -821,16 +855,21 @@ Operation `get_import`, `GET /imports/{id}`. Permission: `import_access`.
 
 ### `transpareo imports map <id>`
 
-Map the columns of an import
+Send the column mapping of a fresh import
 
 ```
-transpareo imports map <id> --file body.json
+transpareo imports map 12 --mappings mapping.json
+transpareo imports map 12 --map "Artikelname=name" \
+    --map "Gewicht=property:Weight" --map "Farbe=new:Colour" \
+    --map "Intern=skip"
+transpareo imports map 12 --accept-suggestions
 ```
 
-- `--file` `<string>`: request body from a file, or - for standard input
-- `--output` `<string>`: write the answer to this file instead of standard output
-- `--set` `<stringArray>`: body field as key=value, nested with dots (repeatable)
-- `--wait`: poll the statusUrl until the work is done
+- `--accept-suggestions`: take every exact match of the preview
+- `--map` `<stringArray>`: Column=target (repeatable)
+- `--mappings` `<string>`: mapping file (ImportMappingsInput)
+- `--published`: publish the records the import creates
+- `--skip-backup`: execute without the backup a revert needs
 
 Operation `map_import`, `PUT /imports/{id}/mappings`. Permission: `import_access`.
 
@@ -848,6 +887,28 @@ transpareo imports revert <id> --file body.json --yes
 - `--wait`: poll the statusUrl until the work is done
 
 Operation `revert_import`, `POST /imports/{id}/revert`. Permission: `import_access`. Cannot be undone; needs `--yes`.
+
+### `transpareo imports run --file <path> --type <components|products|dpps>`
+
+Upload, map, validate and, with --execute, run an import
+
+```
+transpareo imports run --file catalogue.xlsx --type products
+transpareo imports run --file catalogue.xlsx --type products \
+    --accept-suggestions --map "Farbe=new:Colour" --execute
+```
+
+- `--accept-suggestions`: take every exact match of the preview
+- `--execute`: write the records when the validation passes
+- `--file` `<string>`: the spreadsheet or JSON file to import
+- `--map` `<stringArray>`: Column=target (repeatable)
+- `--mappings` `<string>`: mapping file (ImportMappingsInput)
+- `--published`: publish the records the import creates
+- `--skip-backup`: execute without the backup a revert needs
+- `--type` `<string>`: components, products or dpps
+- `--value-separator` `<string>`: what separates several values in a cell
+
+Operation `execute_import`, `POST /imports/{id}/execute`. Permission: `import_access`.
 
 ### `transpareo imports supplier-form`
 
@@ -883,12 +944,13 @@ Operation `validate_import`, `POST /imports/{id}/validate`. Permission: `import_
 Upload a mediafile
 
 ```
-transpareo mediafiles create --file <path>
+transpareo mediafiles create --file <path> --upload <path>
 ```
 
 - `--file` `<string>`: path of the file to upload; Image file to upload
 - `--name` `<string>`: Optional display name
 - `--output` `<string>`: write the answer to this file instead of standard output
+- `--upload` `<string>`: path of the file to upload; The same file under the name the model uses; send either this or 'mediafile[file]'
 
 Operation `create_mediafile`, `POST /mediafiles`. Any consumer token.
 
@@ -1010,7 +1072,7 @@ List products
 transpareo products list --page <page>
 ```
 
-- `--brand-id` `<string>`: Filter by brand ID
+- `--brand-id` `<int>`: Filter by brand ID
 - `--category-ids` `<string>`: Filter by category IDs (comma-separated). Includes all child categories.
 - `--exact`: When true with 'term', match exact product name
 - `--function-ids` `<string>`: Filter by component function IDs (comma-separated)

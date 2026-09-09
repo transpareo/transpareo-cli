@@ -24,6 +24,13 @@ scoop bucket add transpareo https://github.com/transpareo/scoop-bucket
 scoop install transpareo
 ```
 
+With the installer script, which detects the platform, verifies
+the checksum and installs into `~/.local/bin` or `/usr/local/bin`:
+
+```
+curl -fsSL https://transpareo.com/install.sh | sh
+```
+
 From source, with Go:
 
 ```
@@ -33,6 +40,11 @@ go install github.com/transpareo/transpareo-cli/cmd/transpareo@latest
 Every release carries a checksum file signed with Sigstore, a
 software bill of materials per archive and a SLSA provenance
 statement. `SECURITY.md` says how to verify a download.
+`transpareo upgrade` replaces the binary with the latest release
+after verifying the signature against the release workflow's
+identity and the embedded Sigstore trusted root, and the
+archive's checksum; nothing is installed when either check
+fails.
 
 ## First five minutes
 
@@ -63,6 +75,20 @@ a request body comes from `--file <path>` (`-` for standard input)
 or, for flat bodies, from `--set key=value`. The full list is in
 [docs/cli.md](docs/cli.md); `--help` on any command shows an
 example and the permission key it needs.
+
+A few commands span several calls:
+
+```
+transpareo imports run --file catalogue.xlsx --type products --accept-suggestions
+transpareo imports map 12 --map "Farbe=new:Colour" --map "Intern=skip"
+transpareo exports create --format jsonld --wait --download catalogue.tar.gz
+transpareo events tail --follow
+```
+
+`imports run` uploads, maps, validates and, with `--execute` after
+a clean validation, writes; it stops with exit code 5 and the
+unresolved columns when a mapping is needed, and with 3 when the
+validation found failing rows.
 
 `transpareo api <METHOD> <path>` reaches any endpoint by hand.
 `transpareo commands --json` lists every command and every API
@@ -158,7 +184,9 @@ resp, err := client.API().ListDppsWithResponse(ctx, &api.ListDppsParams{})
 ## Privacy
 
 The tool sends no telemetry, checks for no updates, and makes no
-network call other than to the configured workspace host.
+network call other than to the configured workspace host. The one
+exception is the release download that an explicit
+`transpareo upgrade` fetches from GitHub.
 
 ## Licence
 
