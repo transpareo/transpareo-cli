@@ -1,0 +1,96 @@
+{
+  "openapi": "3.0.3",
+  "info": {"title": "Fixture", "version": "9.9.9"},
+  "security": [{"oauth2": []}],
+  "components": {
+    "parameters": {
+      "id": {"name": "id", "in": "path", "required": true,
+             "schema": {"type": "string"}, "description": "Record ID"},
+      "page": {"name": "page", "in": "query", "schema": {"type": "integer"}}
+    },
+    "responses": {
+      "NotFound": {"description": "Not found",
+        "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Error"}}}}
+    },
+    "schemas": {
+      "Error": {"type": "object", "properties": {"error": {"type": "string"}}},
+      "Thing": {"type": "object",
+        "properties": {
+          "id": {"type": "string"},
+          "parent": {"$ref": "#/components/schemas/Thing"},
+          "tags": {"type": "array", "items": {"$ref": "#/components/schemas/Tag"}}
+        },
+        "example": {"id": "t1"}},
+      "Tag": {"type": "string"},
+      "ThingInput": {"allOf": [
+        {"$ref": "#/components/schemas/Thing"},
+        {"type": "object", "properties": {"note": {"type": "string"}}}
+      ]}
+    }
+  },
+  "paths": {
+    "/things": {
+      "parameters": [{"$ref": "#/components/parameters/page"}],
+      "get": {
+        "tags": ["Reference Data"], "operationId": "list_things",
+        "summary": "List things",
+        "parameters": [{"name": "q", "in": "query", "schema": {"type": "string"}}],
+        "security": [{}, {"oauth2": []}, {"userToken": []}],
+        "x-permission": [],
+        "responses": {"200": {"description": "ok",
+          "content": {"application/json": {"schema": {"type": "array",
+            "items": {"$ref": "#/components/schemas/Thing"}}}}}}
+      },
+      "post": {
+        "tags": ["Things"], "operationId": "create_thing",
+        "x-permission": "thing_write",
+        "requestBody": {"required": true, "content": {"application/json": {
+          "schema": {"$ref": "#/components/schemas/ThingInput"},
+          "example": {"id": "new", "note": "hi"}}}},
+        "responses": {
+          "404": {"$ref": "#/components/responses/NotFound"},
+          "201": {"description": "created", "content": {"application/json": {
+            "schema": {"$ref": "#/components/schemas/Thing"}}}}
+        }
+      }
+    },
+    "/things/{id}": {
+      "delete": {
+        "tags": ["Things"], "operationId": "delete_thing",
+        "parameters": [{"$ref": "#/components/parameters/id"}],
+        "x-permission": ["thing_access", "thing_write"], "x-destructive": true,
+        "security": [{"userToken": []}, {"oauth2": []}],
+        "responses": {"204": {"description": "gone"}}
+      }
+    },
+    "/things/validate": {
+      "post": {
+        "tags": ["Things"], "operationId": "validate_thing", "x-safe": true,
+        "requestBody": {"content": {"application/json": {
+          "schema": {"type": "object"},
+          "examples": {"b": {"value": {"b": 1}}, "a": {"value": {"a": 1}}}}}},
+        "responses": {"200": {"description": "ok"}}
+      }
+    },
+    "/things/bulk": {
+      "post": {
+        "tags": ["Things"], "operationId": "bulk_create_things", "x-ndjson": true,
+        "responses": {"200": {"description": "lines", "content": {
+          "application/x-ndjson": {"schema": {"type": "array"}}}}}
+      }
+    },
+    "/session": {
+      "post": {
+        "tags": ["Session"], "operationId": "login_session", "security": [],
+        "requestBody": {"content": {"application/x-www-form-urlencoded": {
+          "schema": {"type": "object", "properties": {"login": {"type": "string"}}}}}},
+        "responses": {"200": {"description": "ok"}}
+      },
+      "delete": {
+        "tags": ["Session"], "operationId": "logout_session",
+        "security": [{"userToken": []}],
+        "responses": {"204": {"description": "gone"}}
+      }
+    }
+  }
+}
