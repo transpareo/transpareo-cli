@@ -1,0 +1,50 @@
+package cli
+
+import (
+	"github.com/spf13/cobra"
+
+	"github.com/transpareo/transpareo-cli/internal/upgrade"
+	"github.com/transpareo/transpareo-cli/internal/version"
+)
+
+func (a *App) upgradeCommand() *cobra.Command {
+	var pin string
+	var check bool
+	cmd := &cobra.Command{
+		Use:   "upgrade [--version <x.y.z>] [--check]",
+		Short: "Replace this binary with a verified release from GitHub",
+		Long: `Downloads the release for this platform from GitHub, verifies the
+Sigstore signature of its checksum file against the release
+workflow's identity and the embedded Sigstore trusted root,
+checks the archive's checksum, and replaces this binary. Nothing
+is installed when either check fails. This is the only network
+call the tool makes besides the workspace host.`,
+		Example: "  transpareo upgrade\n  transpareo upgrade --check\n" +
+			"  transpareo upgrade --version 1.2.0",
+		Args: cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			printer := a.Printer()
+			opts := upgrade.Options{Version: pin, Current: version.Version,
+				HTTP:     a.httpClient(),
+				Progress: func(s string) { printer.Message("%s", s) }}
+			if check {
+				release, err := upgrade.Check(cmd.Context(), opts)
+				if err != nil {
+					return err
+				}
+				return printer.Print(map[string]any{"current": version.Version,
+					"available": release.Version})
+			}
+			result, err := upgrade.Run(cmd.Context(), opts)
+			if err != nil {
+				return err
+			}
+			return printer.Print(result)
+		},
+	}
+	cmd.Flags().StringVar(&pin, "version", "",
+		"install this version instead of the latest")
+	cmd.Flags().BoolVar(&check, "check", false,
+		"report the latest version without installing")
+	return cmd
+}
