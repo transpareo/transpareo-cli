@@ -3687,10 +3687,10 @@ type ListProductsParams struct {
 
 // CreateProductJSONBody defines parameters for CreateProduct.
 type CreateProductJSONBody struct {
-	Brand *struct {
+	Brand struct {
 		// Name Brand name (finds or creates)
-		Name *string `json:"name,omitempty"`
-	} `json:"brand,omitempty"`
+		Name string `json:"name"`
+	} `json:"brand"`
 	Product ProductInput `json:"product"`
 }
 
@@ -5220,7 +5220,7 @@ type ClientInterface interface {
 
 	// CreateProductWithBody Create a product
 	//
-	// Creates a new product. The authenticated user or API consumer becomes the owner. A consumer needs `product_access`.
+	// Creates a new product. The authenticated user or API consumer becomes the owner. A product needs a brand, named alongside it (an existing brand of that name is used, a new one created and owned by the caller), and at least one component under componentsInput. A consumer needs `product_access`.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -5229,7 +5229,7 @@ type ClientInterface interface {
 
 	// CreateProduct Create a product
 	//
-	// Creates a new product. The authenticated user or API consumer becomes the owner. A consumer needs `product_access`.
+	// Creates a new product. The authenticated user or API consumer becomes the owner. A product needs a brand, named alongside it (an existing brand of that name is used, a new one created and owned by the caller), and at least one component under componentsInput. A consumer needs `product_access`.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -7630,7 +7630,7 @@ func (c *Client) ListProducts(ctx context.Context, params *ListProductsParams, r
 
 // CreateProductWithBody Create a product
 //
-// Creates a new product. The authenticated user or API consumer becomes the owner. A consumer needs `product_access`.
+// Creates a new product. The authenticated user or API consumer becomes the owner. A product needs a brand, named alongside it (an existing brand of that name is used, a new one created and owned by the caller), and at least one component under componentsInput. A consumer needs `product_access`.
 //
 // Takes any type of body and a specified content type.
 //
@@ -7649,7 +7649,7 @@ func (c *Client) CreateProductWithBody(ctx context.Context, params *CreateProduc
 
 // CreateProduct Create a product
 //
-// Creates a new product. The authenticated user or API consumer becomes the owner. A consumer needs `product_access`.
+// Creates a new product. The authenticated user or API consumer becomes the owner. A product needs a brand, named alongside it (an existing brand of that name is used, a new one created and owned by the caller), and at least one component under componentsInput. A consumer needs `product_access`.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -14806,7 +14806,7 @@ type ClientWithResponsesInterface interface {
 
 	// CreateProductWithBodyWithResponse Create a product
 	//
-	// Creates a new product. The authenticated user or API consumer becomes the owner. A consumer needs `product_access`.
+	// Creates a new product. The authenticated user or API consumer becomes the owner. A product needs a brand, named alongside it (an existing brand of that name is used, a new one created and owned by the caller), and at least one component under componentsInput. A consumer needs `product_access`.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -14815,7 +14815,7 @@ type ClientWithResponsesInterface interface {
 
 	// CreateProductWithResponse Create a product
 	//
-	// Creates a new product. The authenticated user or API consumer becomes the owner. A consumer needs `product_access`.
+	// Creates a new product. The authenticated user or API consumer becomes the owner. A product needs a brand, named alongside it (an existing brand of that name is used, a new one created and owned by the caller), and at least one component under componentsInput. A consumer needs `product_access`.
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -24289,7 +24289,7 @@ func (c *ClientWithResponses) ListProductsWithResponse(ctx context.Context, para
 
 // CreateProductWithBodyWithResponse Create a product
 //
-// Creates a new product. The authenticated user or API consumer becomes the owner. A consumer needs `product_access`.
+// Creates a new product. The authenticated user or API consumer becomes the owner. A product needs a brand, named alongside it (an existing brand of that name is used, a new one created and owned by the caller), and at least one component under componentsInput. A consumer needs `product_access`.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -24304,7 +24304,7 @@ func (c *ClientWithResponses) CreateProductWithBodyWithResponse(ctx context.Cont
 
 // CreateProductWithResponse Create a product
 //
-// Creates a new product. The authenticated user or API consumer becomes the owner. A consumer needs `product_access`.
+// Creates a new product. The authenticated user or API consumer becomes the owner. A product needs a brand, named alongside it (an existing brand of that name is used, a new one created and owned by the caller), and at least one component under componentsInput. A consumer needs `product_access`.
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //

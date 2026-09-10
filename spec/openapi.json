@@ -10264,7 +10264,7 @@
           "Products"
         ],
         "summary": "Create a product",
-        "description": "Creates a new product. The authenticated user or API consumer becomes the owner. A consumer needs `product_access`.",
+        "description": "Creates a new product. The authenticated user or API consumer becomes the owner. A product needs a brand, named alongside it (an existing brand of that name is used, a new one created and owned by the caller), and at least one component under componentsInput. A consumer needs `product_access`.",
         "operationId": "create_product",
         "x-permission": "product_access",
         "security": [
@@ -10287,7 +10287,8 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "product"
+                  "product",
+                  "brand"
                 ],
                 "properties": {
                   "product": {
@@ -10295,6 +10296,9 @@
                   },
                   "brand": {
                     "type": "object",
+                    "required": [
+                      "name"
+                    ],
                     "properties": {
                       "name": {
                         "type": "string",
