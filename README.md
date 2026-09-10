@@ -22,7 +22,7 @@ its API covers the whole life cycle of a passport, from the
 product's property types through validation, creation and
 publication to the events of a unit in the field. Battery
 passports become mandatory in the European Union in February 2027;
-other product groups follow.
+[other product groups follow](https://transpareo.com/en/industries).
 
 The newest programs are AI agents. Manufacturers have begun to
 hand the filling, checking and upkeep of compliance data to
@@ -45,10 +45,16 @@ safe and quick.
 ## Quick start
 
 ```
-brew install transpareo/tap/transpareo
+curl -fsSL https://transpareo.com/cli/install.sh | sh
 transpareo auth login --host acme.example.com --client-id <key>
 transpareo me
 ```
+
+The installer serves Linux and macOS. macOS also has the Homebrew
+tap [transpareo/homebrew-tap](https://github.com/transpareo/homebrew-tap),
+Windows the Scoop bucket
+[transpareo/scoop-bucket](https://github.com/transpareo/scoop-bucket);
+the packages and `go install` are listed under Install below.
 
 An API consumer is created in the application manager of the
 workspace, which shows its secret once. `auth login` reads the
@@ -125,7 +131,9 @@ as an assistant calls them:
 
 ## Install
 
-macOS, with Homebrew:
+macOS, with Homebrew, from the
+[transpareo/homebrew-tap](https://github.com/transpareo/homebrew-tap)
+repository:
 
 ```
 brew install transpareo/tap/transpareo
@@ -143,7 +151,9 @@ Linux packages: the deb, rpm and apk packages and the tar.gz
 archives are on the
 [releases page](https://github.com/transpareo/transpareo-cli/releases).
 
-Windows, with Scoop:
+Windows, with Scoop, from the
+[transpareo/scoop-bucket](https://github.com/transpareo/scoop-bucket)
+repository:
 
 ```
 scoop bucket add transpareo https://github.com/transpareo/scoop-bucket
