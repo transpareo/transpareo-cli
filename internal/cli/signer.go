@@ -2,19 +2,17 @@ package cli
 
 import (
 	"context"
-	"crypto/ed25519"
 	"errors"
 	"fmt"
-	"io"
 	"log/slog"
 	"net"
 	"net/http"
 	"os"
 	"path/filepath"
-	"strings"
 	"time"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 
 	"github.com/transpareo/transpareo-cli/internal/output"
 	"github.com/transpareo/transpareo-cli/pkg/transpareo/signer"
@@ -132,13 +130,20 @@ timestamp within five minutes, the nonce never seen before.
 
 --platform-key is the Ed25519 public key of the host that signs for
 the workspace, as a PEM file or a URL fetched at start; on a URL a
-rotation is picked up by fetching once more when a signature stops
-verifying. Without --tls-cert and --tls-key the endpoint speaks
-plain HTTP for a reverse proxy that terminates TLS. The platform
-needs an https URL that resolves to a public address either way.
+rotation of that key is followed.
+
+Without --tls-cert and --tls-key the endpoint speaks plain HTTP
+for a reverse proxy that terminates TLS. The platform needs an
+https URL that resolves to a public address either way.
 
 --dir is the directory keygen wrote the two key files to;
 --p256-key and --ed25519-key name them one by one instead.
+
+A setting not named on the command line is read from the
+environment: TRANSPAREO_PLATFORM_KEY, TRANSPAREO_SIGNER_HOST,
+TRANSPAREO_SIGNER_LISTEN and TRANSPAREO_SIGNER_DIR. That is how
+the systemd unit of the packages and the container image are
+configured.
 
 Behind a reverse proxy the Host header and the path must reach the
 endpoint as the platform signed them: the host of the registered
@@ -154,27 +159,51 @@ endpoint a real workspace registered.`,
 			"--listen :8443 --tls-cert cert.pem --tls-key key.pem",
 		Args: cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			a.serveEnvironment(cmd.Flags(), &opts)
 			return a.signerServe(cmd.Context(), opts)
 		},
 	}
 	f := cmd.Flags()
-	f.StringVar(&opts.dir, "dir", "",
-		"directory of the key files (default: signer under the config dir)")
+	f.StringVar(&opts.dir, "dir", "", "directory of the key files "+
+		"[TRANSPAREO_SIGNER_DIR] (default: signer under the config dir)")
 	f.StringVar(&opts.p256Key, "p256-key", "",
 		"P-256 private key PEM (default: p256.pem under the signer dir)")
 	f.StringVar(&opts.ed25519Key, "ed25519-key", "",
 		"Ed25519 private key PEM (default: ed25519.pem under the signer dir)")
-	f.StringVar(&opts.platformKey, "platform-key", "",
-		"the platform's request-signing public key: a PEM file or a URL")
+	f.StringVar(&opts.platformKey, "platform-key", "", "the platform's "+
+		"request-signing public key: a PEM file or a URL "+
+		"[TRANSPAREO_PLATFORM_KEY]")
 	f.StringVar(&opts.host, "host", "", "host name of the registered "+
-		"endpoint URL, when the proxy rewrites the Host header")
-	f.StringVar(&opts.listen, "listen", "127.0.0.1:8443", "address to listen on")
+		"endpoint URL, when the proxy rewrites the Host header "+
+		"[TRANSPAREO_SIGNER_HOST]")
+	f.StringVar(&opts.listen, "listen", "127.0.0.1:8443",
+		"address to listen on [TRANSPAREO_SIGNER_LISTEN]")
 	f.StringVar(&opts.path, "path", "/sign", "the one route served")
 	f.StringVar(&opts.tlsCert, "tls-cert", "", "TLS certificate PEM")
 	f.StringVar(&opts.tlsKey, "tls-key", "", "TLS private key PEM")
 	f.BoolVar(&opts.allowUnsigned, "allow-unsigned", false,
 		"accept requests without the platform signature (development only)")
 	return cmd
+}
+
+// serveEnvironment fills what the command line left out from
+// the environment, so a systemd unit and a container image need
+// no flags of their own. A named option always wins.
+func (a *App) serveEnvironment(flags *pflag.FlagSet, opts *serveOptions) {
+	for _, setting := range []struct {
+		name, flag string
+		value      *string
+	}{
+		{"TRANSPAREO_PLATFORM_KEY", "platform-key", &opts.platformKey},
+		{"TRANSPAREO_SIGNER_HOST", "host", &opts.host},
+		{"TRANSPAREO_SIGNER_LISTEN", "listen", &opts.listen},
+		{"TRANSPAREO_SIGNER_DIR", "dir", &opts.dir},
+	} {
+		if value := a.Getenv(setting.name); value != "" &&
+			!flags.Changed(setting.flag) {
+			*setting.value = value
+		}
+	}
 }
 
 type serveOptions struct {
@@ -184,10 +213,6 @@ type serveOptions struct {
 	tlsCert, tlsKey                  string
 	allowUnsigned                    bool
 }
-
-// platformKeyTimeout bounds a fetch of the platform's key, which
-// may run while a request waits.
-const platformKeyTimeout = 5 * time.Second
 
 // handlerTimeout bounds one request, inside the platform's
 // fifteen-second budget for the whole call.
@@ -281,67 +306,4 @@ func keyLoadError(err error) error {
 			"the file with --p256-key and --ed25519-key", err)
 	}
 	return err
-}
-
-// signerVerifier builds the verifier from the platform key, read
-// from a file or fetched from a URL; a URL also serves the
-// refetch on a rotation.
-func (a *App) signerVerifier(ctx context.Context,
-	opts serveOptions) (*signer.Verifier, error) {
-	var verifier *signer.Verifier
-	switch {
-	case opts.platformKey == "":
-		verifier = signer.NewVerifier(nil)
-	case strings.HasPrefix(opts.platformKey, "https://") ||
-		strings.HasPrefix(opts.platformKey, "http://"):
-		fetch := func() (ed25519.PublicKey, error) {
-			return a.fetchPlatformKey(ctx, opts.platformKey)
-		}
-		key, err := fetch()
-		if err != nil {
-			return nil, err
-		}
-		verifier = signer.NewVerifier(key)
-		verifier.Refetch = fetch
-	default:
-		data, err := os.ReadFile(opts.platformKey)
-		if err != nil {
-			return nil, err
-		}
-		key, err := signer.ParseEd25519PublicKey(data)
-		if err != nil {
-			return nil, fmt.Errorf("%s: %w", opts.platformKey, err)
-		}
-		verifier = signer.NewVerifier(key)
-	}
-	verifier.AllowUnsigned = opts.allowUnsigned
-	verifier.Host = opts.host
-	return verifier, nil
-}
-
-func (a *App) fetchPlatformKey(ctx context.Context,
-	url string) (ed25519.PublicKey, error) {
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
-	if err != nil {
-		return nil, err
-	}
-	client := &http.Client{Timeout: platformKeyTimeout}
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, fmt.Errorf("fetching the platform key: %w", err)
-	}
-	defer resp.Body.Close()
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("fetching the platform key: %s answered %d",
-			url, resp.StatusCode)
-	}
-	data, err := io.ReadAll(io.LimitReader(resp.Body, 16<<10))
-	if err != nil {
-		return nil, err
-	}
-	key, err := signer.ParseEd25519PublicKey(data)
-	if err != nil {
-		return nil, fmt.Errorf("%s: %w", url, err)
-	}
-	return key, nil
 }

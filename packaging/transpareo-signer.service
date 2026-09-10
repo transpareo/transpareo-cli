@@ -12,7 +12,7 @@ Group=transpareo-signer
 # of the account it runs as, which this account does not have.
 Environment=TRANSPAREO_CONFIG_DIR=/etc/transpareo
 EnvironmentFile=/etc/transpareo/signer.env
-ExecStart=/usr/bin/transpareo signer serve --dir /etc/transpareo/signer --platform-key ${TRANSPAREO_PLATFORM_KEY} --host ${TRANSPAREO_SIGNER_HOST} --listen ${TRANSPAREO_SIGNER_LISTEN}
+ExecStart=/usr/bin/transpareo signer serve --dir /etc/transpareo/signer
 Restart=on-failure
 RestartSec=5s
 NoNewPrivileges=true

@@ -216,13 +216,13 @@ transpareo signer serve --dir /etc/transpareo/signer --platform-key https://acme
 | Option | What it does |
 |---|---|
 | `--allow-unsigned` | accept requests without the platform signature (development only) |
-| `--dir` \<value\> | directory of the key files (default: signer under the config dir) |
+| `--dir` \<value\> | directory of the key files [TRANSPAREO_SIGNER_DIR] (default: signer under the config dir) |
 | `--ed25519-key` \<value\> | Ed25519 private key PEM (default: ed25519.pem under the signer dir) |
-| `--host` \<value\> | host name of the registered endpoint URL, when the proxy rewrites the Host header |
-| `--listen` \<value\> | address to listen on |
+| `--host` \<value\> | host name of the registered endpoint URL, when the proxy rewrites the Host header [TRANSPAREO_SIGNER_HOST] |
+| `--listen` \<value\> | address to listen on [TRANSPAREO_SIGNER_LISTEN] |
 | `--p256-key` \<value\> | P-256 private key PEM (default: p256.pem under the signer dir) |
 | `--path` \<value\> | the one route served |
-| `--platform-key` \<value\> | the platform's request-signing public key: a PEM file or a URL |
+| `--platform-key` \<value\> | the platform's request-signing public key: a PEM file or a URL [TRANSPAREO_PLATFORM_KEY] |
 | `--tls-cert` \<value\> | TLS certificate PEM |
 | `--tls-key` \<value\> | TLS private key PEM |
 

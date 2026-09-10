@@ -162,6 +162,45 @@ func TestSignerServeNeedsKeysAndAPlatformKey(t *testing.T) {
 	}
 }
 
+// TestSignerServeReadsTheEnvironment proves the settings the
+// systemd unit and the container image pass as environment
+// variables reach the endpoint, and that an option still wins.
+func TestSignerServeReadsTheEnvironment(t *testing.T) {
+	h := newHarness(t)
+	dir := t.TempDir()
+	h.env["TRANSPAREO_SIGNER_DIR"] = dir
+	h.env["TRANSPAREO_SIGNER_LISTEN"] = "127.0.0.1:0"
+	h.env["TRANSPAREO_SIGNER_HOST"] = "signer.example.com"
+
+	// The key files are looked for under the directory the
+	// environment names.
+	out, errOut, code := h.run("signer", "serve", "--allow-unsigned")
+	if code != 1 || !strings.Contains(out, filepath.Join(dir, "p256.pem")) {
+		t.Errorf("TRANSPAREO_SIGNER_DIR: %d %s%s", code, out, errOut)
+	}
+
+	// An option on the command line wins over the environment.
+	other := t.TempDir()
+	out, errOut, code = h.run("signer", "serve", "--allow-unsigned",
+		"--dir", other)
+	if code != 1 || !strings.Contains(out, filepath.Join(other, "p256.pem")) {
+		t.Errorf("--dir over the environment: %d %s%s", code, out, errOut)
+	}
+
+	// The platform key is a setting like the others, so an
+	// endpoint configured by the environment alone is complete.
+	delete(h.env, "TRANSPAREO_SIGNER_DIR")
+	out, errOut, code = h.run("signer", "serve")
+	if code != 2 || !strings.Contains(out, "--platform-key") {
+		t.Errorf("no platform key: %d %s%s", code, out, errOut)
+	}
+	h.env["TRANSPAREO_PLATFORM_KEY"] = filepath.Join(dir, "platform.pem")
+	out, errOut, code = h.run("signer", "serve")
+	if code != 1 || strings.Contains(out, "--platform-key") {
+		t.Errorf("TRANSPAREO_PLATFORM_KEY: %d %s%s", code, out, errOut)
+	}
+}
+
 // waitForURL reads the "ready" line the server logs and answers
 // the URL it names.
 func waitForURL(t *testing.T, stderr *syncBuffer, done chan int) string {

@@ -64,7 +64,11 @@ TRANSPAREO_SIGNER_LISTEN=127.0.0.1:8443
 `TRANSPAREO_PLATFORM_KEY` carries the workspace host, the one
 from the address bar. `TRANSPAREO_SIGNER_HOST` is the host name
 you are about to register in the BYOK form. Leave the listen
-address alone; nginx reaches the endpoint over loopback.
+address alone; nginx reaches the endpoint over loopback. The
+endpoint reads these three from its environment, which is how
+the unit passes them; an option on the command line would win
+over them. The container image takes the same three, in
+[Running the signer in a container](signer-docker.md).
 
 ## nginx
 
@@ -182,6 +186,11 @@ sudo systemctl restart transpareo-signer
   nginx block, and check the workspace host in
   `TRANSPAREO_PLATFORM_KEY`. Reload nginx and restart the
   service after a change.
+- **"rotation statement" in the journal.** The platform signs
+  with a key this endpoint cannot follow from the one it pinned,
+  which happens when it was pinned across two rotations.
+  `sudo systemctl restart transpareo-signer` pins the key the
+  platform signs with now.
 - **"timestamp" in the journal.** The clock. `timedatectl` and
   then `sudo timedatectl set-ntp true`.
 - **The test says the endpoint is unreachable.** DNS, the
