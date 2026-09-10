@@ -2924,7 +2924,9 @@ type ProductInput struct {
 	// Name Example: New Product
 	Name string `json:"name"`
 
-	// PropertiesInput Property values keyed by property type ID
+	// PropertiesInput Property values keyed by property type id, as GET /products/new lists them. An entry is a bare value, an object with value plus an optional percentage and compositionRows, or a list of either for a type that takes several values.
+	//
+	// Example: {"1":"https://example.com/documents/technical-documentation.pdf","12":["Red","Blue"],"5":"100% organic cotton","9":{"percentage":95,"value":"Cotton"}}
 	PropertiesInput *map[string]interface{} `json:"propertiesInput,omitempty"`
 }
 

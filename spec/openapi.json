@@ -4158,8 +4158,20 @@
           },
           "propertiesInput": {
             "type": "object",
-            "description": "Property values keyed by property type ID",
-            "additionalProperties": true
+            "description": "Property values keyed by property type id, as GET /products/new lists them. An entry is a bare value, an object with value plus an optional percentage and compositionRows, or a list of either for a type that takes several values.",
+            "additionalProperties": true,
+            "example": {
+              "1": "https://example.com/documents/technical-documentation.pdf",
+              "5": "100% organic cotton",
+              "9": {
+                "value": "Cotton",
+                "percentage": 95
+              },
+              "12": [
+                "Red",
+                "Blue"
+              ]
+            }
           }
         }
       },
