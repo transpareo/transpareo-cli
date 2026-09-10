@@ -1,0 +1,94 @@
+[
+  {
+    "input": {},
+    "canonical": "{}"
+  },
+  {
+    "input": {
+      "b": 1,
+      "a": 2
+    },
+    "canonical": "{\"a\":2,\"b\":1}"
+  },
+  {
+    "input": {
+      "type": "DataIntegrityProof",
+      "cryptosuite": "eddsa-jcs-2022",
+      "created": "2026-09-10T09:00:00Z",
+      "verificationMethod": "https://acme.example.com/.well-known/dpp-keys/v3.pub#key-3",
+      "proofPurpose": "assertionMethod",
+      "@context": [
+        "https://www.w3.org/ns/credentials/v2",
+        "https://transpareo.com/ns/dpp/v1"
+      ]
+    },
+    "canonical": "{\"@context\":[\"https://www.w3.org/ns/credentials/v2\",\"https://transpareo.com/ns/dpp/v1\"],\"created\":\"2026-09-10T09:00:00Z\",\"cryptosuite\":\"eddsa-jcs-2022\",\"proofPurpose\":\"assertionMethod\",\"type\":\"DataIntegrityProof\",\"verificationMethod\":\"https://acme.example.com/.well-known/dpp-keys/v3.pub#key-3\"}"
+  },
+  {
+    "input": {
+      "numbers": [
+        333333333.3333333,
+        1e+30,
+        4.5,
+        0.002,
+        1e-27,
+        1e+21,
+        1e+20,
+        0.000001,
+        0.0000001,
+        0,
+        -0.0,
+        -1.5,
+        100,
+        5e-324,
+        1.7976931348623157e+308,
+        123456.789,
+        0.1,
+        1000000.0,
+        1e+15
+      ],
+      "string": "€$\u000f\nA'B\"\\\\\"/",
+      "literals": [
+        null,
+        true,
+        false
+      ]
+    },
+    "canonical": "{\"literals\":[null,true,false],\"numbers\":[333333333.3333333,1e+30,4.5,0.002,1e-27,1e+21,100000000000000000000,0.000001,1e-7,0,0,-1.5,100,5e-324,1.7976931348623157e+308,123456.789,0.1,1000000,1000000000000000],\"string\":\"€$\\u000f\\nA'B\\\"\\\\\\\\\\\"/\"}"
+  },
+  {
+    "input": {
+      "€": "Euro Sign",
+      "\r": "Carriage Return",
+      "\n": "Newline",
+      "1": "One",
+      "": "Control",
+      "😂": "Smiley",
+      "ö": "Latin Small Letter O With Diaeresis",
+      "דּ": "Hebrew Letter Dalet With Dagesh",
+      "</script>": "Browser Challenge"
+    },
+    "canonical": "{\"\\n\":\"Newline\",\"\\r\":\"Carriage Return\",\"1\":\"One\",\"</script>\":\"Browser Challenge\",\"\":\"Control\",\"ö\":\"Latin Small Letter O With Diaeresis\",\"€\":\"Euro Sign\",\"😂\":\"Smiley\",\"דּ\":\"Hebrew Letter Dalet With Dagesh\"}"
+  },
+  {
+    "input": {
+      "nested": {
+        "z": [
+          1,
+          {
+            "y": null
+          }
+        ],
+        "a": "tab\there"
+      }
+    },
+    "canonical": "{\"nested\":{\"a\":\"tab\\there\",\"z\":[1,{\"y\":null}]}}"
+  },
+  {
+    "input": {
+      "unicode": "Grüße, 日本, 🎉",
+      "esc": "\b\f"
+    },
+    "canonical": "{\"esc\":\"\\b\\f\",\"unicode\":\"Grüße, 日本, 🎉\"}"
+  }
+]

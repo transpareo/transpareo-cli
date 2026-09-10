@@ -1,0 +1,42 @@
+[
+  {
+    "hex": "",
+    "base58": ""
+  },
+  {
+    "hex": "00",
+    "base58": "1"
+  },
+  {
+    "hex": "000001",
+    "base58": "112"
+  },
+  {
+    "hex": "68656c6c6f20776f726c64",
+    "base58": "StV1DL6CwTryKyV"
+  },
+  {
+    "hex": "ffff",
+    "base58": "LUv"
+  },
+  {
+    "hex": "00ff00",
+    "base58": "1LQX"
+  },
+  {
+    "hex": "42becf2ec88819a2259118e7c773d8b0c29fc90687f393549da12c1c31962ab6d113aee5c320a89a21be7bee7b8cc28286afc683ad7612b193c7cc59eccacf5c",
+    "base58": "2LQ6rW5vqGUjaEqTGSSQhK3LQQ9b8CMhWHHUWiixFrayed4YHJCfDBdR2YfRxHGDiJrGS5zeTZf2fcy2NEvwryaT"
+  },
+  {
+    "hex": "c1f93c2c8f234887b8a6c96b50f70e19f13d840cf2ca5875c8b51cec09b160f89cb6da",
+    "base58": "LMa6goPpdsW2M9Xjf8m2Bq4LARrnmwoG9W8p2srXPQgDZNY1"
+  },
+  {
+    "hex": "a2",
+    "base58": "3o"
+  },
+  {
+    "hex": "808041c6c677783073f22335538d2589c1976b72a6d397f38ab4e9563d31dffc1d",
+    "base58": "fB2CoKUFQ1GRTvs7SSnjdpw748nwkqnSUcAJ2YHRbNJHr"
+  }
+]
