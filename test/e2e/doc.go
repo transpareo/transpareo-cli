@@ -8,11 +8,16 @@
 //	go test -tags e2e ./test/e2e/
 //
 // The backend's `rake test:api_credentials` prints the three
-// lines for the dev tenant. TRANSPAREO_TEST_SECOND_HOST names a
-// second tenant host for the cross-tenant check, when one exists.
+// lines for the dev tenant. Three more widen the run and each
+// skips its own check when unset: TRANSPAREO_TEST_SECOND_HOST
+// names a second tenant host, so a token of the first host is
+// proven to be refused there, and
+// TRANSPAREO_TEST_READONLY_CLIENT_ID with
+// TRANSPAREO_TEST_READONLY_CLIENT_SECRET name a consumer without
+// write permissions, so a refused write is proven too.
 //
-// The suite creates a brand and two webhook subscriptions named
-// with a run id and deletes them at the end, so a tenant it ran
-// on carries nothing of it. The consumer needs brand_access and
-// webhook_access.
+// The suite creates a brand, a product and two webhook
+// subscriptions named with a run id and deletes them at the end,
+// so a tenant it ran on carries nothing of it. The consumer needs
+// brand_access, product_access and webhook_access.
 package e2e

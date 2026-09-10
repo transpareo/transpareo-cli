@@ -13,6 +13,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 	"time"
@@ -52,35 +53,131 @@ func TestAuthTokenWithScope(t *testing.T) {
 	}
 }
 
+// propertyType is one entry of the properties map that
+// GET /products/new answers: every property type a product of
+// the workspace can carry, keyed by its name.
+type propertyType struct {
+	ID            json.Number `json:"id"`
+	InputType     string      `json:"inputType"`
+	Mandatory     bool        `json:"mandatory"`
+	AllowedValues []string    `json:"allowedValues"`
+}
+
+// sampleValue answers a value the property type accepts, or an
+// empty string when this check cannot construct one. A type with
+// a closed set takes the first value of the set; the typed
+// inputs take the format the platform parses them in.
+func sampleValue(pt propertyType) string {
+	if len(pt.AllowedValues) > 0 {
+		return pt.AllowedValues[0]
+	}
+	switch pt.InputType {
+	case "link":
+		return "https://example.com/cli-end-to-end"
+	case "country":
+		return "DE"
+	case "date":
+		return time.Now().UTC().Format(time.DateOnly)
+	case "datetime":
+		return time.Now().UTC().Format(time.RFC3339)
+	case "boolean":
+		return "true"
+	case "list", "input", "textarea", "composition":
+		return "cli end-to-end check"
+	}
+	return ""
+}
+
+// mandatoryProperties reads the workspace's product template and
+// answers the propertiesInput a product needs there: one value
+// per property type flagged mandatory, keyed by property type
+// id. The second answer names the mandatory types whose input
+// type this check cannot fill, a structured composition among
+// them.
+func mandatoryProperties(t *testing.T,
+	c *transpareo.Client) (map[string]any, []string) {
+	t.Helper()
+	var template struct {
+		Properties map[string]propertyType `json:"properties"`
+	}
+	if _, err := c.Get(context.Background(), "/products/new", nil,
+		&template); err != nil {
+		t.Fatalf("products new: %v", err)
+	}
+	input := map[string]any{}
+	var unfillable []string
+	for name, pt := range template.Properties {
+		if !pt.Mandatory {
+			continue
+		}
+		// A type that binds only part of the catalogue takes a
+		// value here too: it comes from the type's own closed set
+		// and satisfies the condition whichever way it reads.
+		value := sampleValue(pt)
+		if value == "" {
+			unfillable = append(unfillable, name)
+			continue
+		}
+		input[pt.ID.String()] = map[string]any{"value": value}
+	}
+	slices.Sort(unfillable)
+	return input, unfillable
+}
+
+// missingProperties names the mandatory property types the
+// platform still misses, from the 422 a refused create answers.
+func missingProperties(err error) []string {
+	var apiErr *transpareo.Error
+	if !errors.As(err, &apiErr) {
+		return nil
+	}
+	return apiErr.Fields["properties"].Missing
+}
+
+// declaredUnfillable reports whether every type the platform
+// still misses is one this check said it cannot fill. A missing
+// type outside that set means the values went out and did not
+// take, which is a failure rather than a reason to skip.
+func declaredUnfillable(unfillable, missing []string) bool {
+	for _, name := range missing {
+		if !slices.Contains(unfillable, name) {
+			return false
+		}
+	}
+	return true
+}
+
 // throwawayProduct creates a product for the run and deletes it
-// at the end. It skips when the workspace demands mandatory
-// properties the suite does not know.
+// at the end. It fills the workspace's mandatory properties from
+// the product template, and skips only when one of them needs a
+// shape this check does not build.
 func throwawayProduct(t *testing.T, c *transpareo.Client) json.Number {
 	t.Helper()
 	ctx := context.Background()
-	var template map[string]any
-	if _, err := c.Get(ctx, "/products/new", nil, &template); err != nil {
-		t.Fatalf("products new: %v", err)
-	}
-	name := runID()
-	var created struct {
-		ID json.Number `json:"id"`
+	properties, unfillable := mandatoryProperties(t, c)
+	product := map[string]any{"name": runID(),
+		"componentsInput": []map[string]any{{"name": "cli e2e component"}}}
+	if len(properties) > 0 {
+		product["propertiesInput"] = properties
 	}
 	// One brand for every run, since a brand created through a
 	// product outlives the product.
-	body := map[string]any{
-		"product": map[string]any{"name": name,
-			"componentsInput": []map[string]any{{"name": "cli e2e component"}}},
-		"brand": map[string]any{"name": "CLI end-to-end checks"},
+	body := map[string]any{"product": product,
+		"brand": map[string]any{"name": "CLI end-to-end checks"}}
+	var created struct {
+		ID json.Number `json:"id"`
 	}
 	_, err := c.Post(ctx, "/products", body, &created)
-	if transpareo.IsCode(err, "PRODUCT_MISSING_PROPERTIES") {
-		t.Skipf("the workspace demands mandatory properties: %v", err)
+	missing := missingProperties(err)
+	if len(missing) > 0 && declaredUnfillable(unfillable, missing) {
+		t.Skipf("the workspace demands property types this check "+
+			"cannot fill: %s", strings.Join(missing, ", "))
 	}
 	if err != nil {
 		var apiErr *transpareo.Error
 		if errors.As(err, &apiErr) {
-			t.Fatalf("create product: %v\nfields: %+v", err, apiErr.Fields)
+			t.Fatalf("create product with %d mandatory properties: %v\n"+
+				"fields: %+v", len(properties), err, apiErr.Fields)
 		}
 		t.Fatalf("create product: %v", err)
 	}
