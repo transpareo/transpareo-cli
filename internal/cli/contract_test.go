@@ -3,6 +3,7 @@ package cli
 import (
 	"bytes"
 	"encoding/json"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -22,6 +23,7 @@ import (
 func TestContractEveryGeneratedCommandAgainstTheExamples(t *testing.T) {
 	reg := registry.Default()
 	var served *registry.Operation
+	var received []byte
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter,
 		r *http.Request) {
 		if r.URL.Path == "/api/oauth/token" {
@@ -30,6 +32,10 @@ func TestContractEveryGeneratedCommandAgainstTheExamples(t *testing.T) {
 			return
 		}
 		op := reg.Match(r.Method, r.URL.Path)
+		if op != nil && served != nil && op.ID == served.ID {
+			body, _ := io.ReadAll(r.Body)
+			received = body
+		}
 		if op == nil || served == nil || op.ID != served.ID {
 			writeJSON(w, 404, map[string]string{"error": "NOT_FOUND",
 				"message": r.Method + " " + r.URL.Path})
@@ -68,6 +74,16 @@ func TestContractEveryGeneratedCommandAgainstTheExamples(t *testing.T) {
 			t.Errorf("%s (%v): exit %d\n%s%s", op.ID, args, code, stdout,
 				stderr)
 			continue
+		}
+		if op.RequestContentType == "application/json" && len(op.RequestExample) > 0 {
+			var want, got any
+			json.Unmarshal(op.RequestExample, &want)
+			if err := json.Unmarshal(received, &got); err != nil {
+				t.Errorf("%s: the server received %q, not the example body",
+					op.ID, received)
+			} else if w, _ := json.Marshal(want); string(w) != mustMarshal(got) {
+				t.Errorf("%s: the server received %s, want %s", op.ID, mustMarshal(got), w)
+			}
 		}
 		if strings.Contains(op.ResponseContentType, "json") {
 			var want, got any
@@ -126,4 +142,9 @@ func contractArgs(t *testing.T, op *registry.Operation, dir,
 		args = append(args, "--yes")
 	}
 	return append(args, "--json")
+}
+
+func mustMarshal(v any) string {
+	data, _ := json.Marshal(v)
+	return string(data)
 }

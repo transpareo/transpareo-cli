@@ -198,6 +198,27 @@ func TestGeneratedDestructiveNeedsYesAndSetBuildsBody(t *testing.T) {
 	}
 }
 
+func TestGeneratedFileOptionSendsTheFileContent(t *testing.T) {
+	h := generatedHarness(t)
+	h.login()
+	file := filepath.Join(t.TempDir(), "void.json")
+	os.WriteFile(file, []byte("{\n  \"reason\": \"recalled\"\n}\n"), 0o600)
+	_, _, code := h.run("dpps", "void", "A1B2", "--yes", "--file", file)
+	if code != 0 {
+		t.Fatalf("code = %d", code)
+	}
+	if h.lastBody() != "{\n  \"reason\": \"recalled\"\n}\n" {
+		t.Errorf("body = %q, want the file's content", h.lastBody())
+	}
+	if h.lastRequest().Header.Get("Content-Type") != "application/json" {
+		t.Errorf("content type = %q", h.lastRequest().Header.Get("Content-Type"))
+	}
+	_, _, code = h.run("dpps", "void", "A1B2", "--yes", "--file", "/nope.json")
+	if code != 2 {
+		t.Errorf("a missing file must be a usage error, got %d", code)
+	}
+}
+
 func TestGeneratedNDJSONBodyHeaderAndWait(t *testing.T) {
 	h := generatedHarness(t)
 	h.login()

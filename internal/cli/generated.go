@@ -322,7 +322,7 @@ func (a *App) attachBody(call *operationCall, req *transpareo.Request) error {
 		return output.Exit(output.ExitUsage,
 			errors.New("use --file or --set, not both"))
 	case call.file != "":
-		data, err := a.readBody(call.file)
+		data, err := a.readFile(call.file)
 		if err != nil {
 			return err
 		}
@@ -532,4 +532,17 @@ func listItems(body []byte) json.RawMessage {
 		}
 	}
 	return nil
+}
+
+// readFile reads a --file option: a path, or - for standard
+// input.
+func (a *App) readFile(path string) ([]byte, error) {
+	if path == "-" {
+		return io.ReadAll(a.Stdin)
+	}
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return nil, output.Exit(output.ExitUsage, err)
+	}
+	return data, nil
 }
