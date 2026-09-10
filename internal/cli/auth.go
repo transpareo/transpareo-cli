@@ -250,8 +250,8 @@ func (a *App) tokenCommand() *cobra.Command {
 		Long: `Exchanges the stored credential for a token and prints it, so a
 script or a subprocess can call the API with TRANSPAREO_TOKEN and
 never sees the secret. With --json the expiry and scope come too.`,
-		Example: `  export TRANSPAREO_TOKEN=$(transpareo auth token \
-      --scope dpp_read)`,
+		Example: "  export TRANSPAREO_TOKEN=$(transpareo auth token " +
+			"--scope dpp_read)",
 		Args: cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return a.token(cmd.Context(), scope)

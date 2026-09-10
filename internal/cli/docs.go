@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"encoding/json"
 	"fmt"
 	"sort"
 	"strings"
@@ -12,20 +13,36 @@ import (
 	"github.com/transpareo/transpareo-cli/spec"
 )
 
-// Markdown renders the command reference: a table of contents,
-// the hand-written commands first, then one section per group of
-// generated commands, each command with its usage, summary,
-// example, options and the operation with its permission key.
+// globalOptions are the options every command accepts, for the
+// table at the top of the reference.
+var globalOptions = [][2]string{
+	{"`--json`", "print JSON; the default when the output is not a terminal"},
+	{"`--jsonl`", "print lists as one JSON object per line"},
+	{"`-q`, `--quiet`", "print ids only, one per line"},
+	{"`--fields a,b`", "keep only these fields of the answer"},
+	{"`--profile <name>`", "the workspace to use, as stored by `auth login`"},
+	{"`--read-only`", "refuse every operation that changes data"},
+	{"`--yes`", "confirm an operation that cannot be undone"},
+}
+
+// Markdown renders the command reference: the global options, a
+// line of links to the groups, then one section per group with
+// the tag's description and one entry per command: summary,
+// usage and example in one block, options as a table, and the
+// operation with its permission on a closing line.
 func Markdown(root *cobra.Command) (string, error) {
 	reg := registry.Default()
+	tags := tagDescriptions()
 	var b strings.Builder
 	fmt.Fprintf(&b, "# Command reference\n\n")
-	fmt.Fprintf(&b, "Generated from specification %s by `go generate ./...`; "+
-		"do not edit by hand.\n\n", spec.Version())
-	fmt.Fprintf(&b, "Every command accepts `--json`, `--jsonl`, `-q`, "+
-		"`--fields`, `--profile`, `--read-only` and `--yes`; "+
-		"the README says what they do. `--help` on any command "+
-		"prints the same example and permission key as this page.\n\n")
+	fmt.Fprintf(&b, "Every command of `transpareo`, generated from API "+
+		"specification %s. `--help` on any command prints the same "+
+		"example and permission key.\n\n", spec.Version())
+	fmt.Fprintf(&b, "| Option on every command | What it does |\n|---|---|\n")
+	for _, opt := range globalOptions {
+		fmt.Fprintf(&b, "| %s | %s |\n", opt[0], opt[1])
+	}
+	b.WriteString("\n")
 	sections := map[string][]*cobra.Command{}
 	var walk func(cmd *cobra.Command)
 	walk = func(cmd *cobra.Command) {
@@ -51,12 +68,19 @@ func Markdown(root *cobra.Command) (string, error) {
 	}
 	sort.Strings(names)
 	names = append([]string{"General"}, names...)
-	for _, name := range names {
-		fmt.Fprintf(&b, "- [%s](#%s)\n", name, anchor(name))
+	links := make([]string, len(names))
+	for i, name := range names {
+		links[i] = fmt.Sprintf("[%s](#%s)", name, anchor(name))
 	}
-	b.WriteString("\n")
+	fmt.Fprintf(&b, "%s\n\n", strings.Join(links, " · "))
 	for _, name := range names {
 		fmt.Fprintf(&b, "## %s\n\n", name)
+		if description := tags[name]; description != "" {
+			fmt.Fprintf(&b, "%s\n\n", description)
+		} else if name == "General" {
+			fmt.Fprintf(&b, "Logging in, reaching any endpoint, discovering "+
+				"the surface, the assistant setup and the binary itself.\n\n")
+		}
 		cmds := sections[name]
 		sort.Slice(cmds, func(i, j int) bool {
 			return cmds[i].CommandPath() < cmds[j].CommandPath()
@@ -66,6 +90,23 @@ func Markdown(root *cobra.Command) (string, error) {
 		}
 	}
 	return b.String(), nil
+}
+
+// tagDescriptions reads the one-line description of every tag
+// from the embedded specification.
+func tagDescriptions() map[string]string {
+	var doc struct {
+		Tags []struct {
+			Name        string `json:"name"`
+			Description string `json:"description"`
+		} `json:"tags"`
+	}
+	json.Unmarshal(spec.JSON, &doc)
+	out := map[string]string{}
+	for _, tag := range doc.Tags {
+		out[tag.Name] = strings.TrimSuffix(tag.Description, ".") + "."
+	}
+	return out
 }
 
 // anchor is the heading anchor GitHub derives from a section
@@ -99,16 +140,17 @@ func placeholder(f *pflag.Flag) string {
 
 func writeCommandDoc(b *strings.Builder, cmd *cobra.Command,
 	reg *registry.Registry) {
-	path := cmd.CommandPath()
+	fmt.Fprintf(b, "### %s\n\n%s.\n\n", cmd.CommandPath(),
+		strings.TrimSuffix(cmd.Short, "."))
+	var block []string
 	if args := argsOf(cmd); args != "" {
-		path += " " + args
+		block = append(block, cmd.CommandPath()+" "+args)
 	}
-	fmt.Fprintf(b, "### %s\n\n", cmd.CommandPath())
-	fmt.Fprintf(b, "%s\n\n```\n%s\n```\n\n",
-		strings.TrimSuffix(cmd.Short, "."), path)
 	if example := strings.TrimSpace(cmd.Example); example != "" {
-		fmt.Fprintf(b, "Example:\n\n```\n%s\n```\n\n",
-			strings.ReplaceAll(example, "\n  ", "\n"))
+		block = append(block, strings.ReplaceAll(example, "\n  ", "\n"))
+	}
+	if len(block) > 0 {
+		fmt.Fprintf(b, "```sh\n%s\n```\n\n", strings.Join(block, "\n"))
 	}
 	var rows []string
 	cmd.LocalFlags().VisitAll(func(f *pflag.Flag) {
@@ -131,19 +173,20 @@ func writeCommandDoc(b *strings.Builder, cmd *cobra.Command,
 		id = operationOf[cmd.CommandPath()]
 	}
 	if op := reg.Find(id); op != nil {
-		fmt.Fprintf(b, "**API:** `%s %s` (`%s`). ", op.Method, op.Path, op.ID)
+		parts := []string{fmt.Sprintf("`%s %s`", op.Method, op.Path),
+			fmt.Sprintf("operation `%s`", op.ID)}
 		switch {
 		case len(op.Permission) > 0:
-			fmt.Fprintf(b, "**Permission:** `%s`.",
-				strings.Join(op.Permission, "` or `"))
+			parts = append(parts, "permission `"+
+				strings.Join(op.Permission, "` or `")+"`")
 		case op.Public:
-			fmt.Fprintf(b, "**Permission:** none, the endpoint is public.")
+			parts = append(parts, "no permission needed, the endpoint is public")
 		default:
-			fmt.Fprintf(b, "**Permission:** any consumer token.")
+			parts = append(parts, "any consumer token")
 		}
 		if op.Destructive {
-			fmt.Fprintf(b, " **Cannot be undone**; needs `--yes`.")
+			parts = append(parts, "cannot be undone, needs `--yes`")
 		}
-		fmt.Fprintf(b, "\n\n")
+		fmt.Fprintf(b, "%s\n\n", strings.Join(parts, " · "))
 	}
 }

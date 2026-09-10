@@ -1,41 +1,29 @@
 # Command reference
 
-Generated from specification 1.6.0 by `go generate ./...`; do not edit by hand.
+Every command of `transpareo`, generated from API specification 1.6.0. `--help` on any command prints the same example and permission key.
 
-Every command accepts `--json`, `--jsonl`, `-q`, `--fields`, `--profile`, `--read-only` and `--yes`; the README says what they do. `--help` on any command prints the same example and permission key as this page.
+| Option on every command | What it does |
+|---|---|
+| `--json` | print JSON; the default when the output is not a terminal |
+| `--jsonl` | print lists as one JSON object per line |
+| `-q`, `--quiet` | print ids only, one per line |
+| `--fields a,b` | keep only these fields of the answer |
+| `--profile <name>` | the workspace to use, as stored by `auth login` |
+| `--read-only` | refuse every operation that changes data |
+| `--yes` | confirm an operation that cannot be undone |
 
-- [General](#general)
-- [Brands](#brands)
-- [Categories](#categories)
-- [Components](#components)
-- [Configuration](#configuration)
-- [Coupons](#coupons)
-- [DPPs](#dpps)
-- [Events](#events)
-- [Exports](#exports)
-- [Grants](#grants)
-- [Imports](#imports)
-- [Mediafiles](#mediafiles)
-- [Permalinks](#permalinks)
-- [Plans](#plans)
-- [Products](#products)
-- [Reference Data](#reference-data)
-- [Search](#search)
-- [Webhooks](#webhooks)
+[General](#general) · [Brands](#brands) · [Categories](#categories) · [Components](#components) · [Configuration](#configuration) · [Coupons](#coupons) · [DPPs](#dpps) · [Events](#events) · [Exports](#exports) · [Grants](#grants) · [Imports](#imports) · [Mediafiles](#mediafiles) · [Permalinks](#permalinks) · [Plans](#plans) · [Products](#products) · [Reference Data](#reference-data) · [Search](#search) · [Webhooks](#webhooks)
 
 ## General
 
+Logging in, reaching any endpoint, discovering the surface, the assistant setup and the binary itself.
+
 ### transpareo api
 
-Send an authenticated request to any endpoint
+Send an authenticated request to any endpoint.
 
-```
+```sh
 transpareo api <METHOD> <path>
-```
-
-Example:
-
-```
 transpareo api GET /dpps --query page=2 --query per_page=50
 transpareo api POST /dpps/validate --body @passport.json
 transpareo api PUT /products/42 --body '{"product": {"name": "New name"}}'
@@ -51,15 +39,10 @@ transpareo api DELETE /webhooks/7 --yes
 
 ### transpareo auth grant
 
-Issue a child credential scoped to one passport (POST /grant)
+Issue a child credential scoped to one passport (POST /grant).
 
-```
+```sh
 transpareo auth grant --code <passport code>
-```
-
-Example:
-
-```
 transpareo auth grant --code A1B2C3D4E
 transpareo auth grant --gtin 04012345678901 --serial 000412
 ```
@@ -71,19 +54,14 @@ transpareo auth grant --gtin 04012345678901 --serial 000412
 | `--gtin` \<value\> | GTIN of the product, for a lookup by GS1 identifiers |
 | `--serial` \<value\> | serial identifier, with --gtin |
 
-**API:** `POST /grant` (`create_grant`). **Permission:** `dpp_events` or `dpp_history` or `dpp_dynamic`.
+`POST /grant` · operation `create_grant` · permission `dpp_events` or `dpp_history` or `dpp_dynamic`
 
 ### transpareo auth login
 
-Store a credential after checking it at the token endpoint
+Store a credential after checking it at the token endpoint.
 
-```
+```sh
 transpareo auth login --host <workspace host> --client-id <key>
-```
-
-Example:
-
-```
 echo "$SECRET" | transpareo auth login \
     --host acme.example.com --client-id 3f6a...
 transpareo auth login --host acme.example.com --client-id 3f6a... \
@@ -98,101 +76,64 @@ transpareo auth login --host acme.example.com --client-id 3f6a... \
 | `--name` \<value\> | profile name (default: the host) |
 | `--scope` \<value\> | permission keys to narrow tokens to, comma separated |
 
-**API:** `POST /oauth/token` (`exchange_token`). **Permission:** none, the endpoint is public.
+`POST /oauth/token` · operation `exchange_token` · no permission needed, the endpoint is public
 
 ### transpareo auth logout
 
-Remove the stored profile and its secret
-
-```
-transpareo auth logout
-```
+Remove the stored profile and its secret.
 
 ### transpareo auth status
 
-Show what the current credential allows (GET /me)
+Show what the current credential allows (GET /me).
 
-```
-transpareo auth status
-```
-
-**API:** `GET /me` (`get_me`). **Permission:** any consumer token.
+`GET /me` · operation `get_me` · any consumer token
 
 ### transpareo auth token
 
-Print a fresh short-lived bearer token for scripts and subagents
+Print a fresh short-lived bearer token for scripts and subagents.
 
-```
+```sh
 transpareo auth token [--scope a,b]
-```
-
-Example:
-
-```
-export TRANSPAREO_TOKEN=$(transpareo auth token \
-    --scope dpp_read)
+export TRANSPAREO_TOKEN=$(transpareo auth token --scope dpp_read)
 ```
 
 | Option | What it does |
 |---|---|
 | `--scope` \<value\> | permission keys to narrow the token to, comma separated |
 
-**API:** `POST /oauth/token` (`exchange_token`). **Permission:** none, the endpoint is public.
+`POST /oauth/token` · operation `exchange_token` · no permission needed, the endpoint is public
 
 ### transpareo commands
 
-List every command and every API operation, for agents
+List every command and every API operation, for agents.
 
-```
-transpareo commands
-```
-
-Example:
-
-```
+```sh
 transpareo commands --json | jq '.operations[] | .operationId'
 ```
 
 ### transpareo doctor
 
-Check the setup: profile, host, token endpoint, credential, keyring
+Check the setup: profile, host, token endpoint, credential, keyring.
 
-```
-transpareo doctor
-```
-
-Example:
-
-```
+```sh
 transpareo doctor
 transpareo doctor --json
 ```
 
 ### transpareo guide
 
-Print the workspace's API guide as Markdown
+Print the workspace's API guide as Markdown.
 
-```
-transpareo guide
-```
-
-Example:
-
-```
+```sh
 transpareo guide | less
 ```
 
 ### transpareo mcp
 
-Start the Model Context Protocol server over standard input and output
+Start the Model Context Protocol server over standard input and output.
 
-```
+```sh
 transpareo mcp [--tools <group,...>] [--read-only]
-```
-
-Example:
-
-```
 transpareo mcp --profile acme
 transpareo mcp --profile acme --tools dpps,products --read-only
 ```
@@ -203,47 +144,31 @@ transpareo mcp --profile acme --tools dpps,products --read-only
 
 ### transpareo me
 
-Show what the current credential allows (GET /me)
+Show what the current credential allows (GET /me).
 
-```
-transpareo me
-```
-
-Example:
-
-```
+```sh
 transpareo me
 transpareo me --json
 ```
 
-**API:** `GET /me` (`get_me`). **Permission:** any consumer token.
+`GET /me` · operation `get_me` · any consumer token
 
 ### transpareo schema
 
-Print the request schema and example of an operation
+Print the request schema and example of an operation.
 
-```
+```sh
 transpareo schema <operationId>
-```
-
-Example:
-
-```
 transpareo schema create_dpp
 transpareo schema list_dpps --fields queryParams
 ```
 
 ### transpareo setup
 
-Install the skill and register the MCP server for claude or codex
+Install the skill and register the MCP server for claude or codex.
 
-```
+```sh
 transpareo setup <assistant>
-```
-
-Example:
-
-```
 transpareo setup claude --profile acme
 transpareo setup codex
 ```
@@ -255,15 +180,10 @@ transpareo setup codex
 
 ### transpareo upgrade
 
-Replace this binary with a verified release from GitHub
+Replace this binary with a verified release from GitHub.
 
-```
+```sh
 transpareo upgrade [--version <x.y.z>] [--check]
-```
-
-Example:
-
-```
 transpareo upgrade
 transpareo upgrade --check
 transpareo upgrade --version 1.2.0
@@ -276,25 +196,17 @@ transpareo upgrade --version 1.2.0
 
 ### transpareo version
 
-Print the version of the binary and of its API specification
-
-```
-transpareo version
-```
+Print the version of the binary and of its API specification.
 
 ## Brands
 
+Product brands.
+
 ### transpareo brands create
 
-Create a brand
+Create a brand.
 
-```
-transpareo brands create
-```
-
-Example:
-
-```
+```sh
 transpareo brands create --file body.json
 ```
 
@@ -304,19 +216,14 @@ transpareo brands create --file body.json
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 | `--set` \<value\>... | body field as key=value, nested with dots (repeatable) |
 
-**API:** `POST /brands` (`create_brand`). **Permission:** `brand_access` or `brand_write`.
+`POST /brands` · operation `create_brand` · permission `brand_access` or `brand_write`
 
 ### transpareo brands delete
 
-Delete a brand
+Delete a brand.
 
-```
+```sh
 transpareo brands delete <id>
-```
-
-Example:
-
-```
 transpareo brands delete <id> --yes
 ```
 
@@ -324,19 +231,14 @@ transpareo brands delete <id> --yes
 |---|---|
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 
-**API:** `DELETE /brands/{id}` (`delete_brand`). **Permission:** `brand_access` or `brand_write`. **Cannot be undone**; needs `--yes`.
+`DELETE /brands/{id}` · operation `delete_brand` · permission `brand_access` or `brand_write` · cannot be undone, needs `--yes`
 
 ### transpareo brands get
 
-Get a brand
+Get a brand.
 
-```
+```sh
 transpareo brands get <id>
-```
-
-Example:
-
-```
 transpareo brands get <id>
 ```
 
@@ -344,19 +246,13 @@ transpareo brands get <id>
 |---|---|
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 
-**API:** `GET /brands/{id}` (`get_brand`). **Permission:** none, the endpoint is public.
+`GET /brands/{id}` · operation `get_brand` · no permission needed, the endpoint is public
 
 ### transpareo brands list
 
-List brands
+List brands.
 
-```
-transpareo brands list
-```
-
-Example:
-
-```
+```sh
 transpareo brands list --page <page>
 ```
 
@@ -366,19 +262,14 @@ transpareo brands list --page <page>
 | `--page` \<n\> | Page number |
 | `--per-page` \<n\> | Records per page (default: 100, max: 500) |
 
-**API:** `GET /brands` (`list_brands`). **Permission:** none, the endpoint is public.
+`GET /brands` · operation `list_brands` · no permission needed, the endpoint is public
 
 ### transpareo brands update
 
-Rename a brand
+Rename a brand.
 
-```
+```sh
 transpareo brands update <id>
-```
-
-Example:
-
-```
 transpareo brands update <id> --file body.json
 ```
 
@@ -388,21 +279,17 @@ transpareo brands update <id> --file body.json
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 | `--set` \<value\>... | body field as key=value, nested with dots (repeatable) |
 
-**API:** `PUT /brands/{id}` (`update_brand`). **Permission:** `brand_access` or `brand_write`.
+`PUT /brands/{id}` · operation `update_brand` · permission `brand_access` or `brand_write`
 
 ## Categories
 
+Hierarchical product categories.
+
 ### transpareo categories list
 
-List product categories
+List product categories.
 
-```
-transpareo categories list
-```
-
-Example:
-
-```
+```sh
 transpareo categories list
 ```
 
@@ -410,21 +297,17 @@ transpareo categories list
 |---|---|
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 
-**API:** `GET /product_categories` (`list_product_categories`). **Permission:** none, the endpoint is public.
+`GET /product_categories` · operation `list_product_categories` · no permission needed, the endpoint is public
 
 ## Components
 
+Product components: the individual parts, ingredients, or materials that make up a product.
+
 ### transpareo components create
 
-Create a component
+Create a component.
 
-```
-transpareo components create
-```
-
-Example:
-
-```
+```sh
 transpareo components create --file body.json
 ```
 
@@ -434,19 +317,14 @@ transpareo components create --file body.json
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 | `--set` \<value\>... | body field as key=value, nested with dots (repeatable) |
 
-**API:** `POST /components` (`create_component`). **Permission:** `component_access` or `component_write`.
+`POST /components` · operation `create_component` · permission `component_access` or `component_write`
 
 ### transpareo components delete
 
-Delete a component
+Delete a component.
 
-```
+```sh
 transpareo components delete <id>
-```
-
-Example:
-
-```
 transpareo components delete <id> --yes
 ```
 
@@ -454,19 +332,14 @@ transpareo components delete <id> --yes
 |---|---|
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 
-**API:** `DELETE /components/{id}` (`delete_component`). **Permission:** `component_access` or `component_write`. **Cannot be undone**; needs `--yes`.
+`DELETE /components/{id}` · operation `delete_component` · permission `component_access` or `component_write` · cannot be undone, needs `--yes`
 
 ### transpareo components get
 
-Get a component
+Get a component.
 
-```
+```sh
 transpareo components get <id>
-```
-
-Example:
-
-```
 transpareo components get <id>
 ```
 
@@ -474,19 +347,13 @@ transpareo components get <id>
 |---|---|
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 
-**API:** `GET /components/{id}` (`get_component`). **Permission:** none, the endpoint is public.
+`GET /components/{id}` · operation `get_component` · no permission needed, the endpoint is public
 
 ### transpareo components list
 
-List components
+List components.
 
-```
-transpareo components list
-```
-
-Example:
-
-```
+```sh
 transpareo components list --page <page>
 ```
 
@@ -500,19 +367,14 @@ transpareo components list --page <page>
 | `--term` \<value\> | Full-text search query |
 | `--type-ids` \<value\> | Filter by component type IDs (comma-separated) |
 
-**API:** `GET /components` (`list_components`). **Permission:** none, the endpoint is public.
+`GET /components` · operation `list_components` · no permission needed, the endpoint is public
 
 ### transpareo components publish
 
-Publish a component
+Publish a component.
 
-```
+```sh
 transpareo components publish <id>
-```
-
-Example:
-
-```
 transpareo components publish <id>
 ```
 
@@ -520,19 +382,14 @@ transpareo components publish <id>
 |---|---|
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 
-**API:** `PUT /components/{id}/publish` (`publish_component`). **Permission:** `component_access` or `component_write`.
+`PUT /components/{id}/publish` · operation `publish_component` · permission `component_access` or `component_write`
 
 ### transpareo components unpublish
 
-Unpublish a component
+Unpublish a component.
 
-```
+```sh
 transpareo components unpublish <id>
-```
-
-Example:
-
-```
 transpareo components unpublish <id>
 ```
 
@@ -540,19 +397,14 @@ transpareo components unpublish <id>
 |---|---|
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 
-**API:** `PUT /components/{id}/unpublish` (`unpublish_component`). **Permission:** `component_access` or `component_write`.
+`PUT /components/{id}/unpublish` · operation `unpublish_component` · permission `component_access` or `component_write`
 
 ### transpareo components update
 
-Update a component
+Update a component.
 
-```
+```sh
 transpareo components update <id>
-```
-
-Example:
-
-```
 transpareo components update <id> --file body.json
 ```
 
@@ -562,21 +414,17 @@ transpareo components update <id> --file body.json
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 | `--set` \<value\>... | body field as key=value, nested with dots (repeatable) |
 
-**API:** `PUT /components/{id}` (`update_component`). **Permission:** `component_access` or `component_write`.
+`PUT /components/{id}` · operation `update_component` · permission `component_access` or `component_write`
 
 ## Configuration
 
+Tenant configuration, localization, navigation, and languages.
+
 ### transpareo configuration config
 
-Get tenant configuration
+Get tenant configuration.
 
-```
-transpareo configuration config
-```
-
-Example:
-
-```
+```sh
 transpareo configuration config
 ```
 
@@ -584,19 +432,13 @@ transpareo configuration config
 |---|---|
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 
-**API:** `GET /config` (`get_config`). **Permission:** none, the endpoint is public.
+`GET /config` · operation `get_config` · no permission needed, the endpoint is public
 
 ### transpareo configuration languages list
 
-List available languages
+List available languages.
 
-```
-transpareo configuration languages list
-```
-
-Example:
-
-```
+```sh
 transpareo configuration languages list
 ```
 
@@ -604,19 +446,13 @@ transpareo configuration languages list
 |---|---|
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 
-**API:** `GET /languages` (`list_languages`). **Permission:** none, the endpoint is public.
+`GET /languages` · operation `list_languages` · no permission needed, the endpoint is public
 
 ### transpareo configuration localization
 
-Get localization strings
+Get localization strings.
 
-```
-transpareo configuration localization
-```
-
-Example:
-
-```
+```sh
 transpareo configuration localization
 ```
 
@@ -624,19 +460,13 @@ transpareo configuration localization
 |---|---|
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 
-**API:** `GET /localization` (`get_localization`). **Permission:** none, the endpoint is public.
+`GET /localization` · operation `get_localization` · no permission needed, the endpoint is public
 
 ### transpareo configuration navigation
 
-Get navigation items
+Get navigation items.
 
-```
-transpareo configuration navigation
-```
-
-Example:
-
-```
+```sh
 transpareo configuration navigation
 ```
 
@@ -644,21 +474,17 @@ transpareo configuration navigation
 |---|---|
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 
-**API:** `GET /navigation` (`get_navigation`). **Permission:** none, the endpoint is public.
+`GET /navigation` · operation `get_navigation` · no permission needed, the endpoint is public
 
 ## Coupons
 
+Discount coupon lookup.
+
 ### transpareo coupons lookup
 
-Look up a coupon by code
+Look up a coupon by code.
 
-```
-transpareo coupons lookup
-```
-
-Example:
-
-```
+```sh
 transpareo coupons lookup --code <code>
 ```
 
@@ -668,21 +494,17 @@ transpareo coupons lookup --code <code>
 | `--currency` \<value\> | Currency code to filter by (e.g. EUR, USD) |
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 
-**API:** `GET /coupons` (`lookup_coupon`). **Permission:** none, the endpoint is public.
+`GET /coupons` · operation `lookup_coupon` · no permission needed, the endpoint is public
 
 ## DPPs
 
+Digital Product Passports: QR code links to product data, compliant with EU ESPR regulation.
+
 ### transpareo dpps bulk create
 
-Create DPPs in bulk
+Create DPPs in bulk.
 
-```
-transpareo dpps bulk create
-```
-
-Example:
-
-```
+```sh
 transpareo dpps bulk create --file body.json
 ```
 
@@ -693,19 +515,13 @@ transpareo dpps bulk create --file body.json
 | `--prefer` \<value\> | Send 'respond-async' to process the batch in the background and answer 202 with a polling URL. |
 | `--wait` | poll the statusUrl until the work is done |
 
-**API:** `POST /dpps/bulk` (`bulk_create_dpps`). **Permission:** `dpp_bulk_write`.
+`POST /dpps/bulk` · operation `bulk_create_dpps` · permission `dpp_bulk_write`
 
 ### transpareo dpps bulk validate
 
-Validate DPPs in bulk
+Validate DPPs in bulk.
 
-```
-transpareo dpps bulk validate
-```
-
-Example:
-
-```
+```sh
 transpareo dpps bulk validate --file body.json
 ```
 
@@ -714,19 +530,14 @@ transpareo dpps bulk validate --file body.json
 | `--file` \<value\> | request body from a file, or - for standard input |
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 
-**API:** `POST /dpps/bulk/validate` (`validate_dpps_bulk`). **Permission:** `dpp_bulk_write`.
+`POST /dpps/bulk/validate` · operation `validate_dpps_bulk` · permission `dpp_bulk_write`
 
 ### transpareo dpps bulk-task
 
-Poll an asynchronous bulk create
+Poll an asynchronous bulk create.
 
-```
+```sh
 transpareo dpps bulk-task <taskId>
-```
-
-Example:
-
-```
 transpareo dpps bulk-task <taskId>
 ```
 
@@ -734,19 +545,13 @@ transpareo dpps bulk-task <taskId>
 |---|---|
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 
-**API:** `GET /dpps/bulk/{taskId}` (`get_bulk_task`). **Permission:** `dpp_bulk_write`.
+`GET /dpps/bulk/{taskId}` · operation `get_bulk_task` · permission `dpp_bulk_write`
 
 ### transpareo dpps create
 
-Create a DPP
+Create a DPP.
 
-```
-transpareo dpps create
-```
-
-Example:
-
-```
+```sh
 transpareo dpps create --file body.json
 ```
 
@@ -756,19 +561,14 @@ transpareo dpps create --file body.json
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 | `--set` \<value\>... | body field as key=value, nested with dots (repeatable) |
 
-**API:** `POST /dpps` (`create_dpp`). **Permission:** `dpp_write`.
+`POST /dpps` · operation `create_dpp` · permission `dpp_write`
 
 ### transpareo dpps delete
 
-Delete a DPP
+Delete a DPP.
 
-```
+```sh
 transpareo dpps delete <id>
-```
-
-Example:
-
-```
 transpareo dpps delete <id> --yes
 ```
 
@@ -776,19 +576,14 @@ transpareo dpps delete <id> --yes
 |---|---|
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 
-**API:** `DELETE /dpps/{id}` (`delete_dpp`). **Permission:** `dpp_write`. **Cannot be undone**; needs `--yes`.
+`DELETE /dpps/{id}` · operation `delete_dpp` · permission `dpp_write` · cannot be undone, needs `--yes`
 
 ### transpareo dpps dynamic-data update
 
-Update dynamic data
+Update dynamic data.
 
-```
+```sh
 transpareo dpps dynamic-data update <id>
-```
-
-Example:
-
-```
 transpareo dpps dynamic-data update <id> --file body.json
 ```
 
@@ -798,19 +593,14 @@ transpareo dpps dynamic-data update <id> --file body.json
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 | `--set` \<value\>... | body field as key=value, nested with dots (repeatable) |
 
-**API:** `PATCH /dpps/{id}/dynamic_data` (`update_dpp_dynamic_data`). **Permission:** `dpp_dynamic`.
+`PATCH /dpps/{id}/dynamic_data` · operation `update_dpp_dynamic_data` · permission `dpp_dynamic`
 
 ### transpareo dpps events append
 
-Append an event to a DPP
+Append an event to a DPP.
 
-```
+```sh
 transpareo dpps events append <id>
-```
-
-Example:
-
-```
 transpareo dpps events append <id> --file body.json
 ```
 
@@ -820,19 +610,14 @@ transpareo dpps events append <id> --file body.json
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 | `--set` \<value\>... | body field as key=value, nested with dots (repeatable) |
 
-**API:** `POST /dpps/{id}/events` (`append_dpp_event`). **Permission:** `dpp_events`.
+`POST /dpps/{id}/events` · operation `append_dpp_event` · permission `dpp_events`
 
 ### transpareo dpps events list
 
-List the event log of a DPP
+List the event log of a DPP.
 
-```
+```sh
 transpareo dpps events list <id>
-```
-
-Example:
-
-```
 transpareo dpps events list <id> --version <version>
 ```
 
@@ -841,19 +626,14 @@ transpareo dpps events list <id> --version <version>
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 | `--version` \<n\> | Return only the events sealed into this version |
 
-**API:** `GET /dpps/{id}/events` (`list_dpp_events`). **Permission:** `dpp_history`.
+`GET /dpps/{id}/events` · operation `list_dpp_events` · permission `dpp_history`
 
 ### transpareo dpps get
 
-Read a DPP
+Read a DPP.
 
-```
+```sh
 transpareo dpps get <id>
-```
-
-Example:
-
-```
 transpareo dpps get <id> --version <version>
 ```
 
@@ -862,19 +642,13 @@ transpareo dpps get <id> --version <version>
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 | `--version` \<n\> | Return the historical signed snapshot for this version number instead of the passport as it stands. |
 
-**API:** `GET /dpps/{id}` (`get_dpp`). **Permission:** `dpp_read`.
+`GET /dpps/{id}` · operation `get_dpp` · permission `dpp_read`
 
 ### transpareo dpps list
 
-List Digital Product Passports
+List Digital Product Passports.
 
-```
-transpareo dpps list
-```
-
-Example:
-
-```
+```sh
 transpareo dpps list --term <term>
 ```
 
@@ -885,19 +659,14 @@ transpareo dpps list --term <term>
 | `--per-page` \<n\> | Records per page (default: 100, max: 500) |
 | `--term` \<value\> | Search DPPs by code or description |
 
-**API:** `GET /dpps` (`list_dpps`). **Permission:** `dpp_read`.
+`GET /dpps` · operation `list_dpps` · permission `dpp_read`
 
 ### transpareo dpps private-properties
 
-Read the private properties of several versions
+Read the private properties of several versions.
 
-```
+```sh
 transpareo dpps private-properties <code>
-```
-
-Example:
-
-```
 transpareo dpps private-properties <code> --versions <versions>
 ```
 
@@ -906,19 +675,14 @@ transpareo dpps private-properties <code> --versions <versions>
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 | `--versions` \<value\> | Comma-separated version numbers ('versions[]=' is also accepted). At most 50 are derived. |
 
-**API:** `GET /dpps/{code}/private_properties` (`get_dpp_private_properties`). **Permission:** `dpp_read`.
+`GET /dpps/{code}/private_properties` · operation `get_dpp_private_properties` · permission `dpp_read`
 
 ### transpareo dpps publish
 
-Publish a DPP
+Publish a DPP.
 
-```
+```sh
 transpareo dpps publish <code>
-```
-
-Example:
-
-```
 transpareo dpps publish <code> --file body.json
 ```
 
@@ -928,19 +692,14 @@ transpareo dpps publish <code> --file body.json
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 | `--set` \<value\>... | body field as key=value, nested with dots (repeatable) |
 
-**API:** `POST /dpps/{code}/publish` (`publish_dpp`). **Permission:** `dpp_write`.
+`POST /dpps/{code}/publish` · operation `publish_dpp` · permission `dpp_write`
 
 ### transpareo dpps reissue
 
-Reissue a DPP
+Reissue a DPP.
 
-```
+```sh
 transpareo dpps reissue <id>
-```
-
-Example:
-
-```
 transpareo dpps reissue <id> --file body.json
 ```
 
@@ -950,19 +709,13 @@ transpareo dpps reissue <id> --file body.json
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 | `--set` \<value\>... | body field as key=value, nested with dots (repeatable) |
 
-**API:** `POST /dpps/{id}/reissue` (`reissue_dpp`). **Permission:** `dpp_lifecycle`.
+`POST /dpps/{id}/reissue` · operation `reissue_dpp` · permission `dpp_lifecycle`
 
 ### transpareo dpps requirements
 
-What a passport of a product needs
+What a passport of a product needs.
 
-```
-transpareo dpps requirements
-```
-
-Example:
-
-```
+```sh
 transpareo dpps requirements --product-id <productId>
 ```
 
@@ -972,19 +725,14 @@ transpareo dpps requirements --product-id <productId>
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 | `--product-id` \<n\> | The product a passport would describe. The snake_case spelling 'product_id' is accepted as well. |
 
-**API:** `GET /dpps/requirements` (`get_dpp_requirements`). **Permission:** `dpp_read`.
+`GET /dpps/requirements` · operation `get_dpp_requirements` · permission `dpp_read`
 
 ### transpareo dpps stats
 
-Get DPP scan statistics
+Get DPP scan statistics.
 
-```
+```sh
 transpareo dpps stats <id>
-```
-
-Example:
-
-```
 transpareo dpps stats <id> --format <format>
 ```
 
@@ -993,19 +741,14 @@ transpareo dpps stats <id> --format <format>
 | `--format` \<value\> | Response format |
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 
-**API:** `GET /dpps/{id}/stats` (`get_dpp_stats`). **Permission:** `dpp_read`.
+`GET /dpps/{id}/stats` · operation `get_dpp_stats` · permission `dpp_read`
 
 ### transpareo dpps supersede
 
-Supersede a DPP
+Supersede a DPP.
 
-```
+```sh
 transpareo dpps supersede <id>
-```
-
-Example:
-
-```
 transpareo dpps supersede <id> --file body.json --yes
 ```
 
@@ -1015,19 +758,14 @@ transpareo dpps supersede <id> --file body.json --yes
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 | `--set` \<value\>... | body field as key=value, nested with dots (repeatable) |
 
-**API:** `POST /dpps/{id}/supersede` (`supersede_dpp`). **Permission:** `dpp_lifecycle`. **Cannot be undone**; needs `--yes`.
+`POST /dpps/{id}/supersede` · operation `supersede_dpp` · permission `dpp_lifecycle` · cannot be undone, needs `--yes`
 
 ### transpareo dpps update
 
-Update a DPP
+Update a DPP.
 
-```
+```sh
 transpareo dpps update <id>
-```
-
-Example:
-
-```
 transpareo dpps update <id> --file body.json
 ```
 
@@ -1037,19 +775,13 @@ transpareo dpps update <id> --file body.json
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 | `--set` \<value\>... | body field as key=value, nested with dots (repeatable) |
 
-**API:** `PUT /dpps/{id}` (`update_dpp`). **Permission:** `dpp_write`.
+`PUT /dpps/{id}` · operation `update_dpp` · permission `dpp_write`
 
 ### transpareo dpps validate
 
-Validate a DPP payload
+Validate a DPP payload.
 
-```
-transpareo dpps validate
-```
-
-Example:
-
-```
+```sh
 transpareo dpps validate --file body.json
 ```
 
@@ -1059,19 +791,14 @@ transpareo dpps validate --file body.json
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 | `--set` \<value\>... | body field as key=value, nested with dots (repeatable) |
 
-**API:** `POST /dpps/validate` (`validate_dpp`). **Permission:** `dpp_write`.
+`POST /dpps/validate` · operation `validate_dpp` · permission `dpp_write`
 
 ### transpareo dpps version-private-properties
 
-Read the private properties of one version
+Read the private properties of one version.
 
-```
+```sh
 transpareo dpps version-private-properties <code> <version>
-```
-
-Example:
-
-```
 transpareo dpps version-private-properties <code> <version>
 ```
 
@@ -1079,19 +806,14 @@ transpareo dpps version-private-properties <code> <version>
 |---|---|
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 
-**API:** `GET /dpps/{code}/private_properties/{version}` (`get_dpp_version_private_properties`). **Permission:** `dpp_read`.
+`GET /dpps/{code}/private_properties/{version}` · operation `get_dpp_version_private_properties` · permission `dpp_read`
 
 ### transpareo dpps versions list
 
-List the registered versions of a DPP
+List the registered versions of a DPP.
 
-```
+```sh
 transpareo dpps versions list <id>
-```
-
-Example:
-
-```
 transpareo dpps versions list <id>
 ```
 
@@ -1099,19 +821,14 @@ transpareo dpps versions list <id>
 |---|---|
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 
-**API:** `GET /dpps/{id}/versions` (`list_dpp_versions`). **Permission:** `dpp_read`.
+`GET /dpps/{id}/versions` · operation `list_dpp_versions` · permission `dpp_read`
 
 ### transpareo dpps void
 
-Void a DPP
+Void a DPP.
 
-```
+```sh
 transpareo dpps void <id>
-```
-
-Example:
-
-```
 transpareo dpps void <id> --file body.json --yes
 ```
 
@@ -1121,21 +838,17 @@ transpareo dpps void <id> --file body.json --yes
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 | `--set` \<value\>... | body field as key=value, nested with dots (repeatable) |
 
-**API:** `POST /dpps/{id}/void` (`void_dpp`). **Permission:** `dpp_lifecycle`. **Cannot be undone**; needs `--yes`.
+`POST /dpps/{id}/void` · operation `void_dpp` · permission `dpp_lifecycle` · cannot be undone, needs `--yes`
 
 ## Events
 
+The workspace-wide feed of passport events, polled by cursor.
+
 ### transpareo events list
 
-Poll the feed of passport events
+Poll the feed of passport events.
 
-```
-transpareo events list
-```
-
-Example:
-
-```
+```sh
 transpareo events list --since <since>
 ```
 
@@ -1147,19 +860,14 @@ transpareo events list --since <since>
 | `--since` \<value\> | The 'nextCursor' of the previous answer, or an ISO 8601 time to start from |
 | `--types` \<value\> | Comma-separated event types to keep, out of the 'eventType' values of 'DppEvent' |
 
-**API:** `GET /events` (`list_events`). **Permission:** `dpp_history`.
+`GET /events` · operation `list_events` · permission `dpp_history`
 
 ### transpareo events tail
 
-Read the workspace's passport events, optionally as a live stream
+Read the workspace's passport events, optionally as a live stream.
 
-```
+```sh
 transpareo events tail [--since <cursor>] [--follow]
-```
-
-Example:
-
-```
 transpareo events tail --since 2026-09-01T00:00:00Z
 transpareo events tail --follow --types published,voided
 ```
@@ -1173,21 +881,18 @@ transpareo events tail --follow --types published,voided
 | `--since` \<value\> | cursor of the previous answer, or an ISO 8601 time |
 | `--types` \<value\> | event types to keep, comma separated |
 
-**API:** `GET /events` (`list_events`). **Permission:** `dpp_history`.
+`GET /events` · operation `list_events` · permission `dpp_history`
 
 ## Exports
 
+Passport exports: started by a consumer, polled, and downloaded as an archive.
+
 ### transpareo exports create
 
-Start a passport export, wait for it and download the archive
+Start a passport export, wait for it and download the archive.
 
-```
+```sh
 transpareo exports create [--format jsonld|csv|xlsx|sql] [--wait] [--download <path>]
-```
-
-Example:
-
-```
 transpareo exports create --format jsonld --wait \
     --download catalogue.tar.gz
 transpareo exports create --format csv --normalize
@@ -1201,19 +906,14 @@ transpareo exports create --format csv --normalize
 | `--normalize` | resolve references into the rows |
 | `--wait` | poll until the export is done |
 
-**API:** `POST /exports` (`create_export`). **Permission:** `export_access`.
+`POST /exports` · operation `create_export` · permission `export_access`
 
 ### transpareo exports download
 
-Download an export archive
+Download an export archive.
 
-```
+```sh
 transpareo exports download <id>
-```
-
-Example:
-
-```
 transpareo exports download <id>
 ```
 
@@ -1221,19 +921,14 @@ transpareo exports download <id>
 |---|---|
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 
-**API:** `GET /exports/{id}/download` (`download_export`). **Permission:** `export_access`.
+`GET /exports/{id}/download` · operation `download_export` · permission `export_access`
 
 ### transpareo exports get
 
-Poll an export
+Poll an export.
 
-```
+```sh
 transpareo exports get <id>
-```
-
-Example:
-
-```
 transpareo exports get <id>
 ```
 
@@ -1242,21 +937,17 @@ transpareo exports get <id>
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 | `--wait` | poll the statusUrl until the work is done |
 
-**API:** `GET /exports/{id}` (`get_export`). **Permission:** `export_access`.
+`GET /exports/{id}` · operation `get_export` · permission `export_access`
 
 ## Grants
 
+Self-service partner grants: short-lived credentials scoped to one passport, issued from a scanned code.
+
 ### transpareo grants create
 
-Issue a passport-scoped partner grant
+Issue a passport-scoped partner grant.
 
-```
-transpareo grants create
-```
-
-Example:
-
-```
+```sh
 transpareo grants create --file body.json
 ```
 
@@ -1266,21 +957,17 @@ transpareo grants create --file body.json
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 | `--set` \<value\>... | body field as key=value, nested with dots (repeatable) |
 
-**API:** `POST /grant` (`create_grant`). **Permission:** `dpp_events` or `dpp_history` or `dpp_dynamic`.
+`POST /grant` · operation `create_grant` · permission `dpp_events` or `dpp_history` or `dpp_dynamic`
 
 ## Imports
 
+Spreadsheet imports: upload, map the columns, validate, execute, revert.
+
 ### transpareo imports create
 
-Upload a spreadsheet to import
+Upload a spreadsheet to import.
 
-```
-transpareo imports create
-```
-
-Example:
-
-```
+```sh
 transpareo imports create --file <path>
 ```
 
@@ -1294,19 +981,13 @@ transpareo imports create --file <path>
 | `--value-separator` \<value\> | What separates several values in one cell |
 | `--wait` | poll the statusUrl until the work is done |
 
-**API:** `POST /imports` (`create_import`). **Permission:** `import_access`.
+`POST /imports` · operation `create_import` · permission `import_access`
 
 ### transpareo imports example
 
-Download the example spreadsheet
+Download the example spreadsheet.
 
-```
-transpareo imports example
-```
-
-Example:
-
-```
+```sh
 transpareo imports example --data-type <dataType>
 ```
 
@@ -1315,19 +996,14 @@ transpareo imports example --data-type <dataType>
 | `--data-type` \<value\> |  |
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 
-**API:** `GET /imports/example` (`get_import_example`). **Permission:** `import_access`.
+`GET /imports/example` · operation `get_import_example` · permission `import_access`
 
 ### transpareo imports execute
 
-Execute an import
+Execute an import.
 
-```
+```sh
 transpareo imports execute <id>
-```
-
-Example:
-
-```
 transpareo imports execute <id> --file body.json
 ```
 
@@ -1338,19 +1014,14 @@ transpareo imports execute <id> --file body.json
 | `--set` \<value\>... | body field as key=value, nested with dots (repeatable) |
 | `--wait` | poll the statusUrl until the work is done |
 
-**API:** `POST /imports/{id}/execute` (`execute_import`). **Permission:** `import_access`.
+`POST /imports/{id}/execute` · operation `execute_import` · permission `import_access`
 
 ### transpareo imports get
 
-Poll an import
+Poll an import.
 
-```
+```sh
 transpareo imports get <id>
-```
-
-Example:
-
-```
 transpareo imports get <id>
 ```
 
@@ -1359,19 +1030,14 @@ transpareo imports get <id>
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 | `--wait` | poll the statusUrl until the work is done |
 
-**API:** `GET /imports/{id}` (`get_import`). **Permission:** `import_access`.
+`GET /imports/{id}` · operation `get_import` · permission `import_access`
 
 ### transpareo imports map
 
-Send the column mapping of a fresh import
+Send the column mapping of a fresh import.
 
-```
+```sh
 transpareo imports map <id>
-```
-
-Example:
-
-```
 transpareo imports map 12 --mappings mapping.json
 transpareo imports map 12 --map "Artikelname=name" \
     --map "Gewicht=property:Weight" --map "Farbe=new:Colour" \
@@ -1387,19 +1053,14 @@ transpareo imports map 12 --accept-suggestions
 | `--published` | publish the records the import creates |
 | `--skip-backup` | execute without the backup a revert needs |
 
-**API:** `PUT /imports/{id}/mappings` (`map_import`). **Permission:** `import_access`.
+`PUT /imports/{id}/mappings` · operation `map_import` · permission `import_access`
 
 ### transpareo imports revert
 
-Revert an import
+Revert an import.
 
-```
+```sh
 transpareo imports revert <id>
-```
-
-Example:
-
-```
 transpareo imports revert <id> --file body.json --yes
 ```
 
@@ -1410,19 +1071,14 @@ transpareo imports revert <id> --file body.json --yes
 | `--set` \<value\>... | body field as key=value, nested with dots (repeatable) |
 | `--wait` | poll the statusUrl until the work is done |
 
-**API:** `POST /imports/{id}/revert` (`revert_import`). **Permission:** `import_access`. **Cannot be undone**; needs `--yes`.
+`POST /imports/{id}/revert` · operation `revert_import` · permission `import_access` · cannot be undone, needs `--yes`
 
 ### transpareo imports run
 
-Upload, map, validate and, with --execute, run an import
+Upload, map, validate and, with --execute, run an import.
 
-```
+```sh
 transpareo imports run --file <path> --type <components|products|dpps>
-```
-
-Example:
-
-```
 transpareo imports run --file catalogue.xlsx --type products
 transpareo imports run --file catalogue.xlsx --type products \
     --accept-suggestions --map "Farbe=new:Colour" --execute
@@ -1440,19 +1096,13 @@ transpareo imports run --file catalogue.xlsx --type products \
 | `--type` \<value\> | components, products or dpps |
 | `--value-separator` \<value\> | what separates several values in a cell |
 
-**API:** `POST /imports/{id}/execute` (`execute_import`). **Permission:** `import_access`.
+`POST /imports/{id}/execute` · operation `execute_import` · permission `import_access`
 
 ### transpareo imports supplier-form
 
-Download the blank supplier form
+Download the blank supplier form.
 
-```
-transpareo imports supplier-form
-```
-
-Example:
-
-```
+```sh
 transpareo imports supplier-form --data-type <dataType>
 ```
 
@@ -1462,19 +1112,14 @@ transpareo imports supplier-form --data-type <dataType>
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 | `--sheet-locale` \<value\> | The language of the form; a language the workspace does not run falls back to the request's |
 
-**API:** `GET /imports/supplier_form` (`get_import_supplier_form`). **Permission:** `import_access`.
+`GET /imports/supplier_form` · operation `get_import_supplier_form` · permission `import_access`
 
 ### transpareo imports validate
 
-Validate an import
+Validate an import.
 
-```
+```sh
 transpareo imports validate <id>
-```
-
-Example:
-
-```
 transpareo imports validate <id>
 ```
 
@@ -1483,21 +1128,17 @@ transpareo imports validate <id>
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 | `--wait` | poll the statusUrl until the work is done |
 
-**API:** `POST /imports/{id}/validate` (`validate_import`). **Permission:** `import_access`.
+`POST /imports/{id}/validate` · operation `validate_import` · permission `import_access`
 
 ## Mediafiles
 
+Product image uploads and management.
+
 ### transpareo mediafiles create
 
-Upload a mediafile
+Upload a mediafile.
 
-```
-transpareo mediafiles create
-```
-
-Example:
-
-```
+```sh
 transpareo mediafiles create --file <path> --upload <path>
 ```
 
@@ -1508,19 +1149,13 @@ transpareo mediafiles create --file <path> --upload <path>
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 | `--upload` \<value\> | path of the file to upload; The same file under the name the model uses; send either this or 'mediafile[file]' |
 
-**API:** `POST /mediafiles` (`create_mediafile`). **Permission:** any consumer token.
+`POST /mediafiles` · operation `create_mediafile` · any consumer token
 
 ### transpareo mediafiles list
 
-List mediafiles
+List mediafiles.
 
-```
-transpareo mediafiles list
-```
-
-Example:
-
-```
+```sh
 transpareo mediafiles list --page <page>
 ```
 
@@ -1531,21 +1166,18 @@ transpareo mediafiles list --page <page>
 | `--per-page` \<n\> | Records per page (default: 100, max: 500) |
 | `--term` \<value\> | Filter by file name |
 
-**API:** `GET /mediafiles` (`list_mediafiles`). **Permission:** any consumer token.
+`GET /mediafiles` · operation `list_mediafiles` · any consumer token
 
 ## Permalinks
 
+Resolve permalink paths to products, components, or brands.
+
 ### transpareo permalinks resolve
 
-Resolve a permalink
+Resolve a permalink.
 
-```
+```sh
 transpareo permalinks resolve <path>
-```
-
-Example:
-
-```
 transpareo permalinks resolve <path> --show <show>
 ```
 
@@ -1554,21 +1186,18 @@ transpareo permalinks resolve <path> --show <show>
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 | `--show` \<value\> | Comma-separated property type IDs to reveal restricted properties |
 
-**API:** `GET /permalinks/{path}` (`resolve_permalink`). **Permission:** none, the endpoint is public.
+`GET /permalinks/{path}` · operation `resolve_permalink` · no permission needed, the endpoint is public
 
 ## Plans
 
+Subscription plans and pricing.
+
 ### transpareo plans get
 
-Get a subscription plan
+Get a subscription plan.
 
-```
+```sh
 transpareo plans get <id>
-```
-
-Example:
-
-```
 transpareo plans get <id>
 ```
 
@@ -1576,19 +1205,13 @@ transpareo plans get <id>
 |---|---|
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 
-**API:** `GET /plans/{id}` (`get_plan`). **Permission:** none, the endpoint is public.
+`GET /plans/{id}` · operation `get_plan` · no permission needed, the endpoint is public
 
 ### transpareo plans list
 
-List subscription plans
+List subscription plans.
 
-```
-transpareo plans list
-```
-
-Example:
-
-```
+```sh
 transpareo plans list
 ```
 
@@ -1596,21 +1219,17 @@ transpareo plans list
 |---|---|
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 
-**API:** `GET /plans` (`list_plans`). **Permission:** none, the endpoint is public.
+`GET /plans` · operation `list_plans` · no permission needed, the endpoint is public
 
 ## Products
 
+Product data including ratings, components, and properties.
+
 ### transpareo products create
 
-Create a product
+Create a product.
 
-```
-transpareo products create
-```
-
-Example:
-
-```
+```sh
 transpareo products create --file body.json
 ```
 
@@ -1620,19 +1239,14 @@ transpareo products create --file body.json
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 | `--set` \<value\>... | body field as key=value, nested with dots (repeatable) |
 
-**API:** `POST /products` (`create_product`). **Permission:** `product_access`.
+`POST /products` · operation `create_product` · permission `product_access`
 
 ### transpareo products delete
 
-Delete a product
+Delete a product.
 
-```
+```sh
 transpareo products delete <id>
-```
-
-Example:
-
-```
 transpareo products delete <id> --yes
 ```
 
@@ -1640,19 +1254,13 @@ transpareo products delete <id> --yes
 |---|---|
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 
-**API:** `DELETE /products/{id}` (`delete_product`). **Permission:** `product_access`. **Cannot be undone**; needs `--yes`.
+`DELETE /products/{id}` · operation `delete_product` · permission `product_access` · cannot be undone, needs `--yes`
 
 ### transpareo products featured list
 
-List featured products
+List featured products.
 
-```
-transpareo products featured list
-```
-
-Example:
-
-```
+```sh
 transpareo products featured list
 ```
 
@@ -1660,19 +1268,14 @@ transpareo products featured list
 |---|---|
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 
-**API:** `GET /featured_products` (`list_featured_products`). **Permission:** none, the endpoint is public.
+`GET /featured_products` · operation `list_featured_products` · no permission needed, the endpoint is public
 
 ### transpareo products get
 
-Get a product
+Get a product.
 
-```
+```sh
 transpareo products get <id>
-```
-
-Example:
-
-```
 transpareo products get <id> --show <show>
 ```
 
@@ -1682,19 +1285,13 @@ transpareo products get <id> --show <show>
 | `--raw` | Return raw property values instead of rendered HTML |
 | `--show` \<value\> | Comma-separated property type IDs to reveal restricted properties |
 
-**API:** `GET /products/{id}` (`get_product`). **Permission:** none, the endpoint is public.
+`GET /products/{id}` · operation `get_product` · no permission needed, the endpoint is public
 
 ### transpareo products list
 
-List products
+List products.
 
-```
-transpareo products list
-```
-
-Example:
-
-```
+```sh
 transpareo products list --page <page>
 ```
 
@@ -1712,19 +1309,14 @@ transpareo products list --page <page>
 | `--term` \<value\> | Full-text search query (uses Elasticsearch when provided) |
 | `--type-ids` \<value\> | Filter by component type IDs (comma-separated) |
 
-**API:** `GET /products` (`list_products`). **Permission:** none, the endpoint is public.
+`GET /products` · operation `list_products` · no permission needed, the endpoint is public
 
 ### transpareo products mediafiles update
 
-Update product mediafile assignments
+Update product mediafile assignments.
 
-```
+```sh
 transpareo products mediafiles update <id>
-```
-
-Example:
-
-```
 transpareo products mediafiles update <id> --file body.json
 ```
 
@@ -1734,19 +1326,13 @@ transpareo products mediafiles update <id> --file body.json
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 | `--set` \<value\>... | body field as key=value, nested with dots (repeatable) |
 
-**API:** `PUT /products/{id}/mediafiles` (`update_product_mediafiles`). **Permission:** `product_access`.
+`PUT /products/{id}/mediafiles` · operation `update_product_mediafiles` · permission `product_access`
 
 ### transpareo products new
 
-Get new product template
+Get new product template.
 
-```
-transpareo products new
-```
-
-Example:
-
-```
+```sh
 transpareo products new
 ```
 
@@ -1754,19 +1340,13 @@ transpareo products new
 |---|---|
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 
-**API:** `GET /products/new` (`get_new_product`). **Permission:** none, the endpoint is public.
+`GET /products/new` · operation `get_new_product` · no permission needed, the endpoint is public
 
 ### transpareo products properties list
 
-List product properties
+List product properties.
 
-```
-transpareo products properties list
-```
-
-Example:
-
-```
+```sh
 transpareo products properties list --page <page>
 ```
 
@@ -1778,19 +1358,14 @@ transpareo products properties list --page <page>
 | `--property-type-id` \<n\> | The property type whose values to list. Without it, and for a type that does not exist, the list is empty. |
 | `--term` \<value\> | Filter the values by their text |
 
-**API:** `GET /product_properties` (`list_product_properties`). **Permission:** none, the endpoint is public.
+`GET /product_properties` · operation `list_product_properties` · no permission needed, the endpoint is public
 
 ### transpareo products publish
 
-Publish a product
+Publish a product.
 
-```
+```sh
 transpareo products publish <id>
-```
-
-Example:
-
-```
 transpareo products publish <id>
 ```
 
@@ -1798,19 +1373,14 @@ transpareo products publish <id>
 |---|---|
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 
-**API:** `PUT /products/{id}/publish` (`publish_product`). **Permission:** `product_access`.
+`PUT /products/{id}/publish` · operation `publish_product` · permission `product_access`
 
 ### transpareo products unpublish
 
-Unpublish a product
+Unpublish a product.
 
-```
+```sh
 transpareo products unpublish <id>
-```
-
-Example:
-
-```
 transpareo products unpublish <id>
 ```
 
@@ -1818,19 +1388,14 @@ transpareo products unpublish <id>
 |---|---|
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 
-**API:** `PUT /products/{id}/unpublish` (`unpublish_product`). **Permission:** `product_access`.
+`PUT /products/{id}/unpublish` · operation `unpublish_product` · permission `product_access`
 
 ### transpareo products update
 
-Update a product
+Update a product.
 
-```
+```sh
 transpareo products update <id>
-```
-
-Example:
-
-```
 transpareo products update <id> --file body.json
 ```
 
@@ -1840,21 +1405,17 @@ transpareo products update <id> --file body.json
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 | `--set` \<value\>... | body field as key=value, nested with dots (repeatable) |
 
-**API:** `PUT /products/{id}` (`update_product`). **Permission:** `product_access`.
+`PUT /products/{id}` · operation `update_product` · permission `product_access`
 
 ## Reference Data
 
+Component names, functions, types, property categories, countries, and GTINs.
+
 ### transpareo reference-data component-functions list
 
-List component functions
+List component functions.
 
-```
-transpareo reference-data component-functions list
-```
-
-Example:
-
-```
+```sh
 transpareo reference-data component-functions list
 ```
 
@@ -1862,19 +1423,13 @@ transpareo reference-data component-functions list
 |---|---|
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 
-**API:** `GET /component_functions` (`list_component_functions`). **Permission:** none, the endpoint is public.
+`GET /component_functions` · operation `list_component_functions` · no permission needed, the endpoint is public
 
 ### transpareo reference-data component-names list
 
-Autocomplete component names
+Autocomplete component names.
 
-```
-transpareo reference-data component-names list
-```
-
-Example:
-
-```
+```sh
 transpareo reference-data component-names list --page <page>
 ```
 
@@ -1885,19 +1440,13 @@ transpareo reference-data component-names list --page <page>
 | `--per-page` \<n\> | Records per page (default: 100, max: 500) |
 | `--term` \<value\> | Prefix to search for |
 
-**API:** `GET /component_names` (`list_component_names`). **Permission:** none, the endpoint is public.
+`GET /component_names` · operation `list_component_names` · no permission needed, the endpoint is public
 
 ### transpareo reference-data component-properties list
 
-List component property categories
+List component property categories.
 
-```
-transpareo reference-data component-properties list
-```
-
-Example:
-
-```
+```sh
 transpareo reference-data component-properties list
 ```
 
@@ -1905,19 +1454,13 @@ transpareo reference-data component-properties list
 |---|---|
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 
-**API:** `GET /component_properties` (`list_component_properties`). **Permission:** none, the endpoint is public.
+`GET /component_properties` · operation `list_component_properties` · no permission needed, the endpoint is public
 
 ### transpareo reference-data component-types list
 
-List component types
+List component types.
 
-```
-transpareo reference-data component-types list
-```
-
-Example:
-
-```
+```sh
 transpareo reference-data component-types list
 ```
 
@@ -1925,19 +1468,13 @@ transpareo reference-data component-types list
 |---|---|
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 
-**API:** `GET /component_types` (`list_component_types`). **Permission:** none, the endpoint is public.
+`GET /component_types` · operation `list_component_types` · no permission needed, the endpoint is public
 
 ### transpareo reference-data countries list
 
-List countries
+List countries.
 
-```
-transpareo reference-data countries list
-```
-
-Example:
-
-```
+```sh
 transpareo reference-data countries list
 ```
 
@@ -1945,19 +1482,13 @@ transpareo reference-data countries list
 |---|---|
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 
-**API:** `GET /countries` (`list_countries`). **Permission:** none, the endpoint is public.
+`GET /countries` · operation `list_countries` · no permission needed, the endpoint is public
 
 ### transpareo reference-data product-gtins list
 
-Search products by GTIN
+Search products by GTIN.
 
-```
-transpareo reference-data product-gtins list
-```
-
-Example:
-
-```
+```sh
 transpareo reference-data product-gtins list --page <page>
 ```
 
@@ -1968,21 +1499,17 @@ transpareo reference-data product-gtins list --page <page>
 | `--per-page` \<n\> | Records per page (default: 100, max: 500) |
 | `--term` \<value\> | GTIN prefix to search for |
 
-**API:** `GET /product_gtins` (`list_product_gtins`). **Permission:** none, the endpoint is public.
+`GET /product_gtins` · operation `list_product_gtins` · no permission needed, the endpoint is public
 
 ## Search
 
+Full-text search across products and components.
+
 ### transpareo search catalogue
 
-Search products and components
+Search products and components.
 
-```
-transpareo search catalogue
-```
-
-Example:
-
-```
+```sh
 transpareo search catalogue --query <query>
 ```
 
@@ -1994,21 +1521,17 @@ transpareo search catalogue --query <query>
 | `--per-page` \<n\> | Records per page (default: 100, max: 500) |
 | `--query` \<value\> | Search query |
 
-**API:** `GET /search` (`search_catalogue`). **Permission:** none, the endpoint is public.
+`GET /search` · operation `search_catalogue` · no permission needed, the endpoint is public
 
 ## Webhooks
 
+Webhook subscriptions a consumer manages for itself: signed deliveries of versioned passport events.
+
 ### transpareo webhooks create
 
-Create a webhook subscription
+Create a webhook subscription.
 
-```
-transpareo webhooks create
-```
-
-Example:
-
-```
+```sh
 transpareo webhooks create --file body.json
 ```
 
@@ -2018,19 +1541,14 @@ transpareo webhooks create --file body.json
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 | `--set` \<value\>... | body field as key=value, nested with dots (repeatable) |
 
-**API:** `POST /webhooks` (`create_webhook`). **Permission:** `webhook_access`.
+`POST /webhooks` · operation `create_webhook` · permission `webhook_access`
 
 ### transpareo webhooks delete
 
-Delete a webhook subscription
+Delete a webhook subscription.
 
-```
+```sh
 transpareo webhooks delete <id>
-```
-
-Example:
-
-```
 transpareo webhooks delete <id> --yes
 ```
 
@@ -2038,19 +1556,14 @@ transpareo webhooks delete <id> --yes
 |---|---|
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 
-**API:** `DELETE /webhooks/{id}` (`delete_webhook`). **Permission:** `webhook_access`. **Cannot be undone**; needs `--yes`.
+`DELETE /webhooks/{id}` · operation `delete_webhook` · permission `webhook_access` · cannot be undone, needs `--yes`
 
 ### transpareo webhooks get
 
-Get a webhook subscription
+Get a webhook subscription.
 
-```
+```sh
 transpareo webhooks get <id>
-```
-
-Example:
-
-```
 transpareo webhooks get <id>
 ```
 
@@ -2058,19 +1571,13 @@ transpareo webhooks get <id>
 |---|---|
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 
-**API:** `GET /webhooks/{id}` (`get_webhook`). **Permission:** `webhook_access`.
+`GET /webhooks/{id}` · operation `get_webhook` · permission `webhook_access`
 
 ### transpareo webhooks list
 
-List webhook subscriptions
+List webhook subscriptions.
 
-```
-transpareo webhooks list
-```
-
-Example:
-
-```
+```sh
 transpareo webhooks list --page <page>
 ```
 
@@ -2080,19 +1587,14 @@ transpareo webhooks list --page <page>
 | `--page` \<n\> | Page number |
 | `--per-page` \<n\> | Records per page (default: 100, max: 500) |
 
-**API:** `GET /webhooks` (`list_webhooks`). **Permission:** `webhook_access`.
+`GET /webhooks` · operation `list_webhooks` · permission `webhook_access`
 
 ### transpareo webhooks secret regenerate
 
-Rotate a webhook secret
+Rotate a webhook secret.
 
-```
+```sh
 transpareo webhooks secret regenerate <id>
-```
-
-Example:
-
-```
 transpareo webhooks secret regenerate <id> --yes
 ```
 
@@ -2100,19 +1602,14 @@ transpareo webhooks secret regenerate <id> --yes
 |---|---|
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 
-**API:** `POST /webhooks/{id}/regenerate_secret` (`regenerate_webhook_secret`). **Permission:** `webhook_access`. **Cannot be undone**; needs `--yes`.
+`POST /webhooks/{id}/regenerate_secret` · operation `regenerate_webhook_secret` · permission `webhook_access` · cannot be undone, needs `--yes`
 
 ### transpareo webhooks test
 
-Send a test delivery
+Send a test delivery.
 
-```
+```sh
 transpareo webhooks test <id>
-```
-
-Example:
-
-```
 transpareo webhooks test <id>
 ```
 
@@ -2120,19 +1617,14 @@ transpareo webhooks test <id>
 |---|---|
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 
-**API:** `POST /webhooks/{id}/test` (`test_webhook`). **Permission:** `webhook_access`.
+`POST /webhooks/{id}/test` · operation `test_webhook` · permission `webhook_access`
 
 ### transpareo webhooks update
 
-Update a webhook subscription
+Update a webhook subscription.
 
-```
+```sh
 transpareo webhooks update <id>
-```
-
-Example:
-
-```
 transpareo webhooks update <id> --file body.json
 ```
 
@@ -2142,5 +1634,5 @@ transpareo webhooks update <id> --file body.json
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 | `--set` \<value\>... | body field as key=value, nested with dots (repeatable) |
 
-**API:** `PUT /webhooks/{id}` (`update_webhook`). **Permission:** `webhook_access`.
+`PUT /webhooks/{id}` · operation `update_webhook` · permission `webhook_access`
 
