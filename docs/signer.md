@@ -54,6 +54,16 @@ resolves to a public address, pins that address for the call,
 and gives the whole call fifteen seconds; the endpoint answers
 one request in well under a second and bounds each at ten.
 
+The platform signs the request for the host and path of the
+registered URL, so both must reach the endpoint unchanged. A
+reverse proxy that replaces the Host header with the upstream
+address (nginx does, unless `proxy_set_header Host $host` is
+set) makes every request fail verification; `--host` names the
+registered host in that case. Register the URL with the path the
+endpoint serves, `/sign` by default, and keep the clocks of the
+signer host in step with the world: a timestamp more than five
+minutes off is refused.
+
 `--listen` and `--path` change the address and the route;
 `--p256-key` and `--ed25519-key` name the key files when they
 are not under the signer directory. One line per request goes to

@@ -4,6 +4,7 @@ import (
 	"crypto/ed25519"
 	"crypto/rand"
 	"encoding/base64"
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -110,6 +111,59 @@ func TestRefusals(t *testing.T) {
 			t.Error("a malformed timestamp was accepted")
 		}
 	})
+}
+
+// TestPinnedHostSurvivesAProxyRewrite proves a request whose
+// Host header a reverse proxy replaced still verifies when the
+// registered host is pinned, and fails without the pin.
+func TestPinnedHostSurvivesAProxyRewrite(t *testing.T) {
+	v := loadVectors(t)
+	r, body := signedRequest(t, v)
+	r.Host = "127.0.0.1:8443"
+	ver := NewVerifier(v.platformKey(t))
+	ver.Now = clockAt(v.SignedRequest.Timestamp)
+	if err := ver.Verify(r, body); err == nil {
+		t.Error("the rewritten host verified without a pin")
+	}
+	ver = NewVerifier(v.platformKey(t))
+	ver.Now = clockAt(v.SignedRequest.Timestamp)
+	ver.Host = "Signer.Acme.Example.com"
+	if err := ver.Verify(r, body); err != nil {
+		t.Errorf("with the pinned host: %v", err)
+	}
+}
+
+// TestASlowRefetchDoesNotBlockOtherRequests proves a refetch in
+// flight for one forged request leaves a valid request served.
+func TestASlowRefetchDoesNotBlockOtherRequests(t *testing.T) {
+	v := loadVectors(t)
+	ver := NewVerifier(v.platformKey(t))
+	ver.Now = clockAt(v.SignedRequest.Timestamp)
+	release := make(chan struct{})
+	ver.Refetch = func() (ed25519.PublicKey, error) {
+		<-release
+		return nil, errors.New("unreachable")
+	}
+	forged, forgedBody := signedRequest(t, v)
+	forged.Header.Set(HeaderSignature,
+		base64.StdEncoding.EncodeToString(make([]byte, 64)))
+	forgedDone := make(chan error, 1)
+	go func() { forgedDone <- ver.Verify(forged, forgedBody) }()
+	valid, validBody := signedRequest(t, v)
+	served := make(chan error, 1)
+	go func() { served <- ver.Verify(valid, validBody) }()
+	select {
+	case err := <-served:
+		if err != nil {
+			t.Errorf("the valid request: %v", err)
+		}
+	case <-time.After(2 * time.Second):
+		t.Fatal("the valid request waited on the refetch")
+	}
+	close(release)
+	if err := <-forgedDone; err == nil {
+		t.Error("the forged request was accepted")
+	}
 }
 
 // TestRotatedKeyIsFetchedOnce proves a request signed by a key

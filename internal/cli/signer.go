@@ -137,6 +137,10 @@ verifying. Without --tls-cert and --tls-key the endpoint speaks
 plain HTTP for a reverse proxy that terminates TLS. The platform
 needs an https URL that resolves to a public address either way.
 
+Behind a reverse proxy the Host header and the path must reach the
+endpoint as the platform signed them: the host of the registered
+URL, or --host names it, and the path the URL carries as --path.
+
 --allow-unsigned accepts requests without the platform signature.
 It exists for a development platform and must never be set on an
 endpoint a real workspace registered.`,
@@ -156,6 +160,8 @@ endpoint a real workspace registered.`,
 		"Ed25519 private key PEM (default: ed25519.pem under the signer dir)")
 	f.StringVar(&opts.platformKey, "platform-key", "",
 		"the platform's request-signing public key: a PEM file or a URL")
+	f.StringVar(&opts.host, "host", "", "host name of the registered "+
+		"endpoint URL, when the proxy rewrites the Host header")
 	f.StringVar(&opts.listen, "listen", "127.0.0.1:8443", "address to listen on")
 	f.StringVar(&opts.path, "path", "/sign", "the one route served")
 	f.StringVar(&opts.tlsCert, "tls-cert", "", "TLS certificate PEM")
@@ -167,9 +173,14 @@ endpoint a real workspace registered.`,
 
 type serveOptions struct {
 	p256Key, ed25519Key, platformKey string
-	listen, path, tlsCert, tlsKey    string
+	host, listen, path               string
+	tlsCert, tlsKey                  string
 	allowUnsigned                    bool
 }
+
+// platformKeyTimeout bounds a fetch of the platform's key, which
+// may run while a request waits.
+const platformKeyTimeout = 5 * time.Second
 
 // handlerTimeout bounds one request, inside the platform's
 // fifteen-second budget for the whole call.
@@ -293,6 +304,7 @@ func (a *App) signerVerifier(ctx context.Context,
 		verifier = signer.NewVerifier(key)
 	}
 	verifier.AllowUnsigned = opts.allowUnsigned
+	verifier.Host = opts.host
 	return verifier, nil
 }
 
@@ -302,7 +314,8 @@ func (a *App) fetchPlatformKey(ctx context.Context,
 	if err != nil {
 		return nil, err
 	}
-	resp, err := a.httpClient().Do(req)
+	client := &http.Client{Timeout: platformKeyTimeout}
+	resp, err := client.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("fetching the platform key: %w", err)
 	}

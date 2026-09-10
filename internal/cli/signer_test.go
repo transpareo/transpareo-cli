@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"sync"
 	"testing"
@@ -33,8 +34,10 @@ func TestSignerKeygenWritesKeysAndPrintsPublicHalves(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		if info.Mode().Perm() != 0o600 {
-			t.Errorf("%s mode = %o", name, info.Mode().Perm())
+		// Windows has no owner-only mode to check.
+		if perm := info.Mode().Perm(); perm != 0o600 &&
+			runtime.GOOS != "windows" {
+			t.Errorf("%s mode = %o", name, perm)
 		}
 	}
 	if _, err := signer.LoadP256(filepath.Join(dir, "p256.pem")); err != nil {

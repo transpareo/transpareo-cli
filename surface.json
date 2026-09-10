@@ -801,6 +801,7 @@
     "flags": [
       "allow-unsigned",
       "ed25519-key",
+      "host",
       "listen",
       "p256-key",
       "path",

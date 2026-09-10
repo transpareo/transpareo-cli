@@ -48,6 +48,12 @@ type Verifier struct {
 	// is not seeded. Never set it for a production endpoint.
 	AllowUnsigned bool
 
+	// Host is the host name the platform signs for: the host of
+	// the registered endpoint URL. Set it when a reverse proxy
+	// rewrites the Host header on the way in; empty takes the
+	// request's own Host header without its port.
+	Host string
+
 	// Now replaces the clock, in tests.
 	Now func() time.Time
 
@@ -99,7 +105,11 @@ func (v *Verifier) Verify(r *http.Request, body []byte) error {
 	if err != nil {
 		return errors.New("malformed signature")
 	}
-	canonical := Canonical(r.Method, hostOf(r), r.URL.RequestURI(), timestamp,
+	host := v.Host
+	if host == "" {
+		host = hostOf(r)
+	}
+	canonical := Canonical(r.Method, host, r.URL.RequestURI(), timestamp,
 		nonce, body)
 	if !v.verifyWithRefetch(canonical, sig, now) {
 		return errors.New("invalid signature")
@@ -118,23 +128,31 @@ func hostOf(r *http.Request) string {
 
 // verifyWithRefetch checks the signature against the pinned key
 // and, when that fails and a refetch is possible, once more
-// against the platform's current key.
+// against the platform's current key. The fetch runs outside
+// the lock, so a slow platform holds up this one request and
+// not every other.
 func (v *Verifier) verifyWithRefetch(canonical, sig []byte,
 	now time.Time) bool {
 	v.mu.Lock()
-	defer v.mu.Unlock()
-	if ed25519.Verify(v.key, canonical, sig) {
+	key := v.key
+	refetch := v.Refetch != nil && now.Sub(v.lastRefetch) >= refetchInterval
+	if refetch {
+		v.lastRefetch = now
+	}
+	v.mu.Unlock()
+	if ed25519.Verify(key, canonical, sig) {
 		return true
 	}
-	if v.Refetch == nil || now.Sub(v.lastRefetch) < refetchInterval {
+	if !refetch {
 		return false
 	}
-	v.lastRefetch = now
-	key, err := v.Refetch()
-	if err != nil || !ed25519.Verify(key, canonical, sig) {
+	fetched, err := v.Refetch()
+	if err != nil || !ed25519.Verify(fetched, canonical, sig) {
 		return false
 	}
-	v.key = key
+	v.mu.Lock()
+	v.key = fetched
+	v.mu.Unlock()
 	return true
 }
 

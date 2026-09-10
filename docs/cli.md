@@ -217,6 +217,7 @@ transpareo signer serve --platform-key https://acme.example.com/.well-known/tran
 |---|---|
 | `--allow-unsigned` | accept requests without the platform signature (development only) |
 | `--ed25519-key` \<value\> | Ed25519 private key PEM (default: ed25519.pem under the signer dir) |
+| `--host` \<value\> | host name of the registered endpoint URL, when the proxy rewrites the Host header |
 | `--listen` \<value\> | address to listen on |
 | `--p256-key` \<value\> | P-256 private key PEM (default: p256.pem under the signer dir) |
 | `--path` \<value\> | the one route served |
