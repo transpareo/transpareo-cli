@@ -108,9 +108,7 @@ func TestSignerServeSignsAndStops(t *testing.T) {
 	done := make(chan int, 1)
 	go func() {
 		done <- Main(ctx, app, []string{"signer", "serve", "--allow-unsigned",
-			"--listen", "127.0.0.1:0", "--p256-key",
-			filepath.Join(dir, "p256.pem"), "--ed25519-key",
-			filepath.Join(dir, "ed25519.pem")})
+			"--listen", "127.0.0.1:0", "--dir", dir})
 	}()
 	url := waitForURL(t, stderr, done)
 	body := `{"snapshots":[{"kind":"test","body":"{}","proofs":[{"a":1}]}]}`
@@ -152,6 +150,15 @@ func TestSignerServeNeedsKeysAndAPlatformKey(t *testing.T) {
 		"--tls-cert", "c.pem")
 	if code != 2 || !strings.Contains(out, "go together") {
 		t.Errorf("half a TLS pair: %d %s%s", code, out, errOut)
+	}
+
+	// --dir names both key files; a named file wins over it.
+	dir := t.TempDir()
+	named := filepath.Join(dir, "named.pem")
+	out, errOut, code = h.run("signer", "serve", "--allow-unsigned",
+		"--dir", dir, "--p256-key", named)
+	if code != 1 || !strings.Contains(out, named) {
+		t.Errorf("--dir with --p256-key: %d %s%s", code, out, errOut)
 	}
 }
 

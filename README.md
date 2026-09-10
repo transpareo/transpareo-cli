@@ -152,6 +152,8 @@ curl -fsSL https://transpareo.com/cli/install.sh | sh
 Linux packages: the deb, rpm and apk packages and the tar.gz
 archives are on the
 [releases page](https://github.com/transpareo/transpareo-cli/releases).
+The three packages also carry the signing endpoint as a systemd
+service, for a workspace that holds its own keys.
 
 Windows, with Scoop, from the
 [transpareo/scoop-bucket](https://github.com/transpareo/scoop-bucket)
@@ -286,13 +288,57 @@ credentials confined to one passport for a day. All of it in
 
 ## Signing endpoint
 
-A workspace that brings its own keys signs its passports itself.
-`transpareo signer keygen` makes the P-256 and Ed25519 keys and
-prints the public halves for the application manager's BYOK
-form; `transpareo signer serve` runs the endpoint the platform
-calls at publish time, checking the platform's signature on
-every request before a key is touched. The keys never leave the
-machine. Details in [docs/signer.md](docs/signer.md).
+A workspace that brings its own keys (BYOK) signs its passports
+itself. The platform holds no private half: at publish time it
+sends what is to be signed to an HTTPS endpoint the workspace
+runs, reads the signatures back, assembles the proof and
+verifies it against the public keys the workspace registered.
+`transpareo signer` is that endpoint, so a workspace does not
+have to write one.
+
+`transpareo signer keygen` writes the two keys, P-256 for the
+passport's selective-disclosure proof and Ed25519 for the
+whole-document proofs, and prints their public halves for the
+BYOK form of the application manager. `transpareo signer serve`
+runs the endpoint. Every request is checked before a key is
+touched: the platform's signature over the request, the
+timestamp within five minutes, the nonce never seen before. The
+keys never leave the machine, and no assistant can reach them:
+the signer is not an MCP tool and not part of the agent skill.
+
+The deb, rpm and apk packages install it as a service. They
+bring the systemd unit `transpareo-signer`, the settings file
+`/etc/transpareo/signer.env`, the system account
+`transpareo-signer`, and the key directory
+`/etc/transpareo/signer` that only that account can read. The
+package neither enables nor starts the unit, because the keys
+come first:
+
+```
+sudo apt install ./transpareo_<version>_amd64.deb
+sudo -u transpareo-signer transpareo signer keygen --dir /etc/transpareo/signer
+sudoedit /etc/transpareo/signer.env
+sudo systemctl enable --now transpareo-signer
+```
+
+The settings file holds three values: the URL of the key the
+workspace host signs its requests with, the host name registered
+in the BYOK form, and the loopback address the proxy in front
+forwards to. An upgrade keeps the file as you edited it. Paste
+the two public keys into the BYOK form, put nginx or another
+proxy in front to terminate TLS, and press the test button on
+the signing keys page: it round-trips both request shapes and
+verifies the answers against the registered public keys, so a
+publish will not fail verification later.
+
+[docs/signer-ubuntu.md](docs/signer-ubuntu.md) is the runbook for
+Ubuntu with nginx and certbot, from the package to the test
+button: the proxy block that passes the registered Host through,
+the firewall, the uptime check, key rotation and what each
+failure in the journal means. [docs/signer.md](docs/signer.md)
+has the protocol, what each of the two request shapes signs, and
+the Go package for a workspace that would rather embed the
+endpoint in a program of its own.
 
 ## Go client
 

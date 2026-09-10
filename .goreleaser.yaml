@@ -96,6 +96,20 @@ nfpms:
         dst: /usr/share/doc/transpareo/LICENSE
       - src: TRADEMARKS.md
         dst: /usr/share/doc/transpareo/TRADEMARKS.md
+      # The BYOK signing endpoint as a service. The unit reads its
+      # three settings from the environment file, which an upgrade
+      # never overwrites, and the post-install script makes the
+      # account and the key directory the unit needs. Neither
+      # enables nor starts it: the operator generates the keys
+      # first. docs/signer-ubuntu.md is the runbook.
+      - src: packaging/transpareo-signer.service
+        dst: /usr/lib/systemd/system/transpareo-signer.service
+      - src: packaging/signer.env
+        dst: /etc/transpareo/signer.env
+        type: config|noreplace
+    scripts:
+      postinstall: packaging/postinstall.sh
+      preremove: packaging/preremove.sh
 
 # Homebrew cask in the transpareo/homebrew-tap repository. Casks replace the
 # deprecated `brews` formula block in GoReleaser v2; the cask installs the

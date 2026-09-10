@@ -208,14 +208,15 @@ transpareo signer keygen --dir /etc/transpareo/signer --json
 Serve the signing endpoint.
 
 ```sh
-transpareo signer serve --platform-key <pem | url> [--listen <addr>] [--p256-key <pem>] [--ed25519-key <pem>]
+transpareo signer serve --platform-key <pem | url> [--listen <addr>] [--dir <path>] [--p256-key <pem>] [--ed25519-key <pem>]
 transpareo signer serve --platform-key platform.pem
-transpareo signer serve --platform-key https://acme.example.com/.well-known/transpareo-signing-key.pem --listen :8443 --tls-cert cert.pem --tls-key key.pem
+transpareo signer serve --dir /etc/transpareo/signer --platform-key https://acme.example.com/.well-known/transpareo-signing-key.pem --listen :8443 --tls-cert cert.pem --tls-key key.pem
 ```
 
 | Option | What it does |
 |---|---|
 | `--allow-unsigned` | accept requests without the platform signature (development only) |
+| `--dir` \<value\> | directory of the key files (default: signer under the config dir) |
 | `--ed25519-key` \<value\> | Ed25519 private key PEM (default: ed25519.pem under the signer dir) |
 | `--host` \<value\> | host name of the registered endpoint URL, when the proxy rewrites the Host header |
 | `--listen` \<value\> | address to listen on |

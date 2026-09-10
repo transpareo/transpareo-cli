@@ -123,7 +123,7 @@ func (a *App) signerServeCommand() *cobra.Command {
 	var opts serveOptions
 	cmd := &cobra.Command{
 		Use: "serve --platform-key <pem | url> [--listen <addr>] " +
-			"[--p256-key <pem>] [--ed25519-key <pem>]",
+			"[--dir <path>] [--p256-key <pem>] [--ed25519-key <pem>]",
 		Short: "Serve the signing endpoint",
 		Long: `Serves the route the platform calls at publish time. Every request
 is checked against the platform's request-signing key before a key
@@ -137,6 +137,9 @@ verifying. Without --tls-cert and --tls-key the endpoint speaks
 plain HTTP for a reverse proxy that terminates TLS. The platform
 needs an https URL that resolves to a public address either way.
 
+--dir is the directory keygen wrote the two key files to;
+--p256-key and --ed25519-key name them one by one instead.
+
 Behind a reverse proxy the Host header and the path must reach the
 endpoint as the platform signed them: the host of the registered
 URL, or --host names it, and the path the URL carries as --path.
@@ -145,7 +148,8 @@ URL, or --host names it, and the path the URL carries as --path.
 It exists for a development platform and must never be set on an
 endpoint a real workspace registered.`,
 		Example: "  transpareo signer serve --platform-key platform.pem\n" +
-			"  transpareo signer serve --platform-key " +
+			"  transpareo signer serve --dir /etc/transpareo/signer " +
+			"--platform-key " +
 			"https://acme.example.com/.well-known/transpareo-signing-key.pem " +
 			"--listen :8443 --tls-cert cert.pem --tls-key key.pem",
 		Args: cobra.NoArgs,
@@ -154,6 +158,8 @@ endpoint a real workspace registered.`,
 		},
 	}
 	f := cmd.Flags()
+	f.StringVar(&opts.dir, "dir", "",
+		"directory of the key files (default: signer under the config dir)")
 	f.StringVar(&opts.p256Key, "p256-key", "",
 		"P-256 private key PEM (default: p256.pem under the signer dir)")
 	f.StringVar(&opts.ed25519Key, "ed25519-key", "",
@@ -172,6 +178,7 @@ endpoint a real workspace registered.`,
 }
 
 type serveOptions struct {
+	dir                              string
 	p256Key, ed25519Key, platformKey string
 	host, listen, path               string
 	tlsCert, tlsKey                  string
@@ -187,11 +194,15 @@ const platformKeyTimeout = 5 * time.Second
 const handlerTimeout = 10 * time.Second
 
 func (a *App) signerServe(ctx context.Context, opts serveOptions) error {
+	dir := opts.dir
+	if dir == "" {
+		dir = a.signerDir()
+	}
 	if opts.p256Key == "" {
-		opts.p256Key = filepath.Join(a.signerDir(), signerP256File)
+		opts.p256Key = filepath.Join(dir, signerP256File)
 	}
 	if opts.ed25519Key == "" {
-		opts.ed25519Key = filepath.Join(a.signerDir(), signerEd25519File)
+		opts.ed25519Key = filepath.Join(dir, signerEd25519File)
 	}
 	if (opts.tlsCert == "") != (opts.tlsKey == "") {
 		return output.Exit(output.ExitUsage,

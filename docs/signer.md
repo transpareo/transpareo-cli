@@ -65,16 +65,30 @@ signer host in step with the world: a timestamp more than five
 minutes off is refused.
 
 `--listen` and `--path` change the address and the route;
-`--p256-key` and `--ed25519-key` name the key files when they
-are not under the signer directory. One line per request goes to
-standard error: the kind, the elapsed time and the outcome, never
-a key and never a body.
+`--dir` is the directory the key files sit in, and `--p256-key`
+and `--ed25519-key` name them one by one when they are not
+under one directory. One line per request goes to standard
+error: the kind, the elapsed time and the outcome, never a key
+and never a body.
 
 `--allow-unsigned` accepts requests without the platform
 signature. It exists for a development platform whose request
 signing is not seeded and must never be set on an endpoint a
 real workspace registered; the platform never sends an unsigned
 request in production.
+
+## Running it on a server
+
+The deb, rpm and apk packages carry a systemd unit,
+`transpareo-signer`, an environment file with the three
+settings it reads, and a post-install script that creates the
+`transpareo-signer` account and the key directory
+`/etc/transpareo/signer`. The package neither enables nor
+starts the unit: the keys come first.
+[Running the signer on Ubuntu](signer-ubuntu.md) is the
+runbook, from the package to the test button, with nginx in
+front terminating TLS. The systemd and nginx parts are the same
+on Debian.
 
 ## What is signed
 

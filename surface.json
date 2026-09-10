@@ -797,9 +797,10 @@
   },
   {
     "path": "transpareo signer serve",
-    "args": "--platform-key <pem | url> [--listen <addr>] [--p256-key <pem>] [--ed25519-key <pem>]",
+    "args": "--platform-key <pem | url> [--listen <addr>] [--dir <path>] [--p256-key <pem>] [--ed25519-key <pem>]",
     "flags": [
       "allow-unsigned",
+      "dir",
       "ed25519-key",
       "host",
       "listen",
