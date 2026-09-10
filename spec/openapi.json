@@ -7383,7 +7383,7 @@
             "$ref": "#/components/responses/NotFound"
           },
           "409": {
-            "description": "The signing key or the workspace context needed to publish is missing",
+            "description": "The signing key or the workspace context needed to publish is missing (`DPP_PUBLISH_PRECONDITION`), or the workspace signs with its own key and has registered a public key for only one of the two signing curves (`DPP_PUBLISH_BYOK_INCOMPLETE`). The second answer names the curve whose public key is still missing; register it under signing keys in the application manager and publish again.",
             "content": {
               "application/json": {
                 "schema": {
