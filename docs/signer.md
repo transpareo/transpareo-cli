@@ -56,7 +56,10 @@ the new key only when the pinned key signed that statement and
 the statement names the key the host now serves. A host that
 publishes no statement, which is one that never rotated and
 today every host that is not the master of its cluster, is taken
-at its key URL as before, at most once a minute. A statement
+at its key URL as before. Either way the endpoint looks at the
+platform at most once a minute, so a host that rotates twice
+inside one minute leaves it refusing requests until that budget
+refills. A statement
 that did not come from the pinned key is refused, and the
 journal says so: restarting the endpoint pins the key the
 platform signs with now.
