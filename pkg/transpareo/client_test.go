@@ -1,9 +1,11 @@
 package transpareo
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
+	"log/slog"
 	"net/http"
 	"strings"
 	"sync/atomic"
@@ -150,6 +152,88 @@ func TestDoGivesUpAfterThreeAttempts(t *testing.T) {
 	errors.As(err, &apiErr)
 	if !apiErr.Retryable || apiErr.Status != 502 {
 		t.Errorf("error = %+v", apiErr)
+	}
+}
+
+// TestDoLogsTheAttemptItRepeats proves the logger names the
+// call, the attempt, how long it took and why it is repeated,
+// and stays quiet on the attempt that succeeds.
+func TestDoLogsTheAttemptItRepeats(t *testing.T) {
+	ts := newTokenServer(t)
+	clock := newFakeClock()
+	var calls atomic.Int32
+	ts.Mux.HandleFunc("/api/products", func(w http.ResponseWriter,
+		r *http.Request) {
+		if calls.Add(1) == 1 {
+			clock.Advance(61 * time.Second)
+			writeJSON(w, 503, map[string]string{"error": "UPSTREAM",
+				"message": "down"})
+			return
+		}
+		writeJSON(w, 201, map[string]any{"id": 1})
+	})
+	var log bytes.Buffer
+	logger := slog.New(slog.NewTextHandler(&log, nil))
+	c := newTestClient(t, ts, clock, WithLogger(logger))
+	if _, err := c.Post(context.Background(), "/products", nil, nil); err != nil {
+		t.Fatal(err)
+	}
+	lines := strings.Split(strings.TrimSpace(log.String()), "\n")
+	if len(lines) != 1 {
+		t.Fatalf("log = %q, want one line", log.String())
+	}
+	for _, want := range []string{"level=WARN", "method=POST",
+		"path=/api/products", "attempt=1", "elapsed=1m1s", "code=UPSTREAM",
+		"status=503", "wait="} {
+		if !strings.Contains(lines[0], want) {
+			t.Errorf("log %q lacks %q", lines[0], want)
+		}
+	}
+	if strings.Contains(lines[0], "during=") {
+		t.Errorf("log %q names a step for a failure of the request itself",
+			lines[0])
+	}
+}
+
+// TestDoLogsAThrottledTokenExchange proves a 429 from the token
+// endpoint is logged as the exchange, with the Retry-After it
+// waits, and not as a refusal of the request that needed it.
+func TestDoLogsAThrottledTokenExchange(t *testing.T) {
+	ts := newTokenServer(t)
+	throttle := http.NewServeMux()
+	var exchanges atomic.Int32
+	throttle.HandleFunc("POST /api/oauth/token", func(w http.ResponseWriter,
+		r *http.Request) {
+		if exchanges.Add(1) == 1 {
+			w.Header().Set("Retry-After", "60")
+			writeJSON(w, 429, map[string]string{"error": "TOO_MANY_REQUESTS",
+				"message": "slow down"})
+			return
+		}
+		ts.Mux.ServeHTTP(w, r)
+	})
+	throttle.Handle("/", ts.Mux)
+	ts.Config.Handler = throttle
+	ts.Mux.HandleFunc("/api/me", func(w http.ResponseWriter, r *http.Request) {
+		writeJSON(w, 200, map[string]any{"key": "id"})
+	})
+	var log bytes.Buffer
+	logger := slog.New(slog.NewTextHandler(&log, nil))
+	clock := newFakeClock()
+	c := newTestClient(t, ts, clock, WithLogger(logger))
+	if _, err := c.Get(context.Background(), "/me", nil, nil); err != nil {
+		t.Fatal(err)
+	}
+	line := strings.TrimSpace(log.String())
+	for _, want := range []string{"method=GET", "path=/api/me",
+		`during="token exchange"`, "code=TOO_MANY_REQUESTS", "status=429",
+		"wait=1m0s"} {
+		if !strings.Contains(line, want) {
+			t.Errorf("log %q lacks %q", line, want)
+		}
+	}
+	if len(clock.waits) != 1 || clock.waits[0] != time.Minute {
+		t.Errorf("waits = %v, want the Retry-After minute", clock.waits)
 	}
 }
 

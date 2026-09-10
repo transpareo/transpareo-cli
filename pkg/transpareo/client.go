@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log/slog"
 	"math/rand/v2"
 	"net"
 	"net/http"
@@ -50,6 +51,7 @@ type Client struct {
 	tokens    TokenSource
 	userAgent string
 	retry     RetryPolicy
+	logger    *slog.Logger
 
 	now    func() time.Time
 	sleep  func(context.Context, time.Duration) error
@@ -82,6 +84,14 @@ func WithRetryPolicy(p RetryPolicy) Option {
 // WithTokenSource replaces the token source built by New.
 func WithTokenSource(ts TokenSource) Option {
 	return func(c *Client) { c.tokens = ts }
+}
+
+// WithLogger reports every attempt the client repeats, at Warn:
+// the method and path, the attempt number, how long the failed
+// attempt took and the error it ended with. Nothing is logged
+// otherwise, so a stalled request that a retry hid stays visible.
+func WithLogger(logger *slog.Logger) Option {
+	return func(c *Client) { c.logger = logger }
 }
 
 // New returns a client for host that authenticates with the
@@ -293,7 +303,8 @@ func (c *Client) exchange(ctx context.Context, method, target string,
 	refreshed := false
 	attempts := max(c.retry.Attempts, 1)
 	for attempt := 1; ; attempt++ {
-		resp, apiErr := c.attempt(ctx, method, target, body, set)
+		started := c.now()
+		resp, apiErr, step := c.attempt(ctx, method, target, body, set)
 		if apiErr == nil && resp.StatusCode < 300 {
 			return resp, nil
 		}
@@ -308,10 +319,36 @@ func (c *Client) exchange(ctx context.Context, method, target string,
 		if !apiErr.Retryable || attempt >= attempts {
 			return settle(resp, apiErr)
 		}
-		if err := c.sleep(ctx, c.backoff(attempt, apiErr)); err != nil {
+		wait := c.backoff(attempt, apiErr)
+		c.logRetry(method, target, step, attempt, c.now().Sub(started), wait,
+			apiErr)
+		if err := c.sleep(ctx, wait); err != nil {
 			return settle(resp, apiErr)
 		}
 	}
+}
+
+// logRetry records the attempt that is about to be repeated: the
+// request, the step that failed when it was the token exchange
+// rather than the request itself, how long the attempt took, the
+// error, and the wait before the next one.
+func (c *Client) logRetry(method, target, step string, attempt int,
+	elapsed, wait time.Duration, apiErr *Error) {
+	if c.logger == nil {
+		return
+	}
+	path := target
+	if u, err := url.Parse(target); err == nil {
+		path = u.Path
+	}
+	attrs := []any{"method", method, "path", path}
+	if step != "" {
+		attrs = append(attrs, "during", step)
+	}
+	attrs = append(attrs, "attempt", attempt,
+		"elapsed", elapsed.Round(time.Millisecond), "code", apiErr.Code,
+		"status", apiErr.Status, "wait", wait.Round(time.Millisecond))
+	c.logger.Warn("retrying request", attrs...)
 }
 
 // settle ends the attempts: a refused status travels back as the
@@ -323,28 +360,35 @@ func settle(resp *Response, apiErr *Error) (*Response, *Error) {
 	return nil, apiErr
 }
 
+// stepTokenExchange names the token exchange in a retry log, so a
+// refusal of the exchange is not read as one of the request.
+const stepTokenExchange = "token exchange"
+
 // attempt fetches a token and sends the request once. A token
 // endpoint failure is returned like any other, so a transient
-// one is retried by the same policy.
+// one is retried by the same policy; the step then says where
+// the failure came from.
 func (c *Client) attempt(ctx context.Context, method, target string,
-	body []byte, set func(*http.Request, *Token)) (*Response, *Error) {
+	body []byte, set func(*http.Request, *Token)) (*Response, *Error,
+	string) {
 	token, err := c.tokens.Token(ctx)
 	if err != nil {
 		var apiErr *Error
 		if errors.As(err, &apiErr) {
-			return nil, apiErr
+			return nil, apiErr, stepTokenExchange
 		}
 		return nil, &Error{Code: "TOKEN_ERROR", Message: err.Error(),
-			cause: err}
+			cause: err}, stepTokenExchange
 	}
 	httpReq, err := http.NewRequestWithContext(ctx, method, target,
 		bytes.NewReader(body))
 	if err != nil {
 		return nil, &Error{Code: "REQUEST_INVALID", Message: err.Error(),
-			cause: err}
+			cause: err}, ""
 	}
 	set(httpReq, token)
-	return c.send(httpReq)
+	resp, apiErr := c.send(httpReq)
+	return resp, apiErr, ""
 }
 
 // invalidate discards the cached token when the API reports it
