@@ -3,6 +3,7 @@ package mcp
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -373,12 +374,44 @@ func summarise(op *registry.Operation, value any) string {
 }
 
 // failure reports an error inside the result, so the model sees
-// the code, the message and the hint.
+// the code, the message and the hint, and on a validation
+// failure the fields, one line each. An API error also travels
+// as structured content.
 func failure(err error) *sdk.CallToolResult {
-	return &sdk.CallToolResult{
-		IsError: true,
-		Content: []sdk.Content{&sdk.TextContent{Text: err.Error()}},
+	result := &sdk.CallToolResult{IsError: true}
+	var apiErr *transpareo.Error
+	if !errors.As(err, &apiErr) {
+		result.Content = []sdk.Content{&sdk.TextContent{Text: err.Error()}}
+		return result
 	}
+	text := apiErr.Error()
+	names := make([]string, 0, len(apiErr.Fields))
+	for name := range apiErr.Fields {
+		names = append(names, name)
+	}
+	sort.Strings(names)
+	for _, name := range names {
+		field := apiErr.Fields[name]
+		detail := field.FullMessage
+		if detail == "" {
+			detail = field.Message
+		}
+		if len(field.Missing) > 0 {
+			detail = "missing " + strings.Join(field.Missing, ", ")
+		}
+		text += "\n  " + name + ": " + detail
+	}
+	result.Content = []sdk.Content{&sdk.TextContent{Text: text}}
+	result.StructuredContent = map[string]any{
+		"error":     apiErr.Code,
+		"message":   apiErr.Message,
+		"hint":      apiErr.Hint,
+		"docsUrl":   apiErr.DocsURL,
+		"fields":    apiErr.Fields,
+		"retryable": apiErr.Retryable,
+		"status":    apiErr.Status,
+	}
+	return result
 }
 
 func stringArg(v any) string {

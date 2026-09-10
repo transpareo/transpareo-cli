@@ -8,9 +8,16 @@ description: Drive a Transpareo workspace: products, components, brands and Digi
 One binary, `transpareo`, talks to a Transpareo workspace with the
 credentials of an API consumer. Everything it prints is JSON when
 the output is not a terminal, so read it as data. When the MCP
-server is connected, prefer its tools for the flows below; use the
-command line for anything the tools do not cover, for files, and
-for scripts that run without an assistant.
+server is connected, its tools cover every flow below; do not look
+for the binary or shell out to it. Use the command line for files
+on disk, for scripts that run without an assistant, and when no
+server is connected.
+
+A refused call answers the error code, the message, the hint and,
+on a validation failure, one line per failing field. Read those
+before trying again; the same call with the same body fails the
+same way. A product needs a brand and at least one component;
+`product_property_types` shows the property types it may carry.
 
 ## First call
 

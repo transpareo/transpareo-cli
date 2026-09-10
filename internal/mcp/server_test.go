@@ -92,6 +92,16 @@ func newFakeHost(t *testing.T) *fakeHost {
 		record(r)
 		writeJSON(w, 200, map[string]any{"scans": 7})
 	})
+	mux.HandleFunc("POST /api/products", func(w http.ResponseWriter,
+		r *http.Request) {
+		record(r)
+		writeJSON(w, 422, map[string]any{"error": "PRODUCT_INVALID",
+			"message": "Product invalid", "hint": "Fix the fields.",
+			"fields": map[string]any{
+				"brand": map[string]any{"fullMessage": "Brand is required"},
+				"product.componentsInput": map[string]any{
+					"message": "missing"}}})
+	})
 	mux.HandleFunc("GET /api/dpps/missing", func(w http.ResponseWriter,
 		r *http.Request) {
 		writeJSON(w, 404, map[string]any{"error": "DPP_NOT_FOUND",
@@ -337,6 +347,16 @@ func TestErrorsCarryCodeAndHint(t *testing.T) {
 	result := call(t, session, "get_dpp", map[string]any{"id": "missing"})
 	if !result.IsError || text(result) != "DPP_NOT_FOUND: no\nCheck the code." {
 		t.Errorf("error = %q (%v)", text(result), result.IsError)
+	}
+	if structured(t, result)["error"] != "DPP_NOT_FOUND" {
+		t.Errorf("structured error = %v", structured(t, result))
+	}
+	result = call(t, session, "create_product", map[string]any{
+		"product": map[string]any{"name": "x"}})
+	want := "PRODUCT_INVALID: Product invalid\nFix the fields.\n" +
+		"  brand: Brand is required\n  product.componentsInput: missing"
+	if !result.IsError || text(result) != want {
+		t.Errorf("validation error = %q", text(result))
 	}
 	result = call(t, session, "get_dpp", map[string]any{})
 	if !result.IsError || !strings.Contains(text(result), "id is required") {

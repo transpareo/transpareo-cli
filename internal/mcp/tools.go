@@ -351,9 +351,14 @@ func (t Tool) inputSchema(op *registry.Operation) map[string]any {
 		for _, p := range op.QueryParams {
 			props[p.Name] = paramSchema(p)
 		}
+		fieldsOf := "of the record"
+		if t.Kind == kindList {
+			fieldsOf = "of each item"
+		}
 		props["fields"] = map[string]any{"type": "array",
-			"items":       map[string]any{"type": "string"},
-			"description": "Keep only these fields of the answer"}
+			"items": map[string]any{"type": "string"},
+			"description": "Keep only these fields " + fieldsOf +
+				", such as id, name or status"}
 	case kindWrite:
 		var body struct {
 			Properties map[string]any `json:"properties"`
