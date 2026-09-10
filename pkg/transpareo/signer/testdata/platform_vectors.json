@@ -1,0 +1,34 @@
+{
+  "ed25519_private_pem": "-----BEGIN PRIVATE KEY-----\nMC4CAQAwBQYDK2VwBCIEIO5nV1xfH/KDBFxVl8OBa1VTm4ee1YGR+8bfyQUykaZL\n-----END PRIVATE KEY-----\n",
+  "ed25519_public_pem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEALgM0BWiR5DhN9JISmOge6cI28Ieyh6b6tGJ0scczbJU=\n-----END PUBLIC KEY-----\n",
+  "p256_private_pem": "-----BEGIN PRIVATE KEY-----\nMIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQg6jWj0l6xt6bTSMgj\nQtXYYnmr5SIL3cz3bIx2MzfzUJOhRANCAAS1GgiNikY8DbfqPj5kLg2vM3sl8+wt\nTNqfeTteOV+ASptn9wwG2ZnOHu2aXTmtRMhV3uetN/2C07nsMPzy/Gc4\n-----END PRIVATE KEY-----\n",
+  "p256_public_pem": "-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEtRoIjYpGPA236j4+ZC4NrzN7JfPs\nLUzan3k7XjlfgEqbZ/cMBtmZzh7tml05rUTIVd7nrTf9gtO57DD88vxnOA==\n-----END PUBLIC KEY-----\n",
+  "platform_private_pem": "-----BEGIN PRIVATE KEY-----\nMC4CAQAwBQYDK2VwBCIEINdRbVwr8ft/GG5yKI/xYwUMlTu94QIK0hbQmdWIZvv+\n-----END PRIVATE KEY-----\n",
+  "platform_public_pem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAtIM4mul0txwARTlVivxXjS8kcpRyj/5VBX0baaVwJYI=\n-----END PUBLIC KEY-----\n",
+  "documents": {
+    "request": "{\"requested_at\":\"2026-09-10T09:00:00Z\",\"snapshots\":[{\"kind\":\"test\",\"body\":\"{\\\"n\\\":1.5,\\\"transpareoSigningTest\\\":true}\",\"proofs\":[{\"type\":\"DataIntegrityProof\",\"cryptosuite\":\"eddsa-jcs-2022\",\"created\":\"2026-09-10T09:00:00Z\",\"verificationMethod\":\"https://acme.example.com/.well-known/dpp-keys/v1.pub#key-1\",\"proofPurpose\":\"assertionMethod\"},{\"type\":\"DataIntegrityProof\",\"cryptosuite\":\"eddsa-jcs-2022\",\"created\":\"2026-09-10T09:00:00Z\",\"verificationMethod\":\"did:web:acme.example.com#key-1\",\"proofPurpose\":\"assertionMethod\",\"@context\":[\"https://www.w3.org/ns/credentials/v2\"]}]}]}",
+    "proof_values": [
+      "z2aPXWek5BcegLfWPGrYXzFc1jrt8sA35aa2V54KC4jAFhrsrZT73RZ6BU6LKkSBAQy7yYiPvNNar3FFCT8PtvfMu",
+      "zRmKZxo1SFe6asD1ZCkcTLsgnaaRL4dazjmPD8UkJHs88aifSo71R8u7bDSo1eBwjsZ4KGYBkkKPDhcdGq5ttcE1"
+    ]
+  },
+  "signed_request": {
+    "method": "POST",
+    "host": "signer.acme.example.com",
+    "path": "/sign?x=1",
+    "timestamp": "2026-09-10T09:00:05Z",
+    "nonce": "f0e1d2c3b4a5968778695a4b3c2d1e0f",
+    "body": "{\"requested_at\":\"2026-09-10T09:00:00Z\",\"snapshots\":[{\"kind\":\"test\",\"body\":\"{\\\"n\\\":1.5,\\\"transpareoSigningTest\\\":true}\",\"proofs\":[{\"type\":\"DataIntegrityProof\",\"cryptosuite\":\"eddsa-jcs-2022\",\"created\":\"2026-09-10T09:00:00Z\",\"verificationMethod\":\"https://acme.example.com/.well-known/dpp-keys/v1.pub#key-1\",\"proofPurpose\":\"assertionMethod\"},{\"type\":\"DataIntegrityProof\",\"cryptosuite\":\"eddsa-jcs-2022\",\"created\":\"2026-09-10T09:00:00Z\",\"verificationMethod\":\"did:web:acme.example.com#key-1\",\"proofPurpose\":\"assertionMethod\",\"@context\":[\"https://www.w3.org/ns/credentials/v2\"]}]}]}",
+    "signature": "P9lwvIV4H1NxBd5shSGk0hLA4ccwaXBDYlCw9SJSk/KqHOKjbTaNXe8WUIGny0flod6LkGKC2+aUpLLE4wJ5CQ=="
+  },
+  "base_proof": {
+    "proof_hash": "KD0dABtGQoNQJT+n6yFHg+joCKFESWe4exzFs8FIPgg=",
+    "mandatory_hash": "kj6jkSge1/HygkNqZuics5nrRCUex4mCdrx1MbOlsms=",
+    "non_mandatory": [
+      "<urn:transpareo:signing-test> <https://transpareo.com/ns/dpp/v1#description> \"transpareoSigningTest\" .",
+      "<urn:transpareo:signing-test#credential> <https://www.w3.org/2018/credentials#credentialSubject> <urn:transpareo:signing-test> ."
+    ],
+    "scoped_multikey": "gCQC6a6rpDYVcHEY6mdsoc2v8n/252yIf+zIFrxWOxwawLk=",
+    "base_signature": "YrF+fT1IgkCVxb4XgefoSlFeGTTJTawwRFHM1KIE4kJ9CcKtG6XTHWstrt+/yFvICfu8b55MaIEE/3xOviRvGA=="
+  }
+}
