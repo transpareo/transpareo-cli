@@ -79,7 +79,8 @@ func (a *App) doctor(ctx context.Context) *Report {
 			report.OK = false
 		}
 	}
-	add("binary", statusOK, fmt.Sprintf("transpareo %s, specification %s",
+	add("binary", statusOK, fmt.Sprintf("transpareo %s, specification %s; "+
+		"transpareo upgrade --verify checks the signature of the binary",
 		version.String(), spec.Version()))
 
 	resolver := a.Resolver()

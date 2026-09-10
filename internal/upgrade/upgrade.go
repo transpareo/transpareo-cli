@@ -337,18 +337,9 @@ func extract(archive []byte, name, goos string) ([]byte, error) {
 // replace writes the binary beside the running one and renames it
 // into place, so a failure leaves the old binary untouched.
 func (o *Options) replace(binary []byte) (string, error) {
-	target := o.Executable
-	if target == "" {
-		exe, err := os.Executable()
-		if err != nil {
-			return "", &transpareo.Error{Code: CodeReplace,
-				Message: err.Error()}
-		}
-		target, err = filepath.EvalSymlinks(exe)
-		if err != nil {
-			return "", &transpareo.Error{Code: CodeReplace,
-				Message: err.Error()}
-		}
+	target, err := o.executablePath()
+	if err != nil {
+		return "", &transpareo.Error{Code: CodeReplace, Message: err.Error()}
 	}
 	dir := filepath.Dir(target)
 	tmp, err := os.CreateTemp(dir, ".transpareo-upgrade-*")
@@ -386,4 +377,94 @@ func (o *Options) replace(binary []byte) (string, error) {
 		return "", &transpareo.Error{Code: CodeReplace, Message: err.Error()}
 	}
 	return target, nil
+}
+
+// VerifyResult says whether the running binary is the one the
+// release shipped.
+type VerifyResult struct {
+	Version  string `json:"version"`
+	Path     string `json:"path"`
+	Verified bool   `json:"verified"`
+	Detail   string `json:"detail"`
+}
+
+// CodeModified is the error code when the binary on disk differs
+// from the one in the verified release archive.
+const CodeModified = "UPGRADE_BINARY_MODIFIED"
+
+// Verify checks the running binary against its release: the
+// checksum file's Sigstore signature, the archive's checksum, and
+// the archive's binary byte for byte against the file on disk. A
+// build from source has no release to check against.
+func Verify(ctx context.Context, opts Options) (*VerifyResult, error) {
+	opts.defaults()
+	version := strings.TrimPrefix(opts.Current, "v")
+	if version == "" || version == "dev" {
+		return nil, &transpareo.Error{Code: CodeNoRelease,
+			Message: "this binary was built from source and belongs to no release",
+			Hint:    "Install a release with transpareo upgrade to get a signed binary."}
+	}
+	opts.Version = version
+	release, err := fetchRelease(ctx, &opts)
+	if err != nil {
+		return nil, err
+	}
+	checksumsName := fmt.Sprintf("transpareo_%s_checksums.txt", release.Version)
+	checksums, err := opts.asset(ctx, release, checksumsName)
+	if err != nil {
+		return nil, err
+	}
+	bundle, err := opts.asset(ctx, release, checksumsName+".sigstore.json")
+	if err != nil {
+		return nil, err
+	}
+	opts.Progress("verifying the Sigstore signature of " + checksumsName)
+	if err := opts.Verifier.Verify(bundle, checksums); err != nil {
+		return nil, &transpareo.Error{Code: CodeUnverified,
+			Message: "the signature of the checksum file does not verify: " +
+				err.Error()}
+	}
+	archiveName := archiveNameFor(release.Version, opts.GOOS, opts.GOARCH)
+	archive, err := opts.asset(ctx, release, archiveName)
+	if err != nil {
+		return nil, err
+	}
+	if err := verifyChecksum(checksums, archiveName, archive); err != nil {
+		return nil, err
+	}
+	released, err := extract(archive, archiveName, opts.GOOS)
+	if err != nil {
+		return nil, err
+	}
+	path, err := opts.executablePath()
+	if err != nil {
+		return nil, err
+	}
+	installed, err := os.ReadFile(path)
+	if err != nil {
+		return nil, &transpareo.Error{Code: CodeReplace,
+			Message: "reading " + path + ": " + err.Error()}
+	}
+	result := &VerifyResult{Version: release.Version, Path: path}
+	if !bytes.Equal(installed, released) {
+		result.Detail = "the binary differs from the one in the verified " +
+			"release archive"
+		return result, &transpareo.Error{Code: CodeModified, Message: result.Detail,
+			Hint: "Reinstall with transpareo upgrade --version " + release.Version + "."}
+	}
+	result.Verified = true
+	result.Detail = "the binary is the one release " + release.Version +
+		" shipped, signed by the release workflow"
+	return result, nil
+}
+
+func (o *Options) executablePath() (string, error) {
+	if o.Executable != "" {
+		return o.Executable, nil
+	}
+	exe, err := os.Executable()
+	if err != nil {
+		return "", &transpareo.Error{Code: CodeReplace, Message: err.Error()}
+	}
+	return filepath.EvalSymlinks(exe)
 }

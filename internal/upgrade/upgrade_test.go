@@ -266,3 +266,36 @@ func TestSigstoreIdentity(t *testing.T) {
 		t.Error("garbage must not verify")
 	}
 }
+
+func TestVerifyComparesTheBinaryWithTheRelease(t *testing.T) {
+	dir := t.TempDir()
+	os.WriteFile(filepath.Join(dir, "transpareo"), []byte("released"), 0o755)
+	r := newRelease(t, "1.0.0", assetsFor(t, "1.0.0", "linux", "amd64",
+		[]byte("released")))
+	verifier := &fakeVerifier{}
+	result, err := Verify(context.Background(), options(r, dir, verifier))
+	if err != nil || !result.Verified || result.Version != "1.0.0" {
+		t.Fatalf("result = %+v, err = %v", result, err)
+	}
+	if !verifier.called {
+		t.Error("the bundle must be verified")
+	}
+
+	os.WriteFile(filepath.Join(dir, "transpareo"), []byte("tampered"), 0o755)
+	result, err = Verify(context.Background(), options(r, dir, &fakeVerifier{}))
+	if !transpareo.IsCode(err, CodeModified) || result == nil || result.Verified {
+		t.Errorf("modified binary: result %+v, err %v", result, err)
+	}
+
+	opts := options(r, dir, &fakeVerifier{})
+	opts.Current = "dev"
+	_, err = Verify(context.Background(), opts)
+	if !transpareo.IsCode(err, CodeNoRelease) {
+		t.Errorf("a source build: %v", err)
+	}
+	opts = options(r, dir, &fakeVerifier{err: errors.New("bad")})
+	_, err = Verify(context.Background(), opts)
+	if !transpareo.IsCode(err, CodeUnverified) {
+		t.Errorf("an unverified bundle: %v", err)
+	}
+}
