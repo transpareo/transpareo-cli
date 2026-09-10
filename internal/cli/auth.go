@@ -174,9 +174,10 @@ func (a *App) readSecret() (string, error) {
 
 func (a *App) statusCommand() *cobra.Command {
 	return &cobra.Command{
-		Use:   "status",
-		Short: "Show what the current credential allows (GET /me)",
-		Args:  cobra.NoArgs,
+		Use:     "status",
+		Short:   "Show what the current credential allows (GET /me)",
+		Example: "  transpareo auth status\n  transpareo auth status --profile acme",
+		Args:    cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return a.status(cmd.Context())
 		},
@@ -221,9 +222,10 @@ func profileLabel(p *auth.Profile) string {
 
 func (a *App) logoutCommand() *cobra.Command {
 	return &cobra.Command{
-		Use:   "logout",
-		Short: "Remove the stored profile and its secret",
-		Args:  cobra.NoArgs,
+		Use:     "logout",
+		Short:   "Remove the stored profile and its secret",
+		Example: "  transpareo auth logout\n  transpareo auth logout --profile acme",
+		Args:    cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			resolver := a.Resolver()
 			name, _, err := resolver.ProfileName(a.Profile)

@@ -306,17 +306,36 @@ func TestEveryGeneratedCommandHasAnExampleAndOperation(t *testing.T) {
 	json.Unmarshal([]byte(out), &cat)
 	generated := 0
 	for _, c := range cat.Commands {
-		if c.OperationID == "" ||
-			strings.HasPrefix(c.Path, "transpareo auth") ||
-			c.Path == "transpareo me" {
+		if strings.HasPrefix(c.Path, "transpareo completion") {
 			continue
 		}
-		generated++
 		if c.Example == "" {
 			t.Errorf("%s has no example", c.Path)
+		}
+		if c.OperationID != "" && !strings.HasPrefix(c.Path, "transpareo auth") &&
+			c.Path != "transpareo me" {
+			generated++
 		}
 	}
 	if generated < 80 {
 		t.Errorf("only %d generated commands", generated)
+	}
+}
+
+func TestTasksWait(t *testing.T) {
+	h := generatedHarness(t)
+	h.login()
+	out, errOut, code := h.run("tasks", "wait", h.server.URL+"/api/dpps/bulk/t1")
+	if code != 0 {
+		t.Fatalf("code = %d: %s%s", code, out, errOut)
+	}
+	var task map[string]any
+	json.Unmarshal([]byte(out), &task)
+	if task["status"] != "completed" || !strings.Contains(errOut, "running 50%") {
+		t.Errorf("task = %s, progress = %q", out, errOut)
+	}
+	_, _, code = h.run("tasks", "wait", "https://other.example.com/api/x")
+	if code != 1 {
+		t.Errorf("another host must be refused with 1, got %d", code)
 	}
 }

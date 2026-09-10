@@ -12,9 +12,10 @@ import (
 
 func (a *App) versionCommand() *cobra.Command {
 	return &cobra.Command{
-		Use:   "version",
-		Short: "Print the version of the binary and of its API specification",
-		Args:  cobra.NoArgs,
+		Use:     "version",
+		Short:   "Print the version of the binary and of its API specification",
+		Example: "  transpareo version\n  transpareo version --json",
+		Args:    cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			printer := a.Printer()
 			if printer.JSONMode() {

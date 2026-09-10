@@ -36,6 +36,7 @@ Start with:
 		a.mcpCommand(),
 		a.setupCommand(),
 		a.upgradeCommand(),
+		a.tasksCommand(),
 	)
 	a.addGeneratedCommands(root)
 	a.addCompositeCommands(root)
