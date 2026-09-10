@@ -25,13 +25,14 @@ func generatedHarness(t *testing.T) *harness {
 	mux.HandleFunc("GET /api/dpps/{code}", func(w http.ResponseWriter,
 		r *http.Request) {
 		record(r)
-		if r.URL.Query().Get("format") == "png" {
-			w.Header().Set("Content-Type", "image/png")
-			w.Write([]byte("PNG-BYTES"))
-			return
-		}
 		writeJSON(w, 200, map[string]any{"code": r.PathValue("code"),
 			"status": "draft"})
+	})
+	mux.HandleFunc("GET /api/exports/{id}/download", func(w http.ResponseWriter,
+		r *http.Request) {
+		record(r)
+		w.Header().Set("Content-Type", "application/gzip")
+		w.Write([]byte("GZ-BYTES"))
 	})
 	mux.HandleFunc("POST /api/dpps/{code}/void", func(w http.ResponseWriter,
 		r *http.Request) {
@@ -150,17 +151,16 @@ func TestGeneratedGetWithPathParamAndBinaryOutput(t *testing.T) {
 	if h.lastRequest().URL.Path != "/api/dpps/A1B2" {
 		t.Errorf("path = %q", h.lastRequest().URL.Path)
 	}
-	file := filepath.Join(t.TempDir(), "qr.png")
-	_, _, code = h.run("dpps", "get", "A1B2", "--format", "png", "--output",
-		file)
+	file := filepath.Join(t.TempDir(), "export.tar.gz")
+	_, _, code = h.run("exports", "download", "42", "--output", file)
 	if code != 0 {
 		t.Fatalf("code = %d", code)
 	}
 	data, _ := os.ReadFile(file)
-	if string(data) != "PNG-BYTES" {
+	if string(data) != "GZ-BYTES" {
 		t.Errorf("file = %q", data)
 	}
-	if h.lastRequest().Header.Get("Accept") != "application/vnd.api.v1+json" {
+	if h.lastRequest().Header.Get("Accept") != "application/gzip" {
 		t.Errorf("accept = %q", h.lastRequest().Header.Get("Accept"))
 	}
 }

@@ -190,13 +190,25 @@ func TestPassportFlowOnAThrowawayProduct(t *testing.T) {
 			resp.Header.Get("Content-Type"), resp.Body)
 	}
 
+	// A draft whose publish was refused has no versioned event
+	// yet, and events younger than five seconds are held back, so
+	// an empty feed without a cursor is a valid answer here; the
+	// workspace-wide feed must carry a cursor once any event
+	// exists.
 	feed, err := flows.ReadFeed(ctx, c, flows.FeedOptions{DppCode: created.Code,
 		Limit: 10})
 	if err != nil {
 		t.Fatalf("events: %v", err)
 	}
-	if feed.NextCursor == "" {
-		t.Error("the feed answered no cursor")
+	if len(feed.Events) > 0 && feed.NextCursor == "" {
+		t.Error("the feed answered events without a cursor")
+	}
+	all, err := flows.ReadFeed(ctx, c, flows.FeedOptions{Limit: 1})
+	if err != nil {
+		t.Fatalf("workspace feed: %v", err)
+	}
+	if len(all.Events) > 0 && all.NextCursor == "" {
+		t.Error("the workspace feed answered events without a cursor")
 	}
 }
 

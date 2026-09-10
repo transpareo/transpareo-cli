@@ -2137,6 +2137,56 @@
           "schemaVersion": 1
         }
       },
+      "DppVersionSnapshot": {
+        "type": "object",
+        "description": "One published version of a passport, with the signed JSON-LD document as it was served, the hash it was signed over and the address it is kept at.",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "The public code of the passport the version belongs to"
+          },
+          "version": {
+            "type": "integer",
+            "description": "The version number that was asked for"
+          },
+          "hashValue": {
+            "type": "string",
+            "description": "SHA-256 over the signed document, the value a verifier checks"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Where the signed document is served from"
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "snapshot": {
+            "type": "object",
+            "description": "The signed JSON-LD snapshot"
+          }
+        },
+        "example": {
+          "code": "A1B2C3D4E",
+          "version": 3,
+          "hashValue": "9f2b1c4e8a7d6035b1e2c9f04a8d7e6152b3c4d5e6f708192a3b4c5d6e7f8091",
+          "url": "https://cdn.example.com/nordic-wear/dpp/A1B2C3D4E/v/3.jsonld.gz",
+          "publishedAt": "2026-09-08T09:12:44Z",
+          "snapshot": {
+            "@context": [
+              "https://transpareo.com/vocab/vc/v1",
+              "https://transpareo.com/vocab/transpareo/v1"
+            ],
+            "@id": "https://example.com/dpp/A1B2C3D4E#credential",
+            "type": [
+              "VerifiableCredential",
+              "dpp:DigitalProductPassport"
+            ],
+            "issuer": "did:web:nordic-wear.002.fsn.transpareo.com"
+          }
+        }
+      },
       "DynamicDataInput": {
         "type": "object",
         "description": "The keys to write onto the passport's dynamic-data surface. Sent keys are merged into the stored set; a key sent as an explicit null is removed. Field names are yours - no schema is imposed until the EU Battery Regulation's implementing acts pin the list.",
@@ -4059,7 +4109,8 @@
       "ProductInput": {
         "type": "object",
         "required": [
-          "name"
+          "name",
+          "componentsInput"
         ],
         "properties": {
           "name": {
@@ -4070,11 +4121,18 @@
             "type": "string"
           },
           "componentsInput": {
-            "description": "Component names as a comma-separated string or array of objects with name/componentId",
+            "description": "The product's components in order, as a list of names or a list of objects naming an existing component by componentId or a new one by name",
             "oneOf": [
               {
-                "type": "string",
-                "example": "Aqua, Glycerin, Cetearyl Alcohol"
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "example": [
+                  "Aqua",
+                  "Glycerin",
+                  "Cetearyl Alcohol"
+                ]
               },
               {
                 "type": "array",
@@ -6234,8 +6292,8 @@
         "tags": [
           "DPPs"
         ],
-        "summary": "Download DPP QR code",
-        "description": "Returns the DPP's QR code as a PNG image or PDF. Pass ?version=N to fetch a historical signed snapshot as JSON; that variant additionally requires `dpp_read`.",
+        "summary": "Read a DPP",
+        "description": "Returns the passport itself as JSON, in the shape the list carries. Ask for the QR carrier instead with the .png or .pdf extension on the path, the ones pngUrl and pdfUrl name, and for the historical signed snapshot of a version with ?version=N.",
         "operationId": "get_dpp",
         "x-permission": "dpp_read",
         "security": [
@@ -6251,31 +6309,18 @@
             "$ref": "#/components/parameters/id"
           },
           {
-            "name": "format",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "enum": [
-                "png",
-                "pdf"
-              ]
-            },
-            "description": "QR media format (also selectable via .png / .pdf extension). Default png."
-          },
-          {
             "name": "version",
             "in": "query",
             "required": false,
             "schema": {
               "type": "integer"
             },
-            "description": "Return the historical signed snapshot for this version number as JSON instead of QR media."
+            "description": "Return the historical signed snapshot for this version number instead of the passport as it stands."
           }
         ],
         "responses": {
           "200": {
-            "description": "QR code media, or the signed snapshot when ?version is given",
+            "description": "The passport, the QR carrier when the path carried a media extension, or the signed snapshot when ?version is given",
             "content": {
               "image/png": {
                 "schema": {
@@ -6291,49 +6336,33 @@
               },
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "string"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/Dpp"
                     },
-                    "version": {
-                      "type": "integer"
-                    },
-                    "hashValue": {
-                      "type": "string"
-                    },
-                    "url": {
-                      "type": "string",
-                      "format": "uri"
-                    },
-                    "publishedAt": {
-                      "type": "string",
-                      "format": "date-time"
-                    },
-                    "snapshot": {
-                      "type": "object",
-                      "description": "The signed JSON-LD snapshot"
+                    {
+                      "$ref": "#/components/schemas/DppVersionSnapshot"
                     }
-                  }
+                  ]
                 },
                 "example": {
+                  "id": 14,
+                  "type": "Dpp",
                   "code": "A1B2C3D4E",
-                  "version": 3,
-                  "hashValue": "9f2b1c4e8a7d6035b1e2c9f04a8d7e6152b3c4d5e6f708192a3b4c5d6e7f8091",
-                  "url": "https://cdn.example.com/nordic-wear/dpp/A1B2C3D4E/v/3.jsonld.gz",
-                  "publishedAt": "2026-09-08T09:12:44Z",
-                  "snapshot": {
-                    "@context": [
-                      "https://transpareo.com/vocab/vc/v1",
-                      "https://transpareo.com/vocab/transpareo/v1"
-                    ],
-                    "@id": "https://example.com/dpp/A1B2C3D4E#credential",
-                    "type": [
-                      "VerifiableCredential",
-                      "dpp:DigitalProductPassport"
-                    ],
-                    "issuer": "did:web:nordic-wear.002.fsn.transpareo.com"
-                  }
+                  "description": "Hydrating Face Cream 50ml",
+                  "locale": "de",
+                  "counter": 142,
+                  "granularity": "batch",
+                  "batchIdentifier": "L2026-09",
+                  "url": "https://example.com/A1B2C3D4E",
+                  "pdfUrl": "https://example.com/api/dpps/14.pdf",
+                  "pngUrl": "https://example.com/api/dpps/14.png",
+                  "unlockable": {
+                    "id": 11,
+                    "type": "Product",
+                    "name": "Hydrating Face Cream"
+                  },
+                  "createdAt": "2026-02-01T12:00:00Z"
                 }
               }
             }
@@ -8418,7 +8447,7 @@
           "Imports"
         ],
         "summary": "Download the example spreadsheet",
-        "description": "A filled example sheet of a data type in the shape the importer reads, with the canonical headers, so a file built from it needs no mapping.",
+        "description": "A filled example sheet of a data type in the shape the importer reads. The core columns carry the canonical headers and map on their own. The property columns come from the sample dataset of the workspace's regulation category; each maps on its own where the workspace defines a property type of that name, and the preview suggests creating the type otherwise.",
         "operationId": "get_import_example",
         "x-permission": "import_access",
         "security": [
@@ -10278,7 +10307,12 @@
               "example": {
                 "product": {
                   "name": "Hydrating Face Cream",
-                  "gtin": "4006381333931"
+                  "gtin": "4006381333931",
+                  "componentsInput": [
+                    "Aqua",
+                    "Glycerin",
+                    "Cetearyl Alcohol"
+                  ]
                 },
                 "brand": {
                   "name": "NaturaCare"

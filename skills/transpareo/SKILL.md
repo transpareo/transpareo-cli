@@ -151,7 +151,7 @@ any of them shows an example and the permission it needs;
 - `transpareo dpps dynamic-data update <id>`: Update dynamic data (dpp_dynamic)
 - `transpareo dpps events append <id>`: Append an event to a DPP (dpp_events)
 - `transpareo dpps events list <id>`: List the event log of a DPP (dpp_history)
-- `transpareo dpps get <id>`: Download DPP QR code (dpp_read)
+- `transpareo dpps get <id>`: Read a DPP (dpp_read)
 - `transpareo dpps list`: List Digital Product Passports (dpp_read)
 - `transpareo dpps private-properties <code>`: Read the private properties of several versions (dpp_read)
 - `transpareo dpps publish <code>`: Publish a DPP (dpp_write)

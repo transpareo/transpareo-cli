@@ -1017,24 +1017,6 @@ func (e GetDppRequirementsParamsGranularity) Valid() bool {
 	}
 }
 
-// Defines values for GetDppParamsFormat.
-const (
-	Pdf GetDppParamsFormat = "pdf"
-	Png GetDppParamsFormat = "png"
-)
-
-// Valid indicates whether the value is a known member of the GetDppParamsFormat enum.
-func (e GetDppParamsFormat) Valid() bool {
-	switch e {
-	case Pdf:
-		return true
-	case Png:
-		return true
-	default:
-		return false
-	}
-}
-
 // Defines values for GetDppStatsParamsFormat.
 const (
 	GetDppStatsParamsFormatCsv  GetDppStatsParamsFormat = "csv"
@@ -2056,6 +2038,27 @@ type DppVersion struct {
 	Url *string `json:"url,omitempty"`
 }
 
+// DppVersionSnapshot One published version of a passport, with the signed JSON-LD document as it was served, the hash it was signed over and the address it is kept at.
+//
+// Example: {"code":"A1B2C3D4E","hashValue":"9f2b1c4e8a7d6035b1e2c9f04a8d7e6152b3c4d5e6f708192a3b4c5d6e7f8091","publishedAt":"2026-09-08T09:12:44Z","snapshot":{"@context":["https://transpareo.com/vocab/vc/v1","https://transpareo.com/vocab/transpareo/v1"],"@id":"https://example.com/dpp/A1B2C3D4E#credential","issuer":"did:web:nordic-wear.002.fsn.transpareo.com","type":["VerifiableCredential","dpp:DigitalProductPassport"]},"url":"https://cdn.example.com/nordic-wear/dpp/A1B2C3D4E/v/3.jsonld.gz","version":3}
+type DppVersionSnapshot struct {
+	// Code The public code of the passport the version belongs to
+	Code *string `json:"code,omitempty"`
+
+	// HashValue SHA-256 over the signed document, the value a verifier checks
+	HashValue   *string    `json:"hashValue,omitempty"`
+	PublishedAt *time.Time `json:"publishedAt,omitempty"`
+
+	// Snapshot The signed JSON-LD snapshot
+	Snapshot *map[string]interface{} `json:"snapshot,omitempty"`
+
+	// Url Where the signed document is served from
+	Url *string `json:"url,omitempty"`
+
+	// Version The version number that was asked for
+	Version *int `json:"version,omitempty"`
+}
+
 // DynamicDataInput The keys to write onto the passport's dynamic-data surface. Sent keys are merged into the stored set; a key sent as an explicit null is removed. Field names are yours - no schema is imposed until the EU Battery Regulation's implementing acts pin the list.
 //
 // Example: {"cycleCount":412,"retiredReason":null,"stateOfHealth":87.3}
@@ -2914,9 +2917,9 @@ type ProductDetail struct {
 type ProductInput struct {
 	CategoryIds *[]string `json:"categoryIds,omitempty"`
 
-	// ComponentsInput Component names as a comma-separated string or array of objects with name/componentId
-	ComponentsInput *ProductInput_ComponentsInput `json:"componentsInput,omitempty"`
-	Gtin            *string                       `json:"gtin,omitempty"`
+	// ComponentsInput The product's components in order, as a list of names or a list of objects naming an existing component by componentId or a new one by name
+	ComponentsInput ProductInput_ComponentsInput `json:"componentsInput"`
+	Gtin            *string                      `json:"gtin,omitempty"`
 
 	// Name Example: New Product
 	Name string `json:"name"`
@@ -2925,8 +2928,8 @@ type ProductInput struct {
 	PropertiesInput *map[string]interface{} `json:"propertiesInput,omitempty"`
 }
 
-// ProductInputComponentsInput0 Example: Aqua, Glycerin, Cetearyl Alcohol
-type ProductInputComponentsInput0 = string
+// ProductInputComponentsInput0 Example: ["Aqua","Glycerin","Cetearyl Alcohol"]
+type ProductInputComponentsInput0 = []string
 
 // ProductInputComponentsInput1 defines model for ProductInput.ComponentsInput.1.
 type ProductInputComponentsInput1 = []struct {
@@ -2934,7 +2937,7 @@ type ProductInputComponentsInput1 = []struct {
 	Name        *string `json:"name,omitempty"`
 }
 
-// ProductInput_ComponentsInput Component names as a comma-separated string or array of objects with name/componentId
+// ProductInput_ComponentsInput The product's components in order, as a list of names or a list of objects naming an existing component by componentId or a new one by name
 type ProductInput_ComponentsInput struct {
 	union json.RawMessage
 }
@@ -3316,15 +3319,14 @@ type PublishDppParams struct {
 
 // GetDppParams defines parameters for GetDpp.
 type GetDppParams struct {
-	// Format QR media format (also selectable via .png / .pdf extension). Default png.
-	Format *GetDppParamsFormat `form:"format,omitempty" json:"format,omitempty"`
-
-	// Version Return the historical signed snapshot for this version number as JSON instead of QR media.
+	// Version Return the historical signed snapshot for this version number instead of the passport as it stands.
 	Version *int `form:"version,omitempty" json:"version,omitempty"`
 }
 
-// GetDppParamsFormat defines parameters for GetDpp.
-type GetDppParamsFormat string
+// GetDpp200JSONResponseBody defines parameters for GetDpp.
+type GetDpp200JSONResponseBody struct {
+	union json.RawMessage
+}
 
 // UpdateDppJSONBody defines parameters for UpdateDpp.
 type UpdateDppJSONBody struct {
@@ -4070,6 +4072,68 @@ func (t *ProductInput_ComponentsInput) UnmarshalJSON(b []byte) error {
 	return err
 }
 
+// AsDpp returns the union data inside the GetDpp200JSONResponseBody as a Dpp
+func (t GetDpp200JSONResponseBody) AsDpp() (Dpp, error) {
+	var body Dpp
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromDpp overwrites any union data inside the GetDpp200JSONResponseBody as the provided Dpp
+func (t *GetDpp200JSONResponseBody) FromDpp(v Dpp) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeDpp performs a merge with any union data inside the GetDpp200JSONResponseBody, using the provided Dpp
+func (t *GetDpp200JSONResponseBody) MergeDpp(v Dpp) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsDppVersionSnapshot returns the union data inside the GetDpp200JSONResponseBody as a DppVersionSnapshot
+func (t GetDpp200JSONResponseBody) AsDppVersionSnapshot() (DppVersionSnapshot, error) {
+	var body DppVersionSnapshot
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromDppVersionSnapshot overwrites any union data inside the GetDpp200JSONResponseBody as the provided DppVersionSnapshot
+func (t *GetDpp200JSONResponseBody) FromDppVersionSnapshot(v DppVersionSnapshot) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeDppVersionSnapshot performs a merge with any union data inside the GetDpp200JSONResponseBody, using the provided DppVersionSnapshot
+func (t *GetDpp200JSONResponseBody) MergeDppVersionSnapshot(v DppVersionSnapshot) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t GetDpp200JSONResponseBody) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *GetDpp200JSONResponseBody) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
+
 // AsProduct returns the union data inside the SearchCatalogue200JSONResponseBody_Results_Item as a Product
 func (t SearchCatalogue200JSONResponseBody_Results_Item) AsProduct() (Product, error) {
 	var body Product
@@ -4538,9 +4602,9 @@ type ClientInterface interface {
 	// Corresponds with DELETE /dpps/{id} (the `DeleteDpp` operationId).
 	DeleteDpp(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// GetDpp Download DPP QR code
+	// GetDpp Read a DPP
 	//
-	// Returns the DPP's QR code as a PNG image or PDF. Pass ?version=N to fetch a historical signed snapshot as JSON; that variant additionally requires `dpp_read`.
+	// Returns the passport itself as JSON, in the shape the list carries. Ask for the QR carrier instead with the .png or .pdf extension on the path, the ones pngUrl and pdfUrl name, and for the historical signed snapshot of a version with ?version=N.
 	//
 	// Corresponds with GET /dpps/{id} (the `GetDpp` operationId).
 	GetDpp(ctx context.Context, id Id, params *GetDppParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -4847,7 +4911,7 @@ type ClientInterface interface {
 
 	// GetImportExample Download the example spreadsheet
 	//
-	// A filled example sheet of a data type in the shape the importer reads, with the canonical headers, so a file built from it needs no mapping.
+	// A filled example sheet of a data type in the shape the importer reads. The core columns carry the canonical headers and map on their own. The property columns come from the sample dataset of the workspace's regulation category; each maps on its own where the workspace defines a property type of that name, and the preview suggests creating the type otherwise.
 	//
 	// Corresponds with GET /imports/example (the `GetImportExample` operationId).
 	GetImportExample(ctx context.Context, params *GetImportExampleParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -6228,9 +6292,9 @@ func (c *Client) DeleteDpp(ctx context.Context, id Id, reqEditors ...RequestEdit
 	return c.Client.Do(req)
 }
 
-// GetDpp Download DPP QR code
+// GetDpp Read a DPP
 //
-// Returns the DPP's QR code as a PNG image or PDF. Pass ?version=N to fetch a historical signed snapshot as JSON; that variant additionally requires `dpp_read`.
+// Returns the passport itself as JSON, in the shape the list carries. Ask for the QR carrier instead with the .png or .pdf extension on the path, the ones pngUrl and pdfUrl name, and for the historical signed snapshot of a version with ?version=N.
 //
 // Corresponds with GET /dpps/{id} (the `GetDpp` operationId).
 func (c *Client) GetDpp(ctx context.Context, id Id, params *GetDppParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -6867,7 +6931,7 @@ func (c *Client) CreateImportWithBody(ctx context.Context, contentType string, b
 
 // GetImportExample Download the example spreadsheet
 //
-// A filled example sheet of a data type in the shape the importer reads, with the canonical headers, so a file built from it needs no mapping.
+// A filled example sheet of a data type in the shape the importer reads. The core columns carry the canonical headers and map on their own. The property columns come from the sample dataset of the workspace's regulation category; each maps on its own where the workspace defines a property type of that name, and the preview suggests creating the type otherwise.
 //
 // Corresponds with GET /imports/example (the `GetImportExample` operationId).
 func (c *Client) GetImportExample(ctx context.Context, params *GetImportExampleParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -9842,18 +9906,6 @@ func NewGetDppRequest(server string, id Id, params *GetDppParams) (*http.Request
 		// styled parameters, preserving literal commas as delimiters
 		// per the OpenAPI spec (e.g. "color=blue,black,brown").
 		var rawQueryFragments []string
-
-		if params.Format != nil {
-
-			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "format", *params.Format, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
-				return nil, err
-			} else {
-				for _, qp := range strings.Split(queryFrag, "&") {
-					rawQueryFragments = append(rawQueryFragments, qp)
-				}
-			}
-
-		}
 
 		if params.Version != nil {
 
@@ -14072,9 +14124,9 @@ type ClientWithResponsesInterface interface {
 	// Corresponds with DELETE /dpps/{id} (the `DeleteDpp` operationId).
 	DeleteDppWithResponse(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*DeleteDppResponse, error)
 
-	// GetDppWithResponse Download DPP QR code
+	// GetDppWithResponse Read a DPP
 	//
-	// Returns the DPP's QR code as a PNG image or PDF. Pass ?version=N to fetch a historical signed snapshot as JSON; that variant additionally requires `dpp_read`.
+	// Returns the passport itself as JSON, in the shape the list carries. Ask for the QR carrier instead with the .png or .pdf extension on the path, the ones pngUrl and pdfUrl name, and for the historical signed snapshot of a version with ?version=N.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
@@ -14401,7 +14453,7 @@ type ClientWithResponsesInterface interface {
 
 	// GetImportExampleWithResponse Download the example spreadsheet
 	//
-	// A filled example sheet of a data type in the shape the importer reads, with the canonical headers, so a file built from it needs no mapping.
+	// A filled example sheet of a data type in the shape the importer reads. The core columns carry the canonical headers and map on their own. The property columns come from the sample dataset of the workspace's regulation category; each maps on its own where the workspace defines a property type of that name, and the preview suggests creating the type otherwise.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
@@ -17140,16 +17192,7 @@ type GetDppResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
-	JSON200 *struct {
-		Code        *string    `json:"code,omitempty"`
-		HashValue   *string    `json:"hashValue,omitempty"`
-		PublishedAt *time.Time `json:"publishedAt,omitempty"`
-
-		// Snapshot The signed JSON-LD snapshot
-		Snapshot *map[string]interface{} `json:"snapshot,omitempty"`
-		Url      *string                 `json:"url,omitempty"`
-		Version  *int                    `json:"version,omitempty"`
-	}
+	JSON200 *GetDpp200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
 	// JSON402 the response for an HTTP 402 `application/json` response
@@ -17161,16 +17204,7 @@ type GetDppResponse struct {
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
-func (r GetDppResponse) GetJSON200() *struct {
-	Code        *string    `json:"code,omitempty"`
-	HashValue   *string    `json:"hashValue,omitempty"`
-	PublishedAt *time.Time `json:"publishedAt,omitempty"`
-
-	// Snapshot The signed JSON-LD snapshot
-	Snapshot *map[string]interface{} `json:"snapshot,omitempty"`
-	Url      *string                 `json:"url,omitempty"`
-	Version  *int                    `json:"version,omitempty"`
-} {
+func (r GetDppResponse) GetJSON200() *GetDpp200JSONResponseBody {
 	return r.JSON200
 }
 
@@ -23141,9 +23175,9 @@ func (c *ClientWithResponses) DeleteDppWithResponse(ctx context.Context, id Id, 
 	return ParseDeleteDppResponse(rsp)
 }
 
-// GetDppWithResponse Download DPP QR code
+// GetDppWithResponse Read a DPP
 //
-// Returns the DPP's QR code as a PNG image or PDF. Pass ?version=N to fetch a historical signed snapshot as JSON; that variant additionally requires `dpp_read`.
+// Returns the passport itself as JSON, in the shape the list carries. Ask for the QR carrier instead with the .png or .pdf extension on the path, the ones pngUrl and pdfUrl name, and for the historical signed snapshot of a version with ?version=N.
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -23668,7 +23702,7 @@ func (c *ClientWithResponses) CreateImportWithBodyWithResponse(ctx context.Conte
 
 // GetImportExampleWithResponse Download the example spreadsheet
 //
-// A filled example sheet of a data type in the shape the importer reads, with the canonical headers, so a file built from it needs no mapping.
+// A filled example sheet of a data type in the shape the importer reads. The core columns carry the canonical headers and map on their own. The property columns come from the sample dataset of the workspace's regulation category; each maps on its own where the workspace defines a property type of that name, and the preview suggests creating the type otherwise.
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -26636,16 +26670,7 @@ func ParseGetDppResponse(rsp *http.Response) (*GetDppResponse, error) {
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest struct {
-			Code        *string    `json:"code,omitempty"`
-			HashValue   *string    `json:"hashValue,omitempty"`
-			PublishedAt *time.Time `json:"publishedAt,omitempty"`
-
-			// Snapshot The signed JSON-LD snapshot
-			Snapshot *map[string]interface{} `json:"snapshot,omitempty"`
-			Url      *string                 `json:"url,omitempty"`
-			Version  *int                    `json:"version,omitempty"`
-		}
+		var dest GetDpp200JSONResponseBody
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}

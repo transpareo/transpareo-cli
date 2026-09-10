@@ -277,7 +277,6 @@
     "path": "transpareo dpps get",
     "args": "<id>",
     "flags": [
-      "format",
       "output",
       "version"
     ],

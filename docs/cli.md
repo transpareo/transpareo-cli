@@ -520,15 +520,14 @@ Operation `list_dpp_events`, `GET /dpps/{id}/events`. Permission: `dpp_history`.
 
 ### `transpareo dpps get <id>`
 
-Download DPP QR code
+Read a DPP
 
 ```
-transpareo dpps get <id> --format <format>
+transpareo dpps get <id> --version <version>
 ```
 
-- `--format` `<string>`: QR media format (also selectable via .png / .pdf extension). Default png.
 - `--output` `<string>`: write the answer to this file instead of standard output
-- `--version` `<int>`: Return the historical signed snapshot for this version number as JSON instead of QR media.
+- `--version` `<int>`: Return the historical signed snapshot for this version number instead of the passport as it stands.
 
 Operation `get_dpp`, `GET /dpps/{id}`. Permission: `dpp_read`.
 
