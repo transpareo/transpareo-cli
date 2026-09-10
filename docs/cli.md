@@ -82,9 +82,19 @@ transpareo auth login --host acme.example.com --client-id 3f6a... \
 
 Remove the stored profile and its secret.
 
+```sh
+transpareo auth logout
+transpareo auth logout --profile acme
+```
+
 ### transpareo auth status
 
 Show what the current credential allows (GET /me).
+
+```sh
+transpareo auth status
+transpareo auth status --profile acme
+```
 
 `GET /me` · operation `get_me` · any consumer token
 
@@ -178,6 +188,16 @@ transpareo setup codex
 | `--no-mcp` | install the skill only |
 | `--no-skill` | register the MCP server only |
 
+### transpareo tasks wait
+
+Poll a status URL until the work is done.
+
+```sh
+transpareo tasks wait <statusUrl>
+transpareo tasks wait https://acme.example.com/api/exports/42
+transpareo tasks wait /dpps/bulk/507f1f77bcf86cd799439099
+```
+
 ### transpareo upgrade
 
 Replace this binary with a verified release from GitHub.
@@ -187,16 +207,23 @@ transpareo upgrade [--version <x.y.z>] [--check]
 transpareo upgrade
 transpareo upgrade --check
 transpareo upgrade --version 1.2.0
+transpareo upgrade --verify
 ```
 
 | Option | What it does |
 |---|---|
 | `--check` | report the latest version without installing |
+| `--verify` | verify this binary against its release |
 | `--version` \<value\> | install this version instead of the latest |
 
 ### transpareo version
 
 Print the version of the binary and of its API specification.
+
+```sh
+transpareo version
+transpareo version --json
+```
 
 ## Brands
 

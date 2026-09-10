@@ -163,6 +163,8 @@ statement; `SECURITY.md` says how to verify a download.
 after verifying that signature against the release workflow's
 identity and the embedded Sigstore trusted root, and the
 archive's checksum. Nothing is installed when either check fails.
+`transpareo upgrade --verify` checks the binary you are running
+the same way, byte for byte against its release.
 
 ## With an assistant
 
@@ -221,6 +223,9 @@ transpareo events tail --follow
 a clean validation, writes; it stops with exit code 5 and the
 unresolved columns when a mapping is needed, and with 3 when the
 validation found failing rows.
+
+`transpareo tasks wait <statusUrl>` polls the status URL that any
+background work answered and prints the final document.
 
 Three commands are for finding your way: `transpareo api <METHOD>
 <path>` reaches any endpoint by hand, `transpareo commands --json`

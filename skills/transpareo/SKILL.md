@@ -214,6 +214,7 @@ any of them shows an example and the permission it needs;
 - `transpareo schema <operationId>`: Print the request schema and example of an operation
 - `transpareo search catalogue`: Search products and components
 - `transpareo setup <assistant>`: Install the skill and register the MCP server for claude or codex
+- `transpareo tasks wait <statusUrl>`: Poll a status URL until the work is done
 - `transpareo upgrade [--version <x.y.z>] [--check]`: Replace this binary with a verified release from GitHub
 - `transpareo version`: Print the version of the binary and of its API specification
 - `transpareo webhooks create`: Create a webhook subscription (webhook_access)

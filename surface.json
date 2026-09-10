@@ -788,10 +788,15 @@
     ]
   },
   {
+    "path": "transpareo tasks wait",
+    "args": "<statusUrl>"
+  },
+  {
     "path": "transpareo upgrade",
     "args": "[--version <x.y.z>] [--check]",
     "flags": [
       "check",
+      "verify",
       "version"
     ]
   },
