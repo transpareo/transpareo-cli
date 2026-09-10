@@ -1,0 +1,238 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="771" height="554" viewBox="0 0 771 554" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="14">
+<style>@keyframes loop { 0% {opacity:1} 100% {opacity:1} }
+#l0{opacity:0;animation:show0 55.64s linear infinite}
+@keyframes show0{0%,0.000%{opacity:0}0.002%,100%{opacity:1}}
+#c0 rect{animation:type0 55.64s linear infinite}
+@keyframes type0{0%,0.000%{width:16.8px}3.720%,100%{width:403.2px}}
+#l1{opacity:0;animation:show1 55.64s linear infinite}
+@keyframes show1{0%,4.349%{opacity:0}4.351%,100%{opacity:1}}
+#l2{opacity:0;animation:show2 55.64s linear infinite}
+@keyframes show2{0%,4.349%{opacity:0}4.351%,100%{opacity:1}}
+#l3{opacity:0;animation:show3 55.64s linear infinite}
+@keyframes show3{0%,4.349%{opacity:0}4.351%,100%{opacity:1}}
+#l4{opacity:0;animation:show4 55.64s linear infinite}
+@keyframes show4{0%,4.349%{opacity:0}4.351%,100%{opacity:1}}
+#l5{opacity:0;animation:show5 55.64s linear infinite}
+@keyframes show5{0%,4.349%{opacity:0}4.351%,100%{opacity:1}}
+#l6{opacity:0;animation:show6 55.64s linear infinite}
+@keyframes show6{0%,4.349%{opacity:0}4.351%,100%{opacity:1}}
+#l7{opacity:0;animation:show7 55.64s linear infinite}
+@keyframes show7{0%,8.303%{opacity:0}8.305%,100%{opacity:1}}
+#c7 rect{animation:type7 55.64s linear infinite}
+@keyframes type7{0%,8.303%{width:16.8px}14.369%,100%{width:646.8px}}
+#l8{opacity:0;animation:show8 55.64s linear infinite}
+@keyframes show8{0%,15.358%{opacity:0}15.359%,100%{opacity:1}}
+#c8 rect{animation:type8 55.64s linear infinite}
+@keyframes type8{0%,15.358%{width:16.8px}22.475%,100%{width:756.0px}}
+#l9{opacity:0;animation:show9 55.64s linear infinite}
+@keyframes show9{0%,23.463%{opacity:0}23.465%,100%{opacity:1}}
+#c9 rect{animation:type9 55.64s linear infinite}
+@keyframes type9{0%,23.463%{width:16.8px}25.971%,100%{width:277.2px}}
+#l10{opacity:0;animation:show10 55.64s linear infinite}
+@keyframes show10{0%,26.600%{opacity:0}26.601%,100%{opacity:1}}
+#l11{opacity:0;animation:show11 55.64s linear infinite}
+@keyframes show11{0%,26.600%{opacity:0}26.601%,100%{opacity:1}}
+#l12{opacity:0;animation:show12 55.64s linear infinite}
+@keyframes show12{0%,26.600%{opacity:0}26.601%,100%{opacity:1}}
+#l13{opacity:0;animation:show13 55.64s linear infinite}
+@keyframes show13{0%,26.600%{opacity:0}26.601%,100%{opacity:1}}
+#l14{opacity:0;animation:show14 55.64s linear infinite}
+@keyframes show14{0%,26.600%{opacity:0}26.601%,100%{opacity:1}}
+#l15{opacity:0;animation:show15 55.64s linear infinite}
+@keyframes show15{0%,26.600%{opacity:0}26.601%,100%{opacity:1}}
+#l16{opacity:0;animation:show16 55.64s linear infinite}
+@keyframes show16{0%,26.600%{opacity:0}26.601%,100%{opacity:1}}
+#l17{opacity:0;animation:show17 55.64s linear infinite}
+@keyframes show17{0%,30.913%{opacity:0}30.915%,100%{opacity:1}}
+#c17 rect{animation:type17 55.64s linear infinite}
+@keyframes type17{0%,30.913%{width:16.8px}37.626%,100%{width:714.0px}}
+#l18{opacity:0;animation:show18 55.64s linear infinite}
+@keyframes show18{0%,38.255%{opacity:0}38.257%,100%{opacity:1}}
+#l19{opacity:0;animation:show19 55.64s linear infinite}
+@keyframes show19{0%,38.255%{opacity:0}38.257%,100%{opacity:1}}
+#l20{opacity:0;animation:show20 55.64s linear infinite}
+@keyframes show20{0%,38.255%{opacity:0}38.257%,100%{opacity:1}}
+#l21{opacity:0;animation:show21 55.64s linear infinite}
+@keyframes show21{0%,38.255%{opacity:0}38.257%,100%{opacity:1}}
+#l22{opacity:0;animation:show22 55.64s linear infinite}
+@keyframes show22{0%,38.255%{opacity:0}38.257%,100%{opacity:1}}
+#l23{opacity:0;animation:show23 55.64s linear infinite}
+@keyframes show23{0%,38.255%{opacity:0}38.257%,100%{opacity:1}}
+#l24{opacity:0;animation:show24 55.64s linear infinite}
+@keyframes show24{0%,38.255%{opacity:0}38.257%,100%{opacity:1}}
+#l25{opacity:0;animation:show25 55.64s linear infinite}
+@keyframes show25{0%,38.255%{opacity:0}38.257%,100%{opacity:1}}
+#l26{opacity:0;animation:show26 55.64s linear infinite}
+@keyframes show26{0%,38.255%{opacity:0}38.257%,100%{opacity:1}}
+#l27{opacity:0;animation:show27 55.64s linear infinite}
+@keyframes show27{0%,38.255%{opacity:0}38.257%,100%{opacity:1}}
+#l28{opacity:0;animation:show28 55.64s linear infinite}
+@keyframes show28{0%,38.255%{opacity:0}38.257%,100%{opacity:1}}
+#l29{opacity:0;animation:show29 55.64s linear infinite}
+@keyframes show29{0%,38.255%{opacity:0}38.257%,100%{opacity:1}}
+#l30{opacity:0;animation:show30 55.64s linear infinite}
+@keyframes show30{0%,38.255%{opacity:0}38.257%,100%{opacity:1}}
+#l31{opacity:0;animation:show31 55.64s linear infinite}
+@keyframes show31{0%,38.255%{opacity:0}38.257%,100%{opacity:1}}
+#l32{opacity:0;animation:show32 55.64s linear infinite}
+@keyframes show32{0%,38.255%{opacity:0}38.257%,100%{opacity:1}}
+#l33{opacity:0;animation:show33 55.64s linear infinite}
+@keyframes show33{0%,42.928%{opacity:0}42.930%,100%{opacity:1}}
+#c33 rect{animation:type33 55.64s linear infinite}
+@keyframes type33{0%,42.928%{width:16.8px}47.133%,100%{width:453.6px}}
+#l34{opacity:0;animation:show34 55.64s linear infinite}
+@keyframes show34{0%,47.762%{opacity:0}47.764%,100%{opacity:1}}
+#l35{opacity:0;animation:show35 55.64s linear infinite}
+@keyframes show35{0%,47.762%{opacity:0}47.764%,100%{opacity:1}}
+#l36{opacity:0;animation:show36 55.64s linear infinite}
+@keyframes show36{0%,47.762%{opacity:0}47.764%,100%{opacity:1}}
+#l37{opacity:0;animation:show37 55.64s linear infinite}
+@keyframes show37{0%,47.762%{opacity:0}47.764%,100%{opacity:1}}
+#l38{opacity:0;animation:show38 55.64s linear infinite}
+@keyframes show38{0%,47.762%{opacity:0}47.764%,100%{opacity:1}}
+#l39{opacity:0;animation:show39 55.64s linear infinite}
+@keyframes show39{0%,47.762%{opacity:0}47.764%,100%{opacity:1}}
+#l40{opacity:0;animation:show40 55.64s linear infinite}
+@keyframes show40{0%,47.762%{opacity:0}47.764%,100%{opacity:1}}
+#l41{opacity:0;animation:show41 55.64s linear infinite}
+@keyframes show41{0%,47.762%{opacity:0}47.764%,100%{opacity:1}}
+#l42{opacity:0;animation:show42 55.64s linear infinite}
+@keyframes show42{0%,53.154%{opacity:0}53.156%,100%{opacity:1}}
+#c42 rect{animation:type42 55.64s linear infinite}
+@keyframes type42{0%,53.154%{width:16.8px}58.088%,100%{width:529.2px}}
+#l43{opacity:0;animation:show43 55.64s linear infinite}
+@keyframes show43{0%,60.155%{opacity:0}60.156%,100%{opacity:1}}
+#c43 rect{animation:type43 55.64s linear infinite}
+@keyframes type43{0%,60.155%{width:16.8px}63.794%,100%{width:394.8px}}
+#l44{opacity:0;animation:show44 55.64s linear infinite}
+@keyframes show44{0%,64.423%{opacity:0}64.425%,100%{opacity:1}}
+#l45{opacity:0;animation:show45 55.64s linear infinite}
+@keyframes show45{0%,64.423%{opacity:0}64.425%,100%{opacity:1}}
+#l46{opacity:0;animation:show46 55.64s linear infinite}
+@keyframes show46{0%,64.423%{opacity:0}64.425%,100%{opacity:1}}
+#l47{opacity:0;animation:show47 55.64s linear infinite}
+@keyframes show47{0%,64.423%{opacity:0}64.425%,100%{opacity:1}}
+#l48{opacity:0;animation:show48 55.64s linear infinite}
+@keyframes show48{0%,64.423%{opacity:0}64.425%,100%{opacity:1}}
+#l49{opacity:0;animation:show49 55.64s linear infinite}
+@keyframes show49{0%,64.423%{opacity:0}64.425%,100%{opacity:1}}
+#l50{opacity:0;animation:show50 55.64s linear infinite}
+@keyframes show50{0%,68.377%{opacity:0}68.379%,100%{opacity:1}}
+#c50 rect{animation:type50 55.64s linear infinite}
+@keyframes type50{0%,68.377%{width:16.8px}73.230%,100%{width:520.8px}}
+#l51{opacity:0;animation:show51 55.64s linear infinite}
+@keyframes show51{0%,73.859%{opacity:0}73.861%,100%{opacity:1}}
+#l52{opacity:0;animation:show52 55.64s linear infinite}
+@keyframes show52{0%,73.859%{opacity:0}73.861%,100%{opacity:1}}
+#l53{opacity:0;animation:show53 55.64s linear infinite}
+@keyframes show53{0%,73.859%{opacity:0}73.861%,100%{opacity:1}}
+#l54{opacity:0;animation:show54 55.64s linear infinite}
+@keyframes show54{0%,73.859%{opacity:0}73.861%,100%{opacity:1}}
+#l55{opacity:0;animation:show55 55.64s linear infinite}
+@keyframes show55{0%,77.453%{opacity:0}77.455%,100%{opacity:1}}
+#c55 rect{animation:type55 55.64s linear infinite}
+@keyframes type55{0%,77.453%{width:16.8px}80.527%,100%{width:336.0px}}
+#l56{opacity:0;animation:show56 55.64s linear infinite}
+@keyframes show56{0%,81.156%{opacity:0}81.157%,100%{opacity:1}}
+#l57{opacity:0;animation:show57 55.64s linear infinite}
+@keyframes show57{0%,81.156%{opacity:0}81.157%,100%{opacity:1}}
+#l58{opacity:0;animation:show58 55.64s linear infinite}
+@keyframes show58{0%,81.156%{opacity:0}81.157%,100%{opacity:1}}
+#l59{opacity:0;animation:show59 55.64s linear infinite}
+@keyframes show59{0%,81.156%{opacity:0}81.157%,100%{opacity:1}}
+#l60{opacity:0;animation:show60 55.64s linear infinite}
+@keyframes show60{0%,81.156%{opacity:0}81.157%,100%{opacity:1}}
+#l61{opacity:0;animation:show61 55.64s linear infinite}
+@keyframes show61{0%,85.829%{opacity:0}85.830%,100%{opacity:1}}
+#c61 rect{animation:type61 55.64s linear infinite}
+@keyframes type61{0%,85.829%{width:16.8px}87.689%,100%{width:210.0px}}
+#l62{opacity:0;animation:show62 55.64s linear infinite}
+@keyframes show62{0%,88.318%{opacity:0}88.320%,100%{opacity:1}}
+#l63{opacity:0;animation:show63 55.64s linear infinite}
+@keyframes show63{0%,88.318%{opacity:0}88.320%,100%{opacity:1}}
+#scroll{animation:scroll 55.64s linear infinite}
+@keyframes scroll{0%{transform:translateY(0)}38.253%{transform:translateY(0.0px)}38.704%{transform:translateY(-19.0px)}38.253%{transform:translateY(-19.0px)}38.704%{transform:translateY(-38.0px)}38.253%{transform:translateY(-38.0px)}38.704%{transform:translateY(-57.0px)}38.253%{transform:translateY(-57.0px)}38.704%{transform:translateY(-76.0px)}38.253%{transform:translateY(-76.0px)}38.704%{transform:translateY(-95.0px)}38.253%{transform:translateY(-95.0px)}38.704%{transform:translateY(-114.0px)}38.253%{transform:translateY(-114.0px)}38.704%{transform:translateY(-133.0px)}42.926%{transform:translateY(-133.0px)}43.377%{transform:translateY(-152.0px)}47.761%{transform:translateY(-152.0px)}48.212%{transform:translateY(-171.0px)}47.761%{transform:translateY(-171.0px)}48.212%{transform:translateY(-190.0px)}47.761%{transform:translateY(-190.0px)}48.212%{transform:translateY(-209.0px)}47.761%{transform:translateY(-209.0px)}48.212%{transform:translateY(-228.0px)}47.761%{transform:translateY(-228.0px)}48.212%{transform:translateY(-247.0px)}47.761%{transform:translateY(-247.0px)}48.212%{transform:translateY(-266.0px)}47.761%{transform:translateY(-266.0px)}48.212%{transform:translateY(-285.0px)}47.761%{transform:translateY(-285.0px)}48.212%{transform:translateY(-304.0px)}53.152%{transform:translateY(-304.0px)}53.604%{transform:translateY(-323.0px)}60.153%{transform:translateY(-323.0px)}60.604%{transform:translateY(-342.0px)}64.421%{transform:translateY(-342.0px)}64.872%{transform:translateY(-361.0px)}64.421%{transform:translateY(-361.0px)}64.872%{transform:translateY(-380.0px)}64.421%{transform:translateY(-380.0px)}64.872%{transform:translateY(-399.0px)}64.421%{transform:translateY(-399.0px)}64.872%{transform:translateY(-418.0px)}64.421%{transform:translateY(-418.0px)}64.872%{transform:translateY(-437.0px)}64.421%{transform:translateY(-437.0px)}64.872%{transform:translateY(-456.0px)}68.375%{transform:translateY(-456.0px)}68.826%{transform:translateY(-475.0px)}73.857%{transform:translateY(-475.0px)}74.308%{transform:translateY(-494.0px)}73.857%{transform:translateY(-494.0px)}74.308%{transform:translateY(-513.0px)}73.857%{transform:translateY(-513.0px)}74.308%{transform:translateY(-532.0px)}73.857%{transform:translateY(-532.0px)}74.308%{transform:translateY(-551.0px)}77.451%{transform:translateY(-551.0px)}77.903%{transform:translateY(-570.0px)}81.154%{transform:translateY(-570.0px)}81.605%{transform:translateY(-589.0px)}81.154%{transform:translateY(-589.0px)}81.605%{transform:translateY(-608.0px)}81.154%{transform:translateY(-608.0px)}81.605%{transform:translateY(-627.0px)}81.154%{transform:translateY(-627.0px)}81.605%{transform:translateY(-646.0px)}81.154%{transform:translateY(-646.0px)}81.605%{transform:translateY(-665.0px)}85.827%{transform:translateY(-665.0px)}86.278%{transform:translateY(-684.0px)}88.316%{transform:translateY(-684.0px)}88.767%{transform:translateY(-703.0px)}88.316%{transform:translateY(-703.0px)}88.767%{transform:translateY(-722.0px)}100%{transform:translateY(-722.0px)}}</style>
+<rect width="771" height="554" rx="10" fill="#0f172a"/>
+<circle cx="24" cy="20" r="6" fill="#f87171"/>
+<circle cx="44" cy="20" r="6" fill="#fbbf24"/>
+<circle cx="64" cy="20" r="6" fill="#34d399"/>
+<text x="385.5" y="25" fill="#64748b" text-anchor="middle" font-size="12">transpareo</text>
+<clipPath id="clip"><rect x="0" y="40" width="771" height="498"/></clipPath>
+<g clip-path="url(#clip)"><g id="scroll">
+<clipPath id="c0"><rect x="16" y="43" width="16.8" height="19"/></clipPath>
+<text id="l0" x="16" y="58" fill="#7dd3fc" clip-path="url(#c0)" xml:space="preserve">$ transpareo me --fields name,status,permissions</text>
+<text id="l1" x="16" y="77" fill="#e2e8f0" xml:space="preserve">name:         CLI end-to-end checks</text>
+<text id="l2" x="16" y="96" fill="#e2e8f0" xml:space="preserve">permissions:  ["product_access","brand_access","component_access","dpp_read",</text>
+<text id="l3" x="16" y="115" fill="#e2e8f0" xml:space="preserve">               "dpp_write","dpp_bulk_write","dpp_history","import_access",</text>
+<text id="l4" x="16" y="134" fill="#e2e8f0" xml:space="preserve">               "export_access","webhook_access"]</text>
+<text id="l5" x="16" y="153" fill="#e2e8f0" xml:space="preserve">rateLimit:    {"limit":1000,"used":50,"windowStartedAt":"2026-09-10T04:30:31Z"}</text>
+<text id="l6" x="16" y="172" fill="#e2e8f0" xml:space="preserve">status:       active</text>
+<clipPath id="c7"><rect x="16" y="176" width="16.8" height="19"/></clipPath>
+<text id="l7" x="16" y="191" fill="#7dd3fc" clip-path="url(#c7)" xml:space="preserve">$ transpareo products create --set 'product.name=Hydrating Face Cream 50ml' \</text>
+<clipPath id="c8"><rect x="16" y="195" width="16.8" height="19"/></clipPath>
+<text id="l8" x="16" y="210" fill="#7dd3fc" clip-path="url(#c8)" xml:space="preserve">$     --set product.gtin=4006381333931 --set 'product.componentsInput=[{"name":"Aqua"}]' \</text>
+<clipPath id="c9"><rect x="16" y="214" width="16.8" height="19"/></clipPath>
+<text id="l9" x="16" y="229" fill="#7dd3fc" clip-path="url(#c9)" xml:space="preserve">$     --set brand.name=NaturaCare</text>
+<text id="l10" x="16" y="248" fill="#e2e8f0" xml:space="preserve">{</text>
+<text id="l11" x="16" y="267" fill="#e2e8f0" xml:space="preserve">  "id": 8,</text>
+<text id="l12" x="16" y="286" fill="#e2e8f0" xml:space="preserve">  "name": "Hydrating Face Cream 50ml",</text>
+<text id="l13" x="16" y="305" fill="#e2e8f0" xml:space="preserve">  "gtin": "4006381333931",</text>
+<text id="l14" x="16" y="324" fill="#e2e8f0" xml:space="preserve">  "brand": {"id": 7, "name": "Naturacare"},</text>
+<text id="l15" x="16" y="343" fill="#e2e8f0" xml:space="preserve">  "components": [{"id": 1, "name": "Aqua"}, {"id": 2, "name": "Glycerin"}]</text>
+<text id="l16" x="16" y="362" fill="#e2e8f0" xml:space="preserve">}</text>
+<clipPath id="c17"><rect x="16" y="366" width="16.8" height="19"/></clipPath>
+<text id="l17" x="16" y="381" fill="#7dd3fc" clip-path="url(#c17)" xml:space="preserve">$ transpareo dpps requirements --product-id 8 --granularity item --fields identifiers</text>
+<text id="l18" x="16" y="400" fill="#e2e8f0" xml:space="preserve">{</text>
+<text id="l19" x="16" y="419" fill="#e2e8f0" xml:space="preserve">  "identifiers": {</text>
+<text id="l20" x="16" y="438" fill="#e2e8f0" xml:space="preserve">    "batchIdentifier": {</text>
+<text id="l21" x="16" y="457" fill="#e2e8f0" xml:space="preserve">      "required": true</text>
+<text id="l22" x="16" y="476" fill="#e2e8f0" xml:space="preserve">    },</text>
+<text id="l23" x="16" y="495" fill="#e2e8f0" xml:space="preserve">    "modelIdentifier": {</text>
+<text id="l24" x="16" y="514" fill="#e2e8f0" xml:space="preserve">      "required": true,</text>
+<text id="l25" x="16" y="533" fill="#e2e8f0" xml:space="preserve">      "source": "product",</text>
+<text id="l26" x="16" y="552" fill="#e2e8f0" xml:space="preserve">      "value": "4006381333931"</text>
+<text id="l27" x="16" y="571" fill="#e2e8f0" xml:space="preserve">    },</text>
+<text id="l28" x="16" y="590" fill="#e2e8f0" xml:space="preserve">    "serialIdentifier": {</text>
+<text id="l29" x="16" y="609" fill="#e2e8f0" xml:space="preserve">      "required": true</text>
+<text id="l30" x="16" y="628" fill="#e2e8f0" xml:space="preserve">    }</text>
+<text id="l31" x="16" y="647" fill="#e2e8f0" xml:space="preserve">  }</text>
+<text id="l32" x="16" y="666" fill="#e2e8f0" xml:space="preserve">}</text>
+<clipPath id="c33"><rect x="16" y="670" width="16.8" height="19"/></clipPath>
+<text id="l33" x="16" y="685" fill="#7dd3fc" clip-path="url(#c33)" xml:space="preserve">$ transpareo dpps validate --file passport.json --json</text>
+<text id="l34" x="16" y="704" fill="#e2e8f0" xml:space="preserve">{</text>
+<text id="l35" x="16" y="723" fill="#e2e8f0" xml:space="preserve">  "valid": false,</text>
+<text id="l36" x="16" y="742" fill="#e2e8f0" xml:space="preserve">  "publishBlocked": true,</text>
+<text id="l37" x="16" y="761" fill="#e2e8f0" xml:space="preserve">  "fields": {</text>
+<text id="l38" x="16" y="780" fill="#fca5a5" xml:space="preserve">    "batch": {"error": "DPP_BATCH_BLANK", "fullMessage": "Batch missing"},</text>
+<text id="l39" x="16" y="799" fill="#fca5a5" xml:space="preserve">    "serialIdentifier": {"error": "DPP_SERIAL_IDENTIFIER_BLANK"}</text>
+<text id="l40" x="16" y="818" fill="#e2e8f0" xml:space="preserve">  }</text>
+<text id="l41" x="16" y="837" fill="#e2e8f0" xml:space="preserve">}</text>
+<clipPath id="c42"><rect x="16" y="841" width="16.8" height="19"/></clipPath>
+<text id="l42" x="16" y="856" fill="#7dd3fc" clip-path="url(#c42)" xml:space="preserve">$ vi passport.json   # add batchIdentifier and serialIdentifier</text>
+<clipPath id="c43"><rect x="16" y="860" width="16.8" height="19"/></clipPath>
+<text id="l43" x="16" y="875" fill="#7dd3fc" clip-path="url(#c43)" xml:space="preserve">$ transpareo dpps validate --file passport.json</text>
+<text id="l44" x="16" y="894" fill="#e2e8f0" xml:space="preserve">{</text>
+<text id="l45" x="16" y="913" fill="#e2e8f0" xml:space="preserve">  "valid": true,</text>
+<text id="l46" x="16" y="932" fill="#e2e8f0" xml:space="preserve">  "publishBlocked": false,</text>
+<text id="l47" x="16" y="951" fill="#e2e8f0" xml:space="preserve">  "fields": {},</text>
+<text id="l48" x="16" y="970" fill="#e2e8f0" xml:space="preserve">  "validation": {"must": [], "should": [], "validatorVersion": "shacl-v1"}</text>
+<text id="l49" x="16" y="989" fill="#e2e8f0" xml:space="preserve">}</text>
+<clipPath id="c50"><rect x="16" y="993" width="16.8" height="19"/></clipPath>
+<text id="l50" x="16" y="1008" fill="#7dd3fc" clip-path="url(#c50)" xml:space="preserve">$ transpareo dpps create --file passport.json --fields id,code</text>
+<text id="l51" x="16" y="1027" fill="#e2e8f0" xml:space="preserve">{</text>
+<text id="l52" x="16" y="1046" fill="#e2e8f0" xml:space="preserve">  "id": 7,</text>
+<text id="l53" x="16" y="1065" fill="#e2e8f0" xml:space="preserve">  "code": "0qvd-ffca-ozb3"</text>
+<text id="l54" x="16" y="1084" fill="#e2e8f0" xml:space="preserve">}</text>
+<clipPath id="c55"><rect x="16" y="1088" width="16.8" height="19"/></clipPath>
+<text id="l55" x="16" y="1103" fill="#7dd3fc" clip-path="url(#c55)" xml:space="preserve">$ transpareo dpps publish 0qvd-ffca-ozb3</text>
+<text id="l56" x="16" y="1122" fill="#e2e8f0" xml:space="preserve">{</text>
+<text id="l57" x="16" y="1141" fill="#e2e8f0" xml:space="preserve">  "code": "0qvd-ffca-ozb3",</text>
+<text id="l58" x="16" y="1160" fill="#e2e8f0" xml:space="preserve">  "version": 1,</text>
+<text id="l59" x="16" y="1179" fill="#e2e8f0" xml:space="preserve">  "publishedAt": "2026-09-10T04:53:57Z"</text>
+<text id="l60" x="16" y="1198" fill="#e2e8f0" xml:space="preserve">}</text>
+<clipPath id="c61"><rect x="16" y="1202" width="16.8" height="19"/></clipPath>
+<text id="l61" x="16" y="1217" fill="#7dd3fc" clip-path="url(#c61)" xml:space="preserve">$ transpareo setup claude</text>
+<text id="l62" x="16" y="1236" fill="#e2e8f0" xml:space="preserve">Skill installed at ~/.claude/skills/transpareo/SKILL.md.</text>
+<text id="l63" x="16" y="1255" fill="#e2e8f0" xml:space="preserve">MCP server registered for Claude Code (user scope): transpareo mcp --profile acme.</text>
+</g></g>
+</svg>

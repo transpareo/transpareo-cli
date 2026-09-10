@@ -1,10 +1,127 @@
-# transpareo
+# transpareo-cli
 
-One binary for the Transpareo API: a command-line tool for people
-and scripts, an MCP server and an agent skill for assistants, and
-an importable Go client. It logs in with the client credentials of
-an API consumer, reaches every endpoint of a workspace, and prints
-JSON that pipelines and assistants can read.
+[![test](https://github.com/transpareo/transpareo-cli/actions/workflows/test.yaml/badge.svg)](https://github.com/transpareo/transpareo-cli/actions/workflows/test.yaml)
+[![release](https://img.shields.io/github/v/release/transpareo/transpareo-cli?display_name=tag)](https://github.com/transpareo/transpareo-cli/releases)
+[![Go reference](https://pkg.go.dev/badge/github.com/transpareo/transpareo-cli/pkg/transpareo.svg)](https://pkg.go.dev/github.com/transpareo/transpareo-cli/pkg/transpareo)
+[![licence](https://img.shields.io/badge/licence-MIT-blue)](LICENSE)
+
+The command line, MCP server and Go client for the
+[Transpareo](https://transpareo.com) API. One binary that people,
+scripts and AI assistants use to work with a Transpareo workspace:
+its products, components, brands and Digital Product Passports.
+
+![A terminal session: me, products create, dpps requirements, dpps validate, dpps create, dpps publish, setup claude](docs/demo.svg)
+
+## Transpareo for the agentic age
+
+A Digital Product Passport is data that many parties produce, keep
+current and read for years, and most of those parties are
+programs. Transpareo was built for programs from the start: every
+passport it publishes is a signed, machine-readable document, and
+its API covers the whole life cycle of a passport, from the
+product's property types through validation, creation and
+publication to the events of a unit in the field. Battery
+passports become mandatory in the European Union in February 2027;
+other product groups follow.
+
+The newest programs are AI agents. Manufacturers have begun to
+hand the filling, checking and upkeep of compliance data to
+assistants. This tool is how they reach Transpareo: every
+operation of the API is a command, the same binary serves the
+Model Context Protocol to an assistant, an agent skill teaches the
+flows, and the credential stays with the tool. Its commands, its
+reference and the operation catalogue an assistant reads are
+generated from the API specification, so a platform change is a
+generated change.
+
+The API itself is documented on every workspace host: the
+[reference](https://demo.transpareo.com/apidocs) and the
+[guide](https://demo.transpareo.com/apidocs/guide.md) of the demo
+workspace show what it offers. Programs authenticate with the
+OAuth 2.0 client credentials grant; two `curl` lines are enough to
+start without this tool, and this tool is what makes the rest
+safe and quick.
+
+## Quick start
+
+```
+brew install transpareo/tap/transpareo
+transpareo auth login --host acme.example.com --client-id <key>
+transpareo me
+```
+
+An API consumer is created in the application manager of the
+workspace, which shows its secret once. `auth login` reads the
+secret from standard input or from `TRANSPAREO_CLIENT_SECRET`,
+never from an option, checks it at the token endpoint and stores
+it in the operating system's keyring. `me` answers what the
+credential allows. Then:
+
+```
+transpareo products list --per-page 5
+transpareo dpps requirements --product-id <id> --granularity item
+transpareo dpps validate --file passport.json
+transpareo dpps create --file passport.json
+transpareo dpps publish <code>
+```
+
+What a call answers, taken from a real workspace. The
+requirements of a unit passport:
+
+```
+$ transpareo dpps requirements --product-id 8 --granularity item --fields identifiers
+{
+  "identifiers": {
+    "batchIdentifier": { "required": true },
+    "modelIdentifier": { "required": true, "source": "product", "value": "4006381333931" },
+    "serialIdentifier": { "required": true }
+  }
+}
+```
+
+A validation, which runs the checks a publish runs and writes
+nothing:
+
+```
+$ transpareo dpps validate --file passport.json
+{
+  "valid": true,
+  "publishBlocked": false,
+  "fields": {},
+  "validation": { "must": [], "should": [], "validatorVersion": "shacl-v1" }
+}
+```
+
+A refusal, with the hint to read first and one line per failing
+field; the same envelope reaches an assistant through the MCP
+tools:
+
+```
+$ transpareo products create --set product.name=Sample
+PRODUCT_INVALID: Product invalid
+Correct the attributes listed under fields and resend the request.
+  brand: Brand needs a brand - none was given
+  componentsInput: Components input missing
+```
+
+For an assistant, one more line:
+
+```
+transpareo setup claude
+```
+
+The five flows the API guide teaches, as a person runs them and
+as an assistant calls them:
+
+| Task | Command | MCP tool |
+|---|---|---|
+| What does the credential allow | `transpareo me` | `me` |
+| What a passport of a product needs | `transpareo dpps requirements --product-id <id>` | `dpp_requirements` |
+| Check a passport without writing | `transpareo dpps validate --file passport.json` | `validate_dpp` |
+| Write and publish it | `transpareo dpps create --file passport.json`, `transpareo dpps publish <code>` | `create_dpp`, `publish_dpp` |
+| Follow what happened | `transpareo events tail --follow` | `tail_events` |
+| A new product first | `transpareo products new`, `transpareo products create --file product.json` | `product_property_types`, `create_product` |
+| Many passports at once | `transpareo dpps bulk validate --file rows.ndjson`, `transpareo dpps bulk create --file rows.ndjson` | `bulk_validate_dpps`, `bulk_create_dpps` |
 
 ## Install
 
@@ -14,21 +131,23 @@ macOS, with Homebrew:
 brew install transpareo/tap/transpareo
 ```
 
-Linux: the deb, rpm and apk packages and the tar.gz archives are
-on the [releases page](https://github.com/transpareo/transpareo-cli/releases).
+Linux and macOS, with the installer script, which detects the
+platform, verifies the checksum and installs into `~/.local/bin`
+or `/usr/local/bin`:
+
+```
+curl -fsSL https://transpareo.com/cli/install.sh | sh
+```
+
+Linux packages: the deb, rpm and apk packages and the tar.gz
+archives are on the
+[releases page](https://github.com/transpareo/transpareo-cli/releases).
 
 Windows, with Scoop:
 
 ```
 scoop bucket add transpareo https://github.com/transpareo/scoop-bucket
 scoop install transpareo
-```
-
-With the installer script, which detects the platform, verifies
-the checksum and installs into `~/.local/bin` or `/usr/local/bin`:
-
-```
-curl -fsSL https://transpareo.com/cli/install.sh | sh
 ```
 
 From source, with Go:
@@ -39,42 +158,55 @@ go install github.com/transpareo/transpareo-cli/cmd/transpareo@latest
 
 Every release carries a checksum file signed with Sigstore, a
 software bill of materials per archive and a SLSA provenance
-statement. `SECURITY.md` says how to verify a download.
+statement; `SECURITY.md` says how to verify a download.
 `transpareo upgrade` replaces the binary with the latest release
-after verifying the signature against the release workflow's
+after verifying that signature against the release workflow's
 identity and the embedded Sigstore trusted root, and the
-archive's checksum; nothing is installed when either check
-fails.
+archive's checksum. Nothing is installed when either check fails.
 
-## First five minutes
+## With an assistant
 
-An API consumer is created in the application manager of the
-workspace, which shows its secret once. Log in with it; the secret
-is read from standard input or from `TRANSPAREO_CLIENT_SECRET`,
-never from an option, so it stays out of the shell history:
+The same binary is an MCP server. `transpareo setup claude`
+installs the agent skill and registers the server for Claude Code;
+`transpareo setup codex` does the same for Codex. The registration
+holds no secret, only the profile name:
 
-```
-transpareo auth login --host acme.example.com --client-id <key>
-transpareo me
-```
-
-`me` answers what the credential allows. Every operation of the
-API is a command, `transpareo <group> <verb>`, generated from the
-API specification the binary carries:
-
-```
-transpareo products list --per-page 5
-transpareo dpps requirements --product-id <id> --granularity serial
-transpareo dpps validate --file passport.json
-transpareo dpps create --file passport.json
-transpareo dpps publish <code>
+```json
+{ "mcpServers": { "transpareo": { "command": "transpareo",
+  "args": ["mcp", "--profile", "acme"] } } }
 ```
 
+That snippet works in Claude Desktop (`claude_desktop_config.json`),
+Claude Code (`~/.claude.json`) and Cursor (`.cursor/mcp.json`).
+
+The server offers curated tools rather than one per endpoint:
+`me`; products, components and brands; the passport flow from
+`dpp_requirements` through `validate_dpp`, `create_dpp` and
+`publish_dpp` to `void_dpp` and the bulk calls; imports, exports,
+tasks and the event feed; webhooks. `search_operations` and
+`call_api` reach every other operation. Every tool description
+carries the permission it needs, whether the action can be undone,
+the data tier of its answer and one example. Tools that cannot be
+undone take a `confirm` argument that repeats the record's
+identifier, so a host that shows tool calls shows the intent.
+
+`--read-only` after the profile keeps the assistant to reads and
+validations; `--tools dpps,products` narrows the tools. The skill
+and the plugin manifest live under `skills/transpareo`; the
+repository is a plugin marketplace, so Claude Code can also
+install them with `/plugin marketplace add transpareo/transpareo-cli`
+and `/plugin install transpareo@transpareo`. Details in
+[docs/mcp.md](docs/mcp.md).
+
+## Commands
+
+Every operation of the API is a command, `transpareo <group>
+<verb>`, generated from the specification the binary carries:
+`dpps list`, `dpps bulk create`, `products new`, `webhooks test`.
 Path parameters are positional, query parameters are options, and
 a request body comes from `--file <path>` (`-` for standard input)
-or, for flat bodies, from `--set key=value`. The full list is in
-[docs/cli.md](docs/cli.md); `--help` on any command shows an
-example and the permission key it needs.
+or, for flat bodies, from `--set key=value`. `--help` on any
+command shows an example and the permission key it needs.
 
 A few commands span several calls:
 
@@ -90,32 +222,16 @@ a clean validation, writes; it stops with exit code 5 and the
 unresolved columns when a mapping is needed, and with 3 when the
 validation found failing rows.
 
-`transpareo api <METHOD> <path>` reaches any endpoint by hand.
-`transpareo commands --json` lists every command and every API
-operation; `transpareo schema create_dpp` prints the request
-schema and an example of one operation; `transpareo guide` prints
-the workspace's API guide; `transpareo doctor` checks the setup.
+Three commands are for finding your way: `transpareo api <METHOD>
+<path>` reaches any endpoint by hand, `transpareo commands --json`
+prints every command and every operation for programs, and
+`transpareo schema create_dpp` prints the request schema and an
+example of one operation. `transpareo guide` prints the
+workspace's API guide and `transpareo doctor` checks the setup.
 
-## With an assistant
-
-The same binary is an MCP server. `transpareo setup claude` installs
-the agent skill and registers the server for Claude Code;
-`transpareo setup codex` does the same for Codex. The registration
-holds no secret, only the profile name:
-
-```json
-{ "mcpServers": { "transpareo": { "command": "transpareo",
-  "args": ["mcp", "--profile", "acme"] } } }
-```
-
-That snippet works in Claude Desktop (`claude_desktop_config.json`),
-Claude Code (`~/.claude.json`) and Cursor (`.cursor/mcp.json`).
-`--read-only` after the profile keeps the assistant to reads and
-validations; `--tools dpps,products` narrows the tools. The skill
-and the plugin manifest live under `skills/transpareo`; the
-repository is a plugin marketplace, so Claude Code can also install
-them with `/plugin marketplace add transpareo/transpareo-cli` and
-`/plugin install transpareo@transpareo`. See [docs/mcp.md](docs/mcp.md).
+The full reference, one section per group with every command, its
+example, options and permission key, is
+[docs/cli.md](docs/cli.md).
 
 ## Output, exit codes and safety
 
@@ -124,8 +240,8 @@ them with `/plugin marketplace add transpareo/transpareo-cli` and
   prints ids only, `--fields a,b` narrows any read. Tables appear
   on a terminal only.
 - On an error the output is `{"ok": false, "error": {code,
-  message, hint, docsUrl, retryable}}`. The hint is the text to
-  read first.
+  message, hint, docsUrl, fields, retryable}}`. The hint is the
+  text to read first.
 - Exit codes: 0 success, 1 an API or transport error, 2 wrong
   usage, 3 validation failed, 4 an operation that cannot be undone
   was refused for lack of `--yes`, 5 a column mapping is required.
@@ -138,22 +254,18 @@ them with `/plugin marketplace add transpareo/transpareo-cli` and
 
 ## Credentials
 
-- The secret lives in the operating system's keyring: the macOS
-  Keychain, the Windows Credential Manager, or the Secret Service
-  on Linux. Without a keyring, on a server or in a container, it
-  goes to `~/.config/transpareo/credentials.json`, readable only
-  by you.
-- Non-secret settings live in `~/.config/transpareo/config.json`.
-  `--profile <name>` and `TRANSPAREO_PROFILE` select between
-  workspaces; a `.transpareo/config.json` in a project directory
-  with `{"profile": "acme"}` selects one for that directory.
-- `TRANSPAREO_HOST`, `TRANSPAREO_CLIENT_ID`,
-  `TRANSPAREO_CLIENT_SECRET` and `TRANSPAREO_TOKEN` override the
-  stored profile, for automated runs.
-- `transpareo auth token --scope dpp_read` prints a token that
-  lives an hour, for a script or a subprocess that should never
-  see the secret. `transpareo auth grant --code <passport code>`
-  issues child credentials confined to one passport for a day.
+The secret lives in the operating system's keyring, or in
+`~/.config/transpareo/credentials.json`, readable only by you,
+where no keyring exists. `--profile <name>` selects between
+workspaces, and a `.transpareo/config.json` in a project directory
+selects one for that directory. `TRANSPAREO_HOST`,
+`TRANSPAREO_CLIENT_ID`, `TRANSPAREO_CLIENT_SECRET` and
+`TRANSPAREO_TOKEN` override the stored profile for automated runs.
+`transpareo auth token --scope dpp_read` prints a token that lives
+an hour, for a script or a subprocess that should never see the
+secret; `transpareo auth grant --code <passport code>` issues child
+credentials confined to one passport for a day. All of it in
+[docs/auth.md](docs/auth.md).
 
 ## Go client
 
@@ -181,11 +293,22 @@ the same transport:
 resp, err := client.API().ListDppsWithResponse(ctx, &api.ListDppsParams{})
 ```
 
-## Privacy
+## Development
 
-The tool sends no telemetry, checks for no updates, and makes no
-network call other than to the configured workspace host. The one
-exception is the release download that an explicit
+`go build ./cmd/transpareo`, `go test ./...`, `go generate ./...`
+after a change to the specification. Generated code is committed
+and a check fails when it is stale. The end-to-end suite under
+`test/e2e` runs against a real workspace when
+`TRANSPAREO_TEST_HOST`, `TRANSPAREO_TEST_CLIENT_ID` and
+`TRANSPAREO_TEST_CLIENT_SECRET` are set. `CONTRIBUTING.md` has the
+rest, including the sign-off every commit needs.
+
+## Security and privacy
+
+Report vulnerabilities as `SECURITY.md` says, not in a public
+issue. The tool sends no telemetry, checks for no updates, and
+makes no network call other than to the configured workspace
+host; the one exception is the release download that an explicit
 `transpareo upgrade` fetches from GitHub.
 
 ## Licence
@@ -193,3 +316,10 @@ exception is the release download that an explicit
 MIT, see `LICENSE`. The Transpareo name and logo are not part of
 the licence, see `TRADEMARKS.md`. Contributions are signed off
 under the Developer Certificate of Origin, see `CONTRIBUTING.md`.
+
+## About Transpareo
+
+[Transpareo](https://transpareo.com) is a product information
+platform for Digital Product Passports: a workspace per
+manufacturer, signed passports served for ten years, an
+application manager for people and this API for programs.
