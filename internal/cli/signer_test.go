@@ -157,7 +157,7 @@ func TestSignerServeNeedsKeysAndAPlatformKey(t *testing.T) {
 	named := filepath.Join(dir, "named.pem")
 	out, errOut, code = h.run("signer", "serve", "--allow-unsigned",
 		"--dir", dir, "--p256-key", named)
-	if code != 1 || !strings.Contains(out, named) {
+	if code != 1 || !strings.Contains(errorMessage(t, out), named) {
 		t.Errorf("--dir with --p256-key: %d %s%s", code, out, errOut)
 	}
 }
@@ -175,7 +175,8 @@ func TestSignerServeReadsTheEnvironment(t *testing.T) {
 	// The key files are looked for under the directory the
 	// environment names.
 	out, errOut, code := h.run("signer", "serve", "--allow-unsigned")
-	if code != 1 || !strings.Contains(out, filepath.Join(dir, "p256.pem")) {
+	if code != 1 || !strings.Contains(errorMessage(t, out),
+		filepath.Join(dir, "p256.pem")) {
 		t.Errorf("TRANSPAREO_SIGNER_DIR: %d %s%s", code, out, errOut)
 	}
 
@@ -183,7 +184,8 @@ func TestSignerServeReadsTheEnvironment(t *testing.T) {
 	other := t.TempDir()
 	out, errOut, code = h.run("signer", "serve", "--allow-unsigned",
 		"--dir", other)
-	if code != 1 || !strings.Contains(out, filepath.Join(other, "p256.pem")) {
+	if code != 1 || !strings.Contains(errorMessage(t, out),
+		filepath.Join(other, "p256.pem")) {
 		t.Errorf("--dir over the environment: %d %s%s", code, out, errOut)
 	}
 

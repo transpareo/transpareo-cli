@@ -214,6 +214,42 @@ func (h *harness) lastBody() string {
 	return h.bodies[len(h.bodies)-1]
 }
 
+// errorMessage is the message of a JSON error envelope, taken
+// out of the JSON so a path in it carries the separators of the
+// host: Windows writes them as escapes that a comparison
+// against filepath.Join would never match. Output that is not
+// an envelope is answered as it stands.
+func errorMessage(t *testing.T, out string) string {
+	t.Helper()
+	var envelope struct {
+		Error struct {
+			Message string `json:"message"`
+		} `json:"error"`
+	}
+	if err := json.Unmarshal([]byte(out), &envelope); err != nil ||
+		envelope.Error.Message == "" {
+		return out
+	}
+	return envelope.Error.Message
+}
+
+// TestErrorMessageUnescapesAPath proves the comparison the
+// path assertions rest on: a Windows path reaches the envelope
+// with its separators escaped, and comes back out whole.
+func TestErrorMessageUnescapesAPath(t *testing.T) {
+	envelope := `{"ok":false,"error":{"code":"ERROR","message":` +
+		`"open C:\keys\p256.pem: The system cannot find the file ` +
+		`specified."}}`
+	if got := errorMessage(t, envelope); !strings.Contains(got,
+		`C:\keys\p256.pem`) {
+		t.Errorf("message = %q", got)
+	}
+	if got := errorMessage(t, "Error: --platform-key is required"); got !=
+		"Error: --platform-key is required" {
+		t.Errorf("plain output = %q", got)
+	}
+}
+
 func decode(t *testing.T, s string) map[string]any {
 	t.Helper()
 	var out map[string]any
