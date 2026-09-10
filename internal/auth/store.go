@@ -3,9 +3,11 @@ package auth
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 	"sync"
+	"time"
 
 	"github.com/zalando/go-keyring"
 )
@@ -197,6 +199,70 @@ func (s *Stores) ForNewSecret() Store {
 		return s.Keyring
 	}
 	return s.File
+}
+
+// tokenSuffix marks the entry that holds a profile's current
+// token, filed in the same store as its secret because a bearer
+// token opens the same doors for an hour.
+const tokenSuffix = "/token"
+
+// StoredToken is a profile's current token as the store keeps it.
+type StoredToken struct {
+	AccessToken string    `json:"accessToken"`
+	Scope       []string  `json:"scope,omitempty"`
+	ExpiresAt   time.Time `json:"expiresAt"`
+}
+
+// TokenStore reads and writes the token of one profile.
+type TokenStore struct {
+	store   Store
+	profile string
+}
+
+// TokenStore returns the token store of a profile whose secret
+// is in the named store.
+func (s *Stores) TokenStore(profile, storeName string) *TokenStore {
+	return &TokenStore{store: s.ByName(storeName), profile: profile}
+}
+
+func (t *TokenStore) key() string { return t.profile + tokenSuffix }
+
+// Load answers the stored token, or nil when there is none.
+func (t *TokenStore) Load() (*StoredToken, error) {
+	data, err := t.store.Get(t.key())
+	if errors.Is(err, ErrNotFound) {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, fmt.Errorf("reading the token of profile %q: %w",
+			t.profile, err)
+	}
+	var token StoredToken
+	if err := json.Unmarshal([]byte(data), &token); err != nil {
+		return nil, fmt.Errorf("the stored token of profile %q is "+
+			"unreadable; run transpareo auth logout and login again", t.profile)
+	}
+	return &token, nil
+}
+
+func (t *TokenStore) Save(token *StoredToken) error {
+	data, err := json.Marshal(token)
+	if err != nil {
+		return err
+	}
+	if err := t.store.Set(t.key(), string(data)); err != nil {
+		return fmt.Errorf("storing the token of profile %q: %w", t.profile,
+			err)
+	}
+	return nil
+}
+
+func (t *TokenStore) Clear() error {
+	if err := t.store.Delete(t.key()); err != nil {
+		return fmt.Errorf("removing the token of profile %q: %w", t.profile,
+			err)
+	}
+	return nil
 }
 
 // ByName returns the store a profile recorded, or the file store

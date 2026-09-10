@@ -69,6 +69,113 @@ func TestTokenIsCachedUntilSixtySecondsBeforeExpiry(t *testing.T) {
 	}
 }
 
+// memoryTokenStore is a TokenStore for the tests, counting what
+// the source asks of it.
+type memoryTokenStore struct {
+	token                *Token
+	loads, saves, clears int
+}
+
+func (m *memoryTokenStore) Load() (*Token, error) {
+	m.loads++
+	return m.token, nil
+}
+
+func (m *memoryTokenStore) Save(t *Token) error {
+	m.saves++
+	m.token = t
+	return nil
+}
+
+func (m *memoryTokenStore) Clear() error {
+	m.clears++
+	m.token = nil
+	return nil
+}
+
+// TestCachedTokenSourceReusesAStoredToken proves a run that finds
+// a valid token in the store never exchanges, a run that finds
+// none exchanges once and stores the result, and an expired
+// stored token is replaced.
+func TestCachedTokenSourceReusesAStoredToken(t *testing.T) {
+	ts := newTokenServer(t)
+	clock := newFakeClock()
+	ctx := context.Background()
+	inner, _ := NewClientCredentialsSource(ts.URL,
+		ClientCredentials{ID: "id", Secret: "s3cret"}, nil)
+	inner.(*credentialsSource).now = clock.Now
+	store := &memoryTokenStore{token: &Token{AccessToken: "stored",
+		ExpiresAt: clock.Now().Add(30 * time.Minute)}}
+	cached := NewCachedTokenSource(inner, store).(*cachedSource)
+	cached.now = clock.Now
+	for range 2 {
+		token, err := cached.Token(ctx)
+		if err != nil || token.AccessToken != "stored" {
+			t.Fatalf("token = %v, err = %v", token, err)
+		}
+	}
+	if ts.Exchanges() != 0 || store.loads != 1 || store.saves != 0 {
+		t.Errorf("exchanges %d, loads %d, saves %d", ts.Exchanges(),
+			store.loads, store.saves)
+	}
+
+	// Sixty seconds before the stored token expires the source
+	// mints another and stores it.
+	clock.Advance(29*time.Minute + 30*time.Second)
+	token, err := cached.Token(ctx)
+	if err != nil || token.AccessToken != "tok1" {
+		t.Fatalf("token = %v, err = %v", token, err)
+	}
+	if ts.Exchanges() != 1 || store.saves != 1 ||
+		store.token.AccessToken != "tok1" {
+		t.Errorf("exchanges %d, saves %d, stored %v", ts.Exchanges(),
+			store.saves, store.token)
+	}
+
+	// A fresh process finds the minted token.
+	again := NewCachedTokenSource(inner, store).(*cachedSource)
+	again.now = clock.Now
+	if token, _ := again.Token(ctx); token.AccessToken != "tok1" ||
+		ts.Exchanges() != 1 {
+		t.Errorf("a new source exchanged again: %v after %d", token,
+			ts.Exchanges())
+	}
+}
+
+// TestCachedTokenSourceInvalidateClearsTheStore proves an expired
+// token reported by the API is dropped from memory and the store
+// and the next request carries a fresh one.
+func TestCachedTokenSourceInvalidateClearsTheStore(t *testing.T) {
+	ts := newTokenServer(t)
+	var calls int
+	ts.Mux.HandleFunc("/api/me", func(w http.ResponseWriter, r *http.Request) {
+		calls++
+		if r.Header.Get("Authorization") == "Bearer stale" {
+			writeJSON(w, 401, map[string]string{"error": "TOKEN_EXPIRED",
+				"message": "expired"})
+			return
+		}
+		writeJSON(w, 200, map[string]any{"key": "id"})
+	})
+	clock := newFakeClock()
+	store := &memoryTokenStore{token: &Token{AccessToken: "stale",
+		ExpiresAt: clock.Now().Add(time.Hour)}}
+	inner, _ := NewClientCredentialsSource(ts.URL,
+		ClientCredentials{ID: "id", Secret: "s3cret"}, nil)
+	inner.(*credentialsSource).now = clock.Now
+	cached := NewCachedTokenSource(inner, store).(*cachedSource)
+	cached.now = clock.Now
+	c := newTestClient(t, ts, clock, WithTokenSource(cached))
+	if _, err := c.Get(context.Background(), "/me", nil, nil); err != nil {
+		t.Fatal(err)
+	}
+	if calls != 2 || store.clears != 1 || ts.Exchanges() != 1 ||
+		store.token.AccessToken != "tok1" {
+		t.Errorf("calls %d, clears %d, exchanges %d, stored %v", calls,
+			store.clears, ts.Exchanges(), store.token)
+	}
+}
+
 func TestTokenExchangeErrorIsRFC6749Shaped(t *testing.T) {
 	ts := newTokenServer(t)
 	src, _ := NewClientCredentialsSource(ts.URL,

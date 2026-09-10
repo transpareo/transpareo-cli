@@ -60,7 +60,9 @@ An API consumer is created in the application manager of the
 workspace, which shows its secret once. `auth login` reads the
 secret from standard input or from `TRANSPAREO_CLIENT_SECRET`,
 never from an option, checks it at the token endpoint and stores
-it in the operating system's keyring. `me` answers what the
+it in the operating system's keyring, with the token beside it,
+so later commands reuse the token for its hour instead of
+exchanging the secret every time. `me` answers what the
 credential allows. Then:
 
 ```

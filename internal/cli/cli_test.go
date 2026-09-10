@@ -12,6 +12,7 @@ import (
 	"strings"
 	"sync"
 	"testing"
+	"time"
 
 	"github.com/transpareo/transpareo-cli/internal/auth"
 	"github.com/transpareo/transpareo-cli/spec"
@@ -345,6 +346,90 @@ func TestLogoutRemovesProfile(t *testing.T) {
 	out, _, code := h.run("me")
 	if code != 1 || !strings.Contains(out, "NO_PROFILE") {
 		t.Errorf("code = %d, out = %s", code, out)
+	}
+}
+
+// exchanges counts the token exchanges the harness has seen.
+func (h *harness) exchanges() int {
+	h.mu.Lock()
+	defer h.mu.Unlock()
+	n := 0
+	for _, r := range h.requests {
+		if r.URL.Path == "/api/oauth/token" {
+			n++
+		}
+	}
+	return n
+}
+
+// TestStoredProfileReusesItsTokenAcrossRuns proves a stored
+// profile exchanges the secret at login and then not again for
+// as long as the token lives, that `auth token` mints a fresh one
+// regardless, and that logout removes the stored token.
+func TestStoredProfileReusesItsTokenAcrossRuns(t *testing.T) {
+	h := newHarness(t)
+	h.login()
+	for range 3 {
+		if _, errOut, code := h.run("me"); code != 0 {
+			t.Fatalf("me: %d %s", code, errOut)
+		}
+	}
+	if h.exchanges() != 1 {
+		t.Errorf("exchanges = %d, want the login's one", h.exchanges())
+	}
+	if _, _, code := h.run("auth", "token"); code != 0 || h.exchanges() != 2 {
+		t.Errorf("auth token: code %d, exchanges %d", code, h.exchanges())
+	}
+	name := profileNameFor(h.server.URL)
+	store := h.stores.TokenStore(name, "memory")
+	if token, err := store.Load(); err != nil || token == nil ||
+		token.AccessToken != "tok" {
+		t.Fatalf("stored token = %v, err = %v", token, err)
+	}
+	if _, _, code := h.run("auth", "logout"); code != 0 {
+		t.Fatal("logout failed")
+	}
+	if token, _ := store.Load(); token != nil {
+		t.Error("logout kept the token")
+	}
+}
+
+// TestExpiredStoredTokenIsReplaced proves a run that finds a
+// token about to expire exchanges once and stores the new one.
+func TestExpiredStoredTokenIsReplaced(t *testing.T) {
+	h := newHarness(t)
+	h.login()
+	name := profileNameFor(h.server.URL)
+	store := h.stores.TokenStore(name, "memory")
+	store.Save(&auth.StoredToken{AccessToken: "tok",
+		ExpiresAt: time.Now().Add(30 * time.Second)})
+	if _, errOut, code := h.run("me"); code != 0 {
+		t.Fatalf("me: %d %s", code, errOut)
+	}
+	token, _ := store.Load()
+	if h.exchanges() != 2 || token == nil ||
+		time.Until(token.ExpiresAt) < 59*time.Minute {
+		t.Errorf("exchanges %d, stored %+v", h.exchanges(), token)
+	}
+}
+
+// TestEnvironmentCredentialsStoreNoToken proves a run on
+// TRANSPAREO_CLIENT_SECRET exchanges every time and keeps nothing.
+func TestEnvironmentCredentialsStoreNoToken(t *testing.T) {
+	h := newHarness(t)
+	h.env["TRANSPAREO_HOST"] = h.server.URL
+	h.env["TRANSPAREO_CLIENT_ID"] = "id"
+	h.env["TRANSPAREO_CLIENT_SECRET"] = "s3cret"
+	for range 2 {
+		if _, errOut, code := h.run("me"); code != 0 {
+			t.Fatalf("me: %d %s", code, errOut)
+		}
+	}
+	if h.exchanges() != 2 {
+		t.Errorf("exchanges = %d, want one per run", h.exchanges())
+	}
+	if _, err := h.stores.Keyring.Get("/token"); err == nil {
+		t.Error("a token was stored without a profile")
 	}
 }
 

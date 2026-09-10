@@ -191,6 +191,11 @@ func (r *Resolver) Save(p *Profile) error {
 		return fmt.Errorf("storing the secret: %w", err)
 	}
 	p.Store = store.Name()
+	// A token minted for the previous credential or scope of this
+	// name must not serve the new one.
+	if err := r.stores().TokenStore(p.Name, p.Store).Clear(); err != nil {
+		return err
+	}
 	cfg.Profiles[p.Name] = ProfileConfig{
 		Host:     p.Host,
 		ClientID: p.ClientID,
@@ -216,6 +221,9 @@ func (r *Resolver) Delete(name string) error {
 	}
 	if err := r.stores().ByName(pc.Store).Delete(name); err != nil {
 		return fmt.Errorf("removing the secret: %w", err)
+	}
+	if err := r.stores().TokenStore(name, pc.Store).Clear(); err != nil {
+		return err
 	}
 	delete(cfg.Profiles, name)
 	if cfg.DefaultProfile == name {

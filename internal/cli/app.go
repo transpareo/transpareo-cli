@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log/slog"
 	"net/http"
 	"os"
 	"strings"
@@ -147,24 +148,85 @@ func (a *App) httpClient() *http.Client {
 	return &http.Client{Timeout: 60 * time.Second}
 }
 
+// clientOptions wires the client to the tool: its HTTP client,
+// its name, and a log on stderr for every attempt the client
+// repeats, so a request that stalled and was retried leaves a
+// trace instead of only a slow command.
 func (a *App) clientOptions() []transpareo.Option {
 	return []transpareo.Option{
 		transpareo.WithHTTPClient(a.httpClient()),
 		transpareo.WithUserAgent("transpareo-cli/" + version.Version),
+		transpareo.WithLogger(slog.New(slog.NewTextHandler(a.Stderr, nil))),
 	}
 }
 
-// Client returns an API client for the selected profile.
+// Client returns an API client for the selected profile. A
+// stored profile keeps its token beside its secret, so every
+// invocation reuses the token the last one minted and the secret
+// is exchanged once an hour, not once a command.
 func (a *App) Client() (*transpareo.Client, *auth.Profile, error) {
 	profile, err := a.Resolver().Resolve(a.Profile)
 	if err != nil {
 		return nil, nil, noProfileHint(err)
 	}
-	client, err := transpareo.FromResolvedProfile(profile, a.clientOptions()...)
+	opts := a.clientOptions()
+	if store := a.tokenStore(profile); store != nil {
+		source, err := transpareo.NewClientCredentialsSource(profile.Host,
+			credentialsOf(profile), a.httpClient())
+		if err != nil {
+			return nil, nil, err
+		}
+		opts = append(opts, transpareo.WithTokenSource(
+			transpareo.NewCachedTokenSource(source, store)))
+	}
+	client, err := transpareo.FromResolvedProfile(profile, opts...)
 	if err != nil {
 		return nil, nil, err
 	}
 	return client, profile, nil
+}
+
+// tokenStore answers where a profile's token is kept, or nil for
+// a run on environment credentials or a token, which keep
+// nothing.
+func (a *App) tokenStore(profile *auth.Profile) *profileTokens {
+	if profile.Name == "" || profile.Token != "" ||
+		profile.Store == "environment" {
+		return nil
+	}
+	stores := a.Stores
+	if stores == nil {
+		stores = auth.NewStores(a.ConfigDir)
+	}
+	return &profileTokens{stores.TokenStore(profile.Name, profile.Store)}
+}
+
+func credentialsOf(profile *auth.Profile) transpareo.ClientCredentials {
+	return transpareo.ClientCredentials{ID: profile.ClientID,
+		Secret: profile.ClientSecret, Scope: profile.Scope}
+}
+
+// profileTokens adapts the profile's token store to the client.
+type profileTokens struct {
+	store *auth.TokenStore
+}
+
+func (p *profileTokens) Load() (*transpareo.Token, error) {
+	stored, err := p.store.Load()
+	if err != nil || stored == nil {
+		return nil, err
+	}
+	return &transpareo.Token{AccessToken: stored.AccessToken,
+		Scope: stored.Scope, ExpiresAt: stored.ExpiresAt}, nil
+}
+
+func (p *profileTokens) Save(token *transpareo.Token) error {
+	return p.store.Save(&auth.StoredToken{AccessToken: token.AccessToken,
+		Scope: token.Scope, ExpiresAt: token.ExpiresAt})
+}
+
+func (p *profileTokens) Clear() error {
+	return p.store.Clear()
 }
 
 // noProfileHint turns the resolver's error into one that says

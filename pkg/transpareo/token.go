@@ -50,6 +50,72 @@ type invalidator interface {
 	Invalidate()
 }
 
+// TokenStore keeps a token between processes, so a command-line
+// run reuses the token the last run minted instead of exchanging
+// the secret again. Load answers nil without an error when
+// nothing is stored.
+type TokenStore interface {
+	Load() (*Token, error)
+	Save(*Token) error
+	Clear() error
+}
+
+// NewCachedTokenSource wraps a source with a store: a valid
+// stored token is used as it is, and a token the source mints
+// is stored for the next process. A 401 that reports an expired
+// token clears the store along with the source, so the next
+// request mints a fresh one.
+func NewCachedTokenSource(source TokenSource, store TokenStore) TokenSource {
+	return &cachedSource{source: source, store: store, now: time.Now}
+}
+
+type cachedSource struct {
+	source TokenSource
+	store  TokenStore
+	now    func() time.Time
+
+	mu    sync.Mutex
+	token *Token
+}
+
+func (s *cachedSource) Token(ctx context.Context) (*Token, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.token.Valid(s.now()) {
+		return s.token, nil
+	}
+	stored, err := s.store.Load()
+	if err != nil {
+		return nil, err
+	}
+	if stored.Valid(s.now()) {
+		s.token = stored
+		return stored, nil
+	}
+	token, err := s.source.Token(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if err := s.store.Save(token); err != nil {
+		return nil, err
+	}
+	s.token = token
+	return token, nil
+}
+
+// Invalidate drops the token everywhere it is kept. A store that
+// cannot be cleared is left to the next Save, since the token is
+// gone from memory either way.
+func (s *cachedSource) Invalidate() {
+	s.mu.Lock()
+	s.token = nil
+	s.store.Clear()
+	s.mu.Unlock()
+	if inv, ok := s.source.(invalidator); ok {
+		inv.Invalidate()
+	}
+}
+
 // StaticToken is a TokenSource for a token issued elsewhere, for
 // example by `transpareo auth token`. It never refreshes.
 type StaticToken string

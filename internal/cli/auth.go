@@ -97,6 +97,12 @@ func (a *App) login(ctx context.Context, host, clientID, scope, name string,
 	if err := resolver.Save(profile); err != nil {
 		return err
 	}
+	// The token the check minted serves the next commands.
+	if token, err := client.TokenSource().Token(ctx); err == nil {
+		if err := a.tokenStore(profile).Save(token); err != nil {
+			return err
+		}
+	}
 	if setDefault {
 		if err := resolver.SetDefault(name); err != nil {
 			return err

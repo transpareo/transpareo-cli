@@ -7,6 +7,7 @@ import (
 	"runtime"
 	"strings"
 	"testing"
+	"time"
 )
 
 func env(values map[string]string) func(string) string {
@@ -190,6 +191,90 @@ func TestDeleteProfile(t *testing.T) {
 	}
 	if err := r.Delete("b"); err == nil {
 		t.Error("deleting twice must fail")
+	}
+}
+
+// TestTokenStoreKeepsTheTokenBesideTheSecret proves the token
+// round-trips through the profile's store, is absent rather than
+// an error before a run stored one, and goes with a new login of
+// the same name and with the profile's deletion.
+func TestTokenStoreKeepsTheTokenBesideTheSecret(t *testing.T) {
+	r, mem := newResolver(t, nil)
+	profile := &Profile{Name: "acme", Host: "acme.example.com",
+		ClientID: "a", ClientSecret: "x"}
+	if err := r.Save(profile); err != nil {
+		t.Fatal(err)
+	}
+	store := r.stores().TokenStore("acme", profile.Store)
+	if token, err := store.Load(); token != nil || err != nil {
+		t.Fatalf("before a token: %v, %v", token, err)
+	}
+	expiry := time.Date(2026, 9, 10, 9, 0, 0, 0, time.UTC)
+	if err := store.Save(&StoredToken{AccessToken: "tok",
+		Scope: []string{"dpp_read"}, ExpiresAt: expiry}); err != nil {
+		t.Fatal(err)
+	}
+	token, err := store.Load()
+	if err != nil || token.AccessToken != "tok" ||
+		!token.ExpiresAt.Equal(expiry) || len(token.Scope) != 1 {
+		t.Fatalf("token = %+v, err = %v", token, err)
+	}
+	if secret, _ := mem.Get("acme"); secret != "x" {
+		t.Errorf("the secret changed: %q", secret)
+	}
+
+	// A new login of the same name starts without a token.
+	if err := r.Save(profile); err != nil {
+		t.Fatal(err)
+	}
+	if token, _ := store.Load(); token != nil {
+		t.Error("a new login kept the old token")
+	}
+	store.Save(&StoredToken{AccessToken: "tok2", ExpiresAt: expiry})
+	if err := r.Delete("acme"); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := mem.Get("acme" + tokenSuffix); !errors.Is(err, ErrNotFound) {
+		t.Error("deleting the profile kept its token")
+	}
+}
+
+// TestTokenStoreInTheFileStore proves the fallback file keeps
+// the token too, under the same owner-only mode.
+func TestTokenStoreInTheFileStore(t *testing.T) {
+	dir := t.TempDir()
+	stores := &Stores{Dir: dir, File: NewFileStore(dir)}
+	store := stores.TokenStore("acme", "file")
+	expiry := time.Date(2026, 9, 10, 9, 0, 0, 0, time.UTC)
+	if err := store.Save(&StoredToken{AccessToken: "tok",
+		ExpiresAt: expiry}); err != nil {
+		t.Fatal(err)
+	}
+	token, err := store.Load()
+	if err != nil || token.AccessToken != "tok" || !token.ExpiresAt.Equal(expiry) {
+		t.Fatalf("token = %+v, err = %v", token, err)
+	}
+	info, err := os.Stat(filepath.Join(dir, credentialsFile))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if perm := info.Mode().Perm(); perm != 0o600 && runtime.GOOS != "windows" {
+		t.Errorf("credentials.json mode = %o", perm)
+	}
+	if err := store.Clear(); err != nil {
+		t.Fatal(err)
+	}
+	if token, _ := store.Load(); token != nil {
+		t.Error("the token survived Clear")
+	}
+}
+
+func TestUnreadableStoredTokenIsReported(t *testing.T) {
+	r, mem := newResolver(t, nil)
+	mem.Set("acme"+tokenSuffix, "not json")
+	_, err := r.stores().TokenStore("acme", "memory").Load()
+	if err == nil || !strings.Contains(err.Error(), "auth logout") {
+		t.Errorf("err = %v", err)
 	}
 }
 
