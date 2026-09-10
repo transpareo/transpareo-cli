@@ -62,10 +62,10 @@ func TestMarkdownReference(t *testing.T) {
 		t.Fatal(err)
 	}
 	for _, want := range []string{"## General", "## DPPs",
-		"### `transpareo dpps void <id>`",
-		"Permission: `dpp_lifecycle`", "Cannot be undone",
-		"### `transpareo api <METHOD> <path>`",
-		"### `transpareo me`", "Operation `get_me`"} {
+		"### transpareo dpps void", "transpareo dpps void <id>",
+		"**Permission:** `dpp_lifecycle`", "**Cannot be undone**",
+		"### transpareo api", "### transpareo me", "(`get_me`)",
+		"| `--per-page` \\<n\\> |", "- [DPPs](#dpps)"} {
 		if !strings.Contains(doc, want) {
 			t.Errorf("reference lacks %q", want)
 		}
