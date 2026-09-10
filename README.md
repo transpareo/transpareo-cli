@@ -28,7 +28,7 @@ With the installer script, which detects the platform, verifies
 the checksum and installs into `~/.local/bin` or `/usr/local/bin`:
 
 ```
-curl -fsSL https://transpareo.com/install.sh | sh
+curl -fsSL https://transpareo.com/cli/install.sh | sh
 ```
 
 From source, with Go:

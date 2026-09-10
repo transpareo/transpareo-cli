@@ -5,7 +5,7 @@
 # a directory on the PATH. Verify the checksum file's Sigstore
 # bundle too when cosign is installed.
 #
-#   curl -fsSL https://transpareo.com/install.sh | sh
+#   curl -fsSL https://transpareo.com/cli/install.sh | sh
 #
 # Environment: TRANSPAREO_INSTALL_DIR (default ~/.local/bin, or
 # /usr/local/bin when writable), TRANSPAREO_VERSION (default:
