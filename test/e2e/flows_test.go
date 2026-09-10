@@ -36,8 +36,8 @@ func jsonOf(t *testing.T, out string) map[string]any {
 
 func TestAuthTokenWithScope(t *testing.T) {
 	e := load(t)
-	out, errOut, code := run(t, e, "auth", "token", "--scope", "dpp_read",
-		"--json")
+	out, errOut, code := runWithCredentials(t, e, "auth", "token",
+		"--scope", "dpp_read", "--json")
 	if code != 0 {
 		t.Fatalf("exit %d: %s%s", code, out, errOut)
 	}
@@ -444,15 +444,11 @@ func TestReadOnlyConsumerIsRefusedAWrite(t *testing.T) {
 	if id == "" || secret == "" {
 		t.Skip("TRANSPAREO_TEST_READONLY_CLIENT_ID and _SECRET are not set")
 	}
-	c, err := transpareo.New(e.host, transpareo.ClientCredentials{ID: id,
-		Secret: secret})
-	if err != nil {
-		t.Fatal(err)
-	}
+	c := sharedClient(t, e.host, id, secret)
 	if _, err := c.Me(context.Background()); err != nil {
 		t.Fatalf("me: %v", err)
 	}
-	_, err = c.Post(context.Background(), "/brands",
+	_, err := c.Post(context.Background(), "/brands",
 		map[string]any{"brand": map[string]any{
 			"name": runID()}}, nil)
 	var apiErr *transpareo.Error

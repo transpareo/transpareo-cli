@@ -8,10 +8,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"os"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 
@@ -39,10 +41,50 @@ func load(t *testing.T) env {
 	return e
 }
 
+// tokenSources holds one source per consumer for the whole run,
+// so the suite exchanges a token once per consumer the way a
+// client in use does and stays clear of the token endpoint's
+// limit of ten exchanges a minute. Only the checks that are about
+// the exchange itself call the endpoint again.
+var (
+	tokenSourcesMu sync.Mutex
+	tokenSources   = map[string]transpareo.TokenSource{}
+)
+
+func tokenSource(t *testing.T, host, id, secret string) transpareo.TokenSource {
+	t.Helper()
+	tokenSourcesMu.Lock()
+	defer tokenSourcesMu.Unlock()
+	key := host + " " + id
+	if ts, ok := tokenSources[key]; ok {
+		return ts
+	}
+	creds := transpareo.ClientCredentials{ID: id, Secret: secret}
+	ts, err := transpareo.NewClientCredentialsSource(host, creds, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	tokenSources[key] = ts
+	return ts
+}
+
+// logger writes the attempts the client repeats into the test
+// output, so a stalled request that a retry hid is named there.
+var logger = slog.New(slog.NewTextHandler(os.Stderr, nil))
+
+// client answers a client on the shared token of the writing
+// consumer.
 func (e env) client(t *testing.T) *transpareo.Client {
 	t.Helper()
-	creds := transpareo.ClientCredentials{ID: e.clientID, Secret: e.secret}
-	c, err := transpareo.New(e.host, creds)
+	return sharedClient(t, e.host, e.clientID, e.secret)
+}
+
+func sharedClient(t *testing.T, host, id, secret string) *transpareo.Client {
+	t.Helper()
+	creds := transpareo.ClientCredentials{ID: id, Secret: secret}
+	c, err := transpareo.New(host, creds,
+		transpareo.WithTokenSource(tokenSource(t, host, id, secret)),
+		transpareo.WithLogger(logger))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -58,10 +100,16 @@ func apiError(t *testing.T, err error) *transpareo.Error {
 	return apiErr
 }
 
+// TestTokenExchangeAndMe is the check about the exchange, so it
+// builds a client that exchanges on its own.
 func TestTokenExchangeAndMe(t *testing.T) {
 	e := load(t)
 	ctx := context.Background()
-	c := e.client(t)
+	creds := transpareo.ClientCredentials{ID: e.clientID, Secret: e.secret}
+	c, err := transpareo.New(e.host, creds)
+	if err != nil {
+		t.Fatal(err)
+	}
 	token, err := c.TokenSource().Token(ctx)
 	if err != nil {
 		t.Fatalf("token exchange: %v", err)
@@ -299,17 +347,34 @@ func TestSecondHostRefusesTheToken(t *testing.T) {
 	}
 }
 
-// run executes the command line in-process with credentials from
-// the environment and an empty configuration directory.
+// run executes the command line in-process on the shared token,
+// the way a script with TRANSPAREO_TOKEN set runs it, in an empty
+// configuration directory.
 func run(t *testing.T, e env, args ...string) (string, string, int) {
+	t.Helper()
+	token, err := e.client(t).TokenSource().Token(context.Background())
+	if err != nil {
+		t.Fatal(err)
+	}
+	return runWith(t, map[string]string{auth.EnvHost: e.host,
+		auth.EnvToken: token.AccessToken}, args...)
+}
+
+// runWithCredentials lets the command line exchange a token on
+// its own, for the checks that are about the exchange.
+func runWithCredentials(t *testing.T, e env, args ...string) (string,
+	string, int) {
+	t.Helper()
+	return runWith(t, map[string]string{auth.EnvHost: e.host,
+		auth.EnvClientID: e.clientID, auth.EnvClientSecret: e.secret},
+		args...)
+}
+
+func runWith(t *testing.T, values map[string]string,
+	args ...string) (string, string, int) {
 	t.Helper()
 	stdout, stderr := &bytes.Buffer{}, &bytes.Buffer{}
 	dir := t.TempDir()
-	values := map[string]string{
-		auth.EnvHost:         e.host,
-		auth.EnvClientID:     e.clientID,
-		auth.EnvClientSecret: e.secret,
-	}
 	app := &cli.App{
 		Stdin:     strings.NewReader(""),
 		Stdout:    stdout,
