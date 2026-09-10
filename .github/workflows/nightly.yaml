@@ -10,8 +10,11 @@
 # doing the update by hand. The repository setting "Allow GitHub
 # Actions to create and approve pull requests" must be on.
 #
-# The surface job renders the command tree with `commands --json` and
-# compares it with surface.json.
+# The surface job rebuilds the command tree and compares it with
+# surface.json, the projection of the tree that scripts rely on: the
+# paths, arguments and option names, without the prose that may change.
+# A command that is in the snapshot and no longer in the tree fails the
+# job, because removing or renaming one breaks scripts.
 name: nightly
 
 on:
@@ -170,15 +173,22 @@ jobs:
           cache: true
 
       # Without a snapshot there is nothing to compare, so the job only
-      # says so. With one, any difference fails the job.
+      # says so. With one, the snapshot test rebuilds the tree, names
+      # every command and option the snapshot has and the tree lacks,
+      # and fails on any other difference.
       - name: Compare the command tree with surface.json
         run: |
+          set -euo pipefail
           if [ ! -f surface.json ]; then
             echo "no surface snapshot yet"
             exit 0
           fi
-          go run ./cmd/transpareo commands --json > "$RUNNER_TEMP/surface.json"
-          diff -u surface.json "$RUNNER_TEMP/surface.json"
+          go test -v -run '^TestSurfaceSnapshotIsCurrent$' ./internal/cli/ \
+            | tee "$RUNNER_TEMP/surface.log"
+          # A renamed test leaves `go test -run` with nothing to run and
+          # a green exit, which would retire this job in silence.
+          grep -q '^--- PASS: TestSurfaceSnapshotIsCurrent' \
+            "$RUNNER_TEMP/surface.log"
 
   # The end-to-end suite runs against the test tenant with the
   # consumer stored as secrets. It creates and deletes its own
@@ -202,6 +212,9 @@ jobs:
           TRANSPAREO_TEST_HOST: ${{ secrets.TRANSPAREO_TEST_HOST }}
           TRANSPAREO_TEST_CLIENT_ID: ${{ secrets.TRANSPAREO_TEST_CLIENT_ID }}
           TRANSPAREO_TEST_CLIENT_SECRET: ${{ secrets.TRANSPAREO_TEST_CLIENT_SECRET }}
+          TRANSPAREO_TEST_READONLY_CLIENT_ID: ${{ secrets.TRANSPAREO_TEST_READONLY_CLIENT_ID }}
+          TRANSPAREO_TEST_READONLY_CLIENT_SECRET: ${{ secrets.TRANSPAREO_TEST_READONLY_CLIENT_SECRET }}
+          TRANSPAREO_TEST_SECOND_HOST: ${{ secrets.TRANSPAREO_TEST_SECOND_HOST }}
         run: |
           set -euo pipefail
           if [ -z "${TRANSPAREO_TEST_CLIENT_ID}" ]; then
