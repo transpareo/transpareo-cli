@@ -1,8 +1,9 @@
 # Builds and publishes a release for every v* tag.
 #
 # The goreleaser job produces the archives, packages, checksum file,
-# SBOMs and the keyless Sigstore bundle of the checksum file, and pushes
-# the Homebrew cask and Scoop manifest to their tap repositories. The
+# SBOMs and the keyless Sigstore bundle of the checksum file, pushes the
+# signing endpoint's container image to the GitHub registry and signs it,
+# and pushes the Homebrew cask and Scoop manifest to their taps. The
 # provenance job then hands the checksum file to the SLSA generic
 # generator, which signs a SLSA level 3 provenance statement for every
 # archive listed in it and uploads it to the same GitHub release.
@@ -25,7 +26,8 @@ jobs:
     permissions:
       contents: write
       id-token: write
-      packages: read
+      # Pushing the signer image to ghcr.io.
+      packages: write
     outputs:
       hashes: ${{ steps.hash.outputs.hashes }}
     steps:
@@ -45,6 +47,18 @@ jobs:
 
       - name: Install syft
         uses: anchore/sbom-action/download-syft@3ad7283483fc7af8ff2b4ea19663c2d5ca935e26 # v0.24.2
+
+      # The image only copies binaries that are already built, so
+      # buildx assembles both architectures without emulation.
+      - name: Set up buildx
+        uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
+
+      - name: Log in to the GitHub container registry
+        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run goreleaser
         uses: goreleaser/goreleaser-action@f06c13b6b1a9625abc9e6e439d9c05a8f2190e94 # v7.2.3

@@ -324,21 +324,42 @@ sudo systemctl enable --now transpareo-signer
 The settings file holds three values: the URL of the key the
 workspace host signs its requests with, the host name registered
 in the BYOK form, and the loopback address the proxy in front
-forwards to. An upgrade keeps the file as you edited it. Paste
-the two public keys into the BYOK form, put nginx or another
-proxy in front to terminate TLS, and press the test button on
-the signing keys page: it round-trips both request shapes and
-verifies the answers against the registered public keys, so a
-publish will not fail verification later.
+forwards to. They are ordinary environment variables,
+`TRANSPAREO_PLATFORM_KEY`, `TRANSPAREO_SIGNER_HOST` and
+`TRANSPAREO_SIGNER_LISTEN`, which the endpoint reads for any
+setting the command line leaves out. An upgrade keeps the file
+as you edited it. Paste the two public keys into the BYOK form,
+put nginx or another proxy in front to terminate TLS, and press
+the test button on the signing keys page: it round-trips both
+request shapes and verifies the answers against the registered
+public keys, so a publish will not fail verification later.
 
+For a workspace that runs containers instead, the same endpoint
+is `ghcr.io/transpareo/transpareo-signer`, built from the same
+release for amd64 and arm64, signed with Sigstore like the
+release checksums, with the keys as a mounted volume and those
+same variables as its settings:
+
+```
+docker run -d --restart unless-stopped -p 127.0.0.1:8443:8443 \
+  --user "$(id -u):$(id -g)" -v "$PWD/keys":/keys:ro \
+  -e TRANSPAREO_PLATFORM_KEY=https://acme.transpareo.com/.well-known/transpareo-signing-key.pem \
+  -e TRANSPAREO_SIGNER_HOST=signer.example.com \
+  ghcr.io/transpareo/transpareo-signer:latest
+```
+
+Three pages carry the rest.
 [docs/signer-ubuntu.md](docs/signer-ubuntu.md) is the runbook for
 Ubuntu with nginx and certbot, from the package to the test
 button: the proxy block that passes the registered Host through,
 the firewall, the uptime check, key rotation and what each
-failure in the journal means. [docs/signer.md](docs/signer.md)
-has the protocol, what each of the two request shapes signs, and
-the Go package for a workspace that would rather embed the
-endpoint in a program of its own.
+failure in the journal means.
+[docs/signer-docker.md](docs/signer-docker.md) does the same for
+the image, with a compose file, the Kubernetes details and the
+file ownership a non-root image needs.
+[docs/signer.md](docs/signer.md) has the protocol, what each of
+the two request shapes signs, and the Go package for a workspace
+that would rather embed the endpoint in a program of its own.
 
 ## Go client
 

@@ -111,6 +111,55 @@ nfpms:
       postinstall: packaging/postinstall.sh
       preremove: packaging/preremove.sh
 
+# The signing endpoint as a container image, for a workspace that
+# runs it under Docker or Kubernetes instead of the systemd unit
+# the deb, rpm and apk carry. One image per release, built from
+# the binaries already built above, for amd64 and arm64. It is
+# configured by the same environment variables as the unit, and
+# the keys are a mounted volume; docs/signer-docker.md is the
+# runbook.
+dockers_v2:
+  - id: signer
+    ids:
+      - transpareo
+    images:
+      - ghcr.io/transpareo/transpareo-signer
+    tags:
+      - "{{ .Version }}"
+      - "{{ .Major }}.{{ .Minor }}"
+      - "{{ if not .Prerelease }}latest{{ end }}"
+    platforms:
+      - linux/amd64
+      - linux/arm64
+    labels:
+      org.opencontainers.image.title: transpareo-signer
+      org.opencontainers.image.description: >-
+        The signing endpoint of a Transpareo workspace that brings its own keys
+      org.opencontainers.image.url: https://transpareo.com
+      org.opencontainers.image.source: https://github.com/transpareo/transpareo-cli
+      org.opencontainers.image.documentation: >-
+        https://github.com/transpareo/transpareo-cli/blob/main/docs/signer-docker.md
+      org.opencontainers.image.licenses: MIT
+      org.opencontainers.image.version: "{{ .Version }}"
+      org.opencontainers.image.revision: "{{ .FullCommit }}"
+      org.opencontainers.image.created: "{{ .Date }}"
+
+# Keyless Sigstore signature of the pushed image, the same way the
+# checksum file is signed, so the image is not the one release
+# artefact without a signature. Verify with:
+#   cosign verify ghcr.io/transpareo/transpareo-signer:<version> \
+#     --certificate-identity-regexp 'https://github.com/transpareo/transpareo-cli/.*' \
+#     --certificate-oidc-issuer https://token.actions.githubusercontent.com
+docker_signs:
+  - id: image-signature
+    cmd: cosign
+    args:
+      - sign
+      - "--yes"
+      - "${artifact}@${digest}"
+    artifacts: manifests
+    output: true
+
 # Homebrew cask in the transpareo/homebrew-tap repository. Casks replace the
 # deprecated `brews` formula block in GoReleaser v2; the cask installs the
 # binary from the release archive instead of building a formula.
