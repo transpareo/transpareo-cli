@@ -42,10 +42,24 @@ logged; nothing is signed.
 `--platform-key` is the public key of the platform host that
 signs for the workspace: in a cluster the node hosting it, so
 the key the workspace host publishes. It is a PEM file or a URL
-fetched at start; with a URL a key rotation is picked up by
-fetching once more when a signature stops verifying, at most
-once a minute, so a forged request cannot turn the endpoint into
-a client of the platform.
+fetched at start.
+
+With a URL the endpoint follows a rotation of that key. Every
+signed request names the key it was signed with in
+`X-Master-Key-Fingerprint`. While that is the pinned key nothing
+is fetched, so a flood of forged requests cannot turn the
+endpoint into a client of the platform. When it names another
+key, the endpoint reads the host's current key and the hand-over
+statement published beside it, at
+`/.well-known/transpareo-signing-key-rotation.json`, and takes
+the new key only when the pinned key signed that statement and
+the statement names the key the host now serves. A host that
+publishes no statement, which is one that never rotated and
+today every host that is not the master of its cluster, is taken
+at its key URL as before, at most once a minute. A statement
+that did not come from the pinned key is refused, and the
+journal says so: restarting the endpoint pins the key the
+platform signs with now.
 
 Without `--tls-cert` and `--tls-key` the endpoint speaks plain
 HTTP, for a reverse proxy that terminates TLS; with them it
@@ -71,6 +85,13 @@ under one directory. One line per request goes to standard
 error: the kind, the elapsed time and the outcome, never a key
 and never a body.
 
+A setting the command line leaves out is read from the
+environment: `TRANSPAREO_PLATFORM_KEY`, `TRANSPAREO_SIGNER_HOST`,
+`TRANSPAREO_SIGNER_LISTEN` and `TRANSPAREO_SIGNER_DIR`. An
+option always wins over the variable. This is how the systemd
+unit of the packages and the container image are configured, and
+it keeps the endpoint's settings out of the process list.
+
 `--allow-unsigned` accepts requests without the platform
 signature. It exists for a development platform whose request
 signing is not seeded and must never be set on an endpoint a
@@ -79,9 +100,11 @@ request in production.
 
 ## Running it on a server
 
+Two shapes, both configured by those environment variables.
+
 The deb, rpm and apk packages carry a systemd unit,
 `transpareo-signer`, an environment file with the three
-settings it reads, and a post-install script that creates the
+settings, and a post-install script that creates the
 `transpareo-signer` account and the key directory
 `/etc/transpareo/signer`. The package neither enables nor
 starts the unit: the keys come first.
@@ -89,6 +112,19 @@ starts the unit: the keys come first.
 runbook, from the package to the test button, with nginx in
 front terminating TLS. The systemd and nginx parts are the same
 on Debian.
+
+`ghcr.io/transpareo/transpareo-signer` is the same endpoint as a
+container image, built from the same release for amd64 and
+arm64 on a distroless base, signed with Sigstore like the
+release checksums. The keys are a mounted volume and the
+settings are the same variables.
+[Running the signer in a container](signer-docker.md) covers
+the run, a compose file, the Kubernetes details and the file
+ownership a non-root image needs.
+
+Either way something has to terminate TLS in front: the
+platform registers an `https` URL and signs each request for
+the host name of it.
 
 ## What is signed
 
