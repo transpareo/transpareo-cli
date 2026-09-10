@@ -188,6 +188,42 @@ transpareo setup codex
 | `--no-mcp` | install the skill only |
 | `--no-skill` | register the MCP server only |
 
+### transpareo signer keygen
+
+Write the P-256 and Ed25519 keys and print their public halves.
+
+```sh
+transpareo signer keygen [--dir <path>] [--force]
+transpareo signer keygen
+transpareo signer keygen --dir /etc/transpareo/signer --json
+```
+
+| Option | What it does |
+|---|---|
+| `--dir` \<value\> | directory for the key files (default: signer under the config dir) |
+| `--force` | replace existing key files |
+
+### transpareo signer serve
+
+Serve the signing endpoint.
+
+```sh
+transpareo signer serve --platform-key <pem | url> [--listen <addr>] [--p256-key <pem>] [--ed25519-key <pem>]
+transpareo signer serve --platform-key platform.pem
+transpareo signer serve --platform-key https://acme.example.com/.well-known/transpareo-signing-key.pem --listen :8443 --tls-cert cert.pem --tls-key key.pem
+```
+
+| Option | What it does |
+|---|---|
+| `--allow-unsigned` | accept requests without the platform signature (development only) |
+| `--ed25519-key` \<value\> | Ed25519 private key PEM (default: ed25519.pem under the signer dir) |
+| `--listen` \<value\> | address to listen on |
+| `--p256-key` \<value\> | P-256 private key PEM (default: p256.pem under the signer dir) |
+| `--path` \<value\> | the one route served |
+| `--platform-key` \<value\> | the platform's request-signing public key: a PEM file or a URL |
+| `--tls-cert` \<value\> | TLS certificate PEM |
+| `--tls-key` \<value\> | TLS private key PEM |
+
 ### transpareo tasks wait
 
 Poll a status URL until the work is done.

@@ -284,6 +284,16 @@ secret; `transpareo auth grant --code <passport code>` issues child
 credentials confined to one passport for a day. All of it in
 [docs/auth.md](docs/auth.md).
 
+## Signing endpoint
+
+A workspace that brings its own keys signs its passports itself.
+`transpareo signer keygen` makes the P-256 and Ed25519 keys and
+prints the public halves for the application manager's BYOK
+form; `transpareo signer serve` runs the endpoint the platform
+calls at publish time, checking the platform's signature on
+every request before a key is touched. The keys never leave the
+machine. Details in [docs/signer.md](docs/signer.md).
+
 ## Go client
 
 ```go

@@ -31,7 +31,7 @@ func FillReference(skill string, root *cobra.Command) (string, error) {
 	var walk func(cmd *cobra.Command)
 	walk = func(cmd *cobra.Command) {
 		if cmd.Runnable() && !cmd.Hidden && cmd.Name() != "help" &&
-			cmd.Name() != "completion" {
+			cmd.Name() != "completion" && !operatorOnly(cmd) {
 			lines = append(lines, referenceLine(cmd, reg))
 		}
 		for _, child := range cmd.Commands() {
@@ -64,6 +64,22 @@ var commandSpan = regexp.MustCompile("`(transpareo [^`]*)`")
 
 // CommandsNamedIn lists the commands the skill text names in code
 // spans, as their command words without arguments or options.
+// annotationOperator marks a command tree that is for the
+// person operating a workspace, not for an assistant: the skill
+// leaves it out, so no assistant is told to run it.
+const annotationOperator = "operator"
+
+// operatorOnly reports whether cmd or one of its parents carries
+// the operator annotation.
+func operatorOnly(cmd *cobra.Command) bool {
+	for c := cmd; c != nil; c = c.Parent() {
+		if c.Annotations[annotationOperator] != "" {
+			return true
+		}
+	}
+	return false
+}
+
 func CommandsNamedIn(skill string) []string {
 	seen := map[string]bool{}
 	var out []string

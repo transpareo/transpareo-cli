@@ -37,6 +37,7 @@ Start with:
 		a.setupCommand(),
 		a.upgradeCommand(),
 		a.tasksCommand(),
+		a.signerCommand(),
 	)
 	a.addGeneratedCommands(root)
 	a.addCompositeCommands(root)

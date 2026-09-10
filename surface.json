@@ -788,6 +788,28 @@
     ]
   },
   {
+    "path": "transpareo signer keygen",
+    "args": "[--dir <path>] [--force]",
+    "flags": [
+      "dir",
+      "force"
+    ]
+  },
+  {
+    "path": "transpareo signer serve",
+    "args": "--platform-key <pem | url> [--listen <addr>] [--p256-key <pem>] [--ed25519-key <pem>]",
+    "flags": [
+      "allow-unsigned",
+      "ed25519-key",
+      "listen",
+      "p256-key",
+      "path",
+      "platform-key",
+      "tls-cert",
+      "tls-key"
+    ]
+  },
+  {
     "path": "transpareo tasks wait",
     "args": "<statusUrl>"
   },
