@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strconv"
 	"strings"
 	"sync"
 	"testing"
@@ -194,10 +195,23 @@ type brand struct {
 	Name string      `json:"name"`
 }
 
+func (b brand) identifier() json.Number { return b.ID }
+func (b brand) named() string           { return b.Name }
+
+// product is what a sweep of earlier runs needs of one.
+type product struct {
+	ID   json.Number `json:"id"`
+	Name string      `json:"name"`
+}
+
+func (p product) identifier() json.Number { return p.ID }
+func (p product) named() string           { return p.Name }
+
 // createBrand posts one brand and registers its deletion.
 func createBrand(t *testing.T, c *transpareo.Client, name,
 	key string) (brand, *transpareo.Response) {
 	t.Helper()
+	sweepLeftovers(t, c)
 	var out brand
 	body := map[string]any{"brand": map[string]any{"name": name}}
 	resp, err := c.JSON(context.Background(), &transpareo.Request{
@@ -218,8 +232,78 @@ func createBrand(t *testing.T, c *transpareo.Client, name,
 	return out, resp
 }
 
+// runPrefix marks every record this suite names, so a run that
+// died before its cleanup is recognisable to the next one.
+const runPrefix = "cli-e2e-"
+
+// staleAfter is how old a leftover has to be before a sweep
+// takes it, so a run beside this one keeps its own records.
+const staleAfter = time.Hour
+
 func runID() string {
-	return fmt.Sprintf("cli-e2e-%d", time.Now().UnixNano())
+	return fmt.Sprintf("%s%d", runPrefix, time.Now().UnixNano())
+}
+
+// staleRunID says whether a name carries a run id of this suite
+// older than staleAfter. The platform capitalises a name it
+// stores, so the comparison is made in lower case.
+func staleRunID(name string, now time.Time) bool {
+	digits, found := strings.CutPrefix(strings.ToLower(name), runPrefix)
+	if !found {
+		return false
+	}
+	nanos, err := strconv.ParseInt(digits, 10, 64)
+	if err != nil {
+		return false
+	}
+	return now.Sub(time.Unix(0, nanos)) > staleAfter
+}
+
+// sweptOnce keeps the sweep to one per run, whichever check
+// creates the first record.
+var sweptOnce sync.Once
+
+// sweepLeftovers removes the products and brands of runs that
+// died before their own cleanup could delete them. A record it
+// cannot delete, a product a passport was published against for
+// instance, is reported and left: this is tidying, and it never
+// fails a run of its own accord.
+func sweepLeftovers(t *testing.T, c *transpareo.Client) {
+	t.Helper()
+	sweptOnce.Do(func() {
+		now := time.Now()
+		sweepLeftover[product](t, c, "/products", now)
+		sweepLeftover[brand](t, c, "/brands", now)
+	})
+}
+
+// named is a record this suite can recognise by its name and
+// delete by its id.
+type named interface {
+	identifier() json.Number
+	named() string
+}
+
+func sweepLeftover[T named](t *testing.T, c *transpareo.Client, path string,
+	now time.Time) {
+	t.Helper()
+	ctx := context.Background()
+	for record, err := range transpareo.ListAll[T](ctx, c, path, nil) {
+		if err != nil {
+			t.Logf("listing %s to sweep: %v", path, err)
+			return
+		}
+		if !staleRunID(record.named(), now) {
+			continue
+		}
+		id := record.identifier().String()
+		if _, err := c.Delete(ctx, path+"/"+id, nil); err != nil {
+			t.Logf("leftover %s/%s (%s) stays: %v", path, id,
+				record.named(), err)
+			continue
+		}
+		t.Logf("swept %s/%s (%s) of an earlier run", path, id, record.named())
+	}
 }
 
 func TestIdempotencyKeyReplays(t *testing.T) {

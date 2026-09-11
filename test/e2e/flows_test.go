@@ -153,6 +153,7 @@ func declaredUnfillable(unfillable, missing []string) bool {
 // shape this check does not build.
 func throwawayProduct(t *testing.T, c *transpareo.Client) json.Number {
 	t.Helper()
+	sweepLeftovers(t, c)
 	ctx := context.Background()
 	properties, unfillable := mandatoryProperties(t, c)
 	product := map[string]any{"name": runID(),

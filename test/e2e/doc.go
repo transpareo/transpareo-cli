@@ -18,6 +18,9 @@
 //
 // The suite creates a brand, a product and two webhook
 // subscriptions named with a run id and deletes them at the end,
-// so a tenant it ran on carries nothing of it. The consumer needs
-// brand_access, product_access and webhook_access.
+// so a tenant it ran on carries nothing of it. A run that dies
+// before its cleanup leaves records behind, so the next run
+// sweeps the ones older than an hour, which leaves a run beside
+// it alone. The consumer needs brand_access, product_access and
+// webhook_access.
 package e2e
