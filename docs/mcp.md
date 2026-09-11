@@ -1,5 +1,30 @@
 # MCP server
 
+## The workspace's own endpoint
+
+A workspace answers the Model Context Protocol itself, at
+`https://<workspace host>/mcp` over the Streamable HTTP
+transport, so an assistant that runs in a browser reaches the
+same tools with nothing installed. Claude and ChatGPT take that
+address as a connector: the endpoint publishes its OAuth
+metadata at `/.well-known/oauth-protected-resource/mcp`, the
+assistant discovers the workspace as the authorization server,
+and the person approves a consent screen that names every
+permission asked for. The OpenAI Agents SDK's hosted tool takes
+the same address with a token. An approved connection is listed
+on the API consumers page of the application manager, with the
+name and date of whoever approved it, and is revoked there.
+
+The tools are the ones below, under the same names, so nothing
+in this document is a lesser set. Serve the protocol from this
+binary instead when the assistant runs where no browser does, in
+a script or offline, when the credential should stay on the
+machine that stored it, or when the assistant should reach less
+than the workspace allows, which is what `--read-only` and
+`--tools` are for.
+
+## From this binary
+
 `transpareo mcp` serves the Model Context Protocol over standard
 input and output, built on the official Go SDK. The assistant's
 configuration holds no secret; the credential comes from the

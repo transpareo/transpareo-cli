@@ -56,6 +56,11 @@ Windows the Scoop bucket
 [transpareo/scoop-bucket](https://github.com/transpareo/scoop-bucket);
 the packages and `go install` are listed under Install below.
 
+For an assistant in a browser there is nothing to install:
+`https://<workspace host>/mcp` is the workspace's own MCP
+endpoint, pasted into Claude or ChatGPT as a connector. See
+[With an assistant](#with-an-assistant).
+
 An API consumer is created in the application manager of the
 workspace, which shows its secret once. `auth login` reads the
 secret from standard input or from `TRANSPAREO_CLIENT_SECRET`,
@@ -182,10 +187,27 @@ the same way, byte for byte against its release.
 
 ## With an assistant
 
-The same binary is an MCP server. `transpareo setup claude`
-installs the agent skill and registers the server for Claude Code;
-`transpareo setup codex` does the same for Codex. The registration
-holds no secret, only the profile name:
+Two ways in, the same tools under the same names.
+
+The workspace itself answers the Model Context Protocol at
+`https://<workspace host>/mcp`, so an assistant in a browser
+needs nothing installed. Paste that address into Claude or
+ChatGPT as a connector, sign in to the workspace and approve the
+consent screen, which names every permission the assistant asks
+for, one by one. The connection appears on the API consumers
+page of the application manager with the name and date of the
+person who approved it, and is switched off there.
+
+The rest of this section is the other way: this binary as an MCP
+server on your own machine, which is what a script, a machine
+without a browser or an offline run needs, and what keeps the
+credential on the box it was stored on. It also narrows what an
+assistant can reach, with `--read-only` and `--tools`.
+
+`transpareo setup claude` installs the agent skill and registers
+the server for Claude Code; `transpareo setup codex` does the
+same for Codex. The registration holds no secret, only the
+profile name:
 
 ```json
 { "mcpServers": { "transpareo": { "command": "transpareo",
