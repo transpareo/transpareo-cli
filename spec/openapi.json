@@ -2,8 +2,8 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Transpareo API",
-    "version": "1.6.0",
-    "description": "This site runs on the [Transpareo](https://transpareo.com) product information platform. The REST API gives programs access to products, product components, brands, Digital Product Passports, categories and configuration. The version is selected with the `Accept` header, not a path segment.\n\nThe guide at [/apidocs/guide](/apidocs/guide) is the narrative companion to this reference: credentials, permissions, pagination, idempotency, the passport flows, the event feed, webhooks, rate limits and the error format. It is also served as Markdown at [/apidocs/guide.md](/apidocs/guide.md).\n\nPrograms authenticate with the OAuth 2.0 client credentials grant. Exchange the client id and secret once, then send the token on every request:\n\n```\ncurl -X POST https://<host>/api/oauth/token -d grant_type=client_credentials -d client_id=<key> -d client_secret=<secret>\n\ncurl https://<host>/api/me -H \"Authorization: Bearer <access_token>\"\n```",
+    "version": "1.12.0",
+    "description": "This site runs on the [Transpareo](https://transpareo.com) product information platform. The REST API gives programs access to products, product components, brands, Digital Product Passports, categories and configuration. The version is selected with the `Accept` header, not a path segment.\n\nThe guide at [/apidocs/guide](/apidocs/guide) is the narrative companion to this reference: credentials, permissions, pagination, idempotency, the passport flows, the event feed, webhooks, rate limits and the error format. It is also served as Markdown at [/apidocs/guide.md](/apidocs/guide.md).\n\nPrograms authenticate with the OAuth 2.0 client credentials grant. Exchange the client id and secret once, then send the token on every request:\n\n```\ncurl -X POST https://<host>/api/oauth/token -d grant_type=client_credentials -d client_id=<key> -d client_secret=<secret>\n\ncurl https://<host>/api/me -H \"Authorization: Bearer <access_token>\"\n```\n\nAn assistant that speaks the Model Context Protocol connects to `/mcp` on this host and calls these operations as tools, named in the catalogue at [/apidocs/mcp-tools.json](/apidocs/mcp-tools.json) and explained by the guide's Assistants section.",
     "contact": {
       "name": "Transpareo Support",
       "url": "https://transpareo.com"
@@ -126,8 +126,31 @@
     "securitySchemes": {
       "oauth2": {
         "type": "oauth2",
-        "description": "OAuth 2.0 client credentials grant for API consumers. The consumer's key is the client id and its secret the client secret. Exchange them at the token endpoint, as form fields or as HTTP Basic credentials, and send the returned token as `Authorization: Bearer <access_token>`.\n\nA token lives one hour and is bound to the host that issued it. `scope` narrows a token to a subset of the consumer's permission keys; without it the token carries all of them.",
+        "description": "OAuth 2.0 for programs, in two flows. The client credentials grant is for a credential an operator provisioned in the application manager: its key is the client id and its secret the client secret. Exchange them at the token endpoint, as form fields or as HTTP Basic credentials, and send the returned token as `Authorization: Bearer <access_token>`.\n\nThe authorization code grant with PKCE is for an application that asks a person for access instead of holding a credential of its own. It registers itself at `POST /api/oauth/register`, sends the person to `/api/oauth/authorize`, and exchanges the code they approved for a token at the same token endpoint. A refresh token keeps that connection alive without asking again and rotates on every use; `POST /api/oauth/revoke` ends it. Its scopes are the ones a person may grant; private properties and registry callbacks are not among them.\n\nA token lives one hour and is bound to the host that issued it. `scope` narrows a token to a subset of the consumer's permission keys; without it the token carries all of them.\n\nA token is verified on every endpoint it is sent to, the public ones included. An endpoint that answers without credentials still refuses a token that is malformed, unknown, expired or issued to a consumer that is no longer in good standing, with `TOKEN_INVALID`, `TOKEN_EXPIRED` or `CONSUMER_INACTIVE`, so a broken credential surfaces at the first call instead of looking like a public read that worked.",
         "flows": {
+          "authorizationCode": {
+            "authorizationUrl": "/api/oauth/authorize",
+            "tokenUrl": "/api/oauth/token",
+            "refreshUrl": "/api/oauth/token",
+            "scopes": {
+              "brand_access": "Read brands and write own brands",
+              "component_access": "Read components and write own components",
+              "export_access": "Start, poll and download passport exports",
+              "import_access": "Upload, map, validate, execute and revert imports",
+              "product_access": "Read products and write own products",
+              "product_category_access": "Read product categories and write own categories",
+              "webhook_access": "Manage own webhook subscriptions",
+              "brand_write": "Write every brand of the workspace",
+              "component_write": "Write every component of the workspace",
+              "dpp_read": "Read passports",
+              "dpp_write": "Create, update and publish passports",
+              "dpp_events": "Append lifecycle events to passports",
+              "dpp_dynamic": "Update the dynamic data of passports",
+              "dpp_history": "Read the events and versions of passports",
+              "dpp_bulk_write": "Create passports in bulk",
+              "dpp_lifecycle": "Void, supersede and reissue passports"
+            }
+          },
           "clientCredentials": {
             "tokenUrl": "/api/oauth/token",
             "scopes": {
@@ -246,6 +269,14 @@
           "maximum": 500
         },
         "description": "Records per page (default: 100, max: 500)"
+      },
+      "published": {
+        "name": "published",
+        "in": "query",
+        "schema": {
+          "type": "boolean"
+        },
+        "description": "For a credential, `true` lists the published records and `false` the drafts; left out, the list carries both. A storefront reader has no drafts to ask for, so the parameter narrows nothing for one. A value that is neither answers 422 `PUBLISHED_FILTER_INVALID`."
       }
     },
     "responses": {
@@ -709,6 +740,105 @@
           "page": {
             "type": "string"
           }
+        }
+      },
+      "ClientRegistration": {
+        "type": "object",
+        "description": "The client metadata of RFC 7591, section 2. Field names stay in snake_case as the RFC defines them.",
+        "required": [
+          "client_name",
+          "redirect_uris"
+        ],
+        "properties": {
+          "client_name": {
+            "type": "string",
+            "maxLength": 200,
+            "description": "The name a person sees on the consent screen when this application asks them for access"
+          },
+          "redirect_uris": {
+            "type": "array",
+            "maxItems": 5,
+            "items": {
+              "type": "string"
+            },
+            "description": "Where the person is sent back to after they decide. Each entry is an absolute `https://` URL without a fragment, or a loopback address (`http://127.0.0.1:<port>/...`, `http://localhost:<port>/...`) for an application running on the person's own machine. The authorize endpoint compares the presented URI against these by exact string equality."
+          },
+          "scope": {
+            "type": "string",
+            "description": "Space-separated permission keys the application asks for by default. Each has to be one of the scopes this server publishes."
+          },
+          "grant_types": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "authorization_code",
+                "refresh_token"
+              ]
+            },
+            "description": "Defaults to both. Naming anything else is refused."
+          },
+          "response_types": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "code"
+              ]
+            },
+            "description": "Defaults to `code`. Naming anything else is refused."
+          },
+          "token_endpoint_auth_method": {
+            "type": "string",
+            "enum": [
+              "none",
+              "client_secret_basic",
+              "client_secret_post"
+            ],
+            "description": "How the application authenticates at the token endpoint. Defaults to `none`, the public client that authenticates with PKCE alone. Either secret method mints a secret which the registration answer carries once."
+          },
+          "client_uri": {
+            "type": "string",
+            "description": "The application's home page"
+          },
+          "logo_uri": {
+            "type": "string",
+            "description": "An image for the application"
+          },
+          "policy_uri": {
+            "type": "string",
+            "description": "The application's privacy policy"
+          },
+          "tos_uri": {
+            "type": "string",
+            "description": "The application's terms of service"
+          },
+          "contacts": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Addresses of the people responsible for the application"
+          },
+          "software_id": {
+            "type": "string",
+            "description": "A stable identifier the application gives itself, the same across every workspace it registers with"
+          },
+          "software_version": {
+            "type": "string",
+            "description": "The version of the application registering"
+          }
+        },
+        "example": {
+          "client_name": "Assistant",
+          "redirect_uris": [
+            "https://assistant.example/callback"
+          ],
+          "scope": "dpp_read dpp_history",
+          "client_uri": "https://assistant.example",
+          "contacts": [
+            "ops@assistant.example"
+          ]
         }
       },
       "Component": {
@@ -3276,7 +3406,7 @@
       },
       "OAuthError": {
         "type": "object",
-        "description": "The error response of RFC 6749, section 5.2",
+        "description": "The error response of RFC 6749, section 5.2, and of RFC 7591, section 3.2.2 for registration",
         "required": [
           "error"
         ],
@@ -3289,7 +3419,9 @@
               "invalid_scope",
               "unsupported_grant_type",
               "access_denied",
-              "slow_down"
+              "slow_down",
+              "invalid_redirect_uri",
+              "invalid_client_metadata"
             ]
           },
           "error_description": {
@@ -4200,6 +4332,115 @@
           }
         }
       },
+      "RegisteredClient": {
+        "type": "object",
+        "description": "The registration response of RFC 7591, section 3.2.1. Field names stay in snake_case as the RFC defines them. `client_secret` is present only for a client that registered with one, and only in this answer, because the server keeps its encrypted form alone. There is no `registration_access_token` or `registration_client_uri`, because client management (RFC 7592) is not implemented here.",
+        "required": [
+          "client_id",
+          "client_id_issued_at",
+          "client_name",
+          "redirect_uris",
+          "grant_types",
+          "response_types",
+          "token_endpoint_auth_method"
+        ],
+        "properties": {
+          "client_id": {
+            "type": "string",
+            "description": "The identifier the application sends on every authorize and token request"
+          },
+          "client_id_issued_at": {
+            "type": "integer",
+            "description": "When the client id was issued, as seconds since the epoch"
+          },
+          "client_name": {
+            "type": "string"
+          },
+          "redirect_uris": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "grant_types": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "response_types": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "token_endpoint_auth_method": {
+            "type": "string",
+            "enum": [
+              "none",
+              "client_secret_basic",
+              "client_secret_post"
+            ]
+          },
+          "client_secret": {
+            "type": "string",
+            "description": "Present only for a client that registered with a secret method. Answered here once and never again."
+          },
+          "client_secret_expires_at": {
+            "type": "integer",
+            "description": "Always `0`, which RFC 7591 reads as a secret that does not expire"
+          },
+          "scope": {
+            "type": "string",
+            "description": "Present when the registration asked for one"
+          },
+          "client_uri": {
+            "type": "string"
+          },
+          "logo_uri": {
+            "type": "string"
+          },
+          "policy_uri": {
+            "type": "string"
+          },
+          "tos_uri": {
+            "type": "string"
+          },
+          "contacts": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "software_id": {
+            "type": "string"
+          },
+          "software_version": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "client_id": "3f6a9c2e-8d1b-4f7e-9a3c-5b2d8e1f4a7c",
+          "client_id_issued_at": 1788944000,
+          "client_name": "Assistant",
+          "redirect_uris": [
+            "https://assistant.example/callback"
+          ],
+          "grant_types": [
+            "authorization_code",
+            "refresh_token"
+          ],
+          "response_types": [
+            "code"
+          ],
+          "token_endpoint_auth_method": "none",
+          "scope": "dpp_read dpp_history",
+          "client_uri": "https://assistant.example",
+          "contacts": [
+            "ops@assistant.example"
+          ]
+        }
+      },
       "Subscription": {
         "type": "object",
         "description": "Current subscription status",
@@ -4282,6 +4523,10 @@
             "type": "string",
             "description": "Space-separated permission keys the token carries",
             "example": "dpp_read dpp_write"
+          },
+          "refresh_token": {
+            "type": "string",
+            "description": "Present on the authorization code and refresh grants, which keep a connection alive without asking the person again. It rotates on every use, so the one handed back here replaces the one that was sent. Absent on the client credentials grant, which asks for a new token with its secret instead."
           }
         },
         "example": {
@@ -4636,7 +4881,7 @@
           "Brands"
         ],
         "summary": "List brands",
-        "description": "Returns a paginated list of brands.",
+        "description": "Returns a paginated list of brands. A credential holding `brand_access` or `brand_write` receives every brand of the workspace, drafts included; every other reader receives the published brands.",
         "operationId": "list_brands",
         "parameters": [
           {
@@ -4644,6 +4889,9 @@
           },
           {
             "$ref": "#/components/parameters/per_page"
+          },
+          {
+            "$ref": "#/components/parameters/published"
           }
         ],
         "responses": {
@@ -4699,6 +4947,9 @@
           },
           "204": {
             "description": "The storefront lists are switched off for this workspace. A consumer token holding `brand_access` or `brand_write` never receives this; it gets the list either way."
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
           }
         },
         "security": []
@@ -4995,7 +5246,7 @@
           "Components"
         ],
         "summary": "List components",
-        "description": "Returns a paginated list of components. Supports full-text search and filtering by function, property category, and type.",
+        "description": "Returns a paginated list of components. A credential holding `component_access` receives every component of the workspace, drafts included; every other reader receives the published components.\n\nSupports full-text search and filtering by function, property category, type and publication.",
         "operationId": "list_components",
         "parameters": [
           {
@@ -5003,6 +5254,9 @@
           },
           {
             "$ref": "#/components/parameters/per_page"
+          },
+          {
+            "$ref": "#/components/parameters/published"
           },
           {
             "name": "term",
@@ -5091,6 +5345,9 @@
           },
           "204": {
             "description": "The storefront lists are switched off for this workspace. A consumer token holding `component_access` never receives this; it gets the list either way."
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
           }
         },
         "security": []
@@ -9418,8 +9675,8 @@
         "tags": [
           "Authentication"
         ],
-        "summary": "Exchange client credentials for a bearer token",
-        "description": "The OAuth 2.0 client credentials grant (RFC 6749, section 4.4). The consumer's key is the client id and its secret the client secret; send them as form fields or as HTTP Basic credentials. The token lives one hour and is bound to this host. `scope` narrows it to a subset of the consumer's permission keys.\n\nErrors use the codes RFC 6749 defines: `invalid_request` (400), `unsupported_grant_type` (400), `invalid_scope` (400), `invalid_client` (401, also for a suspended or expired consumer), plus `access_denied` (403) for an address outside the consumer's allow-list and `slow_down` (429) for a consumer over its hourly rate limit. The exchange is throttled to 10 per minute per address and per client id.",
+        "summary": "Exchange credentials, an authorization code or a refresh token for a bearer token",
+        "description": "Three grants answer here. The client credentials grant (RFC 6749, section 4.4) is for a credential an operator provisioned: the consumer's key is the client id and its secret the client secret, sent as form fields or as HTTP Basic credentials. The authorization code grant (RFC 6749, section 4.1) is for an application a person authorised: send the `code` the redirect carried, the same `redirect_uri` the authorization request named, the `client_id` and the `code_verifier` the challenge was derived from. The refresh token grant (RFC 6749, section 6) renews that pair without asking the person again. An application that registered as a public client sends no secret on either of the latter two and authenticates with PKCE alone; one that registered with `client_secret_basic` or `client_secret_post` sends the secret registration answered with, as HTTP Basic credentials or as a form field, and is refused `invalid_client` without it.\n\nA token lives one hour whichever grant minted it and is bound to this host. `scope` narrows a client credentials token to a subset of the consumer's permission keys; a code grant carries what the person granted, re-read against what they may still grant at the moment of the exchange; a refresh may narrow that further and may never widen it.\n\nA code is spent once. So is a refresh token: every use answers with a successor, and presenting one that was already used ends the whole chain it belonged to and the access it kept alive. A refresh token lives 30 days and its chain 90, so a connection in use keeps working for a quarter and a forgotten one stops within a month.\n\nErrors use the codes RFC 6749 defines: `invalid_request` (400), `unsupported_grant_type` (400), `invalid_scope` (400), `invalid_grant` (400, for anything wrong about a code or a refresh token), `invalid_client` (401, also for a suspended or expired consumer), plus `invalid_target` (400, RFC 8707) for a `resource` naming another server, `access_denied` (403) for an address outside the consumer's allow-list and `slow_down` (429) for a consumer over its hourly rate limit. The exchange is throttled to 10 per minute per address and per client id.",
         "operationId": "exchange_token",
         "security": [],
         "requestBody": {
@@ -9435,28 +9692,73 @@
                   "grant_type": {
                     "type": "string",
                     "enum": [
-                      "client_credentials"
+                      "client_credentials",
+                      "authorization_code",
+                      "refresh_token"
                     ]
                   },
                   "client_id": {
                     "type": "string",
-                    "description": "The consumer's key. Omit when sent as HTTP Basic credentials."
+                    "description": "The consumer's key, or the client id of a registered application. Omit when sent as HTTP Basic credentials."
                   },
                   "client_secret": {
                     "type": "string",
-                    "description": "The consumer's secret. Omit when sent as HTTP Basic credentials."
+                    "description": "The consumer's secret, or the secret a client registered with. Omit when sent as HTTP Basic credentials, and on the two consented grants when the client registered as a public one."
                   },
                   "scope": {
                     "type": "string",
-                    "description": "Space-separated permission keys to narrow the token to; all granted keys when omitted."
+                    "description": "Space-separated permission keys to narrow the token to; all granted keys when omitted. Client credentials only."
+                  },
+                  "code": {
+                    "type": "string",
+                    "description": "The authorization code the redirect carried. Authorization code grant only."
+                  },
+                  "redirect_uri": {
+                    "type": "string",
+                    "description": "The redirect URI the authorization request named, character for character. Authorization code grant only."
+                  },
+                  "code_verifier": {
+                    "type": "string",
+                    "description": "The PKCE verifier the challenge was derived from, 43 to 128 unreserved characters. Authorization code grant only."
+                  },
+                  "refresh_token": {
+                    "type": "string",
+                    "description": "The refresh token the last exchange handed back. Refresh grant only, and good for one use."
+                  },
+                  "resource": {
+                    "type": "string",
+                    "description": "The audience the token is for (RFC 8707). Must be this host when sent."
                   }
                 }
               },
-              "example": {
-                "grant_type": "client_credentials",
-                "client_id": "3f6a9c2e-8d1b-4f7e-9a3c-5b2d8e1f4a7c",
-                "client_secret": "9b1c...e4f2",
-                "scope": "dpp_read dpp_write"
+              "examples": {
+                "client_credentials": {
+                  "summary": "A credential an operator provisioned",
+                  "value": {
+                    "grant_type": "client_credentials",
+                    "client_id": "3f6a9c2e-8d1b-4f7e-9a3c-5b2d8e1f4a7c",
+                    "client_secret": "9b1c...e4f2",
+                    "scope": "dpp_read dpp_write"
+                  }
+                },
+                "authorization_code": {
+                  "summary": "A code a person approved",
+                  "value": {
+                    "grant_type": "authorization_code",
+                    "client_id": "7c2f1a4e-3b6d-4e9f-8a1c-2d5b7e0f3a6c",
+                    "code": "8Jr2...vQ1z",
+                    "redirect_uri": "https://assistant.example/callback",
+                    "code_verifier": "dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk"
+                  }
+                },
+                "refresh_token": {
+                  "summary": "Renewing without asking again",
+                  "value": {
+                    "grant_type": "refresh_token",
+                    "client_id": "7c2f1a4e-3b6d-4e9f-8a1c-2d5b7e0f3a6c",
+                    "refresh_token": "kQ7p...Zx3m"
+                  }
+                }
               }
             }
           }
@@ -9535,6 +9837,265 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/oauth/authorize": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Ask a person in the workspace for access",
+        "description": "The authorization request (RFC 6749, section 4.1.1) with PKCE (RFC 7636). Open it in the person's browser. The server checks the request, writes it down, and sends the person to the consent screen of the application manager on this same host, where they sign in if they are not already and see the requested permissions named one by one. Allow sends them back to `redirect_uri` with a `code`; Refuse sends them back with `error=access_denied`.\n\nPKCE is mandatory. `code_challenge` is required and `code_challenge_method` has to be `S256`; `plain` is refused. The code that comes back lives 60 seconds and is spent once, at the token endpoint, with the verifier the challenge was derived from.\n\nAn unknown `client_id` and a `redirect_uri` outside the application's registered set are refused here, as a rendered 400, because redirecting a URI nobody registered is what would make this an open redirect. Every other refusal is delivered to the registered `redirect_uri` as `error`, `error_description` and the echoed `state`, using the codes RFC 6749 section 4.1.2.1 defines: `invalid_request`, `unsupported_response_type`, `invalid_scope`, `access_denied`, and `invalid_target` (RFC 8707) for a `resource` naming another server.\n\nA person grants only what their own access covers. A permission they do not hold is shown as unavailable rather than granted. A permission no consent ever grants is dropped from the request, so an application asking for every published scope is answered with the ones a person may actually hand over; a scope left with nothing after that, or naming a permission this server does not know, is refused as `invalid_scope`. The request is throttled to 20 per minute per address and per client id.",
+        "operationId": "authorize_client",
+        "security": [],
+        "parameters": [
+          {
+            "name": "response_type",
+            "in": "query",
+            "required": true,
+            "description": "Always `code`.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "code"
+              ]
+            }
+          },
+          {
+            "name": "client_id",
+            "in": "query",
+            "required": true,
+            "description": "The client id dynamic client registration answered with.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "redirect_uri",
+            "in": "query",
+            "required": true,
+            "description": "One of the application's registered redirect URIs, matched as an exact string.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "code_challenge",
+            "in": "query",
+            "required": true,
+            "description": "The PKCE challenge, 43 to 128 unreserved characters.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "code_challenge_method",
+            "in": "query",
+            "required": true,
+            "description": "Always `S256`.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "S256"
+              ]
+            }
+          },
+          {
+            "name": "scope",
+            "in": "query",
+            "description": "Space-separated permission keys to ask for. Optional. Without it the request asks for the scope the application registered with, and for everything a consent may grant when it registered with none.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "description": "Handed back on the redirect unchanged, at most 512 characters.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "resource",
+            "in": "query",
+            "description": "The audience the token is for (RFC 8707). Must be this host when sent.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "The person is sent to the consent screen, or back to the application with an error",
+            "headers": {
+              "Location": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "The consent screen on this host, or the application's redirect URI carrying `error` and the echoed `state`"
+              }
+            }
+          },
+          "400": {
+            "description": "An unknown client id, or a redirect URI the application did not register",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuthError"
+                },
+                "example": {
+                  "error": "invalid_request",
+                  "error_description": "redirect_uri is not registered for this application."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The platform host asks nobody for access; a credential for it is issued rather than consented to"
+          },
+          "429": {
+            "description": "More than 20 authorization requests from this address, or for this client id, within the minute"
+          }
+        }
+      }
+    },
+    "/oauth/revoke": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "End a token",
+        "description": "Token revocation (RFC 7009). Send the token to end. An access token stops answering at once; a refresh token takes the whole chain it belongs to with it, and the access tokens the credential behind it holds, because the point of revoking is that the connection stops rather than one credential of it.\n\nThe answer is 200 with an empty body whatever the token was, as section 2.2 requires, so this endpoint cannot be used to find out which tokens exist. A token that belongs to a client other than the `client_id` presented is left alone and answers 200 all the same. Only a request carrying no token at all is refused, as `invalid_request` (400).\n\nHolding a token is itself the credential to end it, so no client authentication is asked for. The endpoint is throttled to 30 per minute per address.",
+        "operationId": "revoke_token",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "token"
+                ],
+                "properties": {
+                  "token": {
+                    "type": "string",
+                    "description": "The access token or the refresh token to end."
+                  },
+                  "token_type_hint": {
+                    "type": "string",
+                    "description": "Which of the two the token is. An optimisation, not a constraint - a token is looked for in the other place too when the hint was wrong.",
+                    "enum": [
+                      "access_token",
+                      "refresh_token"
+                    ]
+                  },
+                  "client_id": {
+                    "type": "string",
+                    "description": "The client the token was issued to. A token issued to another client is left alone."
+                  }
+                }
+              },
+              "example": {
+                "token": "kQ7p...Zx3m",
+                "token_type_hint": "refresh_token",
+                "client_id": "7c2f1a4e-3b6d-4e9f-8a1c-2d5b7e0f3a6c"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The token is gone, or was never one this server issued",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Always `no-store`"
+              }
+            }
+          },
+          "400": {
+            "description": "The request carried no token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuthError"
+                },
+                "example": {
+                  "error": "invalid_request",
+                  "error_description": "token is required."
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "More than 30 revocations from this address within the minute"
+          }
+        }
+      }
+    },
+    "/oauth/register": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Register an application that asks people for access",
+        "description": "Dynamic client registration (RFC 7591). An application a person pointed at this workspace registers itself here before it can ask anybody in the workspace for access. Unauthenticated, as the RFC's open registration profile allows: a registered application can do nothing at all until somebody approves it.\n\nAn application chooses how it authenticates at the token endpoint. Absent or `none` mints a public client, which authenticates with PKCE and holds no secret; `client_secret_basic` or `client_secret_post` mints a secret and answers it once, as `client_secret` with `client_secret_expires_at: 0`, because the server keeps only its encrypted form. The answer carries no `registration_access_token` or `registration_client_uri`: client management (RFC 7592) is not implemented here.\n\nRegistration is throttled to 5 per hour per address, a workspace holds at most 50 registered applications, and an application at most 5 redirect URIs. Errors use the two codes RFC 7591 section 3.2.2 defines: `invalid_redirect_uri` (400) for a URI this server will not accept, `invalid_client_metadata` (400) for everything else.",
+        "operationId": "register_client",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClientRegistration"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The registered application",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Always `no-store`"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegisteredClient"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "A redirect URI this server will not accept, or metadata it will not register",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuthError"
+                },
+                "example": {
+                  "error": "invalid_redirect_uri",
+                  "error_description": "Redirect uris must each be an absolute https address without a fragment, or a loopback address for a local application"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The platform host registers no applications; a credential for it is issued rather than consented to"
+          },
+          "429": {
+            "description": "More than 5 registrations from this address within the hour"
           }
         }
       }
@@ -10125,7 +10686,7 @@
           "Products"
         ],
         "summary": "List products",
-        "description": "Returns a paginated list of published products. Supports full-text search via `term` parameter and filtering by brand, category, component function, property category, component type, and rating. Reads are open, so no permission key gates them.",
+        "description": "Returns a paginated list of products. A credential holding `product_access` receives every product of the workspace, drafts included; rejected products stay out. Every other reader receives the published products.\n\nSupports full-text search via the `term` parameter and filtering by brand, category, component function, property category, component type, rating and publication. Reads are open, so no permission key gates them.",
         "operationId": "list_products",
         "x-permission": [],
         "parameters": [
@@ -10134,6 +10695,9 @@
           },
           {
             "$ref": "#/components/parameters/per_page"
+          },
+          {
+            "$ref": "#/components/parameters/published"
           },
           {
             "name": "term",
@@ -10259,6 +10823,9 @@
           },
           "401": {
             "$ref": "#/components/responses/Unauthorized"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
           }
         },
         "security": [
@@ -10361,7 +10928,7 @@
                 "example": {
                   "error": "PRODUCT_INVALID",
                   "message": "Product invalid",
-                  "hint": "Missing mandatory properties: Chemistry, Capacity. GET /products/new lists every property type with its mandatory flag; send a value for each of these under properties.",
+                  "hint": "Missing mandatory properties: Chemistry, Capacity. GET /products/new lists every property type with its id and mandatory flag; send a value for each of these under propertiesInput, keyed by property type id.",
                   "fields": {
                     "properties": {
                       "error": "PRODUCT_PROPERTIES_INVALID",
