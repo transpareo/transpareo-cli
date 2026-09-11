@@ -121,6 +121,12 @@ jobs:
         if: steps.compare.outputs.changed == 'true'
         run: |
           set -o pipefail
+          # The registry first: `go generate ./...` walks the
+          # packages in path order, so internal/cli would render
+          # the surface, the reference and the skill from the
+          # registry of the previous specification and only then
+          # rebuild it.
+          go generate ./internal/registry/
           go generate ./...
           if go test ./... 2>&1 | tee "$RUNNER_TEMP/test.log"; then
             echo "result=passed" >> "$GITHUB_OUTPUT"
