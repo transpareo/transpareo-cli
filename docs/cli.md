@@ -326,6 +326,7 @@ transpareo brands list --page <page>
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 | `--page` \<n\> | Page number |
 | `--per-page` \<n\> | Records per page (default: 100, max: 500) |
+| `--published` | For a credential, 'true' lists the published records and 'false' the drafts; left out, the list carries both. A storefront reader has no drafts to ask for, so the parameter narrows nothing for one. A value that is neither answers 422 'PUBLISHED_FILTER_INVALID'. |
 
 `GET /brands` · operation `list_brands` · no permission needed, the endpoint is public
 
@@ -429,6 +430,7 @@ transpareo components list --page <page>
 | `--page` \<n\> | Page number |
 | `--per-page` \<n\> | Records per page (default: 100, max: 500) |
 | `--property-category-ids` \<value\> | Filter by property category IDs (comma-separated) |
+| `--published` | For a credential, 'true' lists the published records and 'false' the drafts; left out, the list carries both. A storefront reader has no drafts to ask for, so the parameter narrows nothing for one. A value that is neither answers 422 'PUBLISHED_FILTER_INVALID'. |
 | `--term` \<value\> | Full-text search query |
 | `--type-ids` \<value\> | Filter by component type IDs (comma-separated) |
 
@@ -1370,6 +1372,7 @@ transpareo products list --page <page>
 | `--page` \<n\> | Page number |
 | `--per-page` \<n\> | Records per page (default: 100, max: 500) |
 | `--property-category-ids` \<value\> | Filter by component property category IDs (comma-separated) |
+| `--published` | For a credential, 'true' lists the published records and 'false' the drafts; left out, the list carries both. A storefront reader has no drafts to ask for, so the parameter narrows nothing for one. A value that is neither answers 422 'PUBLISHED_FILTER_INVALID'. |
 | `--rating` \<value\> | Filter by rating (comma-separated values: A, B, C, D) |
 | `--term` \<value\> | Full-text search query (uses Elasticsearch when provided) |
 | `--type-ids` \<value\> | Filter by component type IDs (comma-separated) |

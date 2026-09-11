@@ -73,7 +73,8 @@
     "flags": [
       "output",
       "page",
-      "per-page"
+      "per-page",
+      "published"
     ],
     "operationId": "list_brands"
   },
@@ -130,6 +131,7 @@
       "page",
       "per-page",
       "property-category-ids",
+      "published",
       "term",
       "type-ids"
     ],
@@ -656,6 +658,7 @@
       "page",
       "per-page",
       "property-category-ids",
+      "published",
       "rating",
       "term",
       "type-ids"

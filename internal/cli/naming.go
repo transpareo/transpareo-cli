@@ -39,6 +39,12 @@ func Exposed(op *registry.Operation) bool {
 	if handWritten[op.ID] || op.UserOnly {
 		return false
 	}
+	// Nothing but a redirect or an error comes back, so there is
+	// no answer a command could print. The browser half of OAuth
+	// is what lands here: a person decides on a consent screen.
+	if op.ResponseStatus == "" {
+		return false
+	}
 	for _, scheme := range op.Security {
 		if scheme == "oauth2" {
 			return true
@@ -67,6 +73,12 @@ func CommandWords(op *registry.Operation) []string {
 	}
 	sameAsGroup := verb == op.Group || verb == singular(op.Group)
 	if (verb == "get" || sameAsGroup) && len(qualifier) > 0 {
+		return words
+	}
+	// An id that opens with none of the known verbs carries its
+	// whole name in the qualifier; appending the empty verb would
+	// leave a word that is a space.
+	if verb == "" {
 		return words
 	}
 	return append(words, strings.Split(verb, "_")...)

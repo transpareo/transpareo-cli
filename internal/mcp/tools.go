@@ -151,6 +151,8 @@ var curated = []Tool{
 // tell a decision from an omission.
 var viaCallAPIOnly = map[string]string{
 	"exchange_token": "the server logs in itself",
+	"authorize_client": "a person decides on a consent screen in their " +
+		"browser; the answer is a redirect, not data",
 	"create_grant": "issues credentials; a person hands them out with the " +
 		"command line",
 	"get_bulk_task":     "wait_for_task polls the statusUrl",
