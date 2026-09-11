@@ -168,6 +168,60 @@ func (e BulkValidateRowStatus) Valid() bool {
 	}
 }
 
+// Defines values for ClientRegistrationGrantTypes.
+const (
+	ClientRegistrationGrantTypesAuthorizationCode ClientRegistrationGrantTypes = "authorization_code"
+	ClientRegistrationGrantTypesRefreshToken      ClientRegistrationGrantTypes = "refresh_token"
+)
+
+// Valid indicates whether the value is a known member of the ClientRegistrationGrantTypes enum.
+func (e ClientRegistrationGrantTypes) Valid() bool {
+	switch e {
+	case ClientRegistrationGrantTypesAuthorizationCode:
+		return true
+	case ClientRegistrationGrantTypesRefreshToken:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ClientRegistrationResponseTypes.
+const (
+	ClientRegistrationResponseTypesCode ClientRegistrationResponseTypes = "code"
+)
+
+// Valid indicates whether the value is a known member of the ClientRegistrationResponseTypes enum.
+func (e ClientRegistrationResponseTypes) Valid() bool {
+	switch e {
+	case ClientRegistrationResponseTypesCode:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ClientRegistrationTokenEndpointAuthMethod.
+const (
+	ClientRegistrationTokenEndpointAuthMethodClientSecretBasic ClientRegistrationTokenEndpointAuthMethod = "client_secret_basic"
+	ClientRegistrationTokenEndpointAuthMethodClientSecretPost  ClientRegistrationTokenEndpointAuthMethod = "client_secret_post"
+	ClientRegistrationTokenEndpointAuthMethodNone              ClientRegistrationTokenEndpointAuthMethod = "none"
+)
+
+// Valid indicates whether the value is a known member of the ClientRegistrationTokenEndpointAuthMethod enum.
+func (e ClientRegistrationTokenEndpointAuthMethod) Valid() bool {
+	switch e {
+	case ClientRegistrationTokenEndpointAuthMethodClientSecretBasic:
+		return true
+	case ClientRegistrationTokenEndpointAuthMethodClientSecretPost:
+		return true
+	case ClientRegistrationTokenEndpointAuthMethodNone:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for ConsumerIdentityStatus.
 const (
 	ConsumerIdentityStatusActive    ConsumerIdentityStatus = "active"
@@ -794,22 +848,22 @@ func (e ImportMappingsInputMappingsAction) Valid() bool {
 
 // Defines values for ImportPreviewColumnsMatchType.
 const (
-	Attribute ImportPreviewColumnsMatchType = "attribute"
-	Exact     ImportPreviewColumnsMatchType = "exact"
-	Fuzzy     ImportPreviewColumnsMatchType = "fuzzy"
-	None      ImportPreviewColumnsMatchType = "none"
+	ImportPreviewColumnsMatchTypeAttribute ImportPreviewColumnsMatchType = "attribute"
+	ImportPreviewColumnsMatchTypeExact     ImportPreviewColumnsMatchType = "exact"
+	ImportPreviewColumnsMatchTypeFuzzy     ImportPreviewColumnsMatchType = "fuzzy"
+	ImportPreviewColumnsMatchTypeNone      ImportPreviewColumnsMatchType = "none"
 )
 
 // Valid indicates whether the value is a known member of the ImportPreviewColumnsMatchType enum.
 func (e ImportPreviewColumnsMatchType) Valid() bool {
 	switch e {
-	case Attribute:
+	case ImportPreviewColumnsMatchTypeAttribute:
 		return true
-	case Exact:
+	case ImportPreviewColumnsMatchTypeExact:
 		return true
-	case Fuzzy:
+	case ImportPreviewColumnsMatchTypeFuzzy:
 		return true
-	case None:
+	case ImportPreviewColumnsMatchTypeNone:
 		return true
 	default:
 		return false
@@ -842,12 +896,14 @@ func (e ImportPreviewColumnsSuggestedAction) Valid() bool {
 
 // Defines values for OAuthErrorError.
 const (
-	AccessDenied         OAuthErrorError = "access_denied"
-	InvalidClient        OAuthErrorError = "invalid_client"
-	InvalidRequest       OAuthErrorError = "invalid_request"
-	InvalidScope         OAuthErrorError = "invalid_scope"
-	SlowDown             OAuthErrorError = "slow_down"
-	UnsupportedGrantType OAuthErrorError = "unsupported_grant_type"
+	AccessDenied          OAuthErrorError = "access_denied"
+	InvalidClient         OAuthErrorError = "invalid_client"
+	InvalidClientMetadata OAuthErrorError = "invalid_client_metadata"
+	InvalidRedirectUri    OAuthErrorError = "invalid_redirect_uri"
+	InvalidRequest        OAuthErrorError = "invalid_request"
+	InvalidScope          OAuthErrorError = "invalid_scope"
+	SlowDown              OAuthErrorError = "slow_down"
+	UnsupportedGrantType  OAuthErrorError = "unsupported_grant_type"
 )
 
 // Valid indicates whether the value is a known member of the OAuthErrorError enum.
@@ -857,6 +913,10 @@ func (e OAuthErrorError) Valid() bool {
 		return true
 	case InvalidClient:
 		return true
+	case InvalidClientMetadata:
+		return true
+	case InvalidRedirectUri:
+		return true
 	case InvalidRequest:
 		return true
 	case InvalidScope:
@@ -864,6 +924,27 @@ func (e OAuthErrorError) Valid() bool {
 	case SlowDown:
 		return true
 	case UnsupportedGrantType:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for RegisteredClientTokenEndpointAuthMethod.
+const (
+	RegisteredClientTokenEndpointAuthMethodClientSecretBasic RegisteredClientTokenEndpointAuthMethod = "client_secret_basic"
+	RegisteredClientTokenEndpointAuthMethodClientSecretPost  RegisteredClientTokenEndpointAuthMethod = "client_secret_post"
+	RegisteredClientTokenEndpointAuthMethodNone              RegisteredClientTokenEndpointAuthMethod = "none"
+)
+
+// Valid indicates whether the value is a known member of the RegisteredClientTokenEndpointAuthMethod enum.
+func (e RegisteredClientTokenEndpointAuthMethod) Valid() bool {
+	switch e {
+	case RegisteredClientTokenEndpointAuthMethodClientSecretBasic:
+		return true
+	case RegisteredClientTokenEndpointAuthMethodClientSecretPost:
+		return true
+	case RegisteredClientTokenEndpointAuthMethodNone:
 		return true
 	default:
 		return false
@@ -1179,15 +1260,69 @@ func (e GetLeadgenRequestsParamsFormat) Valid() bool {
 	}
 }
 
+// Defines values for AuthorizeClientParamsResponseType.
+const (
+	AuthorizeClientParamsResponseTypeCode AuthorizeClientParamsResponseType = "code"
+)
+
+// Valid indicates whether the value is a known member of the AuthorizeClientParamsResponseType enum.
+func (e AuthorizeClientParamsResponseType) Valid() bool {
+	switch e {
+	case AuthorizeClientParamsResponseTypeCode:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for AuthorizeClientParamsCodeChallengeMethod.
+const (
+	S256 AuthorizeClientParamsCodeChallengeMethod = "S256"
+)
+
+// Valid indicates whether the value is a known member of the AuthorizeClientParamsCodeChallengeMethod enum.
+func (e AuthorizeClientParamsCodeChallengeMethod) Valid() bool {
+	switch e {
+	case S256:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for RevokeTokenFormdataBodyTokenTypeHint.
+const (
+	RevokeTokenFormdataBodyTokenTypeHintAccessToken  RevokeTokenFormdataBodyTokenTypeHint = "access_token"
+	RevokeTokenFormdataBodyTokenTypeHintRefreshToken RevokeTokenFormdataBodyTokenTypeHint = "refresh_token"
+)
+
+// Valid indicates whether the value is a known member of the RevokeTokenFormdataBodyTokenTypeHint enum.
+func (e RevokeTokenFormdataBodyTokenTypeHint) Valid() bool {
+	switch e {
+	case RevokeTokenFormdataBodyTokenTypeHintAccessToken:
+		return true
+	case RevokeTokenFormdataBodyTokenTypeHintRefreshToken:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for ExchangeTokenFormdataBodyGrantType.
 const (
-	ClientCredentials ExchangeTokenFormdataBodyGrantType = "client_credentials"
+	ExchangeTokenFormdataBodyGrantTypeAuthorizationCode ExchangeTokenFormdataBodyGrantType = "authorization_code"
+	ExchangeTokenFormdataBodyGrantTypeClientCredentials ExchangeTokenFormdataBodyGrantType = "client_credentials"
+	ExchangeTokenFormdataBodyGrantTypeRefreshToken      ExchangeTokenFormdataBodyGrantType = "refresh_token"
 )
 
 // Valid indicates whether the value is a known member of the ExchangeTokenFormdataBodyGrantType enum.
 func (e ExchangeTokenFormdataBodyGrantType) Valid() bool {
 	switch e {
-	case ClientCredentials:
+	case ExchangeTokenFormdataBodyGrantTypeAuthorizationCode:
+		return true
+	case ExchangeTokenFormdataBodyGrantTypeClientCredentials:
+		return true
+	case ExchangeTokenFormdataBodyGrantTypeRefreshToken:
 		return true
 	default:
 		return false
@@ -1415,6 +1550,59 @@ type Citation struct {
 	// Value Citation text
 	Value *string `json:"value,omitempty"`
 }
+
+// ClientRegistration The client metadata of RFC 7591, section 2. Field names stay in snake_case as the RFC defines them.
+//
+// Example: {"client_name":"Assistant","client_uri":"https://assistant.example","contacts":["ops@assistant.example"],"redirect_uris":["https://assistant.example/callback"],"scope":"dpp_read dpp_history"}
+type ClientRegistration struct {
+	// ClientName The name a person sees on the consent screen when this application asks them for access
+	ClientName string `json:"client_name"`
+
+	// ClientUri The application's home page
+	ClientUri *string `json:"client_uri,omitempty"`
+
+	// Contacts Addresses of the people responsible for the application
+	Contacts *[]string `json:"contacts,omitempty"`
+
+	// GrantTypes Defaults to both. Naming anything else is refused.
+	GrantTypes *[]ClientRegistrationGrantTypes `json:"grant_types,omitempty"`
+
+	// LogoUri An image for the application
+	LogoUri *string `json:"logo_uri,omitempty"`
+
+	// PolicyUri The application's privacy policy
+	PolicyUri *string `json:"policy_uri,omitempty"`
+
+	// RedirectUris Where the person is sent back to after they decide. Each entry is an absolute `https://` URL without a fragment, or a loopback address (`http://127.0.0.1:<port>/...`, `http://localhost:<port>/...`) for an application running on the person's own machine. The authorize endpoint compares the presented URI against these by exact string equality.
+	RedirectUris []string `json:"redirect_uris"`
+
+	// ResponseTypes Defaults to `code`. Naming anything else is refused.
+	ResponseTypes *[]ClientRegistrationResponseTypes `json:"response_types,omitempty"`
+
+	// Scope Space-separated permission keys the application asks for by default. Each has to be one of the scopes this server publishes.
+	Scope *string `json:"scope,omitempty"`
+
+	// SoftwareId A stable identifier the application gives itself, the same across every workspace it registers with
+	SoftwareId *string `json:"software_id,omitempty"`
+
+	// SoftwareVersion The version of the application registering
+	SoftwareVersion *string `json:"software_version,omitempty"`
+
+	// TokenEndpointAuthMethod How the application authenticates at the token endpoint. Defaults to `none`, the public client that authenticates with PKCE alone. Either secret method mints a secret which the registration answer carries once.
+	TokenEndpointAuthMethod *ClientRegistrationTokenEndpointAuthMethod `json:"token_endpoint_auth_method,omitempty"`
+
+	// TosUri The application's terms of service
+	TosUri *string `json:"tos_uri,omitempty"`
+}
+
+// ClientRegistrationGrantTypes defines model for ClientRegistration.GrantTypes.
+type ClientRegistrationGrantTypes string
+
+// ClientRegistrationResponseTypes defines model for ClientRegistration.ResponseTypes.
+type ClientRegistrationResponseTypes string
+
+// ClientRegistrationTokenEndpointAuthMethod How the application authenticates at the token endpoint. Defaults to `none`, the public client that authenticates with PKCE alone. Either secret method mints a secret which the registration answer carries once.
+type ClientRegistrationTokenEndpointAuthMethod string
 
 // Component Component summary (returned in list endpoints)
 //
@@ -2560,7 +2748,7 @@ type NavigationItem struct {
 	Published *bool   `json:"published,omitempty"`
 }
 
-// OAuthError The error response of RFC 6749, section 5.2
+// OAuthError The error response of RFC 6749, section 5.2, and of RFC 7591, section 3.2.2 for registration
 type OAuthError struct {
 	Error OAuthErrorError `json:"error"`
 
@@ -2959,6 +3147,41 @@ type Property struct {
 	Value *string `json:"value,omitempty"`
 }
 
+// RegisteredClient The registration response of RFC 7591, section 3.2.1. Field names stay in snake_case as the RFC defines them. `client_secret` is present only for a client that registered with one, and only in this answer, because the server keeps its encrypted form alone. There is no `registration_access_token` or `registration_client_uri`, because client management (RFC 7592) is not implemented here.
+//
+// Example: {"client_id":"3f6a9c2e-8d1b-4f7e-9a3c-5b2d8e1f4a7c","client_id_issued_at":1788944000,"client_name":"Assistant","client_uri":"https://assistant.example","contacts":["ops@assistant.example"],"grant_types":["authorization_code","refresh_token"],"redirect_uris":["https://assistant.example/callback"],"response_types":["code"],"scope":"dpp_read dpp_history","token_endpoint_auth_method":"none"}
+type RegisteredClient struct {
+	// ClientId The identifier the application sends on every authorize and token request
+	ClientId string `json:"client_id"`
+
+	// ClientIdIssuedAt When the client id was issued, as seconds since the epoch
+	ClientIdIssuedAt int    `json:"client_id_issued_at"`
+	ClientName       string `json:"client_name"`
+
+	// ClientSecret Present only for a client that registered with a secret method. Answered here once and never again.
+	ClientSecret *string `json:"client_secret,omitempty"`
+
+	// ClientSecretExpiresAt Always `0`, which RFC 7591 reads as a secret that does not expire
+	ClientSecretExpiresAt *int      `json:"client_secret_expires_at,omitempty"`
+	ClientUri             *string   `json:"client_uri,omitempty"`
+	Contacts              *[]string `json:"contacts,omitempty"`
+	GrantTypes            []string  `json:"grant_types"`
+	LogoUri               *string   `json:"logo_uri,omitempty"`
+	PolicyUri             *string   `json:"policy_uri,omitempty"`
+	RedirectUris          []string  `json:"redirect_uris"`
+	ResponseTypes         []string  `json:"response_types"`
+
+	// Scope Present when the registration asked for one
+	Scope                   *string                                 `json:"scope,omitempty"`
+	SoftwareId              *string                                 `json:"software_id,omitempty"`
+	SoftwareVersion         *string                                 `json:"software_version,omitempty"`
+	TokenEndpointAuthMethod RegisteredClientTokenEndpointAuthMethod `json:"token_endpoint_auth_method"`
+	TosUri                  *string                                 `json:"tos_uri,omitempty"`
+}
+
+// RegisteredClientTokenEndpointAuthMethod defines model for RegisteredClient.TokenEndpointAuthMethod.
+type RegisteredClientTokenEndpointAuthMethod string
+
 // Subscription Current subscription status
 type Subscription struct {
 	Cancellable *bool `json:"cancellable,omitempty"`
@@ -2991,6 +3214,9 @@ type TokenResponse struct {
 	//
 	// Example: 3600
 	ExpiresIn int `json:"expires_in"`
+
+	// RefreshToken Present on the authorization code and refresh grants, which keep a connection alive without asking the person again. It rotates on every use, so the one handed back here replaces the one that was sent. Absent on the client credentials grant, which asks for a new token with its secret instead.
+	RefreshToken *string `json:"refresh_token,omitempty"`
 
 	// Scope Space-separated permission keys the token carries
 	//
@@ -3159,6 +3385,9 @@ type Page = int
 // PerPage defines model for per_page.
 type PerPage = int
 
+// Published defines model for published.
+type Published = bool
+
 // Forbidden defines model for Forbidden.
 type Forbidden = Error
 
@@ -3190,6 +3419,9 @@ type ListBrandsParams struct {
 
 	// PerPage Records per page (default: 100, max: 500)
 	PerPage *PerPage `form:"per_page,omitempty" json:"per_page,omitempty"`
+
+	// Published For a credential, `true` lists the published records and `false` the drafts; left out, the list carries both. A storefront reader has no drafts to ask for, so the parameter narrows nothing for one. A value that is neither answers 422 `PUBLISHED_FILTER_INVALID`.
+	Published *Published `form:"published,omitempty" json:"published,omitempty"`
 }
 
 // CreateBrandParams defines parameters for CreateBrand.
@@ -3217,6 +3449,9 @@ type ListComponentsParams struct {
 
 	// PerPage Records per page (default: 100, max: 500)
 	PerPage *PerPage `form:"per_page,omitempty" json:"per_page,omitempty"`
+
+	// Published For a credential, `true` lists the published records and `false` the drafts; left out, the list carries both. A storefront reader has no drafts to ask for, so the parameter narrows nothing for one. A value that is neither answers 422 `PUBLISHED_FILTER_INVALID`.
+	Published *Published `form:"published,omitempty" json:"published,omitempty"`
 
 	// Term Full-text search query
 	Term *string `form:"term,omitempty" json:"term,omitempty"`
@@ -3596,16 +3831,79 @@ type CreateMediafileMultipartBody struct {
 	MediafileUpload *openapi_types.File `json:"mediafile[upload],omitempty"`
 }
 
-// ExchangeTokenFormdataBody defines parameters for ExchangeToken.
-type ExchangeTokenFormdataBody struct {
-	// ClientId The consumer's key. Omit when sent as HTTP Basic credentials.
+// AuthorizeClientParams defines parameters for AuthorizeClient.
+type AuthorizeClientParams struct {
+	// ResponseType Always `code`.
+	ResponseType AuthorizeClientParamsResponseType `form:"response_type" json:"response_type"`
+
+	// ClientId The client id dynamic client registration answered with.
+	ClientId string `form:"client_id" json:"client_id"`
+
+	// RedirectUri One of the application's registered redirect URIs, matched as an exact string.
+	RedirectUri string `form:"redirect_uri" json:"redirect_uri"`
+
+	// CodeChallenge The PKCE challenge, 43 to 128 unreserved characters.
+	CodeChallenge string `form:"code_challenge" json:"code_challenge"`
+
+	// CodeChallengeMethod Always `S256`.
+	CodeChallengeMethod AuthorizeClientParamsCodeChallengeMethod `form:"code_challenge_method" json:"code_challenge_method"`
+
+	// Scope Space-separated permission keys to ask for. Optional. Without it the request asks for the scope the application registered with, and for everything a consent may grant when it registered with none.
+	Scope *string `form:"scope,omitempty" json:"scope,omitempty"`
+
+	// State Handed back on the redirect unchanged, at most 512 characters.
+	State *string `form:"state,omitempty" json:"state,omitempty"`
+
+	// Resource The audience the token is for (RFC 8707). Must be this host when sent.
+	Resource *string `form:"resource,omitempty" json:"resource,omitempty"`
+}
+
+// AuthorizeClientParamsResponseType defines parameters for AuthorizeClient.
+type AuthorizeClientParamsResponseType string
+
+// AuthorizeClientParamsCodeChallengeMethod defines parameters for AuthorizeClient.
+type AuthorizeClientParamsCodeChallengeMethod string
+
+// RevokeTokenFormdataBody defines parameters for RevokeToken.
+type RevokeTokenFormdataBody struct {
+	// ClientId The client the token was issued to. A token issued to another client is left alone.
 	ClientId *string `form:"client_id,omitempty" json:"client_id,omitempty"`
 
-	// ClientSecret The consumer's secret. Omit when sent as HTTP Basic credentials.
-	ClientSecret *string                            `form:"client_secret,omitempty" json:"client_secret,omitempty"`
+	// Token The access token or the refresh token to end.
+	Token string `form:"token" json:"token"`
+
+	// TokenTypeHint Which of the two the token is. An optimisation, not a constraint - a token is looked for in the other place too when the hint was wrong.
+	TokenTypeHint *RevokeTokenFormdataBodyTokenTypeHint `form:"token_type_hint,omitempty" json:"token_type_hint,omitempty"`
+}
+
+// RevokeTokenFormdataBodyTokenTypeHint defines parameters for RevokeToken.
+type RevokeTokenFormdataBodyTokenTypeHint string
+
+// ExchangeTokenFormdataBody defines parameters for ExchangeToken.
+type ExchangeTokenFormdataBody struct {
+	// ClientId The consumer's key, or the client id of a registered application. Omit when sent as HTTP Basic credentials.
+	ClientId *string `form:"client_id,omitempty" json:"client_id,omitempty"`
+
+	// ClientSecret The consumer's secret, or the secret a client registered with. Omit when sent as HTTP Basic credentials, and on the two consented grants when the client registered as a public one.
+	ClientSecret *string `form:"client_secret,omitempty" json:"client_secret,omitempty"`
+
+	// Code The authorization code the redirect carried. Authorization code grant only.
+	Code *string `form:"code,omitempty" json:"code,omitempty"`
+
+	// CodeVerifier The PKCE verifier the challenge was derived from, 43 to 128 unreserved characters. Authorization code grant only.
+	CodeVerifier *string                            `form:"code_verifier,omitempty" json:"code_verifier,omitempty"`
 	GrantType    ExchangeTokenFormdataBodyGrantType `form:"grant_type" json:"grant_type"`
 
-	// Scope Space-separated permission keys to narrow the token to; all granted keys when omitted.
+	// RedirectUri The redirect URI the authorization request named, character for character. Authorization code grant only.
+	RedirectUri *string `form:"redirect_uri,omitempty" json:"redirect_uri,omitempty"`
+
+	// RefreshToken The refresh token the last exchange handed back. Refresh grant only, and good for one use.
+	RefreshToken *string `form:"refresh_token,omitempty" json:"refresh_token,omitempty"`
+
+	// Resource The audience the token is for (RFC 8707). Must be this host when sent.
+	Resource *string `form:"resource,omitempty" json:"resource,omitempty"`
+
+	// Scope Space-separated permission keys to narrow the token to; all granted keys when omitted. Client credentials only.
 	Scope *string `form:"scope,omitempty" json:"scope,omitempty"`
 }
 
@@ -3661,6 +3959,9 @@ type ListProductsParams struct {
 
 	// PerPage Records per page (default: 100, max: 500)
 	PerPage *PerPage `form:"per_page,omitempty" json:"per_page,omitempty"`
+
+	// Published For a credential, `true` lists the published records and `false` the drafts; left out, the list carries both. A storefront reader has no drafts to ask for, so the parameter narrows nothing for one. A value that is neither answers 422 `PUBLISHED_FILTER_INVALID`.
+	Published *Published `form:"published,omitempty" json:"published,omitempty"`
 
 	// Term Full-text search query (uses Elasticsearch when provided)
 	Term *string `form:"term,omitempty" json:"term,omitempty"`
@@ -3901,6 +4202,12 @@ type UpdateLeadgenJSONRequestBody UpdateLeadgenJSONBody
 
 // CreateMediafileMultipartRequestBody defines body for CreateMediafile for multipart/form-data ContentType.
 type CreateMediafileMultipartRequestBody CreateMediafileMultipartBody
+
+// RegisterClientJSONRequestBody defines body for RegisterClient for application/json ContentType.
+type RegisterClientJSONRequestBody = ClientRegistration
+
+// RevokeTokenFormdataRequestBody defines body for RevokeToken for application/x-www-form-urlencoded ContentType.
+type RevokeTokenFormdataRequestBody RevokeTokenFormdataBody
 
 // ExchangeTokenFormdataRequestBody defines body for ExchangeToken for application/x-www-form-urlencoded ContentType.
 type ExchangeTokenFormdataRequestBody ExchangeTokenFormdataBody
@@ -4274,7 +4581,7 @@ type ClientInterface interface {
 
 	// ListBrands List brands
 	//
-	// Returns a paginated list of brands.
+	// Returns a paginated list of brands. A credential holding `brand_access` or `brand_write` receives every brand of the workspace, drafts included; every other reader receives the published brands.
 	//
 	// Corresponds with GET /brands (the `ListBrands` operationId).
 	ListBrands(ctx context.Context, params *ListBrandsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -4363,7 +4670,9 @@ type ClientInterface interface {
 
 	// ListComponents List components
 	//
-	// Returns a paginated list of components. Supports full-text search and filtering by function, property category, and type.
+	// Returns a paginated list of components. A credential holding `component_access` receives every component of the workspace, drafts included; every other reader receives the published components.
+	//
+	// Supports full-text search and filtering by function, property category, type and publication.
 	//
 	// Corresponds with GET /components (the `ListComponents` operationId).
 	ListComponents(ctx context.Context, params *ListComponentsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -5092,22 +5401,95 @@ type ClientInterface interface {
 	// Corresponds with GET /navigation (the `GetNavigation` operationId).
 	GetNavigation(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// ExchangeTokenWithBody Exchange client credentials for a bearer token
+	// AuthorizeClient Ask a person in the workspace for access
 	//
-	// The OAuth 2.0 client credentials grant (RFC 6749, section 4.4). The consumer's key is the client id and its secret the client secret; send them as form fields or as HTTP Basic credentials. The token lives one hour and is bound to this host. `scope` narrows it to a subset of the consumer's permission keys.
+	// The authorization request (RFC 6749, section 4.1.1) with PKCE (RFC 7636). Open it in the person's browser. The server checks the request, writes it down, and sends the person to the consent screen of the application manager on this same host, where they sign in if they are not already and see the requested permissions named one by one. Allow sends them back to `redirect_uri` with a `code`; Refuse sends them back with `error=access_denied`.
 	//
-	// Errors use the codes RFC 6749 defines: `invalid_request` (400), `unsupported_grant_type` (400), `invalid_scope` (400), `invalid_client` (401, also for a suspended or expired consumer), plus `access_denied` (403) for an address outside the consumer's allow-list and `slow_down` (429) for a consumer over its hourly rate limit. The exchange is throttled to 10 per minute per address and per client id.
+	// PKCE is mandatory. `code_challenge` is required and `code_challenge_method` has to be `S256`; `plain` is refused. The code that comes back lives 60 seconds and is spent once, at the token endpoint, with the verifier the challenge was derived from.
+	//
+	// An unknown `client_id` and a `redirect_uri` outside the application's registered set are refused here, as a rendered 400, because redirecting a URI nobody registered is what would make this an open redirect. Every other refusal is delivered to the registered `redirect_uri` as `error`, `error_description` and the echoed `state`, using the codes RFC 6749 section 4.1.2.1 defines: `invalid_request`, `unsupported_response_type`, `invalid_scope`, `access_denied`, and `invalid_target` (RFC 8707) for a `resource` naming another server.
+	//
+	// A person grants only what their own access covers. A permission they do not hold is shown as unavailable rather than granted. A permission no consent ever grants is dropped from the request, so an application asking for every published scope is answered with the ones a person may actually hand over; a scope left with nothing after that, or naming a permission this server does not know, is refused as `invalid_scope`. The request is throttled to 20 per minute per address and per client id.
+	//
+	// Corresponds with GET /oauth/authorize (the `AuthorizeClient` operationId).
+	AuthorizeClient(ctx context.Context, params *AuthorizeClientParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// RegisterClientWithBody Register an application that asks people for access
+	//
+	// Dynamic client registration (RFC 7591). An application a person pointed at this workspace registers itself here before it can ask anybody in the workspace for access. Unauthenticated, as the RFC's open registration profile allows: a registered application can do nothing at all until somebody approves it.
+	//
+	// An application chooses how it authenticates at the token endpoint. Absent or `none` mints a public client, which authenticates with PKCE and holds no secret; `client_secret_basic` or `client_secret_post` mints a secret and answers it once, as `client_secret` with `client_secret_expires_at: 0`, because the server keeps only its encrypted form. The answer carries no `registration_access_token` or `registration_client_uri`: client management (RFC 7592) is not implemented here.
+	//
+	// Registration is throttled to 5 per hour per address, a workspace holds at most 50 registered applications, and an application at most 5 redirect URIs. Errors use the two codes RFC 7591 section 3.2.2 defines: `invalid_redirect_uri` (400) for a URI this server will not accept, `invalid_client_metadata` (400) for everything else.
+	//
+	// Takes any type of body and a specified content type.
+	//
+	// Corresponds with POST /oauth/register (the `RegisterClient` operationId).
+	RegisterClientWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// RegisterClient Register an application that asks people for access
+	//
+	// Dynamic client registration (RFC 7591). An application a person pointed at this workspace registers itself here before it can ask anybody in the workspace for access. Unauthenticated, as the RFC's open registration profile allows: a registered application can do nothing at all until somebody approves it.
+	//
+	// An application chooses how it authenticates at the token endpoint. Absent or `none` mints a public client, which authenticates with PKCE and holds no secret; `client_secret_basic` or `client_secret_post` mints a secret and answers it once, as `client_secret` with `client_secret_expires_at: 0`, because the server keeps only its encrypted form. The answer carries no `registration_access_token` or `registration_client_uri`: client management (RFC 7592) is not implemented here.
+	//
+	// Registration is throttled to 5 per hour per address, a workspace holds at most 50 registered applications, and an application at most 5 redirect URIs. Errors use the two codes RFC 7591 section 3.2.2 defines: `invalid_redirect_uri` (400) for a URI this server will not accept, `invalid_client_metadata` (400) for everything else.
+	//
+	// Takes a body of the `application/json` content type.
+	//
+	// Corresponds with POST /oauth/register (the `RegisterClient` operationId).
+	RegisterClient(ctx context.Context, body RegisterClientJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// RevokeTokenWithBody End a token
+	//
+	// Token revocation (RFC 7009). Send the token to end. An access token stops answering at once; a refresh token takes the whole chain it belongs to with it, and the access tokens the credential behind it holds, because the point of revoking is that the connection stops rather than one credential of it.
+	//
+	// The answer is 200 with an empty body whatever the token was, as section 2.2 requires, so this endpoint cannot be used to find out which tokens exist. A token that belongs to a client other than the `client_id` presented is left alone and answers 200 all the same. Only a request carrying no token at all is refused, as `invalid_request` (400).
+	//
+	// Holding a token is itself the credential to end it, so no client authentication is asked for. The endpoint is throttled to 30 per minute per address.
+	//
+	// Takes any type of body and a specified content type.
+	//
+	// Corresponds with POST /oauth/revoke (the `RevokeToken` operationId).
+	RevokeTokenWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// RevokeTokenWithFormdataBody End a token
+	//
+	// Token revocation (RFC 7009). Send the token to end. An access token stops answering at once; a refresh token takes the whole chain it belongs to with it, and the access tokens the credential behind it holds, because the point of revoking is that the connection stops rather than one credential of it.
+	//
+	// The answer is 200 with an empty body whatever the token was, as section 2.2 requires, so this endpoint cannot be used to find out which tokens exist. A token that belongs to a client other than the `client_id` presented is left alone and answers 200 all the same. Only a request carrying no token at all is refused, as `invalid_request` (400).
+	//
+	// Holding a token is itself the credential to end it, so no client authentication is asked for. The endpoint is throttled to 30 per minute per address.
+	//
+	// Takes a body of the `application/x-www-form-urlencoded` content type.
+	//
+	// Corresponds with POST /oauth/revoke (the `RevokeToken` operationId).
+	RevokeTokenWithFormdataBody(ctx context.Context, body RevokeTokenFormdataRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ExchangeTokenWithBody Exchange credentials, an authorization code or a refresh token for a bearer token
+	//
+	// Three grants answer here. The client credentials grant (RFC 6749, section 4.4) is for a credential an operator provisioned: the consumer's key is the client id and its secret the client secret, sent as form fields or as HTTP Basic credentials. The authorization code grant (RFC 6749, section 4.1) is for an application a person authorised: send the `code` the redirect carried, the same `redirect_uri` the authorization request named, the `client_id` and the `code_verifier` the challenge was derived from. The refresh token grant (RFC 6749, section 6) renews that pair without asking the person again. An application that registered as a public client sends no secret on either of the latter two and authenticates with PKCE alone; one that registered with `client_secret_basic` or `client_secret_post` sends the secret registration answered with, as HTTP Basic credentials or as a form field, and is refused `invalid_client` without it.
+	//
+	// A token lives one hour whichever grant minted it and is bound to this host. `scope` narrows a client credentials token to a subset of the consumer's permission keys; a code grant carries what the person granted, re-read against what they may still grant at the moment of the exchange; a refresh may narrow that further and may never widen it.
+	//
+	// A code is spent once. So is a refresh token: every use answers with a successor, and presenting one that was already used ends the whole chain it belonged to and the access it kept alive. A refresh token lives 30 days and its chain 90, so a connection in use keeps working for a quarter and a forgotten one stops within a month.
+	//
+	// Errors use the codes RFC 6749 defines: `invalid_request` (400), `unsupported_grant_type` (400), `invalid_scope` (400), `invalid_grant` (400, for anything wrong about a code or a refresh token), `invalid_client` (401, also for a suspended or expired consumer), plus `invalid_target` (400, RFC 8707) for a `resource` naming another server, `access_denied` (403) for an address outside the consumer's allow-list and `slow_down` (429) for a consumer over its hourly rate limit. The exchange is throttled to 10 per minute per address and per client id.
 	//
 	// Takes any type of body and a specified content type.
 	//
 	// Corresponds with POST /oauth/token (the `ExchangeToken` operationId).
 	ExchangeTokenWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// ExchangeTokenWithFormdataBody Exchange client credentials for a bearer token
+	// ExchangeTokenWithFormdataBody Exchange credentials, an authorization code or a refresh token for a bearer token
 	//
-	// The OAuth 2.0 client credentials grant (RFC 6749, section 4.4). The consumer's key is the client id and its secret the client secret; send them as form fields or as HTTP Basic credentials. The token lives one hour and is bound to this host. `scope` narrows it to a subset of the consumer's permission keys.
+	// Three grants answer here. The client credentials grant (RFC 6749, section 4.4) is for a credential an operator provisioned: the consumer's key is the client id and its secret the client secret, sent as form fields or as HTTP Basic credentials. The authorization code grant (RFC 6749, section 4.1) is for an application a person authorised: send the `code` the redirect carried, the same `redirect_uri` the authorization request named, the `client_id` and the `code_verifier` the challenge was derived from. The refresh token grant (RFC 6749, section 6) renews that pair without asking the person again. An application that registered as a public client sends no secret on either of the latter two and authenticates with PKCE alone; one that registered with `client_secret_basic` or `client_secret_post` sends the secret registration answered with, as HTTP Basic credentials or as a form field, and is refused `invalid_client` without it.
 	//
-	// Errors use the codes RFC 6749 defines: `invalid_request` (400), `unsupported_grant_type` (400), `invalid_scope` (400), `invalid_client` (401, also for a suspended or expired consumer), plus `access_denied` (403) for an address outside the consumer's allow-list and `slow_down` (429) for a consumer over its hourly rate limit. The exchange is throttled to 10 per minute per address and per client id.
+	// A token lives one hour whichever grant minted it and is bound to this host. `scope` narrows a client credentials token to a subset of the consumer's permission keys; a code grant carries what the person granted, re-read against what they may still grant at the moment of the exchange; a refresh may narrow that further and may never widen it.
+	//
+	// A code is spent once. So is a refresh token: every use answers with a successor, and presenting one that was already used ends the whole chain it belonged to and the access it kept alive. A refresh token lives 30 days and its chain 90, so a connection in use keeps working for a quarter and a forgotten one stops within a month.
+	//
+	// Errors use the codes RFC 6749 defines: `invalid_request` (400), `unsupported_grant_type` (400), `invalid_scope` (400), `invalid_grant` (400, for anything wrong about a code or a refresh token), `invalid_client` (401, also for a suspended or expired consumer), plus `invalid_target` (400, RFC 8707) for a `resource` naming another server, `access_denied` (403) for an address outside the consumer's allow-list and `slow_down` (429) for a consumer over its hourly rate limit. The exchange is throttled to 10 per minute per address and per client id.
 	//
 	// Takes a body of the `application/x-www-form-urlencoded` content type.
 	//
@@ -5215,7 +5597,9 @@ type ClientInterface interface {
 
 	// ListProducts List products
 	//
-	// Returns a paginated list of published products. Supports full-text search via `term` parameter and filtering by brand, category, component function, property category, component type, and rating. Reads are open, so no permission key gates them.
+	// Returns a paginated list of products. A credential holding `product_access` receives every product of the workspace, drafts included; rejected products stay out. Every other reader receives the published products.
+	//
+	// Supports full-text search via the `term` parameter and filtering by brand, category, component function, property category, component type, rating and publication. Reads are open, so no permission key gates them.
 	//
 	// Corresponds with GET /products (the `ListProducts` operationId).
 	ListProducts(ctx context.Context, params *ListProductsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -5584,7 +5968,7 @@ type ClientInterface interface {
 
 // ListBrands List brands
 //
-// Returns a paginated list of brands.
+// Returns a paginated list of brands. A credential holding `brand_access` or `brand_write` receives every brand of the workspace, drafts included; every other reader receives the published brands.
 //
 // Corresponds with GET /brands (the `ListBrands` operationId).
 func (c *Client) ListBrands(ctx context.Context, params *ListBrandsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -5783,7 +6167,9 @@ func (c *Client) ListComponentTypes(ctx context.Context, reqEditors ...RequestEd
 
 // ListComponents List components
 //
-// Returns a paginated list of components. Supports full-text search and filtering by function, property category, and type.
+// Returns a paginated list of components. A credential holding `component_access` receives every component of the workspace, drafts included; every other reader receives the published components.
+//
+// Supports full-text search and filtering by function, property category, type and publication.
 //
 // Corresponds with GET /components (the `ListComponents` operationId).
 func (c *Client) ListComponents(ctx context.Context, params *ListComponentsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -7342,11 +7728,130 @@ func (c *Client) GetNavigation(ctx context.Context, reqEditors ...RequestEditorF
 	return c.Client.Do(req)
 }
 
-// ExchangeTokenWithBody Exchange client credentials for a bearer token
+// AuthorizeClient Ask a person in the workspace for access
 //
-// The OAuth 2.0 client credentials grant (RFC 6749, section 4.4). The consumer's key is the client id and its secret the client secret; send them as form fields or as HTTP Basic credentials. The token lives one hour and is bound to this host. `scope` narrows it to a subset of the consumer's permission keys.
+// The authorization request (RFC 6749, section 4.1.1) with PKCE (RFC 7636). Open it in the person's browser. The server checks the request, writes it down, and sends the person to the consent screen of the application manager on this same host, where they sign in if they are not already and see the requested permissions named one by one. Allow sends them back to `redirect_uri` with a `code`; Refuse sends them back with `error=access_denied`.
 //
-// Errors use the codes RFC 6749 defines: `invalid_request` (400), `unsupported_grant_type` (400), `invalid_scope` (400), `invalid_client` (401, also for a suspended or expired consumer), plus `access_denied` (403) for an address outside the consumer's allow-list and `slow_down` (429) for a consumer over its hourly rate limit. The exchange is throttled to 10 per minute per address and per client id.
+// PKCE is mandatory. `code_challenge` is required and `code_challenge_method` has to be `S256`; `plain` is refused. The code that comes back lives 60 seconds and is spent once, at the token endpoint, with the verifier the challenge was derived from.
+//
+// An unknown `client_id` and a `redirect_uri` outside the application's registered set are refused here, as a rendered 400, because redirecting a URI nobody registered is what would make this an open redirect. Every other refusal is delivered to the registered `redirect_uri` as `error`, `error_description` and the echoed `state`, using the codes RFC 6749 section 4.1.2.1 defines: `invalid_request`, `unsupported_response_type`, `invalid_scope`, `access_denied`, and `invalid_target` (RFC 8707) for a `resource` naming another server.
+//
+// A person grants only what their own access covers. A permission they do not hold is shown as unavailable rather than granted. A permission no consent ever grants is dropped from the request, so an application asking for every published scope is answered with the ones a person may actually hand over; a scope left with nothing after that, or naming a permission this server does not know, is refused as `invalid_scope`. The request is throttled to 20 per minute per address and per client id.
+//
+// Corresponds with GET /oauth/authorize (the `AuthorizeClient` operationId).
+func (c *Client) AuthorizeClient(ctx context.Context, params *AuthorizeClientParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAuthorizeClientRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// RegisterClientWithBody Register an application that asks people for access
+//
+// Dynamic client registration (RFC 7591). An application a person pointed at this workspace registers itself here before it can ask anybody in the workspace for access. Unauthenticated, as the RFC's open registration profile allows: a registered application can do nothing at all until somebody approves it.
+//
+// An application chooses how it authenticates at the token endpoint. Absent or `none` mints a public client, which authenticates with PKCE and holds no secret; `client_secret_basic` or `client_secret_post` mints a secret and answers it once, as `client_secret` with `client_secret_expires_at: 0`, because the server keeps only its encrypted form. The answer carries no `registration_access_token` or `registration_client_uri`: client management (RFC 7592) is not implemented here.
+//
+// Registration is throttled to 5 per hour per address, a workspace holds at most 50 registered applications, and an application at most 5 redirect URIs. Errors use the two codes RFC 7591 section 3.2.2 defines: `invalid_redirect_uri` (400) for a URI this server will not accept, `invalid_client_metadata` (400) for everything else.
+//
+// Takes any type of body and a specified content type.
+//
+// Corresponds with POST /oauth/register (the `RegisterClient` operationId).
+func (c *Client) RegisterClientWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewRegisterClientRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// RegisterClient Register an application that asks people for access
+//
+// Dynamic client registration (RFC 7591). An application a person pointed at this workspace registers itself here before it can ask anybody in the workspace for access. Unauthenticated, as the RFC's open registration profile allows: a registered application can do nothing at all until somebody approves it.
+//
+// An application chooses how it authenticates at the token endpoint. Absent or `none` mints a public client, which authenticates with PKCE and holds no secret; `client_secret_basic` or `client_secret_post` mints a secret and answers it once, as `client_secret` with `client_secret_expires_at: 0`, because the server keeps only its encrypted form. The answer carries no `registration_access_token` or `registration_client_uri`: client management (RFC 7592) is not implemented here.
+//
+// Registration is throttled to 5 per hour per address, a workspace holds at most 50 registered applications, and an application at most 5 redirect URIs. Errors use the two codes RFC 7591 section 3.2.2 defines: `invalid_redirect_uri` (400) for a URI this server will not accept, `invalid_client_metadata` (400) for everything else.
+//
+// Takes a body of the `application/json` content type.
+//
+// Corresponds with POST /oauth/register (the `RegisterClient` operationId).
+func (c *Client) RegisterClient(ctx context.Context, body RegisterClientJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewRegisterClientRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// RevokeTokenWithBody End a token
+//
+// Token revocation (RFC 7009). Send the token to end. An access token stops answering at once; a refresh token takes the whole chain it belongs to with it, and the access tokens the credential behind it holds, because the point of revoking is that the connection stops rather than one credential of it.
+//
+// The answer is 200 with an empty body whatever the token was, as section 2.2 requires, so this endpoint cannot be used to find out which tokens exist. A token that belongs to a client other than the `client_id` presented is left alone and answers 200 all the same. Only a request carrying no token at all is refused, as `invalid_request` (400).
+//
+// Holding a token is itself the credential to end it, so no client authentication is asked for. The endpoint is throttled to 30 per minute per address.
+//
+// Takes any type of body and a specified content type.
+//
+// Corresponds with POST /oauth/revoke (the `RevokeToken` operationId).
+func (c *Client) RevokeTokenWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewRevokeTokenRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// RevokeTokenWithFormdataBody End a token
+//
+// Token revocation (RFC 7009). Send the token to end. An access token stops answering at once; a refresh token takes the whole chain it belongs to with it, and the access tokens the credential behind it holds, because the point of revoking is that the connection stops rather than one credential of it.
+//
+// The answer is 200 with an empty body whatever the token was, as section 2.2 requires, so this endpoint cannot be used to find out which tokens exist. A token that belongs to a client other than the `client_id` presented is left alone and answers 200 all the same. Only a request carrying no token at all is refused, as `invalid_request` (400).
+//
+// Holding a token is itself the credential to end it, so no client authentication is asked for. The endpoint is throttled to 30 per minute per address.
+//
+// Takes a body of the `application/x-www-form-urlencoded` content type.
+//
+// Corresponds with POST /oauth/revoke (the `RevokeToken` operationId).
+func (c *Client) RevokeTokenWithFormdataBody(ctx context.Context, body RevokeTokenFormdataRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewRevokeTokenRequestWithFormdataBody(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// ExchangeTokenWithBody Exchange credentials, an authorization code or a refresh token for a bearer token
+//
+// Three grants answer here. The client credentials grant (RFC 6749, section 4.4) is for a credential an operator provisioned: the consumer's key is the client id and its secret the client secret, sent as form fields or as HTTP Basic credentials. The authorization code grant (RFC 6749, section 4.1) is for an application a person authorised: send the `code` the redirect carried, the same `redirect_uri` the authorization request named, the `client_id` and the `code_verifier` the challenge was derived from. The refresh token grant (RFC 6749, section 6) renews that pair without asking the person again. An application that registered as a public client sends no secret on either of the latter two and authenticates with PKCE alone; one that registered with `client_secret_basic` or `client_secret_post` sends the secret registration answered with, as HTTP Basic credentials or as a form field, and is refused `invalid_client` without it.
+//
+// A token lives one hour whichever grant minted it and is bound to this host. `scope` narrows a client credentials token to a subset of the consumer's permission keys; a code grant carries what the person granted, re-read against what they may still grant at the moment of the exchange; a refresh may narrow that further and may never widen it.
+//
+// A code is spent once. So is a refresh token: every use answers with a successor, and presenting one that was already used ends the whole chain it belonged to and the access it kept alive. A refresh token lives 30 days and its chain 90, so a connection in use keeps working for a quarter and a forgotten one stops within a month.
+//
+// Errors use the codes RFC 6749 defines: `invalid_request` (400), `unsupported_grant_type` (400), `invalid_scope` (400), `invalid_grant` (400, for anything wrong about a code or a refresh token), `invalid_client` (401, also for a suspended or expired consumer), plus `invalid_target` (400, RFC 8707) for a `resource` naming another server, `access_denied` (403) for an address outside the consumer's allow-list and `slow_down` (429) for a consumer over its hourly rate limit. The exchange is throttled to 10 per minute per address and per client id.
 //
 // Takes any type of body and a specified content type.
 //
@@ -7363,11 +7868,15 @@ func (c *Client) ExchangeTokenWithBody(ctx context.Context, contentType string, 
 	return c.Client.Do(req)
 }
 
-// ExchangeTokenWithFormdataBody Exchange client credentials for a bearer token
+// ExchangeTokenWithFormdataBody Exchange credentials, an authorization code or a refresh token for a bearer token
 //
-// The OAuth 2.0 client credentials grant (RFC 6749, section 4.4). The consumer's key is the client id and its secret the client secret; send them as form fields or as HTTP Basic credentials. The token lives one hour and is bound to this host. `scope` narrows it to a subset of the consumer's permission keys.
+// Three grants answer here. The client credentials grant (RFC 6749, section 4.4) is for a credential an operator provisioned: the consumer's key is the client id and its secret the client secret, sent as form fields or as HTTP Basic credentials. The authorization code grant (RFC 6749, section 4.1) is for an application a person authorised: send the `code` the redirect carried, the same `redirect_uri` the authorization request named, the `client_id` and the `code_verifier` the challenge was derived from. The refresh token grant (RFC 6749, section 6) renews that pair without asking the person again. An application that registered as a public client sends no secret on either of the latter two and authenticates with PKCE alone; one that registered with `client_secret_basic` or `client_secret_post` sends the secret registration answered with, as HTTP Basic credentials or as a form field, and is refused `invalid_client` without it.
 //
-// Errors use the codes RFC 6749 defines: `invalid_request` (400), `unsupported_grant_type` (400), `invalid_scope` (400), `invalid_client` (401, also for a suspended or expired consumer), plus `access_denied` (403) for an address outside the consumer's allow-list and `slow_down` (429) for a consumer over its hourly rate limit. The exchange is throttled to 10 per minute per address and per client id.
+// A token lives one hour whichever grant minted it and is bound to this host. `scope` narrows a client credentials token to a subset of the consumer's permission keys; a code grant carries what the person granted, re-read against what they may still grant at the moment of the exchange; a refresh may narrow that further and may never widen it.
+//
+// A code is spent once. So is a refresh token: every use answers with a successor, and presenting one that was already used ends the whole chain it belonged to and the access it kept alive. A refresh token lives 30 days and its chain 90, so a connection in use keeps working for a quarter and a forgotten one stops within a month.
+//
+// Errors use the codes RFC 6749 defines: `invalid_request` (400), `unsupported_grant_type` (400), `invalid_scope` (400), `invalid_grant` (400, for anything wrong about a code or a refresh token), `invalid_client` (401, also for a suspended or expired consumer), plus `invalid_target` (400, RFC 8707) for a `resource` naming another server, `access_denied` (403) for an address outside the consumer's allow-list and `slow_down` (429) for a consumer over its hourly rate limit. The exchange is throttled to 10 per minute per address and per client id.
 //
 // Takes a body of the `application/x-www-form-urlencoded` content type.
 //
@@ -7615,7 +8124,9 @@ func (c *Client) ListProductProperties(ctx context.Context, params *ListProductP
 
 // ListProducts List products
 //
-// Returns a paginated list of published products. Supports full-text search via `term` parameter and filtering by brand, category, component function, property category, component type, and rating. Reads are open, so no permission key gates them.
+// Returns a paginated list of products. A credential holding `product_access` receives every product of the workspace, drafts included; rejected products stay out. Every other reader receives the published products.
+//
+// Supports full-text search via the `term` parameter and filtering by brand, category, component function, property category, component type, rating and publication. Reads are open, so no permission key gates them.
 //
 // Corresponds with GET /products (the `ListProducts` operationId).
 func (c *Client) ListProducts(ctx context.Context, params *ListProductsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -8473,6 +8984,18 @@ func NewListBrandsRequest(server string, params *ListBrandsParams) (*http.Reques
 
 		}
 
+		if params.Published != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "published", *params.Published, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "boolean", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
 		if encoded := queryValues.Encode(); encoded != "" {
 			rawQueryFragments = append(rawQueryFragments, encoded)
 		}
@@ -8859,6 +9382,18 @@ func NewListComponentsRequest(server string, params *ListComponentsParams) (*htt
 		if params.PerPage != nil {
 
 			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "per_page", *params.PerPage, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Published != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "published", *params.Published, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "boolean", Format: ""}); err != nil {
 				return nil, err
 			} else {
 				for _, qp := range strings.Split(queryFrag, "&") {
@@ -11706,6 +12241,204 @@ func NewGetNavigationRequest(server string) (*http.Request, error) {
 	return req, nil
 }
 
+// NewAuthorizeClientRequest constructs an http.Request for the AuthorizeClient method
+func NewAuthorizeClientRequest(server string, params *AuthorizeClientParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/oauth/authorize")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if queryFrag, err := runtime.StyleParamWithOptions("form", true, "response_type", params.ResponseType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+			return nil, err
+		} else {
+			for _, qp := range strings.Split(queryFrag, "&") {
+				rawQueryFragments = append(rawQueryFragments, qp)
+			}
+		}
+
+		if queryFrag, err := runtime.StyleParamWithOptions("form", true, "client_id", params.ClientId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+			return nil, err
+		} else {
+			for _, qp := range strings.Split(queryFrag, "&") {
+				rawQueryFragments = append(rawQueryFragments, qp)
+			}
+		}
+
+		if queryFrag, err := runtime.StyleParamWithOptions("form", true, "redirect_uri", params.RedirectUri, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+			return nil, err
+		} else {
+			for _, qp := range strings.Split(queryFrag, "&") {
+				rawQueryFragments = append(rawQueryFragments, qp)
+			}
+		}
+
+		if queryFrag, err := runtime.StyleParamWithOptions("form", true, "code_challenge", params.CodeChallenge, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+			return nil, err
+		} else {
+			for _, qp := range strings.Split(queryFrag, "&") {
+				rawQueryFragments = append(rawQueryFragments, qp)
+			}
+		}
+
+		if queryFrag, err := runtime.StyleParamWithOptions("form", true, "code_challenge_method", params.CodeChallengeMethod, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+			return nil, err
+		} else {
+			for _, qp := range strings.Split(queryFrag, "&") {
+				rawQueryFragments = append(rawQueryFragments, qp)
+			}
+		}
+
+		if params.Scope != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "scope", *params.Scope, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.State != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "state", *params.State, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Resource != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "resource", *params.Resource, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewRegisterClientRequest calls the generic RegisterClient builder with application/json body
+func NewRegisterClientRequest(server string, body RegisterClientJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewRegisterClientRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewRegisterClientRequestWithBody constructs an http.Request for the RegisterClient method, with any body, and a specified content type
+func NewRegisterClientRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/oauth/register")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewRevokeTokenRequestWithFormdataBody calls the generic RevokeToken builder with application/x-www-form-urlencoded body
+func NewRevokeTokenRequestWithFormdataBody(server string, body RevokeTokenFormdataRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	bodyStr, err := runtime.MarshalForm(body, nil)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = strings.NewReader(bodyStr.Encode())
+	return NewRevokeTokenRequestWithBody(server, "application/x-www-form-urlencoded", bodyReader)
+}
+
+// NewRevokeTokenRequestWithBody constructs an http.Request for the RevokeToken method, with any body, and a specified content type
+func NewRevokeTokenRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/oauth/revoke")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
 // NewExchangeTokenRequestWithFormdataBody calls the generic ExchangeToken builder with application/x-www-form-urlencoded body
 func NewExchangeTokenRequestWithFormdataBody(server string, body ExchangeTokenFormdataRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
@@ -12295,6 +13028,18 @@ func NewListProductsRequest(server string, params *ListProductsParams) (*http.Re
 		if params.PerPage != nil {
 
 			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "per_page", *params.PerPage, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Published != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "published", *params.Published, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "boolean", Format: ""}); err != nil {
 				return nil, err
 			} else {
 				for _, qp := range strings.Split(queryFrag, "&") {
@@ -13752,7 +14497,7 @@ type ClientWithResponsesInterface interface {
 
 	// ListBrandsWithResponse List brands
 	//
-	// Returns a paginated list of brands.
+	// Returns a paginated list of brands. A credential holding `brand_access` or `brand_write` receives every brand of the workspace, drafts included; every other reader receives the published brands.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
@@ -13855,7 +14600,9 @@ type ClientWithResponsesInterface interface {
 
 	// ListComponentsWithResponse List components
 	//
-	// Returns a paginated list of components. Supports full-text search and filtering by function, property category, and type.
+	// Returns a paginated list of components. A credential holding `component_access` receives every component of the workspace, drafts included; every other reader receives the published components.
+	//
+	// Supports full-text search and filtering by function, property category, type and publication.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
@@ -14658,22 +15405,97 @@ type ClientWithResponsesInterface interface {
 	// Corresponds with GET /navigation (the `GetNavigation` operationId).
 	GetNavigationWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetNavigationResponse, error)
 
-	// ExchangeTokenWithBodyWithResponse Exchange client credentials for a bearer token
+	// AuthorizeClientWithResponse Ask a person in the workspace for access
 	//
-	// The OAuth 2.0 client credentials grant (RFC 6749, section 4.4). The consumer's key is the client id and its secret the client secret; send them as form fields or as HTTP Basic credentials. The token lives one hour and is bound to this host. `scope` narrows it to a subset of the consumer's permission keys.
+	// The authorization request (RFC 6749, section 4.1.1) with PKCE (RFC 7636). Open it in the person's browser. The server checks the request, writes it down, and sends the person to the consent screen of the application manager on this same host, where they sign in if they are not already and see the requested permissions named one by one. Allow sends them back to `redirect_uri` with a `code`; Refuse sends them back with `error=access_denied`.
 	//
-	// Errors use the codes RFC 6749 defines: `invalid_request` (400), `unsupported_grant_type` (400), `invalid_scope` (400), `invalid_client` (401, also for a suspended or expired consumer), plus `access_denied` (403) for an address outside the consumer's allow-list and `slow_down` (429) for a consumer over its hourly rate limit. The exchange is throttled to 10 per minute per address and per client id.
+	// PKCE is mandatory. `code_challenge` is required and `code_challenge_method` has to be `S256`; `plain` is refused. The code that comes back lives 60 seconds and is spent once, at the token endpoint, with the verifier the challenge was derived from.
+	//
+	// An unknown `client_id` and a `redirect_uri` outside the application's registered set are refused here, as a rendered 400, because redirecting a URI nobody registered is what would make this an open redirect. Every other refusal is delivered to the registered `redirect_uri` as `error`, `error_description` and the echoed `state`, using the codes RFC 6749 section 4.1.2.1 defines: `invalid_request`, `unsupported_response_type`, `invalid_scope`, `access_denied`, and `invalid_target` (RFC 8707) for a `resource` naming another server.
+	//
+	// A person grants only what their own access covers. A permission they do not hold is shown as unavailable rather than granted. A permission no consent ever grants is dropped from the request, so an application asking for every published scope is answered with the ones a person may actually hand over; a scope left with nothing after that, or naming a permission this server does not know, is refused as `invalid_scope`. The request is throttled to 20 per minute per address and per client id.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /oauth/authorize (the `AuthorizeClient` operationId).
+	AuthorizeClientWithResponse(ctx context.Context, params *AuthorizeClientParams, reqEditors ...RequestEditorFn) (*AuthorizeClientResponse, error)
+
+	// RegisterClientWithBodyWithResponse Register an application that asks people for access
+	//
+	// Dynamic client registration (RFC 7591). An application a person pointed at this workspace registers itself here before it can ask anybody in the workspace for access. Unauthenticated, as the RFC's open registration profile allows: a registered application can do nothing at all until somebody approves it.
+	//
+	// An application chooses how it authenticates at the token endpoint. Absent or `none` mints a public client, which authenticates with PKCE and holds no secret; `client_secret_basic` or `client_secret_post` mints a secret and answers it once, as `client_secret` with `client_secret_expires_at: 0`, because the server keeps only its encrypted form. The answer carries no `registration_access_token` or `registration_client_uri`: client management (RFC 7592) is not implemented here.
+	//
+	// Registration is throttled to 5 per hour per address, a workspace holds at most 50 registered applications, and an application at most 5 redirect URIs. Errors use the two codes RFC 7591 section 3.2.2 defines: `invalid_redirect_uri` (400) for a URI this server will not accept, `invalid_client_metadata` (400) for everything else.
+	//
+	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /oauth/register (the `RegisterClient` operationId).
+	RegisterClientWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*RegisterClientResponse, error)
+
+	// RegisterClientWithResponse Register an application that asks people for access
+	//
+	// Dynamic client registration (RFC 7591). An application a person pointed at this workspace registers itself here before it can ask anybody in the workspace for access. Unauthenticated, as the RFC's open registration profile allows: a registered application can do nothing at all until somebody approves it.
+	//
+	// An application chooses how it authenticates at the token endpoint. Absent or `none` mints a public client, which authenticates with PKCE and holds no secret; `client_secret_basic` or `client_secret_post` mints a secret and answers it once, as `client_secret` with `client_secret_expires_at: 0`, because the server keeps only its encrypted form. The answer carries no `registration_access_token` or `registration_client_uri`: client management (RFC 7592) is not implemented here.
+	//
+	// Registration is throttled to 5 per hour per address, a workspace holds at most 50 registered applications, and an application at most 5 redirect URIs. Errors use the two codes RFC 7591 section 3.2.2 defines: `invalid_redirect_uri` (400) for a URI this server will not accept, `invalid_client_metadata` (400) for everything else.
+	//
+	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /oauth/register (the `RegisterClient` operationId).
+	RegisterClientWithResponse(ctx context.Context, body RegisterClientJSONRequestBody, reqEditors ...RequestEditorFn) (*RegisterClientResponse, error)
+
+	// RevokeTokenWithBodyWithResponse End a token
+	//
+	// Token revocation (RFC 7009). Send the token to end. An access token stops answering at once; a refresh token takes the whole chain it belongs to with it, and the access tokens the credential behind it holds, because the point of revoking is that the connection stops rather than one credential of it.
+	//
+	// The answer is 200 with an empty body whatever the token was, as section 2.2 requires, so this endpoint cannot be used to find out which tokens exist. A token that belongs to a client other than the `client_id` presented is left alone and answers 200 all the same. Only a request carrying no token at all is refused, as `invalid_request` (400).
+	//
+	// Holding a token is itself the credential to end it, so no client authentication is asked for. The endpoint is throttled to 30 per minute per address.
+	//
+	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /oauth/revoke (the `RevokeToken` operationId).
+	RevokeTokenWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*RevokeTokenResponse, error)
+
+	// RevokeTokenWithFormdataBodyWithResponse End a token
+	//
+	// Token revocation (RFC 7009). Send the token to end. An access token stops answering at once; a refresh token takes the whole chain it belongs to with it, and the access tokens the credential behind it holds, because the point of revoking is that the connection stops rather than one credential of it.
+	//
+	// The answer is 200 with an empty body whatever the token was, as section 2.2 requires, so this endpoint cannot be used to find out which tokens exist. A token that belongs to a client other than the `client_id` presented is left alone and answers 200 all the same. Only a request carrying no token at all is refused, as `invalid_request` (400).
+	//
+	// Holding a token is itself the credential to end it, so no client authentication is asked for. The endpoint is throttled to 30 per minute per address.
+	//
+	// Takes a body of the `application/x-www-form-urlencoded` content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /oauth/revoke (the `RevokeToken` operationId).
+	RevokeTokenWithFormdataBodyWithResponse(ctx context.Context, body RevokeTokenFormdataRequestBody, reqEditors ...RequestEditorFn) (*RevokeTokenResponse, error)
+
+	// ExchangeTokenWithBodyWithResponse Exchange credentials, an authorization code or a refresh token for a bearer token
+	//
+	// Three grants answer here. The client credentials grant (RFC 6749, section 4.4) is for a credential an operator provisioned: the consumer's key is the client id and its secret the client secret, sent as form fields or as HTTP Basic credentials. The authorization code grant (RFC 6749, section 4.1) is for an application a person authorised: send the `code` the redirect carried, the same `redirect_uri` the authorization request named, the `client_id` and the `code_verifier` the challenge was derived from. The refresh token grant (RFC 6749, section 6) renews that pair without asking the person again. An application that registered as a public client sends no secret on either of the latter two and authenticates with PKCE alone; one that registered with `client_secret_basic` or `client_secret_post` sends the secret registration answered with, as HTTP Basic credentials or as a form field, and is refused `invalid_client` without it.
+	//
+	// A token lives one hour whichever grant minted it and is bound to this host. `scope` narrows a client credentials token to a subset of the consumer's permission keys; a code grant carries what the person granted, re-read against what they may still grant at the moment of the exchange; a refresh may narrow that further and may never widen it.
+	//
+	// A code is spent once. So is a refresh token: every use answers with a successor, and presenting one that was already used ends the whole chain it belonged to and the access it kept alive. A refresh token lives 30 days and its chain 90, so a connection in use keeps working for a quarter and a forgotten one stops within a month.
+	//
+	// Errors use the codes RFC 6749 defines: `invalid_request` (400), `unsupported_grant_type` (400), `invalid_scope` (400), `invalid_grant` (400, for anything wrong about a code or a refresh token), `invalid_client` (401, also for a suspended or expired consumer), plus `invalid_target` (400, RFC 8707) for a `resource` naming another server, `access_denied` (403) for an address outside the consumer's allow-list and `slow_down` (429) for a consumer over its hourly rate limit. The exchange is throttled to 10 per minute per address and per client id.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with POST /oauth/token (the `ExchangeToken` operationId).
 	ExchangeTokenWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ExchangeTokenResponse, error)
 
-	// ExchangeTokenWithFormdataBodyWithResponse Exchange client credentials for a bearer token
+	// ExchangeTokenWithFormdataBodyWithResponse Exchange credentials, an authorization code or a refresh token for a bearer token
 	//
-	// The OAuth 2.0 client credentials grant (RFC 6749, section 4.4). The consumer's key is the client id and its secret the client secret; send them as form fields or as HTTP Basic credentials. The token lives one hour and is bound to this host. `scope` narrows it to a subset of the consumer's permission keys.
+	// Three grants answer here. The client credentials grant (RFC 6749, section 4.4) is for a credential an operator provisioned: the consumer's key is the client id and its secret the client secret, sent as form fields or as HTTP Basic credentials. The authorization code grant (RFC 6749, section 4.1) is for an application a person authorised: send the `code` the redirect carried, the same `redirect_uri` the authorization request named, the `client_id` and the `code_verifier` the challenge was derived from. The refresh token grant (RFC 6749, section 6) renews that pair without asking the person again. An application that registered as a public client sends no secret on either of the latter two and authenticates with PKCE alone; one that registered with `client_secret_basic` or `client_secret_post` sends the secret registration answered with, as HTTP Basic credentials or as a form field, and is refused `invalid_client` without it.
 	//
-	// Errors use the codes RFC 6749 defines: `invalid_request` (400), `unsupported_grant_type` (400), `invalid_scope` (400), `invalid_client` (401, also for a suspended or expired consumer), plus `access_denied` (403) for an address outside the consumer's allow-list and `slow_down` (429) for a consumer over its hourly rate limit. The exchange is throttled to 10 per minute per address and per client id.
+	// A token lives one hour whichever grant minted it and is bound to this host. `scope` narrows a client credentials token to a subset of the consumer's permission keys; a code grant carries what the person granted, re-read against what they may still grant at the moment of the exchange; a refresh may narrow that further and may never widen it.
+	//
+	// A code is spent once. So is a refresh token: every use answers with a successor, and presenting one that was already used ends the whole chain it belonged to and the access it kept alive. A refresh token lives 30 days and its chain 90, so a connection in use keeps working for a quarter and a forgotten one stops within a month.
+	//
+	// Errors use the codes RFC 6749 defines: `invalid_request` (400), `unsupported_grant_type` (400), `invalid_scope` (400), `invalid_grant` (400, for anything wrong about a code or a refresh token), `invalid_client` (401, also for a suspended or expired consumer), plus `invalid_target` (400, RFC 8707) for a `resource` naming another server, `access_denied` (403) for an address outside the consumer's allow-list and `slow_down` (429) for a consumer over its hourly rate limit. The exchange is throttled to 10 per minute per address and per client id.
 	//
 	// Takes a body of the `application/x-www-form-urlencoded` content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -14799,7 +15621,9 @@ type ClientWithResponsesInterface interface {
 
 	// ListProductsWithResponse List products
 	//
-	// Returns a paginated list of published products. Supports full-text search via `term` parameter and filtering by brand, category, component function, property category, component type, and rating. Reads are open, so no permission key gates them.
+	// Returns a paginated list of products. A credential holding `product_access` receives every product of the workspace, drafts included; rejected products stay out. Every other reader receives the published products.
+	//
+	// Supports full-text search via the `term` parameter and filtering by brand, category, component function, property category, component type, rating and publication. Reads are open, so no permission key gates them.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
@@ -15219,6 +16043,8 @@ type ListBrandsResponse struct {
 	JSON200 *struct {
 		Brands *[]Brand `json:"brands,omitempty"`
 	}
+	// JSON422 the response for an HTTP 422 `application/json` response
+	JSON422 *ValidationError
 	// Headers200 the parsed response headers for an HTTP 200 response
 	Headers200 *ListBrandsResponse200Headers
 }
@@ -15228,6 +16054,11 @@ func (r ListBrandsResponse) GetJSON200() *struct {
 	Brands *[]Brand `json:"brands,omitempty"`
 } {
 	return r.JSON200
+}
+
+// GetJSON422 returns the response for an HTTP 422 `application/json` response
+func (r ListBrandsResponse) GetJSON422() *ValidationError {
+	return r.JSON422
 }
 
 // GetBody returns the raw response body bytes
@@ -15759,6 +16590,8 @@ type ListComponentsResponse struct {
 	JSON200 *struct {
 		Components *[]Component `json:"components,omitempty"`
 	}
+	// JSON422 the response for an HTTP 422 `application/json` response
+	JSON422 *ValidationError
 	// Headers200 the parsed response headers for an HTTP 200 response
 	Headers200 *ListComponentsResponse200Headers
 }
@@ -15768,6 +16601,11 @@ func (r ListComponentsResponse) GetJSON200() *struct {
 	Components *[]Component `json:"components,omitempty"`
 } {
 	return r.JSON200
+}
+
+// GetJSON422 returns the response for an HTTP 422 `application/json` response
+func (r ListComponentsResponse) GetJSON422() *ValidationError {
+	return r.JSON422
 }
 
 // GetBody returns the raw response body bytes
@@ -19860,6 +20698,157 @@ func (r GetNavigationResponse) ContentType() string {
 	return ""
 }
 
+// AuthorizeClientResponse302Headers the declared response headers of an HTTP 302 response for AuthorizeClient
+type AuthorizeClientResponse302Headers struct {
+	Location *string
+}
+
+type AuthorizeClientResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON400 the response for an HTTP 400 `application/json` response
+	JSON400 *OAuthError
+	// Headers302 the parsed response headers for an HTTP 302 response
+	Headers302 *AuthorizeClientResponse302Headers
+}
+
+// GetJSON400 returns the response for an HTTP 400 `application/json` response
+func (r AuthorizeClientResponse) GetJSON400() *OAuthError {
+	return r.JSON400
+}
+
+// GetBody returns the raw response body bytes
+func (r AuthorizeClientResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r AuthorizeClientResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r AuthorizeClientResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r AuthorizeClientResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// RegisterClientResponse201Headers the declared response headers of an HTTP 201 response for RegisterClient
+type RegisterClientResponse201Headers struct {
+	CacheControl *string
+}
+
+type RegisterClientResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON201 the response for an HTTP 201 `application/json` response
+	JSON201 *RegisteredClient
+	// JSON400 the response for an HTTP 400 `application/json` response
+	JSON400 *OAuthError
+	// Headers201 the parsed response headers for an HTTP 201 response
+	Headers201 *RegisterClientResponse201Headers
+}
+
+// GetJSON201 returns the response for an HTTP 201 `application/json` response
+func (r RegisterClientResponse) GetJSON201() *RegisteredClient {
+	return r.JSON201
+}
+
+// GetJSON400 returns the response for an HTTP 400 `application/json` response
+func (r RegisterClientResponse) GetJSON400() *OAuthError {
+	return r.JSON400
+}
+
+// GetBody returns the raw response body bytes
+func (r RegisterClientResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r RegisterClientResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r RegisterClientResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r RegisterClientResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// RevokeTokenResponse200Headers the declared response headers of an HTTP 200 response for RevokeToken
+type RevokeTokenResponse200Headers struct {
+	CacheControl *string
+}
+
+type RevokeTokenResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON400 the response for an HTTP 400 `application/json` response
+	JSON400 *OAuthError
+	// Headers200 the parsed response headers for an HTTP 200 response
+	Headers200 *RevokeTokenResponse200Headers
+}
+
+// GetJSON400 returns the response for an HTTP 400 `application/json` response
+func (r RevokeTokenResponse) GetJSON400() *OAuthError {
+	return r.JSON400
+}
+
+// GetBody returns the raw response body bytes
+func (r RevokeTokenResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r RevokeTokenResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r RevokeTokenResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r RevokeTokenResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
 // ExchangeTokenResponse200Headers the declared response headers of an HTTP 200 response for ExchangeToken
 type ExchangeTokenResponse200Headers struct {
 	CacheControl *string
@@ -20664,6 +21653,8 @@ type ListProductsResponse struct {
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON422 the response for an HTTP 422 `application/json` response
+	JSON422 *ValidationError
 	// Headers200 the parsed response headers for an HTTP 200 response
 	Headers200 *ListProductsResponse200Headers
 }
@@ -20678,6 +21669,11 @@ func (r ListProductsResponse) GetJSON200() *struct {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r ListProductsResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON422 returns the response for an HTTP 422 `application/json` response
+func (r ListProductsResponse) GetJSON422() *ValidationError {
+	return r.JSON422
 }
 
 // GetBody returns the raw response body bytes
@@ -22575,7 +23571,7 @@ func (r TestWebhookResponse) ContentType() string {
 
 // ListBrandsWithResponse List brands
 //
-// Returns a paginated list of brands.
+// Returns a paginated list of brands. A credential holding `brand_access` or `brand_write` receives every brand of the workspace, drafts included; every other reader receives the published brands.
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -22744,7 +23740,9 @@ func (c *ClientWithResponses) ListComponentTypesWithResponse(ctx context.Context
 
 // ListComponentsWithResponse List components
 //
-// Returns a paginated list of components. Supports full-text search and filtering by function, property category, and type.
+// Returns a paginated list of components. A credential holding `component_access` receives every component of the workspace, drafts included; every other reader receives the published components.
+//
+// Supports full-text search and filtering by function, property category, type and publication.
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -24045,11 +25043,112 @@ func (c *ClientWithResponses) GetNavigationWithResponse(ctx context.Context, req
 	return ParseGetNavigationResponse(rsp)
 }
 
-// ExchangeTokenWithBodyWithResponse Exchange client credentials for a bearer token
+// AuthorizeClientWithResponse Ask a person in the workspace for access
 //
-// The OAuth 2.0 client credentials grant (RFC 6749, section 4.4). The consumer's key is the client id and its secret the client secret; send them as form fields or as HTTP Basic credentials. The token lives one hour and is bound to this host. `scope` narrows it to a subset of the consumer's permission keys.
+// The authorization request (RFC 6749, section 4.1.1) with PKCE (RFC 7636). Open it in the person's browser. The server checks the request, writes it down, and sends the person to the consent screen of the application manager on this same host, where they sign in if they are not already and see the requested permissions named one by one. Allow sends them back to `redirect_uri` with a `code`; Refuse sends them back with `error=access_denied`.
 //
-// Errors use the codes RFC 6749 defines: `invalid_request` (400), `unsupported_grant_type` (400), `invalid_scope` (400), `invalid_client` (401, also for a suspended or expired consumer), plus `access_denied` (403) for an address outside the consumer's allow-list and `slow_down` (429) for a consumer over its hourly rate limit. The exchange is throttled to 10 per minute per address and per client id.
+// PKCE is mandatory. `code_challenge` is required and `code_challenge_method` has to be `S256`; `plain` is refused. The code that comes back lives 60 seconds and is spent once, at the token endpoint, with the verifier the challenge was derived from.
+//
+// An unknown `client_id` and a `redirect_uri` outside the application's registered set are refused here, as a rendered 400, because redirecting a URI nobody registered is what would make this an open redirect. Every other refusal is delivered to the registered `redirect_uri` as `error`, `error_description` and the echoed `state`, using the codes RFC 6749 section 4.1.2.1 defines: `invalid_request`, `unsupported_response_type`, `invalid_scope`, `access_denied`, and `invalid_target` (RFC 8707) for a `resource` naming another server.
+//
+// A person grants only what their own access covers. A permission they do not hold is shown as unavailable rather than granted. A permission no consent ever grants is dropped from the request, so an application asking for every published scope is answered with the ones a person may actually hand over; a scope left with nothing after that, or naming a permission this server does not know, is refused as `invalid_scope`. The request is throttled to 20 per minute per address and per client id.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /oauth/authorize (the `AuthorizeClient` operationId).
+func (c *ClientWithResponses) AuthorizeClientWithResponse(ctx context.Context, params *AuthorizeClientParams, reqEditors ...RequestEditorFn) (*AuthorizeClientResponse, error) {
+	rsp, err := c.AuthorizeClient(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseAuthorizeClientResponse(rsp)
+}
+
+// RegisterClientWithBodyWithResponse Register an application that asks people for access
+//
+// Dynamic client registration (RFC 7591). An application a person pointed at this workspace registers itself here before it can ask anybody in the workspace for access. Unauthenticated, as the RFC's open registration profile allows: a registered application can do nothing at all until somebody approves it.
+//
+// An application chooses how it authenticates at the token endpoint. Absent or `none` mints a public client, which authenticates with PKCE and holds no secret; `client_secret_basic` or `client_secret_post` mints a secret and answers it once, as `client_secret` with `client_secret_expires_at: 0`, because the server keeps only its encrypted form. The answer carries no `registration_access_token` or `registration_client_uri`: client management (RFC 7592) is not implemented here.
+//
+// Registration is throttled to 5 per hour per address, a workspace holds at most 50 registered applications, and an application at most 5 redirect URIs. Errors use the two codes RFC 7591 section 3.2.2 defines: `invalid_redirect_uri` (400) for a URI this server will not accept, `invalid_client_metadata` (400) for everything else.
+//
+// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /oauth/register (the `RegisterClient` operationId).
+func (c *ClientWithResponses) RegisterClientWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*RegisterClientResponse, error) {
+	rsp, err := c.RegisterClientWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseRegisterClientResponse(rsp)
+}
+
+// RegisterClientWithResponse Register an application that asks people for access
+//
+// Dynamic client registration (RFC 7591). An application a person pointed at this workspace registers itself here before it can ask anybody in the workspace for access. Unauthenticated, as the RFC's open registration profile allows: a registered application can do nothing at all until somebody approves it.
+//
+// An application chooses how it authenticates at the token endpoint. Absent or `none` mints a public client, which authenticates with PKCE and holds no secret; `client_secret_basic` or `client_secret_post` mints a secret and answers it once, as `client_secret` with `client_secret_expires_at: 0`, because the server keeps only its encrypted form. The answer carries no `registration_access_token` or `registration_client_uri`: client management (RFC 7592) is not implemented here.
+//
+// Registration is throttled to 5 per hour per address, a workspace holds at most 50 registered applications, and an application at most 5 redirect URIs. Errors use the two codes RFC 7591 section 3.2.2 defines: `invalid_redirect_uri` (400) for a URI this server will not accept, `invalid_client_metadata` (400) for everything else.
+//
+// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /oauth/register (the `RegisterClient` operationId).
+func (c *ClientWithResponses) RegisterClientWithResponse(ctx context.Context, body RegisterClientJSONRequestBody, reqEditors ...RequestEditorFn) (*RegisterClientResponse, error) {
+	rsp, err := c.RegisterClient(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseRegisterClientResponse(rsp)
+}
+
+// RevokeTokenWithBodyWithResponse End a token
+//
+// Token revocation (RFC 7009). Send the token to end. An access token stops answering at once; a refresh token takes the whole chain it belongs to with it, and the access tokens the credential behind it holds, because the point of revoking is that the connection stops rather than one credential of it.
+//
+// The answer is 200 with an empty body whatever the token was, as section 2.2 requires, so this endpoint cannot be used to find out which tokens exist. A token that belongs to a client other than the `client_id` presented is left alone and answers 200 all the same. Only a request carrying no token at all is refused, as `invalid_request` (400).
+//
+// Holding a token is itself the credential to end it, so no client authentication is asked for. The endpoint is throttled to 30 per minute per address.
+//
+// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /oauth/revoke (the `RevokeToken` operationId).
+func (c *ClientWithResponses) RevokeTokenWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*RevokeTokenResponse, error) {
+	rsp, err := c.RevokeTokenWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseRevokeTokenResponse(rsp)
+}
+
+// RevokeTokenWithFormdataBodyWithResponse End a token
+//
+// Token revocation (RFC 7009). Send the token to end. An access token stops answering at once; a refresh token takes the whole chain it belongs to with it, and the access tokens the credential behind it holds, because the point of revoking is that the connection stops rather than one credential of it.
+//
+// The answer is 200 with an empty body whatever the token was, as section 2.2 requires, so this endpoint cannot be used to find out which tokens exist. A token that belongs to a client other than the `client_id` presented is left alone and answers 200 all the same. Only a request carrying no token at all is refused, as `invalid_request` (400).
+//
+// Holding a token is itself the credential to end it, so no client authentication is asked for. The endpoint is throttled to 30 per minute per address.
+//
+// Takes a body of the `application/x-www-form-urlencoded` content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /oauth/revoke (the `RevokeToken` operationId).
+func (c *ClientWithResponses) RevokeTokenWithFormdataBodyWithResponse(ctx context.Context, body RevokeTokenFormdataRequestBody, reqEditors ...RequestEditorFn) (*RevokeTokenResponse, error) {
+	rsp, err := c.RevokeTokenWithFormdataBody(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseRevokeTokenResponse(rsp)
+}
+
+// ExchangeTokenWithBodyWithResponse Exchange credentials, an authorization code or a refresh token for a bearer token
+//
+// Three grants answer here. The client credentials grant (RFC 6749, section 4.4) is for a credential an operator provisioned: the consumer's key is the client id and its secret the client secret, sent as form fields or as HTTP Basic credentials. The authorization code grant (RFC 6749, section 4.1) is for an application a person authorised: send the `code` the redirect carried, the same `redirect_uri` the authorization request named, the `client_id` and the `code_verifier` the challenge was derived from. The refresh token grant (RFC 6749, section 6) renews that pair without asking the person again. An application that registered as a public client sends no secret on either of the latter two and authenticates with PKCE alone; one that registered with `client_secret_basic` or `client_secret_post` sends the secret registration answered with, as HTTP Basic credentials or as a form field, and is refused `invalid_client` without it.
+//
+// A token lives one hour whichever grant minted it and is bound to this host. `scope` narrows a client credentials token to a subset of the consumer's permission keys; a code grant carries what the person granted, re-read against what they may still grant at the moment of the exchange; a refresh may narrow that further and may never widen it.
+//
+// A code is spent once. So is a refresh token: every use answers with a successor, and presenting one that was already used ends the whole chain it belonged to and the access it kept alive. A refresh token lives 30 days and its chain 90, so a connection in use keeps working for a quarter and a forgotten one stops within a month.
+//
+// Errors use the codes RFC 6749 defines: `invalid_request` (400), `unsupported_grant_type` (400), `invalid_scope` (400), `invalid_grant` (400, for anything wrong about a code or a refresh token), `invalid_client` (401, also for a suspended or expired consumer), plus `invalid_target` (400, RFC 8707) for a `resource` naming another server, `access_denied` (403) for an address outside the consumer's allow-list and `slow_down` (429) for a consumer over its hourly rate limit. The exchange is throttled to 10 per minute per address and per client id.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -24062,11 +25161,15 @@ func (c *ClientWithResponses) ExchangeTokenWithBodyWithResponse(ctx context.Cont
 	return ParseExchangeTokenResponse(rsp)
 }
 
-// ExchangeTokenWithFormdataBodyWithResponse Exchange client credentials for a bearer token
+// ExchangeTokenWithFormdataBodyWithResponse Exchange credentials, an authorization code or a refresh token for a bearer token
 //
-// The OAuth 2.0 client credentials grant (RFC 6749, section 4.4). The consumer's key is the client id and its secret the client secret; send them as form fields or as HTTP Basic credentials. The token lives one hour and is bound to this host. `scope` narrows it to a subset of the consumer's permission keys.
+// Three grants answer here. The client credentials grant (RFC 6749, section 4.4) is for a credential an operator provisioned: the consumer's key is the client id and its secret the client secret, sent as form fields or as HTTP Basic credentials. The authorization code grant (RFC 6749, section 4.1) is for an application a person authorised: send the `code` the redirect carried, the same `redirect_uri` the authorization request named, the `client_id` and the `code_verifier` the challenge was derived from. The refresh token grant (RFC 6749, section 6) renews that pair without asking the person again. An application that registered as a public client sends no secret on either of the latter two and authenticates with PKCE alone; one that registered with `client_secret_basic` or `client_secret_post` sends the secret registration answered with, as HTTP Basic credentials or as a form field, and is refused `invalid_client` without it.
 //
-// Errors use the codes RFC 6749 defines: `invalid_request` (400), `unsupported_grant_type` (400), `invalid_scope` (400), `invalid_client` (401, also for a suspended or expired consumer), plus `access_denied` (403) for an address outside the consumer's allow-list and `slow_down` (429) for a consumer over its hourly rate limit. The exchange is throttled to 10 per minute per address and per client id.
+// A token lives one hour whichever grant minted it and is bound to this host. `scope` narrows a client credentials token to a subset of the consumer's permission keys; a code grant carries what the person granted, re-read against what they may still grant at the moment of the exchange; a refresh may narrow that further and may never widen it.
+//
+// A code is spent once. So is a refresh token: every use answers with a successor, and presenting one that was already used ends the whole chain it belonged to and the access it kept alive. A refresh token lives 30 days and its chain 90, so a connection in use keeps working for a quarter and a forgotten one stops within a month.
+//
+// Errors use the codes RFC 6749 defines: `invalid_request` (400), `unsupported_grant_type` (400), `invalid_scope` (400), `invalid_grant` (400, for anything wrong about a code or a refresh token), `invalid_client` (401, also for a suspended or expired consumer), plus `invalid_target` (400, RFC 8707) for a `resource` naming another server, `access_denied` (403) for an address outside the consumer's allow-list and `slow_down` (429) for a consumer over its hourly rate limit. The exchange is throttled to 10 per minute per address and per client id.
 //
 // Takes a body of the `application/x-www-form-urlencoded` content type, and returns a wrapper object for the known response body format(s).
 //
@@ -24276,7 +25379,9 @@ func (c *ClientWithResponses) ListProductPropertiesWithResponse(ctx context.Cont
 
 // ListProductsWithResponse List products
 //
-// Returns a paginated list of published products. Supports full-text search via `term` parameter and filtering by brand, category, component function, property category, component type, and rating. Reads are open, so no permission key gates them.
+// Returns a paginated list of products. A credential holding `product_access` receives every product of the workspace, drafts included; rejected products stay out. Every other reader receives the published products.
+//
+// Supports full-text search via the `term` parameter and filtering by brand, category, component function, property category, component type, rating and publication. Reads are open, so no permission key gates them.
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -24968,6 +26073,13 @@ func ParseListBrandsResponse(rsp *http.Response) (*ListBrandsResponse, error) {
 	case rsp.StatusCode == 204:
 		break // No content-type
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest ValidationError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
+
 	}
 
 	switch {
@@ -25470,6 +26582,13 @@ func ParseListComponentsResponse(rsp *http.Response) (*ListComponentsResponse, e
 
 	case rsp.StatusCode == 204:
 		break // No content-type
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest ValidationError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
 
 	}
 
@@ -28787,6 +29906,151 @@ func ParseGetNavigationResponse(rsp *http.Response) (*GetNavigationResponse, err
 	return response, nil
 }
 
+// ParseAuthorizeClientResponse parses an HTTP response from a AuthorizeClientWithResponse call
+func ParseAuthorizeClientResponse(rsp *http.Response) (*AuthorizeClientResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &AuthorizeClientResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case rsp.StatusCode == 302:
+		break // No content-type
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest OAuthError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case rsp.StatusCode == 404:
+		break // No content-type
+
+	case rsp.StatusCode == 429:
+		break // No content-type
+
+	}
+
+	switch {
+	case rsp.StatusCode == 302:
+		var headers AuthorizeClientResponse302Headers
+		if values := rsp.Header.Values("Location"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "Location", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.Location = &value
+		}
+		response.Headers302 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseRegisterClientResponse parses an HTTP response from a RegisterClientWithResponse call
+func ParseRegisterClientResponse(rsp *http.Response) (*RegisterClientResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &RegisterClientResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest RegisteredClient
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest OAuthError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case rsp.StatusCode == 404:
+		break // No content-type
+
+	case rsp.StatusCode == 429:
+		break // No content-type
+
+	}
+
+	switch {
+	case rsp.StatusCode == 201:
+		var headers RegisterClientResponse201Headers
+		if values := rsp.Header.Values("Cache-Control"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "Cache-Control", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.CacheControl = &value
+		}
+		response.Headers201 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseRevokeTokenResponse parses an HTTP response from a RevokeTokenWithResponse call
+func ParseRevokeTokenResponse(rsp *http.Response) (*RevokeTokenResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &RevokeTokenResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case rsp.StatusCode == 200:
+		break // No content-type
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest OAuthError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case rsp.StatusCode == 429:
+		break // No content-type
+
+	}
+
+	switch {
+	case rsp.StatusCode == 200:
+		var headers RevokeTokenResponse200Headers
+		if values := rsp.Header.Values("Cache-Control"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "Cache-Control", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.CacheControl = &value
+		}
+		response.Headers200 = &headers
+	}
+
+	return response, nil
+}
+
 // ParseExchangeTokenResponse parses an HTTP response from a ExchangeTokenWithResponse call
 func ParseExchangeTokenResponse(rsp *http.Response) (*ExchangeTokenResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -29500,6 +30764,13 @@ func ParseListProductsResponse(rsp *http.Response) (*ListProductsResponse, error
 			return nil, err
 		}
 		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest ValidationError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
 
 	}
 
