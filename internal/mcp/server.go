@@ -43,13 +43,14 @@ type Options struct {
 }
 
 // instructions is what the assistant reads when it connects.
-const instructions = `Transpareo holds a workspace's products,
-	components and Digital
+const instructions = `Transpareo holds a workspace's products, components and Digital
 Product Passports. Start with me to learn what the credential
 allows. For a new product call product_property_types before
 create_product. For passports of an existing product call
 dpp_requirements, then validate_dpp before create_dpp. publish_dpp
-signs the passport and cannot be undone. void_dpp and
+signs the passport and cannot be undone. Recalling a unit is a
+status change to suspended through append_dpp_event, not a void;
+void_dpp is for a unit that no longer exists. void_dpp and
 supersede_dpp need the confirm argument with the stated phrase.
 Anything without a tool: search_operations, then call_api. Lists
 are paged; follow nextPage.`
