@@ -636,6 +636,27 @@ func TestDataTools(t *testing.T) {
 	}
 }
 
+// TestWriteToolsHaveAJSONBody keeps a write tool on an operation
+// whose body it can actually send. A tool's arguments travel as
+// JSON, so an operation declaring only a file attachment has no
+// tool until the document carries the bytes inline as well.
+func TestWriteToolsHaveAJSONBody(t *testing.T) {
+	reg := registry.Default()
+	for _, tool := range curated {
+		if tool.Kind != kindWrite {
+			continue
+		}
+		op := reg.Find(tool.Operation)
+		if op == nil || len(op.RequestBodies) == 0 {
+			continue
+		}
+		if op.JSONBody() == nil {
+			t.Errorf("%s writes %s, which declares only %s", tool.Name, op.ID,
+				op.DefaultBody().ContentType)
+		}
+	}
+}
+
 // TestSearchReportsEveryBody keeps the bodies an operation
 // accepts visible to an assistant. call_api sends JSON, so one
 // declaring only a file attachment must say so and carry the
@@ -664,5 +685,20 @@ func TestSearchReportsEveryBody(t *testing.T) {
 	}
 	if seen == 0 {
 		t.Fatal("the search matched no operation taking a body")
+	}
+}
+
+// TestCreateMediafileWaitsForItsBody fails when the vendored
+// document gains an upload body a tool can send. The reason the
+// operation is reachable through call_api alone is spent then,
+// and it becomes a curated tool the assistant can call.
+func TestCreateMediafileWaitsForItsBody(t *testing.T) {
+	op := registry.Default().Find("create_mediafile")
+	if op == nil {
+		t.Skip("the document no longer declares create_mediafile")
+	}
+	if op.JSONBody() != nil {
+		t.Error("create_mediafile now takes a JSON body: give it a curated " +
+			"tool and drop it from viaCallAPIOnly")
 	}
 }

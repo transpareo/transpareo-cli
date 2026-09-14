@@ -86,6 +86,12 @@ var curated = []Tool{
 		Operation: "create_component", Kind: kindWrite},
 	{Name: "update_component", Group: GroupProducts,
 		Operation: "update_component", Kind: kindWrite},
+	{Name: "list_mediafiles", Group: GroupProducts,
+		Operation: "list_mediafiles", Kind: kindList},
+	{Name: "update_product_mediafiles", Group: GroupProducts,
+		Operation: "update_product_mediafiles", Kind: kindWrite,
+		Description: "Replaces a product's images with the ones named, in " +
+			"the order given."},
 	{Name: "list_brands", Group: GroupProducts, Operation: "list_brands",
 		Kind: kindList},
 	{Name: "create_brand", Group: GroupProducts, Operation: "create_brand",
@@ -186,11 +192,11 @@ var viaCallAPIOnly = map[string]string{
 	"get_brand":    "list_brands shows every field",
 	"update_brand": "a brand is its name; rename in the " +
 		"application manager",
-	"publish_component":         "components publish with their products",
-	"unpublish_component":       "components publish with their products",
-	"update_product_mediafiles": "media handling stays with the command line",
-	"list_mediafiles":           "media handling stays with the command line",
-	"create_mediafile":          "media handling stays with the command line",
+	"publish_component":   "components publish with their products",
+	"unpublish_component": "components publish with their products",
+	"create_mediafile": "the vendored document declares the upload as a " +
+		"file attachment, which a tool cannot send; it becomes a tool with " +
+		"the body carrying the bytes inline",
 	"list_product_properties":   "reference data, on demand",
 	"list_featured_products":    "storefront view, on demand",
 	"list_product_categories":   "reference data, on demand",
