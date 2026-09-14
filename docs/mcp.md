@@ -52,9 +52,8 @@ protocol.
 
 ## Tools
 
-Tools are curated, not generated one per endpoint: about thirty
-domain tools cover the flows, and two escape hatches reach the
-rest.
+Tools are curated, not generated one per endpoint: forty domain
+tools cover the flows, and two escape hatches reach the rest.
 
 - Identity: `me`.
 - Discovery: `search_operations(query)` finds operations by words
@@ -66,7 +65,8 @@ rest.
   `update_product`, `publish_product`, `unpublish_product`,
   `product_property_types`, `list_components`, `get_component`,
   `create_component`, `update_component`, `list_mediafiles`,
-  `update_product_mediafiles`, `list_brands`, `create_brand`.
+  `create_mediafile`, `update_product_mediafiles`, `list_brands`,
+  `create_brand`.
 - Passports: `dpp_requirements`, `list_dpps`, `get_dpp`,
   `validate_dpp`, `create_dpp`, `update_dpp`, `publish_dpp`,
   `append_dpp_event`, `update_dynamic_data`, `void_dpp`,

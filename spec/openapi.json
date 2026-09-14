@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Transpareo API",
-    "version": "1.12.0",
+    "version": "1.14.0",
     "description": "This site runs on the [Transpareo](https://transpareo.com) product information platform. The REST API gives programs access to products, product components, brands, Digital Product Passports, categories and configuration. The version is selected with the `Accept` header, not a path segment.\n\nThe guide at [/apidocs/guide](/apidocs/guide) is the narrative companion to this reference: credentials, permissions, pagination, idempotency, the passport flows, the event feed, webhooks, rate limits and the error format. It is also served as Markdown at [/apidocs/guide.md](/apidocs/guide.md).\n\nPrograms authenticate with the OAuth 2.0 client credentials grant. Exchange the client id and secret once, then send the token on every request:\n\n```\ncurl -X POST https://<host>/api/oauth/token -d grant_type=client_credentials -d client_id=<key> -d client_secret=<secret>\n\ncurl https://<host>/api/me -H \"Authorization: Bearer <access_token>\"\n```\n\nAn assistant that speaks the Model Context Protocol connects to `/mcp` on this host and calls these operations as tools, named in the catalogue at [/apidocs/mcp-tools.json](/apidocs/mcp-tools.json) and explained by the guide's Assistants section.",
     "contact": {
       "name": "Transpareo Support",
@@ -917,6 +917,10 @@
             "additionalProperties": {
               "type": "object",
               "properties": {
+                "id": {
+                  "type": "integer",
+                  "description": "The property type's id, which a properties payload is keyed by"
+                },
                 "values": {
                   "type": "array",
                   "items": {
@@ -966,9 +970,11 @@
           "rating": "A",
           "properties": {
             "Origin": {
+              "id": 14,
               "rated": true,
               "values": [
                 {
+                  "id": 811,
                   "value": "West Africa",
                   "rating": "A"
                 }
@@ -1017,7 +1023,7 @@
               },
               "existing": {
                 "type": "object",
-                "description": "Properties to change, per property type id, keyed by property id. An empty value leaves the property as it is.",
+                "description": "Properties to change, per property type id, keyed by property id. A property this half does not name is left as it is; one it names with an empty value is removed. Both ids come from `GET /components/{id}`, which names the type id on each group and an id on each value. This half is keyed by ids where `new` carries a plain list, so the two are not interchangeable; `new` adds a value beside the ones already there rather than replacing one.",
                 "additionalProperties": {
                   "type": "object",
                   "additionalProperties": {
@@ -1027,7 +1033,8 @@
                         "type": "string"
                       },
                       "points": {
-                        "type": "integer"
+                        "type": "integer",
+                        "description": "The rating points of the value, where the type is rated. Left out, the value keeps the rating it has."
                       }
                     }
                   }
@@ -1054,6 +1061,13 @@
                   "value": "Emollient"
                 }
               ]
+            },
+            "existing": {
+              "14": {
+                "811": {
+                  "value": "ES"
+                }
+              }
             }
           },
           "templateIds": [
@@ -1434,6 +1448,22 @@
               "item"
             ]
           },
+          "status": {
+            "type": "string",
+            "description": "Where the passport stands in its life. Always present.",
+            "enum": [
+              "draft",
+              "manufactured",
+              "placed_on_market",
+              "in_use",
+              "repair",
+              "refurbished",
+              "collected",
+              "recycled",
+              "end_of_life",
+              "suspended"
+            ]
+          },
           "modelIdentifier": {
             "type": "string",
             "description": "Only present when set. Inherited from the product when the create named none."
@@ -1678,7 +1708,7 @@
         "properties": {
           "eventType": {
             "type": "string",
-            "description": "`status_change` drives the transition and is recorded as an event of type `lifecycle_transition`; every other value is recorded verbatim. A versioned type answers 422 `EVENT_TYPE_NOT_ALLOWED` - those ride the void / supersede / reissue / publish operations instead.",
+            "description": "`status_change` drives the transition and is recorded as an event of type `lifecycle_transition`; every other value is recorded verbatim. `recall` records an authority-only note and moves the passport nowhere - recalling a unit is a `status_change` to `suspended`. A versioned type answers 422 `EVENT_TYPE_NOT_ALLOWED` - those ride the void / supersede / reissue / publish operations instead.",
             "enum": [
               "status_change",
               "inspection",
@@ -1691,7 +1721,7 @@
           },
           "status": {
             "type": "string",
-            "description": "The status to move to. Required on `status_change`, ignored otherwise.",
+            "description": "The status to move to. Required on `status_change`, ignored otherwise. `suspended` is the recall and regulatory-hold status: a unit that is still in the field and must stop being used is moved there, and its passport stays readable so whoever scans the code learns of the recall. Voiding is for a unit that no longer exists.",
             "enum": [
               "draft",
               "manufactured",
@@ -1735,17 +1765,18 @@
       },
       "DppInput": {
         "type": "object",
+        "description": "The passport to write. It always stands for a product, which `unlockableId` names.",
         "required": [
           "unlockableId"
         ],
         "properties": {
           "unlockableType": {
             "type": "string",
-            "description": "Type of linked record (defaults to Product)"
+            "description": "What the passport stands for. Only `Product` is issued one, which is the default."
           },
           "unlockableId": {
             "type": "integer",
-            "description": "Product ID to link"
+            "description": "The id of the product this passport is for, as `list_products` and `get_product` answer it"
           },
           "description": {
             "type": "string"
@@ -4240,10 +4271,7 @@
       },
       "ProductInput": {
         "type": "object",
-        "required": [
-          "name",
-          "componentsInput"
-        ],
+        "description": "The fields of a product write. A create needs `name` and `componentsInput`, which the create operation says; an update carries only what it means to change, because every field it names is written.",
         "properties": {
           "name": {
             "type": "string",
@@ -4253,7 +4281,7 @@
             "type": "string"
           },
           "componentsInput": {
-            "description": "The product's components in order, as a list of names or a list of objects naming an existing component by componentId or a new one by name",
+            "description": "The product's components in order, as a list of names or a list of objects naming an existing component by componentId or a new one by name. Naming it replaces the whole list, so on an update send the components the product is to have from then on, not the ones being added; leaving it out keeps the list as it is.",
             "oneOf": [
               {
                 "type": "array",
@@ -4290,7 +4318,7 @@
           },
           "propertiesInput": {
             "type": "object",
-            "description": "Property values keyed by property type id, as GET /products/new lists them. An entry is a bare value, an object with value plus an optional percentage and compositionRows, or a list of either for a type that takes several values.",
+            "description": "Property values keyed by property type id, as GET /products/new lists them. An entry is a bare value, an object with value plus an optional percentage and compositionRows, or a list of either for a type that takes several values. A type named here is replaced by what the entry carries; a type left out keeps the values it has.",
             "additionalProperties": true,
             "example": {
               "1": "https://example.com/documents/technical-documentation.pdf",
@@ -4310,6 +4338,10 @@
       "Property": {
         "type": "object",
         "properties": {
+          "id": {
+            "type": "integer",
+            "description": "The property's own id, which the `existing` half of a properties payload is keyed by"
+          },
           "value": {
             "type": "string",
             "description": "Rendered HTML value (or raw value when ?raw=true)"
@@ -5461,7 +5493,7 @@
           "Components"
         ],
         "summary": "Update a component",
-        "description": "Renames the component and applies property and template changes in the shape the application manager form sends. `properties.existing` maps a property type id to the properties to change by id, an empty value removes one; `properties.new` adds values; `templateIds` replaces the template set. The caller must own the component, or hold `component_write`.",
+        "description": "Renames the component and applies property and template changes in the shape the application manager form sends. The write is a patch, so the properties it does not name stay as they are. `properties.existing` maps a property type id to the properties to change by id, an empty value removes one; `properties.new` adds values; `templateIds` replaces the template set. The caller must own the component, or hold `component_write`.",
         "operationId": "update_component",
         "x-permission": [
           "component_access",
@@ -5917,7 +5949,7 @@
           "DPPs"
         ],
         "summary": "List Digital Product Passports",
-        "description": "Returns a paginated list of DPPs owned by the authenticated user, their group members, or the API consumer.",
+        "description": "Returns a paginated list of DPPs owned by the authenticated user, their group members, or the API consumer. Narrow it with `product_id` and `status` rather than reading the whole catalogue and matching by hand; acting on every passport of one product is what those are for.",
         "operationId": "list_dpps",
         "x-permission": "dpp_read",
         "security": [
@@ -5936,6 +5968,22 @@
               "type": "string"
             },
             "description": "Search DPPs by code or description"
+          },
+          {
+            "name": "product_id",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Keep only the passports of this product"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Keep only the passports in these lifecycle statuses, comma-separated: draft, manufactured, placed_on_market, in_use, repair, refurbished, collected, recycled, end_of_life, suspended"
           },
           {
             "$ref": "#/components/parameters/page"
@@ -7055,7 +7103,7 @@
           "DPPs"
         ],
         "summary": "Append an event to a DPP",
-        "description": "Records one event against the passport. `eventType: status_change` moves the passport to the `status` you name and is recorded as a `lifecycle_transition`; any other type is recorded as a plain event.\n\nAn event is a pending draft until it is sealed. Send `publish: true` to seal it into the Vault at once (a status change is sealed into a new registered version); leave it out to keep the draft open. At most one pending event exists per passport, so a second call while one is open answers 409 until it is sealed or discarded.\n\nVersioned event types are rejected here: they stand for operations that mint a version, and those have their own endpoints (void, supersede, reissue, publish).",
+        "description": "Records one event against the passport. `eventType: status_change` moves the passport to the `status` you name and is recorded as a `lifecycle_transition`; any other type is recorded as a plain event.\n\nRecalling a unit is a status change to `suspended`. The passport stays readable and keeps answering a scan, which is the point: whoever holds the unit learns of the recall when they scan its code. Voiding is a different operation, for a unit that no longer exists.\n\nAn event is a pending draft until it is sealed. Send `publish: true` to seal it into the Vault at once (a status change is sealed into a new registered version); leave it out to keep the draft open. At most one pending event exists per passport, so a second call while one is open answers 409 until it is sealed or discarded.\n\nVersioned event types are rejected here: they stand for operations that mint a version, and those have their own endpoints (void, supersede, reissue, publish).",
         "operationId": "append_dpp_event",
         "x-permission": "dpp_events",
         "security": [
@@ -7269,7 +7317,7 @@
           "DPPs"
         ],
         "summary": "Void a DPP",
-        "description": "Marks the passport as voided - the unit it stands for was destroyed, recalled, never shipped, or otherwise taken out of circulation. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. A consumer also needs write access to the passport itself (`dpp_write`).",
+        "description": "Marks the passport as voided - the unit it stands for no longer exists: it was destroyed, never shipped, or scrapped after a recall. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. This is not how a unit is recalled: a unit still out there is moved to `suspended` through a status change, so its passport goes on answering a scan with the recall. Voiding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).",
         "operationId": "void_dpp",
         "x-permission": "dpp_lifecycle",
         "x-destructive": true,
@@ -7301,6 +7349,7 @@
                 "properties": {
                   "reason": {
                     "type": "string",
+                    "description": "Why the unit is gone. `recalled` means recalled and then disposed of; a recall on its own is a status change to `suspended`, not a void.",
                     "enum": [
                       "destroyed",
                       "recalled",
@@ -7315,8 +7364,8 @@
                 }
               },
               "example": {
-                "reason": "recalled",
-                "description": "Batch L2026-09 recalled after a supplier defect"
+                "reason": "never_shipped",
+                "description": "Unit scrapped in final inspection, never left the plant"
               }
             }
           }
@@ -9592,7 +9641,7 @@
           "Mediafiles"
         ],
         "summary": "Upload a mediafile",
-        "description": "Uploads a new image file. Requires the product mediafiles feature. Any valid credential reaches it; the upload is owned by the caller.",
+        "description": "Uploads a new image file. Requires the product mediafiles feature. Any valid credential reaches it; the upload is owned by the caller.\n\nA browser and the command line send the file itself as `multipart/form-data`. A caller that can only send JSON sends the bytes as base64 instead, bare or as a `data:` URI, in a body of the shape `{\"mediafile\": {\"data\": \"iVBORw0KGgo...\", \"name\": \"Rain shell hero shot\"}}`. The kind of file is read from the bytes, not from anything the caller says about them, and the same size, readability and content rules apply either way.",
         "operationId": "create_mediafile",
         "x-permission": [],
         "security": [
@@ -9629,6 +9678,35 @@
               "example": {
                 "mediafile[file]": "(binary)",
                 "mediafile[name]": "product-photo.jpg"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "mediafile": {
+                    "type": "object",
+                    "required": [
+                      "data"
+                    ],
+                    "properties": {
+                      "data": {
+                        "type": "string",
+                        "description": "The bytes of the file as base64, bare or as a `data:` URI"
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "Optional display name"
+                      }
+                    }
+                  }
+                }
+              },
+              "example": {
+                "mediafile": {
+                  "data": "iVBORw0KGgoAAAANSUhEUgAAAAUA...",
+                  "name": "Rain shell hero shot"
+                }
               }
             }
           }
@@ -11163,7 +11241,7 @@
           "Products"
         ],
         "summary": "Update a product",
-        "description": "Updates a product you own. Admins can update any product.",
+        "description": "Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are.",
         "operationId": "update_product",
         "x-permission": "product_access",
         "security": [

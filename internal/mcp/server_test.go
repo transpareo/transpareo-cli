@@ -687,18 +687,3 @@ func TestSearchReportsEveryBody(t *testing.T) {
 		t.Fatal("the search matched no operation taking a body")
 	}
 }
-
-// TestCreateMediafileWaitsForItsBody fails when the vendored
-// document gains an upload body a tool can send. The reason the
-// operation is reachable through call_api alone is spent then,
-// and it becomes a curated tool the assistant can call.
-func TestCreateMediafileWaitsForItsBody(t *testing.T) {
-	op := registry.Default().Find("create_mediafile")
-	if op == nil {
-		t.Skip("the document no longer declares create_mediafile")
-	}
-	if op.JSONBody() != nil {
-		t.Error("create_mediafile now takes a JSON body: give it a curated " +
-			"tool and drop it from viaCallAPIOnly")
-	}
-}
