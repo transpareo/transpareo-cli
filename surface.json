@@ -290,6 +290,8 @@
       "output",
       "page",
       "per-page",
+      "product-id",
+      "status",
       "term"
     ],
     "operationId": "list_dpps"

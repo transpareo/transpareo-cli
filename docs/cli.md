@@ -1,6 +1,6 @@
 # Command reference
 
-Every command of `transpareo`, generated from API specification 1.12.0. `--help` on any command prints the same example and permission key.
+Every command of `transpareo`, generated from API specification 1.13.0. `--help` on any command prints the same example and permission key.
 
 | Option on every command | What it does |
 |---|---|
@@ -724,6 +724,8 @@ transpareo dpps list --term <term>
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 | `--page` \<n\> | Page number |
 | `--per-page` \<n\> | Records per page (default: 100, max: 500) |
+| `--product-id` \<n\> | Keep only the passports of this product |
+| `--status` \<value\> | Keep only the passports in these lifecycle statuses, comma-separated: draft, manufactured, placed_on_market, in_use, repair, refurbished, collected, recycled, end_of_life, suspended |
 | `--term` \<value\> | Search DPPs by code or description |
 
 `GET /dpps` · operation `list_dpps` · permission `dpp_read`
