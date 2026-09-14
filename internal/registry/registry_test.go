@@ -373,3 +373,32 @@ func TestOperationJSONKeepsTheSingleBodyKeys(t *testing.T) {
 		}
 	}
 }
+
+// TestGeneratedTableMatchesTheDocument catches an operation
+// table left behind by a vendored specification. The table is
+// committed, so nothing rebuilds it on the way to a test; this
+// is what says it is stale.
+func TestGeneratedTableMatchesTheDocument(t *testing.T) {
+	loaded, err := Load(spec.JSON)
+	if err != nil {
+		t.Fatal(err)
+	}
+	table := Default()
+	if table.Version != loaded.Version {
+		t.Fatalf("the table is built from %s, the document says %s: run "+
+			"go generate ./...", table.Version, loaded.Version)
+	}
+	if len(table.Operations) != len(loaded.Operations) {
+		t.Fatalf("the table holds %d operations, the document %d: run "+
+			"go generate ./...", len(table.Operations),
+			len(loaded.Operations))
+	}
+	for i := range loaded.Operations {
+		want, _ := json.Marshal(loaded.Operations[i])
+		got, _ := json.Marshal(table.Operations[i])
+		if string(want) != string(got) {
+			t.Errorf("%s differs from the document: run go generate ./...",
+				loaded.Operations[i].ID)
+		}
+	}
+}
