@@ -635,3 +635,34 @@ func TestDataTools(t *testing.T) {
 		t.Error("--tools dpps must not serve the data tools")
 	}
 }
+
+// TestSearchReportsEveryBody keeps the bodies an operation
+// accepts visible to an assistant. call_api sends JSON, so one
+// declaring only a file attachment must say so and carry the
+// prose that names what to send instead.
+func TestSearchReportsEveryBody(t *testing.T) {
+	s := New(Options{Version: "test"})
+	reg := registry.Default()
+	seen := 0
+	for _, m := range s.search("create product mediafile import") {
+		op := reg.Find(m.OperationID)
+		if len(op.RequestBodies) == 0 {
+			continue
+		}
+		seen++
+		if len(m.ContentTypes) != len(op.RequestBodies) {
+			t.Errorf("%s reports %v of %d bodies", m.OperationID,
+				m.ContentTypes, len(op.RequestBodies))
+		}
+		if op.JSONBody() != nil && m.Description != "" {
+			t.Errorf("%s takes JSON and needs no prose", m.OperationID)
+		}
+		if op.JSONBody() == nil && m.Description == "" {
+			t.Errorf("%s takes no body call_api can send and carries no prose",
+				m.OperationID)
+		}
+	}
+	if seen == 0 {
+		t.Fatal("the search matched no operation taking a body")
+	}
+}

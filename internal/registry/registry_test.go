@@ -32,7 +32,7 @@ func TestLoadFixture(t *testing.T) {
 		ids = append(ids, op.ID)
 	}
 	want := "login_session logout_session list_things create_thing " +
-		"bulk_create_things validate_thing delete_thing"
+		"bulk_create_things upload_thing_image validate_thing delete_thing"
 	if strings.Join(ids, " ") != want {
 		t.Errorf("ids = %v", ids)
 	}
@@ -95,11 +95,11 @@ func TestRequestBodyResolution(t *testing.T) {
 	reg := loadFixture(t)
 	create := reg.Find("create_thing")
 	if !create.RequestRequired ||
-		create.RequestContentType != "application/json" {
+		create.DefaultBody().ContentType != "application/json" {
 		t.Errorf("body = %+v", create)
 	}
 	var schema map[string]any
-	if err := json.Unmarshal(create.RequestBody, &schema); err != nil {
+	if err := json.Unmarshal(create.DefaultBody().Schema, &schema); err != nil {
 		t.Fatal(err)
 	}
 	allOf, _ := schema["allOf"].([]any)
@@ -117,8 +117,8 @@ func TestRequestBodyResolution(t *testing.T) {
 	if items["type"] != "string" {
 		t.Errorf("nested reference not resolved: %v", tags)
 	}
-	if string(create.RequestExample) != `{"id":"new","note":"hi"}` {
-		t.Errorf("example = %s", create.RequestExample)
+	if string(create.DefaultBody().Example) != `{"id":"new","note":"hi"}` {
+		t.Errorf("example = %s", create.DefaultBody().Example)
 	}
 	if string(create.ResponseExample) != `{"id":"t1"}` {
 		t.Errorf("schema example = %s", create.ResponseExample)
@@ -129,8 +129,9 @@ func TestRequestBodyResolution(t *testing.T) {
 
 	validate := reg.Find("validate_thing")
 	if !validate.Safe || !validate.ReadOnly() ||
-		string(validate.RequestExample) != `{"a":1}` {
-		t.Errorf("validate = %+v example %s", validate, validate.RequestExample)
+		string(validate.DefaultBody().Example) != `{"a":1}` {
+		t.Errorf("validate = %+v example %s", validate,
+			validate.DefaultBody().Example)
 	}
 
 	bulk := reg.Find("bulk_create_things")
@@ -139,7 +140,7 @@ func TestRequestBodyResolution(t *testing.T) {
 	}
 
 	login := reg.Find("login_session")
-	if login.RequestContentType != "application/x-www-form-urlencoded" ||
+	if login.DefaultBody().ContentType != "application/x-www-form-urlencoded" ||
 		!login.Public || login.UserOnly {
 		t.Errorf("login = %+v", login)
 	}
@@ -213,12 +214,16 @@ func TestLoadVendoredSpecification(t *testing.T) {
 		if op.Group == "" || op.Method == "" {
 			t.Errorf("%s has no group or method", op.ID)
 		}
-		if op.RequestBody != nil && !json.Valid(op.RequestBody) {
-			t.Errorf("%s has an invalid request schema", op.ID)
-		}
-		if strings.Contains(string(op.RequestBody),
-			`"$ref":"#/components/responses`) {
-			t.Errorf("%s keeps a response reference in its body", op.ID)
+		for _, body := range op.RequestBodies {
+			if body.Schema != nil && !json.Valid(body.Schema) {
+				t.Errorf("%s has an invalid %s schema", op.ID,
+					body.ContentType)
+			}
+			if strings.Contains(string(body.Schema),
+				`"$ref":"#/components/responses`) {
+				t.Errorf("%s keeps a response reference in its %s body",
+					op.ID, body.ContentType)
+			}
 		}
 	}
 }
@@ -278,5 +283,93 @@ func TestGeneratedRegistryMatchesTheSpecification(t *testing.T) {
 	}
 	if generated.Find("get_me") == nil {
 		t.Error("the generated registry has no index")
+	}
+}
+
+// TestOperationKeepsEveryRequestBody pins the rule that decides
+// which body a caller sends: an operation accepting a file as an
+// attachment and the same bytes inline keeps both, and each
+// caller asks for the one it can send.
+func TestOperationKeepsEveryRequestBody(t *testing.T) {
+	reg := loadFixture(t)
+	upload := reg.Find("upload_thing_image")
+	if len(upload.RequestBodies) != 2 {
+		t.Fatalf("bodies = %+v", upload.RequestBodies)
+	}
+	if upload.RequestBodies[0].ContentType != "application/json" ||
+		upload.RequestBodies[1].ContentType != "multipart/form-data" {
+		t.Errorf("bodies are not in name order: %+v", upload.RequestBodies)
+	}
+	if body := upload.AttachmentBody(); body == nil ||
+		body.ContentType != "multipart/form-data" {
+		t.Errorf("attachment body = %+v", body)
+	}
+	if body := upload.JSONBody(); body == nil ||
+		!strings.Contains(string(body.Schema), `"data"`) {
+		t.Errorf("json body = %+v", body)
+	}
+	if body := upload.DefaultBody(); body == nil ||
+		body.ContentType != "application/json" {
+		t.Errorf("a caller stating no preference gets %+v", body)
+	}
+	if string(upload.JSONBody().Example) !=
+		`{"image":{"data":"iVBORw0KGgo=","name":"hero"}}` {
+		t.Errorf("each body keeps its own example: %s",
+			upload.JSONBody().Example)
+	}
+
+	// A body of bytes alone is not an attachment body.
+	create := reg.Find("create_thing")
+	if create.AttachmentBody() != nil {
+		t.Errorf("create_thing carries no file: %+v", create.AttachmentBody())
+	}
+	if body := reg.Find("login_session").DefaultBody(); body == nil ||
+		body.ContentType != "application/x-www-form-urlencoded" {
+		t.Errorf("one body without JSON is the default: %+v", body)
+	}
+	if reg.Find("delete_thing").DefaultBody() != nil {
+		t.Error("an operation taking no body has no default body")
+	}
+}
+
+// TestOperationJSONKeepsTheSingleBodyKeys pins the shape of the
+// operation table `transpareo commands --json` prints: the
+// default body under the keys a reader already knows, and every
+// body beside them.
+func TestOperationJSONKeepsTheSingleBodyKeys(t *testing.T) {
+	reg := loadFixture(t)
+	data, err := json.Marshal(reg.Find("upload_thing_image"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var printed struct {
+		RequestContentType string          `json:"requestContentType"`
+		RequestBody        json.RawMessage `json:"requestBody"`
+		RequestExample     json.RawMessage `json:"requestExample"`
+		RequestBodies      []RequestBody   `json:"requestBodies"`
+	}
+	if err := json.Unmarshal(data, &printed); err != nil {
+		t.Fatal(err)
+	}
+	if printed.RequestContentType != "application/json" {
+		t.Errorf("content type = %q", printed.RequestContentType)
+	}
+	if !strings.Contains(string(printed.RequestBody), `"data"`) {
+		t.Errorf("body = %s", printed.RequestBody)
+	}
+	if len(printed.RequestExample) == 0 {
+		t.Error("the example of the default body must stay printed")
+	}
+	if len(printed.RequestBodies) != 2 {
+		t.Errorf("bodies = %+v", printed.RequestBodies)
+	}
+
+	// An operation taking no body prints none of the keys.
+	data, _ = json.Marshal(reg.Find("delete_thing"))
+	for _, key := range []string{"requestBody", "requestContentType",
+		"requestExample", "requestBodies"} {
+		if strings.Contains(string(data), `"`+key+`"`) {
+			t.Errorf("delete_thing prints %s", key)
+		}
 	}
 }

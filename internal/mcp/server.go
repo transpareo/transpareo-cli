@@ -215,7 +215,7 @@ func (s *Server) buildRequest(t Tool, op *registry.Operation,
 			}
 		}
 	case kindWrite:
-		if op.RequestContentType == "" {
+		if op.JSONBody() == nil {
 			break
 		}
 		body := map[string]any{}
@@ -523,6 +523,13 @@ type Match struct {
 	QueryParams []registry.Param `json:"queryParams,omitempty"`
 	Example     json.RawMessage  `json:"example,omitempty"`
 	Tool        string           `json:"tool,omitempty"`
+
+	// ContentTypes names every body the operation accepts, and
+	// Description carries the prose when none of them is JSON:
+	// call_api sends JSON, so such an operation cannot be
+	// satisfied from its example alone.
+	ContentTypes []string `json:"contentTypes,omitempty"`
+	Description  string   `json:"description,omitempty"`
 }
 
 // search scores every callable operation by the query words.
@@ -559,8 +566,10 @@ func (s *Server) search(query string) []Match {
 			OperationID: op.ID, Method: op.Method, Path: op.Path,
 			Summary: op.Summary, Permission: op.Permission,
 			Destructive: op.Destructive, PathParams: op.PathParams,
-			QueryParams: op.QueryParams, Example: op.RequestExample,
-			Tool: toolFor(op.ID),
+			QueryParams: op.QueryParams, Example: bodyExample(op),
+			Tool:         toolFor(op.ID),
+			ContentTypes: op.ContentTypes(),
+			Description:  descriptionWhenNoJSONBody(op),
 		}})
 	}
 	sort.SliceStable(results, func(i, j int) bool {
@@ -636,11 +645,14 @@ func (s *Server) callAPI(ctx context.Context,
 	}
 	if body, ok := args["body"]; ok && body != nil {
 		req.Body = body
-		if op.RequestContentType != "" &&
-			op.RequestContentType != "multipart/form-data" {
-			req.ContentType = op.RequestContentType
+		contentType := ""
+		if declared := op.DefaultBody(); declared != nil {
+			contentType = declared.ContentType
 		}
-		if op.NDJSON || op.RequestContentType == "application/x-ndjson" {
+		if contentType != "" && contentType != "multipart/form-data" {
+			req.ContentType = contentType
+		}
+		if op.NDJSON || contentType == "application/x-ndjson" {
 			if rows, ok := body.([]any); ok {
 				var lines []string
 				for _, row := range rows {

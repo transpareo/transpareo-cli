@@ -26,8 +26,13 @@ type Schema struct {
 	QueryParams    []registry.Param `json:"queryParams,omitempty"`
 	RequestBody    json.RawMessage  `json:"requestBody,omitempty"`
 	RequestExample json.RawMessage  `json:"requestExample,omitempty"`
-	ResponseSchema json.RawMessage  `json:"responseSchema,omitempty"`
-	ResponseStatus string           `json:"responseStatus,omitempty"`
+
+	// RequestBodies names every media type when the operation
+	// takes more than one, so no body stays hidden behind the
+	// default.
+	RequestBodies  []string        `json:"requestBodies,omitempty"`
+	ResponseSchema json.RawMessage `json:"responseSchema,omitempty"`
+	ResponseStatus string          `json:"responseStatus,omitempty"`
 }
 
 // completeOperationIDs offers the operation ids for shell
@@ -72,6 +77,16 @@ a payload starts here. Operation ids come from
 			}
 			printer := a.Printer()
 			printer.JSON = true
+			var schema, example json.RawMessage
+			if body := op.DefaultBody(); body != nil {
+				schema, example = body.Schema, body.Example
+			}
+
+			// A single body is already the one printed.
+			var bodies []string
+			if len(op.RequestBodies) > 1 {
+				bodies = op.ContentTypes()
+			}
 			return printer.Print(Schema{
 				OperationID:    op.ID,
 				Method:         op.Method,
@@ -84,8 +99,9 @@ a payload starts here. Operation ids come from
 				UserOnly:       op.UserOnly,
 				PathParams:     op.PathParams,
 				QueryParams:    op.QueryParams,
-				RequestBody:    op.RequestBody,
-				RequestExample: op.RequestExample,
+				RequestBody:    schema,
+				RequestExample: example,
+				RequestBodies:  bodies,
 				ResponseSchema: op.ResponseSchema,
 				ResponseStatus: op.ResponseStatus,
 			})

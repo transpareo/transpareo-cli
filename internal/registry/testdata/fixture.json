@@ -54,6 +54,23 @@
         }
       }
     },
+    "/things/images": {
+      "post": {
+        "tags": ["Things"], "operationId": "upload_thing_image",
+        "x-permission": "thing_write",
+        "requestBody": {"required": true, "content": {
+          "multipart/form-data": {"schema": {"type": "object", "properties": {
+            "image[file]": {"type": "string", "format": "binary",
+              "description": "the image to upload"},
+            "image[name]": {"type": "string"}}}},
+          "application/json": {"schema": {"type": "object", "properties": {
+            "image": {"type": "object", "required": ["data"], "properties": {
+              "data": {"type": "string"}, "name": {"type": "string"}}}}},
+            "example": {"image": {"data": "iVBORw0KGgo=", "name": "hero"}}}}},
+        "responses": {"201": {"description": "created", "content": {
+          "application/json": {"schema": {"type": "object"}}}}}
+      }
+    },
     "/things/{id}": {
       "delete": {
         "tags": ["Things"], "operationId": "delete_thing",

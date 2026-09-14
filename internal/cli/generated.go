@@ -75,6 +75,7 @@ func childCommand(parent *cobra.Command, word string) *cobra.Command {
 // operationCall holds the option values of one invocation.
 type operationCall struct {
 	op      *registry.Operation
+	body    *registry.RequestBody
 	file    string
 	sets    []string
 	wait    bool
@@ -86,7 +87,8 @@ type operationCall struct {
 
 func (a *App) operationCommand(op *registry.Operation,
 	words []string) *cobra.Command {
-	call := &operationCall{op: op, query: map[string]pflag.Value{},
+	call := &operationCall{op: op, body: commandBody(op),
+		query:   map[string]pflag.Value{},
 		headers: map[string]*string{}, parts: map[string]*string{}}
 	use := words[len(words)-1]
 	for _, p := range op.PathParams {
@@ -111,16 +113,17 @@ func (a *App) operationCommand(op *registry.Operation,
 		call.headers[p.Name] = f.String(flagName(p.Name), "",
 			usage(p.Description))
 	}
-	switch {
-	case op.RequestContentType == "multipart/form-data":
-		for _, field := range multipartFields(op) {
+	switch body := call.body; {
+	case body == nil:
+	case body.ContentType == "multipart/form-data":
+		for _, field := range multipartFields(body) {
 			call.parts[field.name] = f.String(field.flag, "",
 				usage(field.usage))
 		}
-	case op.RequestContentType != "":
+	default:
 		f.StringVar(&call.file, "file", "",
 			"request body from a file, or - for standard input")
-		if op.RequestContentType == "application/json" {
+		if body.ContentType == "application/json" {
 			f.StringArrayVar(&call.sets, "set", nil,
 				"body field as key=value, nested with dots (repeatable)")
 		}
@@ -184,17 +187,19 @@ func exampleFor(op *registry.Operation, words []string) string {
 	for _, p := range op.PathParams {
 		parts = append(parts, "<"+p.Name+">")
 	}
+	body := commandBody(op)
 	switch {
-	case op.RequestContentType == "multipart/form-data":
-		for _, field := range multipartFields(op) {
+	case body == nil:
+	case body.ContentType == "multipart/form-data":
+		for _, field := range multipartFields(body) {
 			if field.binary {
 				parts = append(parts, "--"+field.flag, "<path>")
 			}
 		}
-	case op.RequestContentType != "":
+	default:
 		parts = append(parts, "--file", "body.json")
 	}
-	if len(op.QueryParams) > 0 && op.RequestContentType == "" {
+	if len(op.QueryParams) > 0 && body == nil {
 		p := op.QueryParams[0]
 		parts = append(parts, "--"+flagName(p.Name), "<"+p.Name+">")
 	}
@@ -209,9 +214,20 @@ type multipartField struct {
 	binary            bool
 }
 
+// commandBody is the body the command line sends: the one
+// carrying a file when the operation declares it, because a
+// command line has a path to hand over, else the default. An
+// assistant picks differently; it has nothing but JSON.
+func commandBody(op *registry.Operation) *registry.RequestBody {
+	if body := op.AttachmentBody(); body != nil {
+		return body
+	}
+	return op.DefaultBody()
+}
+
 // multipartFields lists the form fields of a multipart body as
 // options; a binary field takes a file path.
-func multipartFields(op *registry.Operation) []multipartField {
+func multipartFields(body *registry.RequestBody) []multipartField {
 	var schema struct {
 		Properties map[string]struct {
 			Format      string `json:"format"`
@@ -219,7 +235,7 @@ func multipartFields(op *registry.Operation) []multipartField {
 			Type        string `json:"type"`
 		} `json:"properties"`
 	}
-	json.Unmarshal(op.RequestBody, &schema)
+	json.Unmarshal(body.Schema, &schema)
 	names := make([]string, 0, len(schema.Properties))
 	for name := range schema.Properties {
 		names = append(names, name)
@@ -313,10 +329,10 @@ func fillPath(op *registry.Operation, args []string) string {
 // options, as the operation takes it.
 func (a *App) attachBody(call *operationCall, req *transpareo.Request) error {
 	op := call.op
-	switch {
-	case op.RequestContentType == "":
+	switch body := call.body; {
+	case body == nil:
 		return nil
-	case op.RequestContentType == "multipart/form-data":
+	case body.ContentType == "multipart/form-data":
 		return a.attachMultipart(call, req)
 	case call.file != "" && len(call.sets) > 0:
 		return output.Exit(output.ExitUsage,
@@ -327,7 +343,7 @@ func (a *App) attachBody(call *operationCall, req *transpareo.Request) error {
 			return err
 		}
 		req.Body = data
-		req.ContentType = op.RequestContentType
+		req.ContentType = body.ContentType
 		return nil
 	case len(call.sets) > 0:
 		body, err := bodyFromSets(call.sets)
@@ -379,7 +395,7 @@ func (a *App) attachMultipart(call *operationCall,
 	req *transpareo.Request) error {
 	var buf bytes.Buffer
 	writer := multipart.NewWriter(&buf)
-	for _, field := range multipartFields(call.op) {
+	for _, field := range multipartFields(call.body) {
 		value := *call.parts[field.name]
 		if value == "" {
 			continue

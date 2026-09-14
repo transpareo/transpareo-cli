@@ -35,12 +35,12 @@ type Operation struct {
 	QueryParams  []Param `json:"queryParams,omitempty"`
 	HeaderParams []Param `json:"headerParams,omitempty"`
 
-	// RequestBody is the JSON Schema of the body with every
-	// reference resolved; RequestContentType is its media type.
-	RequestBody        json.RawMessage `json:"requestBody,omitempty"`
-	RequestContentType string          `json:"requestContentType,omitempty"`
-	RequestRequired    bool            `json:"requestRequired,omitempty"`
-	RequestExample     json.RawMessage `json:"requestExample,omitempty"`
+	// RequestBodies holds every media type the operation accepts,
+	// in name order. Which one a caller sends is the caller's to
+	// decide: an assistant has nothing but JSON, the command line
+	// has a path to read.
+	RequestBodies   []RequestBody `json:"requestBodies,omitempty"`
+	RequestRequired bool          `json:"requestRequired,omitempty"`
 
 	// Response describes the first success response.
 	ResponseStatus      string          `json:"responseStatus,omitempty"`
@@ -72,6 +72,107 @@ type Operation struct {
 // operation: a GET, or a POST marked safe.
 func (o *Operation) ReadOnly() bool {
 	return o.Method == "GET" || o.Safe
+}
+
+// RequestBody is one media type an operation accepts: the JSON
+// Schema of the body with every reference resolved, and the
+// example the document gives for it.
+type RequestBody struct {
+	ContentType string          `json:"contentType"`
+	Schema      json.RawMessage `json:"schema,omitempty"`
+	Example     json.RawMessage `json:"example,omitempty"`
+}
+
+// carriesFile reports whether the body declares a binary field,
+// which marks bytes sent as an attachment rather than inline.
+func (b *RequestBody) carriesFile() bool {
+	var schema struct {
+		Properties map[string]struct {
+			Format string `json:"format"`
+		} `json:"properties"`
+	}
+	json.Unmarshal(b.Schema, &schema)
+	for _, prop := range schema.Properties {
+		if prop.Format == "binary" {
+			return true
+		}
+	}
+	return false
+}
+
+// Body returns the body of the media type, or nil.
+func (o *Operation) Body(contentType string) *RequestBody {
+	for i := range o.RequestBodies {
+		if o.RequestBodies[i].ContentType == contentType {
+			return &o.RequestBodies[i]
+		}
+	}
+	return nil
+}
+
+// JSONBody returns the JSON body, or nil. A caller that can send
+// nothing else has no other option than this one.
+func (o *Operation) JSONBody() *RequestBody {
+	return o.Body("application/json")
+}
+
+// AttachmentBody returns the body that carries a file, the one
+// declaring a binary field, or nil. An operation can declare it
+// beside a JSON body taking the same bytes inline, and then a
+// caller holding a path wants this one.
+func (o *Operation) AttachmentBody() *RequestBody {
+	for i := range o.RequestBodies {
+		if o.RequestBodies[i].carriesFile() {
+			return &o.RequestBodies[i]
+		}
+	}
+	return nil
+}
+
+// ContentTypes names every media type the operation accepts, in
+// the order the bodies are kept.
+func (o *Operation) ContentTypes() []string {
+	if len(o.RequestBodies) == 0 {
+		return nil
+	}
+	types := make([]string, 0, len(o.RequestBodies))
+	for _, body := range o.RequestBodies {
+		types = append(types, body.ContentType)
+	}
+	return types
+}
+
+// DefaultBody returns the body for a caller that states no
+// preference: the JSON one when the operation declares it, else
+// the first in name order. Nil when it takes no body.
+func (o *Operation) DefaultBody() *RequestBody {
+	if body := o.JSONBody(); body != nil {
+		return body
+	}
+	if len(o.RequestBodies) == 0 {
+		return nil
+	}
+	return &o.RequestBodies[0]
+}
+
+// MarshalJSON prints the default body under the single-body keys
+// beside the bodies themselves. The operation table is a
+// published interface: `transpareo commands --json` prints it,
+// and a reader of either shape keeps working.
+func (o Operation) MarshalJSON() ([]byte, error) {
+	type operation Operation
+	out := struct {
+		operation
+		RequestBody        json.RawMessage `json:"requestBody,omitempty"`
+		RequestContentType string          `json:"requestContentType,omitempty"`
+		RequestExample     json.RawMessage `json:"requestExample,omitempty"`
+	}{operation: operation(o)}
+	if body := o.DefaultBody(); body != nil {
+		out.RequestBody = body.Schema
+		out.RequestContentType = body.ContentType
+		out.RequestExample = body.Example
+	}
+	return json.Marshal(out)
 }
 
 // Registry is the loaded operation table.
@@ -252,19 +353,28 @@ func (r *resolver) requestBody(op *Operation, v any) error {
 	}
 	body, _ := resolved.(map[string]any)
 	op.RequestRequired = body["required"] == true
-	contentType, media := firstMedia(body["content"])
-	if media == nil {
-		return nil
+	content, _ := body["content"].(map[string]any)
+	types := make([]string, 0, len(content))
+	for contentType := range content {
+		types = append(types, contentType)
 	}
-	op.RequestContentType = contentType
-	schema, err := r.resolve(media["schema"], nil)
-	if err != nil {
-		return err
+	sort.Strings(types)
+	for _, contentType := range types {
+		media, _ := content[contentType].(map[string]any)
+		if media == nil {
+			continue
+		}
+		schema, err := r.resolve(media["schema"], nil)
+		if err != nil {
+			return err
+		}
+		entry := RequestBody{ContentType: contentType,
+			Example: example(media, schema)}
+		if schema != nil {
+			entry.Schema = marshal(schema)
+		}
+		op.RequestBodies = append(op.RequestBodies, entry)
 	}
-	if schema != nil {
-		op.RequestBody = marshal(schema)
-	}
-	op.RequestExample = example(media, schema)
 	return nil
 }
 
@@ -399,7 +509,9 @@ func (r *resolver) lookup(ref string) (any, error) {
 }
 
 // firstMedia returns the JSON media type of a content map when
-// there is one, else the first media type in sorted order.
+// there is one, else the first media type in sorted order. It
+// reads a response, where the server picks the media type; a
+// request keeps every one of them, for the caller to pick.
 func firstMedia(v any) (string, map[string]any) {
 	content, _ := v.(map[string]any)
 	if len(content) == 0 {

@@ -75,9 +75,11 @@ func TestContractEveryGeneratedCommandAgainstTheExamples(t *testing.T) {
 				stderr)
 			continue
 		}
-		if op.RequestContentType == "application/json" && len(op.RequestExample) > 0 {
+		body := commandBody(op)
+		if body != nil && body.ContentType == "application/json" &&
+			len(body.Example) > 0 {
 			var want, got any
-			json.Unmarshal(op.RequestExample, &want)
+			json.Unmarshal(body.Example, &want)
 			if err := json.Unmarshal(received, &got); err != nil {
 				t.Errorf("%s: the server received %q, not the example body",
 					op.ID, received)
@@ -117,19 +119,21 @@ func contractArgs(t *testing.T, op *registry.Operation, dir,
 	for range op.PathParams {
 		args = append(args, "x")
 	}
+	sent := commandBody(op)
 	switch {
-	case op.RequestContentType == "multipart/form-data":
-		for _, field := range multipartFields(op) {
+	case sent == nil:
+	case sent.ContentType == "multipart/form-data":
+		for _, field := range multipartFields(sent) {
 			if field.binary {
 				args = append(args, "--"+field.flag, upload)
 			}
 		}
-	case op.RequestContentType != "":
-		body := op.RequestExample
+	default:
+		body := sent.Example
 		if len(body) == 0 {
 			body = []byte("{}")
 		}
-		if op.RequestContentType == "application/x-ndjson" {
+		if sent.ContentType == "application/x-ndjson" {
 			var compact bytes.Buffer
 			json.Compact(&compact, body)
 			body = append(compact.Bytes(), '\n')

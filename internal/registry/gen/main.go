@@ -69,10 +69,8 @@ func writeOperation(b *bytes.Buffer, op registry.Operation) {
 	writeParams(b, "PathParams", op.PathParams)
 	writeParams(b, "QueryParams", op.QueryParams)
 	writeParams(b, "HeaderParams", op.HeaderParams)
-	raw("RequestBody", op.RequestBody)
-	str("RequestContentType", op.RequestContentType)
+	writeBodies(b, op.RequestBodies)
 	boolean("RequestRequired", op.RequestRequired)
-	raw("RequestExample", op.RequestExample)
 	str("ResponseStatus", op.ResponseStatus)
 	str("ResponseContentType", op.ResponseContentType)
 	raw("ResponseSchema", op.ResponseSchema)
@@ -86,6 +84,26 @@ func writeOperation(b *bytes.Buffer, op registry.Operation) {
 	boolean("Public", op.Public)
 	boolean("UserOnly", op.UserOnly)
 	fmt.Fprintf(b, "\t},\n")
+}
+
+func writeBodies(b *bytes.Buffer, bodies []registry.RequestBody) {
+	if len(bodies) == 0 {
+		return
+	}
+	fmt.Fprintf(b, "\t\tRequestBodies: []RequestBody{\n")
+	for _, body := range bodies {
+		fmt.Fprintf(b, "\t\t\t{ContentType: %s", strconv.Quote(body.ContentType))
+		if len(body.Schema) > 0 {
+			fmt.Fprintf(b, ", Schema: json.RawMessage(%s)",
+				rawLiteral(body.Schema))
+		}
+		if len(body.Example) > 0 {
+			fmt.Fprintf(b, ", Example: json.RawMessage(%s)",
+				rawLiteral(body.Example))
+		}
+		fmt.Fprintf(b, "},\n")
+	}
+	fmt.Fprintf(b, "\t\t},\n")
 }
 
 func writeParams(b *bytes.Buffer, name string, params []registry.Param) {

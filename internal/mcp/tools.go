@@ -317,7 +317,7 @@ func (t Tool) example(op *registry.Operation, schema map[string]any) string {
 		args["rows"] = []any{json.RawMessage(`{"modelIdentifier": "FC-50ML"}`)}
 	case kindWrite:
 		var body map[string]any
-		json.Unmarshal(op.RequestExample, &body)
+		json.Unmarshal(bodyExample(op), &body)
 		for key, value := range body {
 			args[key] = value
 		}
@@ -366,7 +366,9 @@ func (t Tool) inputSchema(op *registry.Operation) map[string]any {
 			Properties map[string]any `json:"properties"`
 			Required   []string       `json:"required"`
 		}
-		json.Unmarshal(op.RequestBody, &body)
+		if declared := op.JSONBody(); declared != nil {
+			json.Unmarshal(declared.Schema, &body)
+		}
 		for name, schema := range body.Properties {
 			props[name] = schema
 		}
@@ -396,6 +398,17 @@ func (t Tool) inputSchema(op *registry.Operation) map[string]any {
 		schema["required"] = required
 	}
 	return schema
+}
+
+// bodyExample is the example an assistant is shown: the one of
+// the body it would send, which is the JSON body whenever the
+// operation declares one.
+func bodyExample(op *registry.Operation) json.RawMessage {
+	body := op.DefaultBody()
+	if body == nil {
+		return nil
+	}
+	return body.Example
 }
 
 func paramSchema(p registry.Param) map[string]any {
@@ -451,4 +464,14 @@ func orDefault(s, fallback string) string {
 		return fallback
 	}
 	return s
+}
+
+// descriptionWhenNoJSONBody carries the operation's prose for a
+// body call_api cannot send as it stands. The prose is then the
+// only place saying what to send instead.
+func descriptionWhenNoJSONBody(op *registry.Operation) string {
+	if len(op.RequestBodies) == 0 || op.JSONBody() != nil {
+		return ""
+	}
+	return op.Description
 }

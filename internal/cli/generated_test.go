@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/transpareo/transpareo-cli/internal/registry"
 )
 
 // generatedHarness extends the fake host with the endpoints the
@@ -337,5 +339,46 @@ func TestTasksWait(t *testing.T) {
 	_, _, code = h.run("tasks", "wait", "https://other.example.com/api/x")
 	if code != 1 {
 		t.Errorf("another host must be refused with 1, got %d", code)
+	}
+}
+
+// TestCommandBindsTheAttachmentBody keeps the options that take
+// a path on an operation accepting a file as an attachment and
+// the same bytes inline. A document adding a JSON body beside
+// the multipart one must not cost the command its --file and
+// --name, nor turn --file into the request body itself.
+func TestCommandBindsTheAttachmentBody(t *testing.T) {
+	op := &registry.Operation{ID: "upload_thing_image", Group: "things",
+		Tag: "Things", Method: "POST", Path: "/things/images",
+		RequestBodies: []registry.RequestBody{
+			{ContentType: "application/json", Schema: json.RawMessage(
+				`{"type":"object","properties":{"image":{"type":"object"}}}`)},
+			{ContentType: "multipart/form-data", Schema: json.RawMessage(
+				`{"type":"object","properties":{` +
+					`"image[file]":{"type":"string","format":"binary"},` +
+					`"image[name]":{"type":"string"}}}`)},
+		}}
+	body := commandBody(op)
+	if body == nil || body.ContentType != "multipart/form-data" {
+		t.Fatalf("command body = %+v", body)
+	}
+	app := &App{Getenv: func(string) string { return "" }}
+	cmd := app.operationCommand(op, CommandWords(op))
+	for _, name := range []string{"file", "name"} {
+		if cmd.Flags().Lookup(name) == nil {
+			t.Errorf("the command lost the option --%s", name)
+		}
+	}
+	if cmd.Flags().Lookup("set") != nil {
+		t.Error("--set belongs to a JSON body, not to an attachment one")
+	}
+	if !strings.Contains(cmd.Example, "--file <path>") {
+		t.Errorf("the example must hand over a path: %q", cmd.Example)
+	}
+
+	// The assistant side of the same operation reads the other body.
+	if json := op.JSONBody(); json == nil ||
+		!strings.Contains(string(json.Schema), `"image"`) {
+		t.Errorf("json body = %+v", json)
 	}
 }
