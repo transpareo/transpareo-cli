@@ -279,6 +279,48 @@ func (e DppPassportStatus) Valid() bool {
 	}
 }
 
+// Defines values for DppStatus.
+const (
+	DppStatusCollected      DppStatus = "collected"
+	DppStatusDraft          DppStatus = "draft"
+	DppStatusEndOfLife      DppStatus = "end_of_life"
+	DppStatusInUse          DppStatus = "in_use"
+	DppStatusManufactured   DppStatus = "manufactured"
+	DppStatusPlacedOnMarket DppStatus = "placed_on_market"
+	DppStatusRecycled       DppStatus = "recycled"
+	DppStatusRefurbished    DppStatus = "refurbished"
+	DppStatusRepair         DppStatus = "repair"
+	DppStatusSuspended      DppStatus = "suspended"
+)
+
+// Valid indicates whether the value is a known member of the DppStatus enum.
+func (e DppStatus) Valid() bool {
+	switch e {
+	case DppStatusCollected:
+		return true
+	case DppStatusDraft:
+		return true
+	case DppStatusEndOfLife:
+		return true
+	case DppStatusInUse:
+		return true
+	case DppStatusManufactured:
+		return true
+	case DppStatusPlacedOnMarket:
+		return true
+	case DppStatusRecycled:
+		return true
+	case DppStatusRefurbished:
+		return true
+	case DppStatusRepair:
+		return true
+	case DppStatusSuspended:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for DppBulkRowInputGranularity.
 const (
 	DppBulkRowInputGranularityBatch DppBulkRowInputGranularity = "batch"
@@ -1627,7 +1669,7 @@ type Component struct {
 
 // ComponentDetail Full component details (returned by show action)
 //
-// Example: {"citations":[],"id":13,"mediafiles":[],"name":"Shea Butter","permalink":"/components/shea-butter","properties":{"Origin":{"rated":true,"values":[{"rating":"A","value":"West Africa"}]}},"published":true,"publishedAt":"2026-01-10T08:00:00Z","rating":"A","type":"Component"}
+// Example: {"citations":[],"id":13,"mediafiles":[],"name":"Shea Butter","permalink":"/components/shea-butter","properties":{"Origin":{"id":14,"rated":true,"values":[{"id":811,"rating":"A","value":"West Africa"}]}},"published":true,"publishedAt":"2026-01-10T08:00:00Z","rating":"A","type":"Component"}
 type ComponentDetail struct {
 	// Citations Scientific citations. Only present when citations are enabled in tenant config and the user has access (citations may be protected behind login).
 	Citations *[]Citation `json:"citations,omitempty"`
@@ -1645,6 +1687,9 @@ type ComponentDetail struct {
 
 	// Properties Component properties grouped by type name. Only present in show action. Protected types return {"protected": true} instead of values when user is not unlocked.
 	Properties *map[string]struct {
+		// Id The property type's id, which a properties payload is keyed by
+		Id *int `json:"id,omitempty"`
+
 		// Protected Whether this property type is protected (requires login)
 		Protected *bool `json:"protected,omitempty"`
 
@@ -1666,7 +1711,7 @@ type ComponentDetail struct {
 
 // ComponentInput A component write. `component` carries the attributes; `properties` and `templateIds` ride beside it in the shape the application manager's form sends and are applied after the component is saved.
 //
-// Example: {"component":{"name":"Shea Butter"},"properties":{"new":{"12":[{"value":"Emollient"}]}},"templateIds":["507"]}
+// Example: {"component":{"name":"Shea Butter"},"properties":{"existing":{"14":{"811":{"value":"ES"}}},"new":{"12":[{"value":"Emollient"}]}},"templateIds":["507"]}
 type ComponentInput struct {
 	Component *struct {
 		// Name Unique across the workspace
@@ -1675,7 +1720,7 @@ type ComponentInput struct {
 
 	// Properties Property changes keyed by property type id. Values are matched against existing properties of that type, so two components naming the same value share one property.
 	Properties *struct {
-		// Existing Properties to change, per property type id, keyed by property id. An empty value leaves the property as it is.
+		// Existing Properties to change, per property type id, keyed by property id. An empty value leaves the property as it is. Both ids come from `GET /components/{id}`, which names the type id on each group and an id on each value. This half is keyed by ids where `new` carries a plain list, so the two are not interchangeable; `new` adds a value beside the ones already there rather than replacing one.
 		Existing *map[string]map[string]struct {
 			Points *int    `json:"points,omitempty"`
 			Value  *string `json:"value,omitempty"`
@@ -1890,6 +1935,9 @@ type Dpp struct {
 	// SerialIdentifier Only present when set. Carried at item granularity.
 	SerialIdentifier *string `json:"serialIdentifier,omitempty"`
 
+	// Status Where the passport stands in its life. Always present.
+	Status *DppStatus `json:"status,omitempty"`
+
 	// SupersededBy The code of the passport that replaced this one. Only present on a superseded passport.
 	SupersededBy *string `json:"supersededBy,omitempty"`
 
@@ -1921,6 +1969,9 @@ type DppGranularity string
 
 // DppPassportStatus The EN 18223 status of a carrier taken out of circulation. Only present once the passport is voided or superseded.
 type DppPassportStatus string
+
+// DppStatus Where the passport stands in its life. Always present.
+type DppStatus string
 
 // DppBulkRowInput One row of a bulk passport body. Read the same way by the bulk create and the bulk dry run, so a batch that validates is the batch that will be created.
 type DppBulkRowInput struct {
@@ -1991,7 +2042,7 @@ type DppEventInput struct {
 	Data        *map[string]interface{} `json:"data,omitempty"`
 	Description *string                 `json:"description,omitempty"`
 
-	// EventType `status_change` drives the transition and is recorded as an event of type `lifecycle_transition`; every other value is recorded verbatim. A versioned type answers 422 `EVENT_TYPE_NOT_ALLOWED` - those ride the void / supersede / reissue / publish operations instead.
+	// EventType `status_change` drives the transition and is recorded as an event of type `lifecycle_transition`; every other value is recorded verbatim. `recall` records an authority-only note and moves the passport nowhere - recalling a unit is a `status_change` to `suspended`. A versioned type answers 422 `EVENT_TYPE_NOT_ALLOWED` - those ride the void / supersede / reissue / publish operations instead.
 	EventType DppEventInputEventType `json:"eventType"`
 
 	// Gln GS1 Global Location Number of the place the event happened. Falls back to the calling consumer's GLN, then to the workspace GLN.
@@ -2000,17 +2051,17 @@ type DppEventInput struct {
 	// Publish Seals the event into the Vault (and, for a status change, into a new registered version) instead of leaving it as a pending draft. Honours the publish-debounce window.
 	Publish *bool `json:"publish,omitempty"`
 
-	// Status The status to move to. Required on `status_change`, ignored otherwise.
+	// Status The status to move to. Required on `status_change`, ignored otherwise. `suspended` is the recall and regulatory-hold status: a unit that is still in the field and must stop being used is moved there, and its passport stays readable so whoever scans the code learns of the recall. Voiding is for a unit that no longer exists.
 	Status *DppEventInputStatus `json:"status,omitempty"`
 }
 
-// DppEventInputEventType `status_change` drives the transition and is recorded as an event of type `lifecycle_transition`; every other value is recorded verbatim. A versioned type answers 422 `EVENT_TYPE_NOT_ALLOWED` - those ride the void / supersede / reissue / publish operations instead.
+// DppEventInputEventType `status_change` drives the transition and is recorded as an event of type `lifecycle_transition`; every other value is recorded verbatim. `recall` records an authority-only note and moves the passport nowhere - recalling a unit is a `status_change` to `suspended`. A versioned type answers 422 `EVENT_TYPE_NOT_ALLOWED` - those ride the void / supersede / reissue / publish operations instead.
 type DppEventInputEventType string
 
-// DppEventInputStatus The status to move to. Required on `status_change`, ignored otherwise.
+// DppEventInputStatus The status to move to. Required on `status_change`, ignored otherwise. `suspended` is the recall and regulatory-hold status: a unit that is still in the field and must stop being used is moved there, and its passport stays readable so whoever scans the code learns of the recall. Voiding is for a unit that no longer exists.
 type DppEventInputStatus string
 
-// DppInput defines model for DppInput.
+// DppInput The passport to write. It always stands for a product, which `unlockableId` names.
 type DppInput struct {
 	// BatchIdentifier Required at batch and item granularity. The lot is created from the product as it stands the first time its identifier is used, and reused by every later passport of the same lot.
 	BatchIdentifier *string `json:"batchIdentifier,omitempty"`
@@ -2032,10 +2083,10 @@ type DppInput struct {
 	// SerialIdentifier Required at item granularity
 	SerialIdentifier *string `json:"serialIdentifier,omitempty"`
 
-	// UnlockableId Product ID to link
+	// UnlockableId The id of the product this passport is for, as `list_products` and `get_product` answer it
 	UnlockableId int `json:"unlockableId"`
 
-	// UnlockableType Type of linked record (defaults to Product)
+	// UnlockableType What the passport stands for. Only `Product` is issued one, which is the default.
 	UnlockableType *string `json:"unlockableType,omitempty"`
 }
 
@@ -3101,16 +3152,16 @@ type ProductDetail struct {
 	Weight *float32 `json:"weight,omitempty"`
 }
 
-// ProductInput defines model for ProductInput.
+// ProductInput The fields of a product write. A create needs `name` and `componentsInput`, which the create operation says; an update carries only what it means to change, because every field it names is written.
 type ProductInput struct {
 	CategoryIds *[]string `json:"categoryIds,omitempty"`
 
-	// ComponentsInput The product's components in order, as a list of names or a list of objects naming an existing component by componentId or a new one by name
-	ComponentsInput ProductInput_ComponentsInput `json:"componentsInput"`
-	Gtin            *string                      `json:"gtin,omitempty"`
+	// ComponentsInput The product's components in order, as a list of names or a list of objects naming an existing component by componentId or a new one by name. Naming it replaces the whole list, so on an update send the components the product is to have from then on, not the ones being added; leaving it out keeps the list as it is.
+	ComponentsInput *ProductInput_ComponentsInput `json:"componentsInput,omitempty"`
+	Gtin            *string                       `json:"gtin,omitempty"`
 
 	// Name Example: New Product
-	Name string `json:"name"`
+	Name *string `json:"name,omitempty"`
 
 	// PropertiesInput Property values keyed by property type id, as GET /products/new lists them. An entry is a bare value, an object with value plus an optional percentage and compositionRows, or a list of either for a type that takes several values.
 	//
@@ -3127,7 +3178,7 @@ type ProductInputComponentsInput1 = []struct {
 	Name        *string `json:"name,omitempty"`
 }
 
-// ProductInput_ComponentsInput The product's components in order, as a list of names or a list of objects naming an existing component by componentId or a new one by name
+// ProductInput_ComponentsInput The product's components in order, as a list of names or a list of objects naming an existing component by componentId or a new one by name. Naming it replaces the whole list, so on an update send the components the product is to have from then on, not the ones being added; leaving it out keeps the list as it is.
 type ProductInput_ComponentsInput struct {
 	union json.RawMessage
 }
@@ -3136,6 +3187,9 @@ type ProductInput_ComponentsInput struct {
 type Property struct {
 	// CompositionRows The rows of a structured composition, each keyed by the column keys the property type declares. Only present when the property carries rows.
 	CompositionRows *[]map[string]interface{} `json:"compositionRows,omitempty"`
+
+	// Id The property's own id, which the `existing` half of a properties payload is keyed by
+	Id *int `json:"id,omitempty"`
 
 	// Percentage The share of the product the value stands for. Only present when the property carries one.
 	Percentage *float32 `json:"percentage,omitempty"`
@@ -3492,6 +3546,12 @@ type ListDppsParams struct {
 	// Term Search DPPs by code or description
 	Term *string `form:"term,omitempty" json:"term,omitempty"`
 
+	// ProductId Keep only the passports of this product
+	ProductId *int `form:"product_id,omitempty" json:"product_id,omitempty"`
+
+	// Status Keep only the passports in these lifecycle statuses, comma-separated: draft, manufactured, placed_on_market, in_use, repair, refurbished, collected, recycled, end_of_life, suspended
+	Status *string `form:"status,omitempty" json:"status,omitempty"`
+
 	// Page Page number
 	Page *Page `form:"page,omitempty" json:"page,omitempty"`
 
@@ -3501,6 +3561,7 @@ type ListDppsParams struct {
 
 // CreateDppJSONBody defines parameters for CreateDpp.
 type CreateDppJSONBody struct {
+	// Dpp The passport to write. It always stands for a product, which `unlockableId` names.
 	Dpp DppInput `json:"dpp"`
 }
 
@@ -3533,6 +3594,7 @@ type GetDppRequirementsParamsGranularity string
 
 // ValidateDppJSONBody defines parameters for ValidateDpp.
 type ValidateDppJSONBody struct {
+	// Dpp The passport to write. It always stands for a product, which `unlockableId` names.
 	Dpp DppInput `json:"dpp"`
 }
 
@@ -3567,6 +3629,7 @@ type GetDpp200JSONResponseBody struct {
 
 // UpdateDppJSONBody defines parameters for UpdateDpp.
 type UpdateDppJSONBody struct {
+	// Dpp The passport to write. It always stands for a product, which `unlockableId` names.
 	Dpp *DppInput `json:"dpp,omitempty"`
 }
 
@@ -3634,8 +3697,10 @@ type SupersedeDppParams struct {
 // VoidDppJSONBody defines parameters for VoidDpp.
 type VoidDppJSONBody struct {
 	// Description Free-text note carried onto the `voided` event
-	Description *string               `json:"description,omitempty"`
-	Reason      VoidDppJSONBodyReason `json:"reason"`
+	Description *string `json:"description,omitempty"`
+
+	// Reason Why the unit is gone. `recalled` means recalled and then disposed of; a recall on its own is a status change to `suspended`, not a void.
+	Reason VoidDppJSONBodyReason `json:"reason"`
 }
 
 // VoidDppParams defines parameters for VoidDpp.
@@ -3994,6 +4059,8 @@ type CreateProductJSONBody struct {
 		// Name Brand name (finds or creates)
 		Name string `json:"name"`
 	} `json:"brand"`
+
+	// Product The fields of a product write. A create needs `name` and `componentsInput`, which the create operation says; an update carries only what it means to change, because every field it names is written.
 	Product ProductInput `json:"product"`
 }
 
@@ -4023,6 +4090,8 @@ type UpdateProductJSONBody struct {
 	Brand *struct {
 		Name *string `json:"name,omitempty"`
 	} `json:"brand,omitempty"`
+
+	// Product The fields of a product write. A create needs `name` and `componentsInput`, which the create operation says; an update carries only what it means to change, because every field it names is written.
 	Product *ProductInput `json:"product,omitempty"`
 }
 
@@ -4775,7 +4844,7 @@ type ClientInterface interface {
 
 	// ListDpps List Digital Product Passports
 	//
-	// Returns a paginated list of DPPs owned by the authenticated user, their group members, or the API consumer.
+	// Returns a paginated list of DPPs owned by the authenticated user, their group members, or the API consumer. Narrow it with `product_id` and `status` rather than reading the whole catalogue and matching by hand; acting on every passport of one product is what those are for.
 	//
 	// Corresponds with GET /dpps (the `ListDpps` operationId).
 	ListDpps(ctx context.Context, params *ListDppsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -4971,6 +5040,8 @@ type ClientInterface interface {
 	//
 	// Records one event against the passport. `eventType: status_change` moves the passport to the `status` you name and is recorded as a `lifecycle_transition`; any other type is recorded as a plain event.
 	//
+	// Recalling a unit is a status change to `suspended`. The passport stays readable and keeps answering a scan, which is the point: whoever holds the unit learns of the recall when they scan its code. Voiding is a different operation, for a unit that no longer exists.
+	//
 	// An event is a pending draft until it is sealed. Send `publish: true` to seal it into the Vault at once (a status change is sealed into a new registered version); leave it out to keep the draft open. At most one pending event exists per passport, so a second call while one is open answers 409 until it is sealed or discarded.
 	//
 	// Versioned event types are rejected here: they stand for operations that mint a version, and those have their own endpoints (void, supersede, reissue, publish).
@@ -4983,6 +5054,8 @@ type ClientInterface interface {
 	// AppendDppEvent Append an event to a DPP
 	//
 	// Records one event against the passport. `eventType: status_change` moves the passport to the `status` you name and is recorded as a `lifecycle_transition`; any other type is recorded as a plain event.
+	//
+	// Recalling a unit is a status change to `suspended`. The passport stays readable and keeps answering a scan, which is the point: whoever holds the unit learns of the recall when they scan its code. Voiding is a different operation, for a unit that no longer exists.
 	//
 	// An event is a pending draft until it is sealed. Send `publish: true` to seal it into the Vault at once (a status change is sealed into a new registered version); leave it out to keep the draft open. At most one pending event exists per passport, so a second call while one is open answers 409 until it is sealed or discarded.
 	//
@@ -5045,7 +5118,7 @@ type ClientInterface interface {
 
 	// VoidDppWithBody Void a DPP
 	//
-	// Marks the passport as voided - the unit it stands for was destroyed, recalled, never shipped, or otherwise taken out of circulation. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. A consumer also needs write access to the passport itself (`dpp_write`).
+	// Marks the passport as voided - the unit it stands for no longer exists: it was destroyed, never shipped, or scrapped after a recall. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. This is not how a unit is recalled: a unit still out there is moved to `suspended` through a status change, so its passport goes on answering a scan with the recall. Voiding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -5054,7 +5127,7 @@ type ClientInterface interface {
 
 	// VoidDpp Void a DPP
 	//
-	// Marks the passport as voided - the unit it stands for was destroyed, recalled, never shipped, or otherwise taken out of circulation. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. A consumer also needs write access to the passport itself (`dpp_write`).
+	// Marks the passport as voided - the unit it stands for no longer exists: it was destroyed, never shipped, or scrapped after a recall. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. This is not how a unit is recalled: a unit still out there is moved to `suspended` through a status change, so its passport goes on answering a scan with the recall. Voiding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -6402,7 +6475,7 @@ func (c *Client) LookupCoupon(ctx context.Context, params *LookupCouponParams, r
 
 // ListDpps List Digital Product Passports
 //
-// Returns a paginated list of DPPs owned by the authenticated user, their group members, or the API consumer.
+// Returns a paginated list of DPPs owned by the authenticated user, their group members, or the API consumer. Narrow it with `product_id` and `status` rather than reading the whole catalogue and matching by hand; acting on every passport of one product is what those are for.
 //
 // Corresponds with GET /dpps (the `ListDpps` operationId).
 func (c *Client) ListDpps(ctx context.Context, params *ListDppsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -6798,6 +6871,8 @@ func (c *Client) ListDppEvents(ctx context.Context, id Id, params *ListDppEvents
 //
 // Records one event against the passport. `eventType: status_change` moves the passport to the `status` you name and is recorded as a `lifecycle_transition`; any other type is recorded as a plain event.
 //
+// Recalling a unit is a status change to `suspended`. The passport stays readable and keeps answering a scan, which is the point: whoever holds the unit learns of the recall when they scan its code. Voiding is a different operation, for a unit that no longer exists.
+//
 // An event is a pending draft until it is sealed. Send `publish: true` to seal it into the Vault at once (a status change is sealed into a new registered version); leave it out to keep the draft open. At most one pending event exists per passport, so a second call while one is open answers 409 until it is sealed or discarded.
 //
 // Versioned event types are rejected here: they stand for operations that mint a version, and those have their own endpoints (void, supersede, reissue, publish).
@@ -6820,6 +6895,8 @@ func (c *Client) AppendDppEventWithBody(ctx context.Context, id Id, contentType 
 // AppendDppEvent Append an event to a DPP
 //
 // Records one event against the passport. `eventType: status_change` moves the passport to the `status` you name and is recorded as a `lifecycle_transition`; any other type is recorded as a plain event.
+//
+// Recalling a unit is a status change to `suspended`. The passport stays readable and keeps answering a scan, which is the point: whoever holds the unit learns of the recall when they scan its code. Voiding is a different operation, for a unit that no longer exists.
 //
 // An event is a pending draft until it is sealed. Send `publish: true` to seal it into the Vault at once (a status change is sealed into a new registered version); leave it out to keep the draft open. At most one pending event exists per passport, so a second call while one is open answers 409 until it is sealed or discarded.
 //
@@ -6952,7 +7029,7 @@ func (c *Client) ListDppVersions(ctx context.Context, id Id, reqEditors ...Reque
 
 // VoidDppWithBody Void a DPP
 //
-// Marks the passport as voided - the unit it stands for was destroyed, recalled, never shipped, or otherwise taken out of circulation. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. A consumer also needs write access to the passport itself (`dpp_write`).
+// Marks the passport as voided - the unit it stands for no longer exists: it was destroyed, never shipped, or scrapped after a recall. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. This is not how a unit is recalled: a unit still out there is moved to `suspended` through a status change, so its passport goes on answering a scan with the recall. Voiding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
 //
 // Takes any type of body and a specified content type.
 //
@@ -6971,7 +7048,7 @@ func (c *Client) VoidDppWithBody(ctx context.Context, id Id, params *VoidDppPara
 
 // VoidDpp Void a DPP
 //
-// Marks the passport as voided - the unit it stands for was destroyed, recalled, never shipped, or otherwise taken out of circulation. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. A consumer also needs write access to the passport itself (`dpp_write`).
+// Marks the passport as voided - the unit it stands for no longer exists: it was destroyed, never shipped, or scrapped after a recall. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. This is not how a unit is recalled: a unit still out there is moved to `suspended` through a status change, so its passport goes on answering a scan with the recall. Voiding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
 //
 // Takes a body of the `application/json` content type.
 //
@@ -9900,6 +9977,30 @@ func NewListDppsRequest(server string, params *ListDppsParams) (*http.Request, e
 		if params.Term != nil {
 
 			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "term", *params.Term, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.ProductId != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "product_id", *params.ProductId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Status != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "status", *params.Status, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
 				return nil, err
 			} else {
 				for _, qp := range strings.Split(queryFrag, "&") {
@@ -14723,7 +14824,7 @@ type ClientWithResponsesInterface interface {
 
 	// ListDppsWithResponse List Digital Product Passports
 	//
-	// Returns a paginated list of DPPs owned by the authenticated user, their group members, or the API consumer.
+	// Returns a paginated list of DPPs owned by the authenticated user, their group members, or the API consumer. Narrow it with `product_id` and `status` rather than reading the whole catalogue and matching by hand; acting on every passport of one product is what those are for.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
@@ -14935,6 +15036,8 @@ type ClientWithResponsesInterface interface {
 	//
 	// Records one event against the passport. `eventType: status_change` moves the passport to the `status` you name and is recorded as a `lifecycle_transition`; any other type is recorded as a plain event.
 	//
+	// Recalling a unit is a status change to `suspended`. The passport stays readable and keeps answering a scan, which is the point: whoever holds the unit learns of the recall when they scan its code. Voiding is a different operation, for a unit that no longer exists.
+	//
 	// An event is a pending draft until it is sealed. Send `publish: true` to seal it into the Vault at once (a status change is sealed into a new registered version); leave it out to keep the draft open. At most one pending event exists per passport, so a second call while one is open answers 409 until it is sealed or discarded.
 	//
 	// Versioned event types are rejected here: they stand for operations that mint a version, and those have their own endpoints (void, supersede, reissue, publish).
@@ -14947,6 +15050,8 @@ type ClientWithResponsesInterface interface {
 	// AppendDppEventWithResponse Append an event to a DPP
 	//
 	// Records one event against the passport. `eventType: status_change` moves the passport to the `status` you name and is recorded as a `lifecycle_transition`; any other type is recorded as a plain event.
+	//
+	// Recalling a unit is a status change to `suspended`. The passport stays readable and keeps answering a scan, which is the point: whoever holds the unit learns of the recall when they scan its code. Voiding is a different operation, for a unit that no longer exists.
 	//
 	// An event is a pending draft until it is sealed. Send `publish: true` to seal it into the Vault at once (a status change is sealed into a new registered version); leave it out to keep the draft open. At most one pending event exists per passport, so a second call while one is open answers 409 until it is sealed or discarded.
 	//
@@ -15013,7 +15118,7 @@ type ClientWithResponsesInterface interface {
 
 	// VoidDppWithBodyWithResponse Void a DPP
 	//
-	// Marks the passport as voided - the unit it stands for was destroyed, recalled, never shipped, or otherwise taken out of circulation. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. A consumer also needs write access to the passport itself (`dpp_write`).
+	// Marks the passport as voided - the unit it stands for no longer exists: it was destroyed, never shipped, or scrapped after a recall. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. This is not how a unit is recalled: a unit still out there is moved to `suspended` through a status change, so its passport goes on answering a scan with the recall. Voiding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -15022,7 +15127,7 @@ type ClientWithResponsesInterface interface {
 
 	// VoidDppWithResponse Void a DPP
 	//
-	// Marks the passport as voided - the unit it stands for was destroyed, recalled, never shipped, or otherwise taken out of circulation. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. A consumer also needs write access to the passport itself (`dpp_write`).
+	// Marks the passport as voided - the unit it stands for no longer exists: it was destroyed, never shipped, or scrapped after a recall. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. This is not how a unit is recalled: a unit still out there is moved to `suspended` through a status change, so its passport goes on answering a scan with the recall. Voiding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -21259,7 +21364,7 @@ type ResolvePermalinkResponse struct {
 
 		// Component Full component details (returned by show action)
 		//
-		// Example: {"citations":[],"id":13,"mediafiles":[],"name":"Shea Butter","permalink":"/components/shea-butter","properties":{"Origin":{"rated":true,"values":[{"rating":"A","value":"West Africa"}]}},"published":true,"publishedAt":"2026-01-10T08:00:00Z","rating":"A","type":"Component"}
+		// Example: {"citations":[],"id":13,"mediafiles":[],"name":"Shea Butter","permalink":"/components/shea-butter","properties":{"Origin":{"id":14,"rated":true,"values":[{"id":811,"rating":"A","value":"West Africa"}]}},"published":true,"publishedAt":"2026-01-10T08:00:00Z","rating":"A","type":"Component"}
 		Component *ComponentDetail        `json:"component,omitempty"`
 		Page      *map[string]interface{} `json:"page,omitempty"`
 
@@ -21288,7 +21393,7 @@ func (r ResolvePermalinkResponse) GetJSON200() *struct {
 
 	// Component Full component details (returned by show action)
 	//
-	// Example: {"citations":[],"id":13,"mediafiles":[],"name":"Shea Butter","permalink":"/components/shea-butter","properties":{"Origin":{"rated":true,"values":[{"rating":"A","value":"West Africa"}]}},"published":true,"publishedAt":"2026-01-10T08:00:00Z","rating":"A","type":"Component"}
+	// Example: {"citations":[],"id":13,"mediafiles":[],"name":"Shea Butter","permalink":"/components/shea-butter","properties":{"Origin":{"id":14,"rated":true,"values":[{"id":811,"rating":"A","value":"West Africa"}]}},"published":true,"publishedAt":"2026-01-10T08:00:00Z","rating":"A","type":"Component"}
 	Component *ComponentDetail        `json:"component,omitempty"`
 	Page      *map[string]interface{} `json:"page,omitempty"`
 
@@ -23941,7 +24046,7 @@ func (c *ClientWithResponses) LookupCouponWithResponse(ctx context.Context, para
 
 // ListDppsWithResponse List Digital Product Passports
 //
-// Returns a paginated list of DPPs owned by the authenticated user, their group members, or the API consumer.
+// Returns a paginated list of DPPs owned by the authenticated user, their group members, or the API consumer. Narrow it with `product_id` and `status` rather than reading the whole catalogue and matching by hand; acting on every passport of one product is what those are for.
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -24273,6 +24378,8 @@ func (c *ClientWithResponses) ListDppEventsWithResponse(ctx context.Context, id 
 //
 // Records one event against the passport. `eventType: status_change` moves the passport to the `status` you name and is recorded as a `lifecycle_transition`; any other type is recorded as a plain event.
 //
+// Recalling a unit is a status change to `suspended`. The passport stays readable and keeps answering a scan, which is the point: whoever holds the unit learns of the recall when they scan its code. Voiding is a different operation, for a unit that no longer exists.
+//
 // An event is a pending draft until it is sealed. Send `publish: true` to seal it into the Vault at once (a status change is sealed into a new registered version); leave it out to keep the draft open. At most one pending event exists per passport, so a second call while one is open answers 409 until it is sealed or discarded.
 //
 // Versioned event types are rejected here: they stand for operations that mint a version, and those have their own endpoints (void, supersede, reissue, publish).
@@ -24291,6 +24398,8 @@ func (c *ClientWithResponses) AppendDppEventWithBodyWithResponse(ctx context.Con
 // AppendDppEventWithResponse Append an event to a DPP
 //
 // Records one event against the passport. `eventType: status_change` moves the passport to the `status` you name and is recorded as a `lifecycle_transition`; any other type is recorded as a plain event.
+//
+// Recalling a unit is a status change to `suspended`. The passport stays readable and keeps answering a scan, which is the point: whoever holds the unit learns of the recall when they scan its code. Voiding is a different operation, for a unit that no longer exists.
 //
 // An event is a pending draft until it is sealed. Send `publish: true` to seal it into the Vault at once (a status change is sealed into a new registered version); leave it out to keep the draft open. At most one pending event exists per passport, so a second call while one is open answers 409 until it is sealed or discarded.
 //
@@ -24399,7 +24508,7 @@ func (c *ClientWithResponses) ListDppVersionsWithResponse(ctx context.Context, i
 
 // VoidDppWithBodyWithResponse Void a DPP
 //
-// Marks the passport as voided - the unit it stands for was destroyed, recalled, never shipped, or otherwise taken out of circulation. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. A consumer also needs write access to the passport itself (`dpp_write`).
+// Marks the passport as voided - the unit it stands for no longer exists: it was destroyed, never shipped, or scrapped after a recall. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. This is not how a unit is recalled: a unit still out there is moved to `suspended` through a status change, so its passport goes on answering a scan with the recall. Voiding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -24414,7 +24523,7 @@ func (c *ClientWithResponses) VoidDppWithBodyWithResponse(ctx context.Context, i
 
 // VoidDppWithResponse Void a DPP
 //
-// Marks the passport as voided - the unit it stands for was destroyed, recalled, never shipped, or otherwise taken out of circulation. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. A consumer also needs write access to the passport itself (`dpp_write`).
+// Marks the passport as voided - the unit it stands for no longer exists: it was destroyed, never shipped, or scrapped after a recall. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. This is not how a unit is recalled: a unit still out there is moved to `suspended` through a status change, so its passport goes on answering a scan with the recall. Voiding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
@@ -30381,7 +30490,7 @@ func ParseResolvePermalinkResponse(rsp *http.Response) (*ResolvePermalinkRespons
 
 			// Component Full component details (returned by show action)
 			//
-			// Example: {"citations":[],"id":13,"mediafiles":[],"name":"Shea Butter","permalink":"/components/shea-butter","properties":{"Origin":{"rated":true,"values":[{"rating":"A","value":"West Africa"}]}},"published":true,"publishedAt":"2026-01-10T08:00:00Z","rating":"A","type":"Component"}
+			// Example: {"citations":[],"id":13,"mediafiles":[],"name":"Shea Butter","permalink":"/components/shea-butter","properties":{"Origin":{"id":14,"rated":true,"values":[{"id":811,"rating":"A","value":"West Africa"}]}},"published":true,"publishedAt":"2026-01-10T08:00:00Z","rating":"A","type":"Component"}
 			Component *ComponentDetail        `json:"component,omitempty"`
 			Page      *map[string]interface{} `json:"page,omitempty"`
 
