@@ -288,8 +288,10 @@ func (t Tool) describe(op *registry.Operation, schema map[string]any) string {
 	case len(op.Permission) > 1:
 		fmt.Fprintf(&b, "Permission: one of %s.", strings.Join(op.Permission,
 			", "))
-	default:
+	case op.Public:
 		b.WriteString("Permission: none, the endpoint is public.")
+	default:
+		b.WriteString("Permission: none beyond a valid token.")
 	}
 	if op.Destructive {
 		fmt.Fprintf(&b, " Cannot be undone; confirm must be %q.",

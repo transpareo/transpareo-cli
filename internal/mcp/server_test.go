@@ -687,3 +687,22 @@ func TestSearchReportsEveryBody(t *testing.T) {
 		t.Fatal("the search matched no operation taking a body")
 	}
 }
+
+// TestDescriptionDoesNotCallAuthenticatedToolsPublic keeps the
+// permission line honest: an operation with no permission key
+// still needs a credential unless the document marks it public.
+func TestDescriptionDoesNotCallAuthenticatedToolsPublic(t *testing.T) {
+	reg := registry.Default()
+	for _, tool := range curated {
+		op := reg.Find(tool.Operation)
+		if op == nil {
+			continue
+		}
+		said := tool.describe(op, tool.inputSchema(op))
+		public := strings.Contains(said, "the endpoint is public")
+		if public != op.Public {
+			t.Errorf("%s: described public %v, document says %v", tool.Name,
+				public, op.Public)
+		}
+	}
+}
