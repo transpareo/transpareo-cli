@@ -10,7 +10,10 @@ import (
 )
 
 func main() {
-	app := &cli.App{Getenv: func(string) string { return "" }}
+	app, err := cli.GeneratorApp()
+	if err != nil {
+		log.Fatal(err)
+	}
 	data, err := cli.SurfaceJSON(app.Root())
 	if err != nil {
 		log.Fatal(err)

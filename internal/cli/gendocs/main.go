@@ -11,8 +11,11 @@ import (
 )
 
 func main() {
-	app := &cli.App{Getenv: func(string) string { return "" }}
-	doc, err := cli.Markdown(app.Root())
+	app, err := cli.GeneratorApp()
+	if err != nil {
+		log.Fatal(err)
+	}
+	doc, err := app.Markdown(app.Root())
 	if err != nil {
 		log.Fatal(err)
 	}

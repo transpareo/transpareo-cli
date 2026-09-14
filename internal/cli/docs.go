@@ -30,8 +30,8 @@ var globalOptions = [][2]string{
 // the tag's description and one entry per command: summary,
 // usage and example in one block, options as a table, and the
 // operation with its permission on a closing line.
-func Markdown(root *cobra.Command) (string, error) {
-	reg := registry.Default()
+func (a *App) Markdown(root *cobra.Command) (string, error) {
+	reg := a.operations()
 	tags := tagDescriptions()
 	var b strings.Builder
 	fmt.Fprintf(&b, "# Command reference\n\n")

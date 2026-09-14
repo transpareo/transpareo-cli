@@ -60,9 +60,38 @@ type App struct {
 	Yes      bool
 	Output   output.Options
 
+	// Operations replaces the compiled operation table the
+	// command tree is built from. A generator sets it to the
+	// document it is rendering, so its output never comes from
+	// the table of the previous specification.
+	Operations *registry.Registry
+
 	registryOnce sync.Once
 	registry     *registry.Registry
 	registryErr  error
+}
+
+// operations is the table the command tree, the reference and
+// the skill are built from: the compiled one, which costs no
+// parsing at start, unless a caller supplied its own.
+func (a *App) operations() *registry.Registry {
+	if a.Operations != nil {
+		return a.Operations
+	}
+	return registry.Default()
+}
+
+// GeneratorApp builds the App the generators render from. It
+// reads the vendored document rather than the compiled table, so
+// what they write cannot lag behind the specification in the
+// tree, whatever order `go generate` reaches the packages in.
+func GeneratorApp() (*App, error) {
+	reg, err := registry.Load(spec.JSON)
+	if err != nil {
+		return nil, err
+	}
+	return &App{Getenv: func(string) string { return "" },
+		Operations: reg}, nil
 }
 
 // FromOS builds the App for a real process.

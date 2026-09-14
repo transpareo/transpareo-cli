@@ -30,7 +30,7 @@ const annotationOperation = "operationId"
 // addGeneratedCommands builds one command per exposed operation
 // of the registry under its group: transpareo <group> <verb>.
 func (a *App) addGeneratedCommands(root *cobra.Command) {
-	reg := registry.Default()
+	reg := a.operations()
 	groups := map[string]*cobra.Command{}
 	for _, op := range exposedOperations(reg) {
 		words := CommandWords(op)

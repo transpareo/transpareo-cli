@@ -17,8 +17,11 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	app := &cli.App{Getenv: func(string) string { return "" }}
-	updated, err := cli.FillReference(string(data), app.Root())
+	app, err := cli.GeneratorApp()
+	if err != nil {
+		log.Fatal(err)
+	}
+	updated, err := app.FillReference(string(data), app.Root())
 	if err != nil {
 		log.Fatal(err)
 	}

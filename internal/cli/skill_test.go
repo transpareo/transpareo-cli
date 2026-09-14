@@ -32,7 +32,7 @@ func TestSkillNamesOnlyExistingCommands(t *testing.T) {
 			t.Errorf("the skill names %q, which is not a command", name)
 		}
 	}
-	filled, err := FillReference(skill, root)
+	filled, err := app.FillReference(skill, root)
 	if err != nil {
 		t.Fatal(err)
 	}

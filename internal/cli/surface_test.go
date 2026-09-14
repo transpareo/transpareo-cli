@@ -57,7 +57,7 @@ func unixLines(data []byte) string {
 
 func TestMarkdownReference(t *testing.T) {
 	app := &App{Getenv: func(string) string { return "" }}
-	doc, err := Markdown(app.Root())
+	doc, err := app.Markdown(app.Root())
 	if err != nil {
 		t.Fatal(err)
 	}

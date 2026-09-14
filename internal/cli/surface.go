@@ -1,8 +1,8 @@
 package cli
 
-// The registry has to be generated before these three: they
-// render what it holds, and `go generate ./...` reaches this
-// package before internal/registry.
+// These three render the vendored document, not the compiled
+// operation table, so it does not matter that `go generate ./...`
+// reaches this package before internal/registry.
 //
 //go:generate go run ./gensurface
 //go:generate go run ./gendocs

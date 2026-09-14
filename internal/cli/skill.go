@@ -20,13 +20,14 @@ const (
 // FillReference replaces the reference section of the skill text
 // with one line per command: the command, its arguments, its
 // summary and the permission key.
-func FillReference(skill string, root *cobra.Command) (string, error) {
+func (a *App) FillReference(skill string,
+	root *cobra.Command) (string, error) {
 	start := strings.Index(skill, ReferenceStart)
 	end := strings.Index(skill, ReferenceEnd)
 	if start < 0 || end < 0 || end < start {
 		return "", fmt.Errorf("the skill has no reference markers")
 	}
-	reg := registry.Default()
+	reg := a.operations()
 	var lines []string
 	var walk func(cmd *cobra.Command)
 	walk = func(cmd *cobra.Command) {

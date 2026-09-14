@@ -233,7 +233,7 @@ func TestSignerStaysOutOfTheSkill(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	rendered, err := FillReference(string(skill), app.Root())
+	rendered, err := app.FillReference(string(skill), app.Root())
 	if err != nil {
 		t.Fatal(err)
 	}
