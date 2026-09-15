@@ -19,7 +19,7 @@ func (s *Server) addDataTools() {
 	if !s.wants(GroupData) {
 		return
 	}
-	s.addTool("wait_for_task", &sdk.Tool{
+	s.addTool(GroupData, &sdk.Tool{
 		Name: "wait_for_task",
 		Description: "Poll the statusUrl a bulk create, export or import " +
 			"answered " +
@@ -39,7 +39,7 @@ func (s *Server) addDataTools() {
 			ReadOnlyHint: true},
 	}, s.waitForTask)
 
-	s.addTool("tail_events", &sdk.Tool{
+	s.addTool(GroupData, &sdk.Tool{
 		Name: "tail_events",
 		Description: "Read the workspace's passport events since a cursor or " +
 			"a " +
@@ -66,7 +66,7 @@ func (s *Server) addDataTools() {
 	if s.opts.ReadOnly {
 		return
 	}
-	s.addTool("export_catalogue", &sdk.Tool{
+	s.addTool(GroupData, &sdk.Tool{
 		Name: "export_catalogue",
 		Description: "Start an export of the passport catalogue and wait for " +
 			"the " +
@@ -86,7 +86,7 @@ func (s *Server) addDataTools() {
 		Annotations: &sdk.ToolAnnotations{Title: "Export the catalogue"},
 	}, s.exportCatalogue)
 
-	s.addTool("import_spreadsheet", &sdk.Tool{
+	s.addTool(GroupData, &sdk.Tool{
 		Name: "import_spreadsheet",
 		Description: "Upload a spreadsheet or JSON file from a path on this " +
 			"machine, map its columns, validate and, only with execute true " +
@@ -132,9 +132,10 @@ func (s *Server) wants(group string) bool {
 
 // addTool registers a tool with a handler that takes decoded
 // arguments.
-func (s *Server) addTool(name string, tool *sdk.Tool,
+func (s *Server) addTool(group string, tool *sdk.Tool,
 	handler func(context.Context, map[string]any) *sdk.CallToolResult) {
-	s.extra = append(s.extra, name)
+	s.composed = append(s.composed, composedTool{
+		Name: tool.Name, Group: group, Tool: tool})
 	s.Server.AddTool(tool, func(ctx context.Context,
 		req *sdk.CallToolRequest) (*sdk.CallToolResult, error) {
 		args, err := arguments(req)

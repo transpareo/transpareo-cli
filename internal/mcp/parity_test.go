@@ -11,8 +11,9 @@ import (
 // with the catalogue the hosted assistant server publishes. A
 // curated tool must agree field for field, because both sides
 // derive it from the same specification. A composed tool is
-// written twice by hand, so a difference is allowed, but only
-// when hostedOnly or localOnly gives the reason.
+// written twice by hand, so its absence on one side is allowed
+// when hostedOnly or localOnly gives the reason, but one both
+// sides carry must still agree on its group and its flags.
 func TestCatalogueMatchesTheHostedOne(t *testing.T) {
 	version, hosted := spec.Catalogue()
 	if version != spec.Version() {
@@ -51,16 +52,29 @@ func TestCatalogueMatchesTheHostedOne(t *testing.T) {
 		}
 	}
 
-	for _, name := range New(Options{}).ToolNames() {
-		if _, curated := local[name]; curated {
+	for _, tool := range New(Options{}).composedTools() {
+		if tool.Tool.Annotations == nil {
+			t.Errorf("composed tool %s carries no annotations, so its "+
+				"flags cannot be compared", tool.Name)
 			continue
 		}
-		if _, ok := hosted[name]; ok {
+		got, ok := hosted[tool.Name]
+		if !ok {
+			if localOnly[tool.Name] == "" {
+				t.Errorf("%s is a tool here and not in the hosted "+
+					"catalogue, with no reason in localOnly", tool.Name)
+			}
 			continue
 		}
-		if localOnly[name] == "" {
-			t.Errorf("%s is a tool here and not in the hosted catalogue, "+
-				"with no reason in localOnly", name)
+		want := spec.CatalogueTool{
+			Name:        tool.Name,
+			Group:       tool.Group,
+			Destructive: hint(tool.Tool.Annotations.DestructiveHint),
+			Safe:        tool.Tool.Annotations.ReadOnlyHint,
+		}
+		if got != want {
+			t.Errorf("composed tool %s differs:\n hosted %+v\n  local %+v",
+				tool.Name, got, want)
 		}
 	}
 
@@ -115,6 +129,11 @@ func TestAllowancesNameARealDifference(t *testing.T) {
 			t.Errorf("localOnly gives no reason for %s", name)
 		}
 	}
+}
+
+// hint reads an annotation the SDK models as an optional flag.
+func hint(value *bool) bool {
+	return value != nil && *value
 }
 
 // serves reports whether a server with every group carries the

@@ -55,14 +55,23 @@ supersede_dpp need the confirm argument with the stated phrase.
 Anything without a tool: search_operations, then call_api. Lists
 are paged; follow nextPage.`
 
+// composedTool is a tool written by hand rather than derived
+// from an operation. The server keeps the group and the built
+// tool so the catalogue can be compared with the hosted one.
+type composedTool struct {
+	Name  string
+	Group string
+	Tool  *sdk.Tool
+}
+
 // Server wraps the SDK server with the client and the registry.
 type Server struct {
 	*sdk.Server
-	opts   Options
-	reg    *registry.Registry
-	tools  []Tool
-	extra  []string
-	logger *slog.Logger
+	opts     Options
+	reg      *registry.Registry
+	tools    []Tool
+	composed []composedTool
+	logger   *slog.Logger
 
 	once   sync.Once
 	client *transpareo.Client
@@ -106,13 +115,21 @@ func (s *Server) api() (*transpareo.Client, error) {
 
 // ToolNames lists the registered tools, for tests and doctor.
 func (s *Server) ToolNames() []string {
-	names := []string{"search_operations", "call_api"}
+	var names []string
 	for _, t := range s.tools {
 		names = append(names, t.Name)
 	}
-	names = append(names, s.extra...)
+	for _, t := range s.composed {
+		names = append(names, t.Name)
+	}
 	sort.Strings(names)
 	return names
+}
+
+// composedTools returns the hand-written tools with their groups
+// and annotations.
+func (s *Server) composedTools() []composedTool {
+	return s.composed
 }
 
 func (s *Server) addCurated(t Tool) {
@@ -448,7 +465,7 @@ func stringList(v any) []string {
 // addDiscovery registers search_operations and call_api, the two
 // tools that reach every operation without a curated tool.
 func (s *Server) addDiscovery() {
-	s.Server.AddTool(&sdk.Tool{
+	s.addTool(GroupDiscovery, &sdk.Tool{
 		Name: "search_operations",
 		Description: "Find API operations by words in their id, summary, " +
 			"description or path. Each match carries the operationId, the " +
@@ -461,18 +478,13 @@ func (s *Server) addDiscovery() {
 			"required": []string{"query"}},
 		Annotations: &sdk.ToolAnnotations{Title: "Search operations",
 			ReadOnlyHint: true},
-	}, func(ctx context.Context, req *sdk.CallToolRequest) (*sdk.CallToolResult,
-		error) {
-		args, err := arguments(req)
-		if err != nil {
-			return failure(err), nil
-		}
+	}, func(ctx context.Context, args map[string]any) *sdk.CallToolResult {
 		matches := s.search(stringArg(args["query"]))
 		return &sdk.CallToolResult{
 			Content: []sdk.Content{&sdk.TextContent{
 				Text: fmt.Sprintf("%d operations match", len(matches))}},
 			StructuredContent: map[string]any{"operations": matches},
-		}, nil
+		}
 	})
 
 	description := "Execute any API operation by operationId, with path " +
@@ -485,7 +497,8 @@ func (s *Server) addDiscovery() {
 	description += "Permission: the operation's, see search_operations. " +
 		"Data tier: authorised. Example: call_api {\"operationId\": " +
 		"\"get_dpp_stats\", \"path\": {\"id\": \"A1B2C3D4E\"}}"
-	s.Server.AddTool(&sdk.Tool{
+	destructive := true
+	s.addTool(GroupDiscovery, &sdk.Tool{
 		Name:        "call_api",
 		Description: description,
 		InputSchema: map[string]any{"type": "object",
@@ -500,14 +513,9 @@ func (s *Server) addDiscovery() {
 			},
 			"required": []string{"operationId"}},
 		Annotations: &sdk.ToolAnnotations{Title: "Call the API",
-			ReadOnlyHint: s.opts.ReadOnly},
-	}, func(ctx context.Context, req *sdk.CallToolRequest) (*sdk.CallToolResult,
-		error) {
-		args, err := arguments(req)
-		if err != nil {
-			return failure(err), nil
-		}
-		return s.callAPI(ctx, args), nil
+			ReadOnlyHint: s.opts.ReadOnly, DestructiveHint: &destructive},
+	}, func(ctx context.Context, args map[string]any) *sdk.CallToolResult {
+		return s.callAPI(ctx, args)
 	})
 }
 
