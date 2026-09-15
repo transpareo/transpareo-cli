@@ -1,6 +1,6 @@
 # Command reference
 
-Every command of `transpareo`, generated from API specification 1.14.0. `--help` on any command prints the same example and permission key.
+Every command of `transpareo`, generated from API specification 1.18.0. `--help` on any command prints the same example and permission key.
 
 | Option on every command | What it does |
 |---|---|
@@ -614,6 +614,23 @@ transpareo dpps bulk-task <taskId>
 
 `GET /dpps/bulk/{taskId}` · operation `get_bulk_task` · permission `dpp_bulk_write`
 
+### transpareo dpps correct
+
+Correct a DPP from its source.
+
+```sh
+transpareo dpps correct <id>
+transpareo dpps correct <id> --file body.json
+```
+
+| Option | What it does |
+|---|---|
+| `--file` \<value\> | request body from a file, or - for standard input |
+| `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
+| `--set` \<value\>... | body field as key=value, nested with dots (repeatable) |
+
+`POST /dpps/{id}/correct` · operation `correct_dpp` · permission `dpp_write`
+
 ### transpareo dpps create
 
 Create a DPP.
@@ -1220,6 +1237,21 @@ transpareo mediafiles create --file <path> --upload <path>
 
 `POST /mediafiles` · operation `create_mediafile` · any consumer token
 
+### transpareo mediafiles delete
+
+Delete a mediafile.
+
+```sh
+transpareo mediafiles delete <id>
+transpareo mediafiles delete <id> --yes
+```
+
+| Option | What it does |
+|---|---|
+| `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
+
+`DELETE /mediafiles/{id}` · operation `delete_mediafile` · any consumer token · cannot be undone, needs `--yes`
+
 ### transpareo mediafiles list
 
 List mediafiles.
@@ -1233,7 +1265,7 @@ transpareo mediafiles list --page <page>
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 | `--page` \<n\> | Page number |
 | `--per-page` \<n\> | Records per page (default: 100, max: 500) |
-| `--term` \<value\> | Filter by file name |
+| `--term` \<value\> | Filter by display name or stored file name |
 
 `GET /mediafiles` · operation `list_mediafiles` · any consumer token
 
