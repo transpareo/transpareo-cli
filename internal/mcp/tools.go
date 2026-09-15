@@ -171,6 +171,8 @@ var viaCallAPIOnly = map[string]string{
 	"list_dpp_events":   "history, reachable when a flow needs it",
 	"delete_dpp": "drafts only; voiding is the documented " +
 		"way out",
+	"correct_dpp": "a passport follows a product an operator " +
+		"corrected",
 	"get_dpp_private_properties": "restricted tier, read on purpose only",
 	"get_dpp_version_private_properties": "restricted tier, read on purpose " +
 		"only",
@@ -196,8 +198,10 @@ var viaCallAPIOnly = map[string]string{
 	"get_brand":    "list_brands shows every field",
 	"update_brand": "a brand is its name; rename in the " +
 		"application manager",
-	"publish_component":         "components publish with their products",
-	"unpublish_component":       "components publish with their products",
+	"publish_component":   "components publish with their products",
+	"unpublish_component": "components publish with their products",
+	"delete_mediafile": "taking a file away stays a deliberate call; " +
+		"update_product_mediafiles takes it off a product",
 	"list_product_properties":   "reference data, on demand",
 	"list_featured_products":    "storefront view, on demand",
 	"list_product_categories":   "reference data, on demand",

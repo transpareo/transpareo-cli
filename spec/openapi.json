@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Transpareo API",
-    "version": "1.14.0",
+    "version": "1.18.0",
     "description": "This site runs on the [Transpareo](https://transpareo.com) product information platform. The REST API gives programs access to products, product components, brands, Digital Product Passports, categories and configuration. The version is selected with the `Accept` header, not a path segment.\n\nThe guide at [/apidocs/guide](/apidocs/guide) is the narrative companion to this reference: credentials, permissions, pagination, idempotency, the passport flows, the event feed, webhooks, rate limits and the error format. It is also served as Markdown at [/apidocs/guide.md](/apidocs/guide.md).\n\nPrograms authenticate with the OAuth 2.0 client credentials grant. Exchange the client id and secret once, then send the token on every request:\n\n```\ncurl -X POST https://<host>/api/oauth/token -d grant_type=client_credentials -d client_id=<key> -d client_secret=<secret>\n\ncurl https://<host>/api/me -H \"Authorization: Bearer <access_token>\"\n```\n\nAn assistant that speaks the Model Context Protocol connects to `/mcp` on this host and calls these operations as tools, named in the catalogue at [/apidocs/mcp-tools.json](/apidocs/mcp-tools.json) and explained by the guide's Assistants section.",
     "contact": {
       "name": "Transpareo Support",
@@ -1495,6 +1495,10 @@
           "supersededBy": {
             "type": "string",
             "description": "The code of the passport that replaced this one. Only present on a superseded passport."
+          },
+          "supersedes": {
+            "type": "string",
+            "description": "The code of the passport this one was issued to replace. Only present on a passport that replaced another, and no statement about its own status - a replacement is the live passport for its unit."
           },
           "pdfUrl": {
             "type": "string",
@@ -5278,7 +5282,7 @@
           "Components"
         ],
         "summary": "List components",
-        "description": "Returns a paginated list of components. A credential holding `component_access` receives every component of the workspace, drafts included; every other reader receives the published components.\n\nSupports full-text search and filtering by function, property category, type and publication.",
+        "description": "Returns a paginated list of components. A credential holding `component_access` or `component_write` receives every component of the workspace, drafts included; every other reader receives the published components.\n\nSupports full-text search and filtering by function, property category, type and publication.",
         "operationId": "list_components",
         "parameters": [
           {
@@ -7465,7 +7469,7 @@
         },
         "responses": {
           "200": {
-            "description": "DPP superseded",
+            "description": "The superseded passport. The successor names it back through its own `supersedes` field.",
             "content": {
               "application/json": {
                 "schema": {
@@ -7593,6 +7597,142 @@
                 "example": {
                   "error": "DPP_SUCCESSOR_NOT_FOUND",
                   "message": "Successor DPP not found."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dpps/{id}/correct": {
+      "post": {
+        "tags": [
+          "DPPs"
+        ],
+        "summary": "Correct a DPP from its source",
+        "description": "Carries a correction made to the product onto a passport already written. A passport freezes the product identity, the components and the properties when it is created, so a product edited afterwards never reaches it on its own. Fix the product first and then call this, rather than issuing a second passport for a unit that already has one. The re-freeze reads what the create-time freeze read - the live product at model granularity, the lot's frozen values at batch and item - and mints a signed version anchored to a `corrected` event. A correction with nothing to correct mints nothing and answers `corrected` false, naming the version that still stands.",
+        "operationId": "correct_dpp",
+        "x-permission": "dpp_write",
+        "security": [
+          {
+            "userToken": []
+          },
+          {
+            "oauth2": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          },
+          {
+            "$ref": "#/components/parameters/idempotency_key"
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "description": {
+                    "type": "string",
+                    "description": "Free-text note carried onto the `corrected` event"
+                  }
+                }
+              },
+              "example": {
+                "description": "Product photo replaced after the shoot"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The version the passport now stands on",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "corrected": {
+                      "type": "boolean",
+                      "description": "False when the re-freeze found nothing to change, in which case no version was minted"
+                    },
+                    "version": {
+                      "type": "integer"
+                    },
+                    "publishedAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "hashValue": {
+                      "type": "string"
+                    },
+                    "url": {
+                      "type": "string",
+                      "format": "uri"
+                    }
+                  }
+                },
+                "example": {
+                  "code": "A1B2C3D4E",
+                  "corrected": true,
+                  "version": 4,
+                  "publishedAt": "2026-09-08T09:12:44Z",
+                  "hashValue": "9f2b1c4e8a7d6035b1e2c9f04a8d7e6152b3c4d5e6f708192a3b4c5d6e7f8091",
+                  "url": "https://cdn.example.com/acme/dpp/A1B2C3D4E/v/4.jsonld.gz"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/components/responses/MembershipExpired"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "description": "The signing key or the workspace context needed to publish the corrected version is missing (`DPP_PUBLISH_PRECONDITION`), or the workspace signs with its own key and has registered a public key for only one of the two signing curves (`DPP_PUBLISH_BYOK_INCOMPLETE`).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "DPP_PUBLISH_PRECONDITION",
+                  "message": "No signing key for this workspace"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The corrected snapshot still fails a mandatory validation rule, so nothing was minted and the passport stands where it did. `fields` names the failing paths, as a publish does.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "DPP_PUBLISH_VALIDATION_BLOCKED",
+                  "message": "Publish blocked. Missing or invalid: Issuer name",
+                  "fields": {
+                    "issuer.name": {
+                      "error": "MIN_COUNT",
+                      "message": "issuer.name requires at least 1 value(s), got 0",
+                      "field": "Issuer name"
+                    }
+                  }
                 }
               }
             }
@@ -9544,7 +9684,7 @@
           "Mediafiles"
         ],
         "summary": "List mediafiles",
-        "description": "Returns paginated image mediafiles owned by the authenticated user or API consumer. Requires the product mediafiles feature. Any valid credential reaches it; no permission key gates it, and the list is confined to what the caller owns.",
+        "description": "Returns the workspace's paginated image mediafiles. Requires the product mediafiles feature. Any valid credential reaches it and no permission key gates it, so a caller can put a photo the workspace already holds on a product rather than uploading a second copy of it. A signed-in person sees what they and their groups own; taking a file away stays with whoever uploaded it.",
         "operationId": "list_mediafiles",
         "x-permission": [],
         "security": [
@@ -9568,7 +9708,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Filter by file name"
+            "description": "Filter by display name or stored file name"
           }
         ],
         "responses": {
@@ -9641,7 +9781,7 @@
           "Mediafiles"
         ],
         "summary": "Upload a mediafile",
-        "description": "Uploads a new image file. Requires the product mediafiles feature. Any valid credential reaches it; the upload is owned by the caller.\n\nA browser and the command line send the file itself as `multipart/form-data`. A caller that can only send JSON sends the bytes as base64 instead, bare or as a `data:` URI, in a body of the shape `{\"mediafile\": {\"data\": \"iVBORw0KGgo...\", \"name\": \"Rain shell hero shot\"}}`. The kind of file is read from the bytes, not from anything the caller says about them, and the same size, readability and content rules apply either way.",
+        "description": "Uploads a new image file. Requires the product mediafiles feature. Any valid credential reaches it; the upload is owned by the caller.\n\nA browser and the command line send the file itself as `multipart/form-data`. A caller that can only send JSON sends the bytes as base64 instead, bare or as a `data:` URI, in a body of the shape `{\"mediafile\": {\"data\": \"iVBORw0KGgo...\", \"name\": \"Rain shell hero shot\"}}`.\n\nA caller holding a link sends `mediafile.url` and the server reads the bytes itself, which is the practical way in for anything larger than a small image. Only https, only an address outside this network, at most three redirects, and the same size cap; a refusal says which of those it was.\n\nThe kind of file is read from the bytes, not from anything the caller says about them, and the same size, readability and content rules apply whichever way it arrived.",
         "operationId": "create_mediafile",
         "x-permission": [],
         "security": [
@@ -9686,13 +9826,14 @@
                 "properties": {
                   "mediafile": {
                     "type": "object",
-                    "required": [
-                      "data"
-                    ],
                     "properties": {
                       "data": {
                         "type": "string",
                         "description": "The bytes of the file as base64, bare or as a `data:` URI"
+                      },
+                      "url": {
+                        "type": "string",
+                        "description": "An https address the server reads the bytes from, instead of `data`"
                       },
                       "name": {
                         "type": "string",
@@ -9704,7 +9845,7 @@
               },
               "example": {
                 "mediafile": {
-                  "data": "iVBORw0KGgoAAAANSUhEUgAAAAUA...",
+                  "url": "https://images.example.com/rain-shell-hero.jpg",
                   "name": "Rain shell hero shot"
                 }
               }
@@ -9744,6 +9885,71 @@
           },
           "422": {
             "$ref": "#/components/responses/ValidationError"
+          }
+        }
+      }
+    },
+    "/mediafiles/{id}": {
+      "delete": {
+        "tags": [
+          "Mediafiles"
+        ],
+        "summary": "Delete a mediafile",
+        "description": "Takes the file out of the library. The row is trashed rather than destroyed, so a person can restore it in the application manager. A file a record still shows answers 409 `MEDIAFILE_IN_USE` and names those records; take it off them first. The caller must own the file.",
+        "operationId": "delete_mediafile",
+        "x-permission": [],
+        "x-destructive": true,
+        "security": [
+          {
+            "userToken": []
+          },
+          {
+            "oauth2": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The file was taken out of the library",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "OK"
+                    }
+                  }
+                },
+                "example": {
+                  "status": "OK"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "description": "Records still show the file (`MEDIAFILE_IN_USE`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       }

@@ -153,6 +153,7 @@ any of them shows an example and the permission it needs;
 - `transpareo dpps bulk create`: Create DPPs in bulk (dpp_bulk_write)
 - `transpareo dpps bulk validate`: Validate DPPs in bulk (dpp_bulk_write)
 - `transpareo dpps bulk-task <taskId>`: Poll an asynchronous bulk create (dpp_bulk_write)
+- `transpareo dpps correct <id>`: Correct a DPP from its source (dpp_write)
 - `transpareo dpps create`: Create a DPP (dpp_write)
 - `transpareo dpps delete <id>`: Delete a DPP (dpp_write)
 - `transpareo dpps dynamic-data update <id>`: Update dynamic data (dpp_dynamic)
@@ -190,6 +191,7 @@ any of them shows an example and the permission it needs;
 - `transpareo mcp [--tools <group,...>] [--read-only]`: Start the Model Context Protocol server over standard input and output
 - `transpareo me`: Show what the current credential allows (GET /me)
 - `transpareo mediafiles create`: Upload a mediafile
+- `transpareo mediafiles delete <id>`: Delete a mediafile
 - `transpareo mediafiles list`: List mediafiles
 - `transpareo permalinks resolve <path>`: Resolve a permalink
 - `transpareo plans get <id>`: Get a subscription plan
