@@ -64,10 +64,19 @@ words.
 ## The specification
 
 The OpenAPI document is vendored in `spec/openapi.json` and embedded into
-the binary. It is not edited by hand: the `nightly` workflow downloads the
-live document, neutralises the tenant-specific fields, and when the
-result differs from the vendored file opens a pull request that vendors
-it, regenerates the code and reports the test result. The API itself lives in the
+the binary, and the tool catalogue the hosted assistant server publishes
+is vendored beside it in `spec/mcp-tools.json`. Neither is edited by
+hand: the `nightly` workflow downloads both live documents, neutralises
+the host-specific fields, and when either differs from its vendored copy
+opens a pull request that vendors both, regenerates the code and reports
+the test result. They travel together because the catalogue names the
+specification version it was built from, and the parity test refuses to
+compare two documents that disagree about it.
+
+The catalogue is there so the two assistant servers can be compared: a
+tool curated here must match the hosted one field for field, and a tool
+only one side carries needs its reason in `hostedOnly` or `localOnly`
+(`internal/mcp/tools.go`). The API itself lives in the
 Transpareo platform and is not changed from this repository; if you need
 an API change, open an issue that describes it and it will be routed to
 the platform team.

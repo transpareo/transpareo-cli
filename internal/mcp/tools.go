@@ -45,7 +45,7 @@ type Tool struct {
 	Kind      kind
 
 	// Confirm is the phrase template of a destructive tool, with
-	// the path argument in angle brackets: "void <code>".
+	// the path argument in angle brackets: "void <id>".
 	Confirm string
 
 	// Description adds to what the registry says.
@@ -221,6 +221,24 @@ var viaCallAPIOnly = map[string]string{
 	"list_component_properties": "reference data, on demand",
 	"search_catalogue": "list_products and list_components take a " +
 		"term",
+}
+
+// hostedOnly and localOnly are the tools one catalogue carries
+// and the other does not, each with the reason. Only a composed
+// tool may appear: the curated tables are derived from the same
+// document on both sides, so a curated difference is a
+// derivation bug rather than a decision. A test compares the two
+// catalogues and refuses any difference not listed here.
+var hostedOnly = map[string]string{
+	"search": "deep research prescribes both this name and its shape; " +
+		"a client that finds anything else falls back to no research",
+	"fetch": "deep research prescribes both this name and its shape; " +
+		"a client that finds anything else falls back to no research",
+}
+
+var localOnly = map[string]string{
+	"import_spreadsheet": "the flow starts from a path to a file on " +
+		"disk, which a hosted assistant has no way to reach",
 }
 
 // Tools returns the curated tools, filtered to the groups asked

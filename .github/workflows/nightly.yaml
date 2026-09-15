@@ -1,14 +1,18 @@
 # Nightly drift checks against the vendored specification and the
 # command surface, plus the end-to-end run.
 #
-# The spec job downloads the live OpenAPI document from the test host
-# named by the TRANSPAREO_TEST_HOST secret, replaces the fields that
-# carry tenant-specific values with the neutral values used in
-# spec/openapi.json, and compares. On a difference it vendors the new
-# document, regenerates the code, runs the tests and opens a pull
+# The spec job downloads the live OpenAPI document and the assistant
+# tool catalogue from the test host named by the TRANSPAREO_TEST_HOST
+# secret, replaces what carries host-specific values with the neutral
+# form used in spec/, and compares. On a difference it vendors the new
+# documents, regenerates the code, runs the tests and opens a pull
 # request with the result, so the maintainer reviews a diff instead of
 # doing the update by hand. The repository setting "Allow GitHub
 # Actions to create and approve pull requests" must be on.
+#
+# Both documents travel together: the catalogue names the
+# specification version it was built from, and the parity test
+# refuses to compare a catalogue and a specification that disagree.
 #
 # The surface job rebuilds the command tree and compares it with
 # surface.json, the projection of the tree that scripts rely on: the
@@ -38,7 +42,7 @@ jobs:
 
       # Forks and local mirrors usually do not have the secret. The job
       # then reports that and finishes green instead of failing.
-      - name: Fetch the live specification
+      - name: Fetch the live specification and tool catalogue
         id: fetch
         env:
           TRANSPAREO_TEST_HOST: ${{ secrets.TRANSPAREO_TEST_HOST }}
@@ -53,9 +57,12 @@ jobs:
           curl --fail --silent --show-error --location \
             --output "$RUNNER_TEMP/live.json" \
             "https://${TRANSPAREO_TEST_HOST}/apidocs/openapi.json"
+          curl --fail --silent --show-error --location \
+            --output "$RUNNER_TEMP/live-tools.json" \
+            "https://${TRANSPAREO_TEST_HOST}/apidocs/mcp-tools.json"
           echo "available=true" >> "$GITHUB_OUTPUT"
 
-      - name: Neutralise tenant-specific fields
+      - name: Neutralise host-specific fields
         if: steps.fetch.outputs.available == 'true'
         run: |
           python3 - "$RUNNER_TEMP/live.json" \
@@ -89,20 +96,60 @@ jobs:
               handle.write("\n")
           PY
 
-      - name: Compare with the vendored specification
+      # Every tool description ends with a link into the guide of
+      # whichever host answered. The vendored catalogue carries the
+      # host-neutral form, which is also what the digest covers.
+      - name: Take the guide links out of the tool catalogue
+        if: steps.fetch.outputs.available == 'true'
+        run: |
+          python3 - "$RUNNER_TEMP/live-tools.json" \
+            "$RUNNER_TEMP/live-tools-normalised.json" <<'PY'
+          import json
+          import re
+          import sys
+
+          source, target = sys.argv[1], sys.argv[2]
+          with open(source, encoding="utf-8") as handle:
+              document = json.load(handle)
+
+          guide = re.compile(r"\nSee https?://\S+/apidocs/guide#\S+$")
+          for tool in document["tools"]:
+              description = tool.get("description")
+              if description:
+                  tool["description"] = guide.sub("", description)
+
+          with open(target, "w", encoding="utf-8") as handle:
+              json.dump(document, handle, indent=2, ensure_ascii=False)
+              handle.write("\n")
+          PY
+
+      # Either document differing vendors both, so the version the
+      # catalogue names always matches the specification beside it.
+      - name: Compare with the vendored documents
         id: compare
         if: steps.fetch.outputs.available == 'true'
         run: |
+          changed=false
           if diff -u spec/openapi.json "$RUNNER_TEMP/live-normalised.json"; then
             echo "spec/openapi.json matches the live specification."
-            echo "changed=false" >> "$GITHUB_OUTPUT"
           else
             echo "spec/openapi.json differs from the live specification."
+            changed=true
+          fi
+          if diff -u spec/mcp-tools.json \
+            "$RUNNER_TEMP/live-tools-normalised.json"; then
+            echo "spec/mcp-tools.json matches the live catalogue."
+          else
+            echo "spec/mcp-tools.json differs from the live catalogue."
+            changed=true
+          fi
+          echo "changed=${changed}" >> "$GITHUB_OUTPUT"
+          if [ "${changed}" = "true" ]; then
             cp "$RUNNER_TEMP/live-normalised.json" spec/openapi.json
+            cp "$RUNNER_TEMP/live-tools-normalised.json" spec/mcp-tools.json
             version=$(python3 -c \
               'import json,sys; print(json.load(open(sys.argv[1]))["info"]["version"])' \
               spec/openapi.json)
-            echo "changed=true" >> "$GITHUB_OUTPUT"
             echo "version=${version}" >> "$GITHUB_OUTPUT"
           fi
 
@@ -148,14 +195,14 @@ jobs:
           commit-message: |
             Vendor specification ${{ steps.compare.outputs.version }}
 
-            - spec/openapi.json fetched from the test tenant and
-              neutralised
+            - spec/openapi.json and spec/mcp-tools.json fetched from
+              the test tenant and neutralised
             - generated code, surface.json and docs/cli.md refreshed
           body: |
-            The live specification differs from the vendored one. This
-            pull request vendors version ${{ steps.compare.outputs.version }},
-            regenerates the code, the surface snapshot and the command
-            reference.
+            The live specification or the live tool catalogue differs
+            from the vendored one. This pull request vendors version
+            ${{ steps.compare.outputs.version }}, regenerates the code,
+            the surface snapshot and the command reference.
 
             Tests after regeneration: **${{ steps.regenerate.outputs.result }}**
 
