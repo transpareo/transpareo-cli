@@ -47,6 +47,7 @@
     "path": "transpareo brands create",
     "flags": [
       "file",
+      "idempotency-key",
       "output",
       "set"
     ],
@@ -102,6 +103,7 @@
     "path": "transpareo components create",
     "flags": [
       "file",
+      "idempotency-key",
       "output",
       "set"
     ],
@@ -234,6 +236,7 @@
     "args": "<id>",
     "flags": [
       "file",
+      "idempotency-key",
       "output",
       "set"
     ],
@@ -243,6 +246,7 @@
     "path": "transpareo dpps create",
     "flags": [
       "file",
+      "idempotency-key",
       "output",
       "set"
     ],
@@ -320,6 +324,7 @@
     "args": "<code>",
     "flags": [
       "file",
+      "idempotency-key",
       "output",
       "set"
     ],
@@ -330,6 +335,7 @@
     "args": "<id>",
     "flags": [
       "file",
+      "idempotency-key",
       "output",
       "set"
     ],
@@ -358,6 +364,7 @@
     "args": "<id>",
     "flags": [
       "file",
+      "idempotency-key",
       "output",
       "set"
     ],
@@ -403,6 +410,7 @@
     "args": "<id>",
     "flags": [
       "file",
+      "idempotency-key",
       "output",
       "set"
     ],
@@ -465,6 +473,7 @@
     "path": "transpareo grants create",
     "flags": [
       "file",
+      "idempotency-key",
       "output",
       "set"
     ],
@@ -637,6 +646,7 @@
     "path": "transpareo products create",
     "flags": [
       "file",
+      "idempotency-key",
       "output",
       "set"
     ],
@@ -854,6 +864,7 @@
     "path": "transpareo webhooks create",
     "flags": [
       "file",
+      "idempotency-key",
       "output",
       "set"
     ],

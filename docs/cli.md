@@ -278,6 +278,7 @@ transpareo brands create --file body.json
 | Option | What it does |
 |---|---|
 | `--file` \<value\> | request body from a file, or - for standard input |
+| `--idempotency-key` \<value\> | makes the call safe to repeat: the same key within a day answers the result of the first call (default: random) |
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 | `--set` \<value\>... | body field as key=value, nested with dots (repeatable) |
 
@@ -380,6 +381,7 @@ transpareo components create --file body.json
 | Option | What it does |
 |---|---|
 | `--file` \<value\> | request body from a file, or - for standard input |
+| `--idempotency-key` \<value\> | makes the call safe to repeat: the same key within a day answers the result of the first call (default: random) |
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 | `--set` \<value\>... | body field as key=value, nested with dots (repeatable) |
 
@@ -626,6 +628,7 @@ transpareo dpps correct <id> --file body.json
 | Option | What it does |
 |---|---|
 | `--file` \<value\> | request body from a file, or - for standard input |
+| `--idempotency-key` \<value\> | makes the call safe to repeat: the same key within a day answers the result of the first call (default: random) |
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 | `--set` \<value\>... | body field as key=value, nested with dots (repeatable) |
 
@@ -642,6 +645,7 @@ transpareo dpps create --file body.json
 | Option | What it does |
 |---|---|
 | `--file` \<value\> | request body from a file, or - for standard input |
+| `--idempotency-key` \<value\> | makes the call safe to repeat: the same key within a day answers the result of the first call (default: random) |
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 | `--set` \<value\>... | body field as key=value, nested with dots (repeatable) |
 
@@ -775,6 +779,7 @@ transpareo dpps publish <code> --file body.json
 | Option | What it does |
 |---|---|
 | `--file` \<value\> | request body from a file, or - for standard input |
+| `--idempotency-key` \<value\> | makes the call safe to repeat: the same key within a day answers the result of the first call (default: random) |
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 | `--set` \<value\>... | body field as key=value, nested with dots (repeatable) |
 
@@ -792,6 +797,7 @@ transpareo dpps reissue <id> --file body.json
 | Option | What it does |
 |---|---|
 | `--file` \<value\> | request body from a file, or - for standard input |
+| `--idempotency-key` \<value\> | makes the call safe to repeat: the same key within a day answers the result of the first call (default: random) |
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 | `--set` \<value\>... | body field as key=value, nested with dots (repeatable) |
 
@@ -841,6 +847,7 @@ transpareo dpps supersede <id> --file body.json --yes
 | Option | What it does |
 |---|---|
 | `--file` \<value\> | request body from a file, or - for standard input |
+| `--idempotency-key` \<value\> | makes the call safe to repeat: the same key within a day answers the result of the first call (default: random) |
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 | `--set` \<value\>... | body field as key=value, nested with dots (repeatable) |
 
@@ -921,6 +928,7 @@ transpareo dpps void <id> --file body.json --yes
 | Option | What it does |
 |---|---|
 | `--file` \<value\> | request body from a file, or - for standard input |
+| `--idempotency-key` \<value\> | makes the call safe to repeat: the same key within a day answers the result of the first call (default: random) |
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 | `--set` \<value\>... | body field as key=value, nested with dots (repeatable) |
 
@@ -1040,6 +1048,7 @@ transpareo grants create --file body.json
 | Option | What it does |
 |---|---|
 | `--file` \<value\> | request body from a file, or - for standard input |
+| `--idempotency-key` \<value\> | makes the call safe to repeat: the same key within a day answers the result of the first call (default: random) |
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 | `--set` \<value\>... | body field as key=value, nested with dots (repeatable) |
 
@@ -1337,6 +1346,7 @@ transpareo products create --file body.json
 | Option | What it does |
 |---|---|
 | `--file` \<value\> | request body from a file, or - for standard input |
+| `--idempotency-key` \<value\> | makes the call safe to repeat: the same key within a day answers the result of the first call (default: random) |
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 | `--set` \<value\>... | body field as key=value, nested with dots (repeatable) |
 
@@ -1640,6 +1650,7 @@ transpareo webhooks create --file body.json
 | Option | What it does |
 |---|---|
 | `--file` \<value\> | request body from a file, or - for standard input |
+| `--idempotency-key` \<value\> | makes the call safe to repeat: the same key within a day answers the result of the first call (default: random) |
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 | `--set` \<value\>... | body field as key=value, nested with dots (repeatable) |
 

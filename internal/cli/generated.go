@@ -74,15 +74,16 @@ func childCommand(parent *cobra.Command, word string) *cobra.Command {
 
 // operationCall holds the option values of one invocation.
 type operationCall struct {
-	op      *registry.Operation
-	body    *registry.RequestBody
-	file    string
-	sets    []string
-	wait    bool
-	output  string
-	query   map[string]pflag.Value
-	headers map[string]*string
-	parts   map[string]*string
+	op             *registry.Operation
+	body           *registry.RequestBody
+	file           string
+	sets           []string
+	wait           bool
+	output         string
+	idempotencyKey string
+	query          map[string]pflag.Value
+	headers        map[string]*string
+	parts          map[string]*string
 }
 
 func (a *App) operationCommand(op *registry.Operation,
@@ -131,6 +132,15 @@ func (a *App) operationCommand(op *registry.Operation,
 	if op.Task {
 		f.BoolVar(&call.wait, "wait", false,
 			"poll the statusUrl until the work is done")
+	}
+	// The client fills a key in on every POST, which makes the
+	// retries inside one call safe. A script that runs the command
+	// again after a timeout is a second call, and only its own key
+	// tells the two apart.
+	if op.Idempotent {
+		f.StringVar(&call.idempotencyKey, "idempotency-key", "",
+			"makes the call safe to repeat: the same key within a day "+
+				"answers the result of the first call (default: random)")
 	}
 	f.StringVarP(&call.output, "output", "o", "",
 		"write the answer to this file instead of standard output")
@@ -275,10 +285,11 @@ func (a *App) runOperation(ctx context.Context, call *operationCall,
 		return err
 	}
 	req := &transpareo.Request{
-		Method: op.Method,
-		Path:   fillPath(op, args),
-		Query:  url.Values{},
-		Header: http.Header{},
+		Method:         op.Method,
+		Path:           fillPath(op, args),
+		Query:          url.Values{},
+		Header:         http.Header{},
+		IdempotencyKey: call.idempotencyKey,
 	}
 	for name, value := range call.query {
 		if value.String() != "" && value.String() != "0" &&

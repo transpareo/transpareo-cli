@@ -200,6 +200,39 @@ func TestGeneratedDestructiveNeedsYesAndSetBuildsBody(t *testing.T) {
 	}
 }
 
+// A command whose operation replays an answer takes the key, so a
+// script that runs it again after a timeout gets the first result
+// back rather than a second record. A command whose operation
+// replays nothing does not offer the option at all.
+func TestGeneratedIdempotencyKeyOption(t *testing.T) {
+	h := generatedHarness(t)
+	h.login()
+	_, _, code := h.run("dpps", "void", "A1B2", "--yes", "--set",
+		"reason=recalled", "--idempotency-key", "void-000412")
+	if code != 0 {
+		t.Fatalf("code = %d", code)
+	}
+	if key := h.lastRequest().Header.Get("Idempotency-Key"); key !=
+		"void-000412" {
+		t.Errorf("Idempotency-Key = %q, want the one passed", key)
+	}
+	// Without one the client still sends a key of its own.
+	_, _, code = h.run("dpps", "void", "A1B2", "--yes", "--set",
+		"reason=recalled")
+	if code != 0 {
+		t.Fatalf("code = %d", code)
+	}
+	if key := h.lastRequest().Header.Get("Idempotency-Key"); len(key) != 36 {
+		t.Errorf("Idempotency-Key = %q, want a random UUID", key)
+	}
+	out, errOut, code := h.run("dpps", "events", "append", "A1B2", "--set",
+		"event.eventType=inspection", "--idempotency-key", "x")
+	if code != 2 || !strings.Contains(out+errOut, "unknown flag") {
+		t.Errorf("an operation that replays nothing must not take the "+
+			"option: exit %d: %s%s", code, out, errOut)
+	}
+}
+
 func TestGeneratedFileOptionSendsTheFileContent(t *testing.T) {
 	h := generatedHarness(t)
 	h.login()
