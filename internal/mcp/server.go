@@ -137,7 +137,7 @@ func (s *Server) addCurated(t Tool) {
 	schema := t.inputSchema(op)
 	tool := &sdk.Tool{
 		Name:         t.Name,
-		Description:  t.describe(op, schema),
+		Description:  t.describe(op),
 		InputSchema:  schema,
 		OutputSchema: t.outputSchema(op),
 		Annotations:  annotations(op),
@@ -212,7 +212,8 @@ func (s *Server) callCurated(ctx context.Context, t Tool,
 func (s *Server) buildRequest(t Tool, op *registry.Operation,
 	args map[string]any) (*transpareo.Request, error) {
 	path := op.Path
-	used := map[string]bool{"fields": true, "confirm": true}
+	used := map[string]bool{"fields": true, "confirm": true,
+		"idempotencyKey": true}
 	for _, p := range op.PathParams {
 		value := stringArg(args[p.Name])
 		if value == "" {
@@ -224,6 +225,13 @@ func (s *Server) buildRequest(t Tool, op *registry.Operation,
 	req := &transpareo.Request{Method: op.Method, Path: path,
 		Query:  url.Values{},
 		Header: http.Header{}}
+	// Without one the client sends a fresh key per call, which
+	// makes a retry inside the call safe but leaves an assistant
+	// repeating a timed-out create with no way to say it is the
+	// same create.
+	if key := stringArg(args["idempotencyKey"]); key != "" && op.Idempotent {
+		req.IdempotencyKey = key
+	}
 	switch t.Kind {
 	case kindList, kindGet:
 		for _, p := range op.QueryParams {

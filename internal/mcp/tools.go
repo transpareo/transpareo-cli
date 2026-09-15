@@ -4,6 +4,7 @@
 package mcp
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"sort"
@@ -90,8 +91,8 @@ var curated = []Tool{
 		Operation: "list_mediafiles", Kind: kindList},
 	{Name: "create_mediafile", Group: GroupProducts,
 		Operation: "create_mediafile", Kind: kindWrite,
-		Description: "A JSON body carries no file: the image goes in as " +
-			"base64 under data, and its kind is read from the bytes."},
+		Description: "A link goes in under url and the server reads the " +
+			"bytes; a small image can go in as base64 under data."},
 	{Name: "update_product_mediafiles", Group: GroupProducts,
 		Operation: "update_product_mediafiles", Kind: kindWrite,
 		Description: "Replaces a product's images with the ones named, in " +
@@ -103,8 +104,8 @@ var curated = []Tool{
 
 	{Name: "dpp_requirements", Group: GroupDpps,
 		Operation: "get_dpp_requirements", Kind: kindGet,
-		Description: "What a passport of a product still needs, with a body " +
-			"ready to fill for validate_dpp and create_dpp."},
+		Description: "The answer carries a body ready to fill for " +
+			"validate_dpp and create_dpp."},
 	{Name: "list_dpps", Group: GroupDpps, Operation: "list_dpps",
 		Kind: kindList},
 	{Name: "get_dpp", Group: GroupDpps, Operation: "get_dpp", Kind: kindGet},
@@ -122,11 +123,16 @@ var curated = []Tool{
 		Description: "Signs a snapshot into the ten-year archive. Publishing " +
 			"cannot be undone."},
 	{Name: "append_dpp_event", Group: GroupDpps, Operation: "append_dpp_event",
-		Kind: kindWrite},
+		Kind: kindWrite,
+		Description: "Recalling a unit is an event here: a status change to " +
+			"suspended, so the passport goes on answering a scan with the " +
+			"recall."},
 	{Name: "update_dynamic_data", Group: GroupDpps,
 		Operation: "update_dpp_dynamic_data", Kind: kindWrite},
 	{Name: "void_dpp", Group: GroupDpps, Operation: "void_dpp", Kind: kindWrite,
-		Confirm: "void <id>"},
+		Confirm: "void <id>",
+		Description: "For a unit that no longer exists. To recall one that " +
+			"is still in the field, use append_dpp_event instead."},
 	{Name: "supersede_dpp", Group: GroupDpps, Operation: "supersede_dpp",
 		Kind:    kindWrite,
 		Confirm: "supersede <id>"},
@@ -241,6 +247,21 @@ var localOnly = map[string]string{
 		"disk, which a hosted assistant has no way to reach",
 }
 
+// prose lists the curated tools whose description says something
+// different here than in the hosted catalogue, with the reason.
+// A tool is in here while one of the two wordings is being
+// corrected and comes straight out again once both say the same
+// thing; a test refuses an entry whose two descriptions already
+// agree. Everything else about a curated tool has to match,
+// because both sides render it from the same document.
+var prose = map[string]string{
+	"create_mediafile": "the hosted sentence predates mediafile.url: it " +
+		"says the bytes travel as base64 and sends anything larger to the " +
+		"application manager, which is the case the operation grew url " +
+		"for. The wording used here is the agreed replacement, waiting on " +
+		"a catalogue release",
+}
+
 // Tools returns the curated tools, filtered to the groups asked
 // for and, in read-only mode, to the ones that change nothing.
 func Tools(reg *registry.Registry, groups []string, readOnly bool) []Tool {
@@ -297,7 +318,7 @@ func tier(op *registry.Operation) string {
 // describe composes the tool description: the summary, the extra
 // text, the permission, the irreversibility note, the data tier
 // and one example call.
-func (t Tool) describe(op *registry.Operation, schema map[string]any) string {
+func (t Tool) describe(op *registry.Operation) string {
 	var b strings.Builder
 	b.WriteString(op.Summary)
 	if t.Description != "" {
@@ -320,7 +341,7 @@ func (t Tool) describe(op *registry.Operation, schema map[string]any) string {
 			t.confirmPhrase(op))
 	}
 	fmt.Fprintf(&b, " Data tier: %s.", tier(op))
-	fmt.Fprintf(&b, "\nExample: %s", t.example(op, schema))
+	fmt.Fprintf(&b, "\nExample: %s", t.example(op))
 	return b.String()
 }
 
@@ -335,41 +356,80 @@ func (t Tool) confirmPhrase(op *registry.Operation) string {
 }
 
 // example builds one example call from the request example and
-// placeholder path arguments.
-func (t Tool) example(op *registry.Operation, schema map[string]any) string {
-	args := map[string]any{}
+// placeholder path arguments. Each value is kept as the document
+// spells it rather than decoded and written out again, so the
+// fields of a body stay in their declared order, which is the
+// order that reads as an explanation.
+func (t Tool) example(op *registry.Operation) string {
+	args := map[string]json.RawMessage{}
 	for _, p := range op.PathParams {
-		args[p.Name] = "<" + p.Name + ">"
+		args[p.Name] = literal("<" + p.Name + ">")
 	}
 	switch t.Kind {
 	case kindList:
-		args["per_page"] = 20
+		args["per_page"] = literal(20)
 	case kindRows:
-		args["rows"] = []any{json.RawMessage(`{"modelIdentifier": "FC-50ML"}`)}
+		args["rows"] = json.RawMessage(`[{"modelIdentifier":"FC-50ML"}]`)
 	case kindWrite:
-		var body map[string]any
+		var body map[string]json.RawMessage
 		json.Unmarshal(bodyExample(op), &body)
 		for key, value := range body {
 			args[key] = value
 		}
 		if t.Confirm != "" {
-			args["confirm"] = t.confirmPhrase(op)
+			args["confirm"] = literal(t.confirmPhrase(op))
 		}
 	case kindGet:
 		for _, p := range op.QueryParams {
 			if p.Name == "productId" {
-				args["productId"] = "<productId>"
+				args["productId"] = literal("<productId>")
 			}
 		}
 	}
-	data, _ := json.Marshal(args)
-	return t.Name + " " + string(data)
+	return t.Name + " " + object(args)
+}
+
+// literal renders one value with the angle brackets of a
+// placeholder left alone: encoding/json escapes <, > and & by
+// default, which would turn <id> into an escape sequence in the
+// one line a reader copies from.
+func literal(value any) json.RawMessage {
+	var b bytes.Buffer
+	encoder := json.NewEncoder(&b)
+	encoder.SetEscapeHTML(false)
+	if err := encoder.Encode(value); err != nil {
+		return json.RawMessage("null")
+	}
+	return json.RawMessage(bytes.TrimRight(b.Bytes(), "\n"))
+}
+
+// object writes the members in name order, each value as it
+// stands.
+func object(members map[string]json.RawMessage) string {
+	names := make([]string, 0, len(members))
+	for name := range members {
+		names = append(names, name)
+	}
+	sort.Strings(names)
+	var b strings.Builder
+	b.WriteByte('{')
+	for i, name := range names {
+		if i > 0 {
+			b.WriteByte(',')
+		}
+		b.Write(literal(name))
+		b.WriteByte(':')
+		b.Write(members[name])
+	}
+	b.WriteByte('}')
+	return b.String()
 }
 
 // inputSchema builds the JSON Schema of the arguments: the path
 // parameters, the query parameters of a list or a get, the body
-// properties of a write, rows for a bulk call, fields to narrow
-// the answer, and confirm for a destructive call.
+// properties of a write, an idempotency key where the operation
+// replays one, rows for a bulk call, fields to narrow the answer,
+// and confirm for a destructive call.
 func (t Tool) inputSchema(op *registry.Operation) map[string]any {
 	props := map[string]any{}
 	var required []string
@@ -404,6 +464,11 @@ func (t Tool) inputSchema(op *registry.Operation) map[string]any {
 			props[name] = schema
 		}
 		required = append(required, body.Required...)
+		if op.Idempotent {
+			props["idempotencyKey"] = map[string]any{"type": "string",
+				"description": "Makes the call safe to repeat: the same key " +
+					"within a day answers the result of the first call"}
+		}
 	case kindRows:
 		props["rows"] = map[string]any{"type": "array",
 			"items":       map[string]any{"type": "object"},

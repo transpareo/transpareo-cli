@@ -91,6 +91,14 @@ with a declared output schema. A list answers `{items, page,
 total, nextPage}`; a get answers the full record; a `fields`
 argument narrows either.
 
+A write whose operation replays an answer takes an
+`idempotencyKey`. Repeating the call with the same key within a
+day answers the result of the first one instead of writing again,
+so a create that timed out can be sent a second time without
+making a second record. Without a key the client still sends one,
+freshly made per call, which covers a retry inside the call but
+not a repeat of it.
+
 ## Safety
 
 Tools that cannot be undone are present, not hidden, and take a

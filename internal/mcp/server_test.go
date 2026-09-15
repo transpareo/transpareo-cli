@@ -313,6 +313,44 @@ func TestWriteToolsAndConfirm(t *testing.T) {
 	}
 }
 
+// A key an assistant passes travels as the header and stays out
+// of the body, so repeating a create that timed out answers the
+// first result instead of writing a second record.
+func TestIdempotencyKeyTravelsAsAHeader(t *testing.T) {
+	host := newFakeHost(t)
+	session := connect(t, host, Options{})
+	result := call(t, session, "void_dpp", map[string]any{"id": "A1B2",
+		"reason":         "recalled",
+		"confirm":        "void A1B2",
+		"idempotencyKey": "void-000412"})
+	if result.IsError {
+		t.Fatalf("void: %s", text(result))
+	}
+	req, body := host.last()
+	if got := req.Header.Get("Idempotency-Key"); got != "void-000412" {
+		t.Errorf("Idempotency-Key = %q, want the one passed", got)
+	}
+	if body != `{"reason":"recalled"}` {
+		t.Errorf("body = %s, want the key left out of it", body)
+	}
+
+	// An operation that replays nothing declares no key, and one
+	// passed anyway must not reach the body either.
+	result = call(t, session, "validate_dpp", map[string]any{
+		"dpp":            map[string]any{"granularity": "serial"},
+		"idempotencyKey": "ignored"})
+	if result.IsError {
+		t.Fatalf("validate: %s", text(result))
+	}
+	req, body = host.last()
+	if body != `{"dpp":{"granularity":"serial"}}` {
+		t.Errorf("body = %s, want the key left out of it", body)
+	}
+	if got := req.Header.Get("Idempotency-Key"); got == "ignored" {
+		t.Error("a key reached an operation that declares none")
+	}
+}
+
 func TestRowsTool(t *testing.T) {
 	host := newFakeHost(t)
 	session := connect(t, host, Options{})
@@ -698,7 +736,7 @@ func TestDescriptionDoesNotCallAuthenticatedToolsPublic(t *testing.T) {
 		if op == nil {
 			continue
 		}
-		said := tool.describe(op, tool.inputSchema(op))
+		said := tool.describe(op)
 		public := strings.Contains(said, "the endpoint is public")
 		if public != op.Public {
 			t.Errorf("%s: described public %v, document says %v", tool.Name,

@@ -1,6 +1,12 @@
 package mcp
 
 import (
+	"encoding/json"
+	"fmt"
+	"reflect"
+	"sort"
+	"strconv"
+	"strings"
 	"testing"
 
 	"github.com/transpareo/transpareo-cli/internal/registry"
@@ -9,11 +15,15 @@ import (
 
 // TestCatalogueMatchesTheHostedOne compares this server's tools
 // with the catalogue the hosted assistant server publishes. A
-// curated tool must agree field for field, because both sides
-// derive it from the same specification. A composed tool is
-// written twice by hand, so its absence on one side is allowed
-// when hostedOnly or localOnly gives the reason, but one both
-// sides carry must still agree on its group and its flags.
+// curated tool must agree on everything an assistant sees: the
+// name, the operation, the group, the flags, the confirm phrase,
+// the description and both schemas. Both sides render all of it
+// from the same specification, so a difference is one of the two
+// renderings being wrong, not a decision either side gets to
+// make. A composed tool is written twice by hand, so its absence
+// on one side is allowed when hostedOnly or localOnly gives the
+// reason, but one both sides carry must still agree on its group
+// and its flags.
 func TestCatalogueMatchesTheHostedOne(t *testing.T) {
 	version, hosted := spec.Catalogue()
 	if version != spec.Version() {
@@ -29,12 +39,15 @@ func TestCatalogueMatchesTheHostedOne(t *testing.T) {
 			continue
 		}
 		local[tool.Name] = spec.CatalogueTool{
-			Name:        tool.Name,
-			Group:       tool.Group,
-			Operation:   tool.Operation,
-			Confirm:     tool.confirmPhrase(op),
-			Destructive: op.Destructive,
-			Safe:        op.ReadOnly(),
+			Name:         tool.Name,
+			Group:        tool.Group,
+			Operation:    tool.Operation,
+			Confirm:      tool.confirmPhrase(op),
+			Destructive:  op.Destructive,
+			Safe:         op.ReadOnly(),
+			Description:  tool.describe(op),
+			InputSchema:  marshal(t, tool.inputSchema(op)),
+			OutputSchema: marshal(t, tool.outputSchema(op)),
 		}
 	}
 
@@ -46,9 +59,8 @@ func TestCatalogueMatchesTheHostedOne(t *testing.T) {
 				"something hostedOnly or localOnly may excuse", name)
 			continue
 		}
-		if got != want {
-			t.Errorf("curated tool %s differs:\n hosted %+v\n  local %+v",
-				name, got, want)
+		for _, difference := range differences(want, got) {
+			t.Errorf("curated tool %s: %s", name, difference)
 		}
 	}
 
@@ -66,15 +78,28 @@ func TestCatalogueMatchesTheHostedOne(t *testing.T) {
 			}
 			continue
 		}
-		want := spec.CatalogueTool{
-			Name:        tool.Name,
-			Group:       tool.Group,
-			Destructive: hint(tool.Tool.Annotations.DestructiveHint),
-			Safe:        tool.Tool.Annotations.ReadOnlyHint,
+		if got.Operation != "" {
+			t.Errorf("composed tool %s answers operation %s in the hosted "+
+				"catalogue, so it is curated there and written by hand here",
+				tool.Name, got.Operation)
 		}
-		if got != want {
-			t.Errorf("composed tool %s differs:\n hosted %+v\n  local %+v",
-				tool.Name, got, want)
+		if got.Confirm != "" {
+			t.Errorf("composed tool %s states the confirm phrase %q in the "+
+				"hosted catalogue; this server composes one per operation",
+				tool.Name, got.Confirm)
+		}
+		if got.Group != tool.Group {
+			t.Errorf("composed tool %s is in group %s here and %s there",
+				tool.Name, tool.Group, got.Group)
+		}
+		destructive := hint(tool.Tool.Annotations.DestructiveHint)
+		if got.Destructive != destructive {
+			t.Errorf("composed tool %s is destructive %t here and %t there",
+				tool.Name, destructive, got.Destructive)
+		}
+		if got.Safe != tool.Tool.Annotations.ReadOnlyHint {
+			t.Errorf("composed tool %s is safe %t here and %t there",
+				tool.Name, tool.Tool.Annotations.ReadOnlyHint, got.Safe)
 		}
 	}
 
@@ -98,7 +123,180 @@ func TestCatalogueMatchesTheHostedOne(t *testing.T) {
 	}
 }
 
-// TestAllowancesNameARealDifference keeps the two lists honest:
+// differences names every way the two renderings of one curated
+// tool disagree, in words rather than as two dumped structs: a
+// schema runs to tens of kilobytes and reading two of them side
+// by side is not how the difference is found.
+func differences(local, hosted spec.CatalogueTool) []string {
+	var out []string
+	note := func(what, here, there string) {
+		out = append(out, fmt.Sprintf("%s is %q here and %q there", what,
+			here, there))
+	}
+	if local.Group != hosted.Group {
+		note("the group", local.Group, hosted.Group)
+	}
+	if local.Operation != hosted.Operation {
+		note("the operation", local.Operation, hosted.Operation)
+	}
+	if local.Confirm != hosted.Confirm {
+		note("the confirm phrase", local.Confirm, hosted.Confirm)
+	}
+	if local.Destructive != hosted.Destructive {
+		note("destructive", strconv.FormatBool(local.Destructive),
+			strconv.FormatBool(hosted.Destructive))
+	}
+	if local.Safe != hosted.Safe {
+		note("safe", strconv.FormatBool(local.Safe),
+			strconv.FormatBool(hosted.Safe))
+	}
+	out = append(out, describedDifferently(local, hosted)...)
+	for _, schema := range []struct {
+		what          string
+		local, hosted json.RawMessage
+	}{
+		{"input schema", local.InputSchema, hosted.InputSchema},
+		{"output schema", local.OutputSchema, hosted.OutputSchema},
+	} {
+		for _, difference := range documentDifferences(schema.what,
+			schema.local, schema.hosted) {
+			out = append(out, "the "+difference)
+		}
+	}
+	return out
+}
+
+// describedDifferently compares the two descriptions. The prose
+// is compared as text, unless prose names the tool as one being
+// corrected. The example is compared as the call it is: the
+// hosted server writes a body's fields in the order the document
+// declares them and this one writes them in name order, because
+// Go marshals a map that way, and that is a difference in
+// spelling rather than in what an assistant is told to send.
+func describedDifferently(local, hosted spec.CatalogueTool) []string {
+	localProse, localExample := splitExample(local.Description)
+	hostedProse, hostedExample := splitExample(hosted.Description)
+	var out []string
+	if localProse != hostedProse && prose[local.Name] == "" {
+		out = append(out, fmt.Sprintf("the description is %q here and %q "+
+			"there, with no reason in prose", localProse, hostedProse))
+	}
+	if !sameCall(localExample, hostedExample) {
+		out = append(out, fmt.Sprintf("the example is %q here and %q there",
+			localExample, hostedExample))
+	}
+	return out
+}
+
+// splitExample cuts a description into the prose above the
+// example line and the example itself.
+func splitExample(description string) (string, string) {
+	const marker = "\nExample: "
+	if i := strings.Index(description, marker); i >= 0 {
+		return description[:i], description[i+len(marker):]
+	}
+	return description, ""
+}
+
+// sameCall reports whether two example lines name the same tool
+// and carry the same arguments, whatever order they are written
+// in.
+func sameCall(local, hosted string) bool {
+	if local == hosted {
+		return true
+	}
+	localName, localArgs, _ := strings.Cut(local, " ")
+	hostedName, hostedArgs, _ := strings.Cut(hosted, " ")
+	if localName != hostedName {
+		return false
+	}
+	var localValue, hostedValue any
+	if json.Unmarshal([]byte(localArgs), &localValue) != nil ||
+		json.Unmarshal([]byte(hostedArgs), &hostedValue) != nil {
+		return false
+	}
+	return reflect.DeepEqual(localValue, hostedValue)
+}
+
+// documentDifferences names the paths at which two JSON documents
+// disagree, at most eight of them, so a failure says which
+// property moved.
+func documentDifferences(what string, local, hosted json.RawMessage) []string {
+	var localValue, hostedValue any
+	if err := json.Unmarshal(local, &localValue); err != nil {
+		return []string{what + " here is not JSON: " + err.Error()}
+	}
+	if err := json.Unmarshal(hosted, &hostedValue); err != nil {
+		return []string{what + " there is not JSON: " + err.Error()}
+	}
+	found := walk(what, localValue, hostedValue)
+	if len(found) > 8 {
+		found = append(found[:8], fmt.Sprintf("%s: and %d more", what,
+			len(found)-8))
+	}
+	return found
+}
+
+func walk(path string, local, hosted any) []string {
+	localObject, isObject := local.(map[string]any)
+	hostedObject, alsoObject := hosted.(map[string]any)
+	if !isObject || !alsoObject {
+		if reflect.DeepEqual(local, hosted) {
+			return nil
+		}
+		return []string{fmt.Sprintf("%s is %s here and %s there", path,
+			brief(local), brief(hosted))}
+	}
+	names := map[string]bool{}
+	for name := range localObject {
+		names[name] = true
+	}
+	for name := range hostedObject {
+		names[name] = true
+	}
+	ordered := make([]string, 0, len(names))
+	for name := range names {
+		ordered = append(ordered, name)
+	}
+	sort.Strings(ordered)
+	var out []string
+	for _, name := range ordered {
+		localChild, here := localObject[name]
+		hostedChild, there := hostedObject[name]
+		switch {
+		case !there:
+			out = append(out, fmt.Sprintf("%s.%s is only here", path, name))
+		case !here:
+			out = append(out, fmt.Sprintf("%s.%s is only there", path, name))
+		default:
+			out = append(out, walk(path+"."+name, localChild, hostedChild)...)
+		}
+	}
+	return out
+}
+
+// brief renders a value short enough to read in a failure line.
+func brief(value any) string {
+	data, err := json.Marshal(value)
+	if err != nil {
+		return "unreadable"
+	}
+	if len(data) > 120 {
+		return string(data[:120]) + "..."
+	}
+	return string(data)
+}
+
+func marshal(t *testing.T, value any) json.RawMessage {
+	t.Helper()
+	data, err := json.Marshal(value)
+	if err != nil {
+		t.Fatalf("rendering a schema: %v", err)
+	}
+	return data
+}
+
+// TestAllowancesNameARealDifference keeps the three lists honest:
 // an entry that no longer describes a difference is noise, and a
 // reason is the whole point of the entry.
 func TestAllowancesNameARealDifference(t *testing.T) {
@@ -127,6 +325,34 @@ func TestAllowancesNameARealDifference(t *testing.T) {
 		}
 		if reason == "" {
 			t.Errorf("localOnly gives no reason for %s", name)
+		}
+	}
+	reg := registry.Default()
+	for name, reason := range prose {
+		if reason == "" {
+			t.Errorf("prose gives no reason for %s", name)
+		}
+		tool := Find(name)
+		if tool == nil {
+			t.Errorf("prose names %s, which is not a curated tool here", name)
+			continue
+		}
+		if _, ok := hosted[name]; !ok {
+			t.Errorf("prose names %s, which the hosted catalogue does not "+
+				"carry, so there is no second wording to differ from", name)
+			continue
+		}
+		op := reg.Find(tool.Operation)
+		if op == nil {
+			t.Errorf("prose names %s, whose operation %s is gone", name,
+				tool.Operation)
+			continue
+		}
+		here, _ := splitExample(tool.describe(op))
+		there, _ := splitExample(hosted[name].Description)
+		if here == there {
+			t.Errorf("prose names %s, whose description already matches the "+
+				"hosted one; take the entry out", name)
 		}
 	}
 }

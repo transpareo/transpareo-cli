@@ -14,9 +14,11 @@ import (
 //go:embed mcp-tools.json
 var CatalogueJSON []byte
 
-// CatalogueTool is one tool of the hosted catalogue, reduced to
-// the fields worth agreeing on. Descriptions are left out: the
-// hosted side adds a guide link this binary cannot know.
+// CatalogueTool is one tool of the hosted catalogue: what it is
+// called and what it answers to, and the three documents an
+// assistant actually reads. The guide link the hosted side adds
+// to every description is taken out when the catalogue is
+// vendored, so the description here is the comparable part.
 type CatalogueTool struct {
 	Name        string
 	Group       string
@@ -24,6 +26,10 @@ type CatalogueTool struct {
 	Confirm     string
 	Destructive bool
 	Safe        bool
+
+	Description  string
+	InputSchema  json.RawMessage
+	OutputSchema json.RawMessage
 }
 
 // Catalogue parses the vendored catalogue into its version and
@@ -32,20 +38,17 @@ func Catalogue() (string, map[string]CatalogueTool) {
 	var doc struct {
 		Version string `json:"version"`
 		Tools   []struct {
-			Name      string `json:"name"`
-			Extension struct {
+			Name         string          `json:"name"`
+			Description  string          `json:"description"`
+			OutputSchema json.RawMessage `json:"outputSchema"`
+			Extension    struct {
 				OperationID string `json:"operationId"`
 				Group       string `json:"group"`
 				Destructive bool   `json:"destructive"`
 				Safe        bool   `json:"safe"`
+				Confirm     string `json:"confirm"`
 			} `json:"x-transpareo"`
-			InputSchema struct {
-				Properties struct {
-					Confirm struct {
-						Description string `json:"description"`
-					} `json:"confirm"`
-				} `json:"properties"`
-			} `json:"inputSchema"`
+			InputSchema json.RawMessage `json:"inputSchema"`
 		} `json:"tools"`
 	}
 	if err := json.Unmarshal(CatalogueJSON, &doc); err != nil {
@@ -53,22 +56,45 @@ func Catalogue() (string, map[string]CatalogueTool) {
 	}
 	tools := make(map[string]CatalogueTool, len(doc.Tools))
 	for _, t := range doc.Tools {
-		confirm := t.InputSchema.Properties.Confirm.Description
 		tools[t.Name] = CatalogueTool{
-			Name:        t.Name,
-			Group:       t.Extension.Group,
-			Operation:   t.Extension.OperationID,
-			Confirm:     confirmPhrase(confirm),
-			Destructive: t.Extension.Destructive,
-			Safe:        t.Extension.Safe,
+			Name:      t.Name,
+			Group:     t.Extension.Group,
+			Operation: t.Extension.OperationID,
+			Confirm: confirmPhrase(t.Extension.Confirm,
+				declaredConfirm(t.InputSchema)),
+			Destructive:  t.Extension.Destructive,
+			Safe:         t.Extension.Safe,
+			Description:  t.Description,
+			InputSchema:  t.InputSchema,
+			OutputSchema: t.OutputSchema,
 		}
 	}
 	return doc.Version, tools
 }
 
-// confirmPhrase reads the phrase out of the schema description
-// the hosted side writes, `Must be "void <id>"`.
-func confirmPhrase(description string) string {
+// declaredConfirm reads the description of the confirm argument
+// out of an input schema.
+func declaredConfirm(schema json.RawMessage) string {
+	var doc struct {
+		Properties struct {
+			Confirm struct {
+				Description string `json:"description"`
+			} `json:"confirm"`
+		} `json:"properties"`
+	}
+	json.Unmarshal(schema, &doc)
+	return doc.Properties.Confirm.Description
+}
+
+// confirmPhrase takes the phrase the extension states, and falls
+// back to reading it out of the argument's description, `Must be
+// "void <id>"`. The description is prose an editor may reword,
+// which would leave the comparison agreeing on two empty strings,
+// so the extension is where the phrase belongs.
+func confirmPhrase(stated, description string) string {
+	if stated != "" {
+		return stated
+	}
 	var phrase string
 	if _, err := fmt.Sscanf(description, "Must be %q", &phrase); err != nil {
 		return ""
