@@ -200,6 +200,14 @@ func TestLoadVendoredSpecification(t *testing.T) {
 	if len(reg.Find("create_grant").HeaderParams) != 0 {
 		t.Error("Idempotency-Key must not be listed as a header parameter")
 	}
+	for id, want := range map[string]bool{"create_product": true,
+		"create_dpp": true, "void_dpp": true, "create_grant": true,
+		"validate_dpp": false, "append_dpp_event": false,
+		"bulk_create_dpps": false, "list_products": false} {
+		if got := reg.Find(id).Idempotent; got != want {
+			t.Errorf("%s: idempotent %v, want %v", id, got, want)
+		}
+	}
 	for id, want := range map[string]bool{"bulk_create_dpps": true,
 		"create_export": true, "get_import": true, "validate_import": true,
 		"list_dpps": false, "create_dpp": false} {

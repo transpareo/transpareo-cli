@@ -80,6 +80,7 @@ func writeOperation(b *bytes.Buffer, op registry.Operation) {
 	boolean("Safe", op.Safe)
 	boolean("NDJSON", op.NDJSON)
 	boolean("Task", op.Task)
+	boolean("Idempotent", op.Idempotent)
 	fmt.Fprintf(b, "\t\tSecurity: %s,\n", stringSlice(op.Security))
 	boolean("Public", op.Public)
 	boolean("UserOnly", op.UserOnly)

@@ -54,11 +54,15 @@ type Operation struct {
 	// Destructive marks an operation that cannot be undone; Safe
 	// marks a POST that changes nothing; NDJSON marks a response
 	// of one JSON object per line; Task marks an operation whose
-	// answer can carry a statusUrl to poll.
+	// answer can carry a statusUrl to poll; Idempotent marks one
+	// that takes an Idempotency-Key, so a caller repeating it
+	// with the same key gets the first answer back rather than a
+	// second record.
 	Destructive bool `json:"destructive,omitempty"`
 	Safe        bool `json:"safe,omitempty"`
 	NDJSON      bool `json:"ndjson,omitempty"`
 	Task        bool `json:"task,omitempty"`
+	Idempotent  bool `json:"idempotent,omitempty"`
 
 	// Security lists the schemes that can authenticate the call;
 	// Public is set when the call needs none. UserOnly is set
@@ -301,9 +305,16 @@ func (r *resolver) operation(method, path string, raw map[string]any,
 		case "query":
 			op.QueryParams = append(op.QueryParams, param)
 		case "header":
-			if param.Name != "Idempotency-Key" {
-				op.HeaderParams = append(op.HeaderParams, param)
+			// The key is not a header a caller sets by hand: the
+			// command line has --idempotency-key and the client
+			// fills one in on every POST. It is kept as a fact
+			// about the operation, because only the operations
+			// declaring it replay an answer.
+			if param.Name == "Idempotency-Key" {
+				op.Idempotent = true
+				continue
 			}
+			op.HeaderParams = append(op.HeaderParams, param)
 		}
 	}
 	if err := r.requestBody(op, raw["requestBody"]); err != nil {

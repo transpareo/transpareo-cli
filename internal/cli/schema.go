@@ -21,6 +21,7 @@ type Schema struct {
 	Permission     []string         `json:"permission"`
 	Destructive    bool             `json:"destructive"`
 	Safe           bool             `json:"safe"`
+	Idempotent     bool             `json:"idempotent"`
 	UserOnly       bool             `json:"userOnly"`
 	PathParams     []registry.Param `json:"pathParams,omitempty"`
 	QueryParams    []registry.Param `json:"queryParams,omitempty"`
@@ -96,6 +97,7 @@ a payload starts here. Operation ids come from
 				Permission:     op.Permission,
 				Destructive:    op.Destructive,
 				Safe:           op.Safe,
+				Idempotent:     op.Idempotent,
 				UserOnly:       op.UserOnly,
 				PathParams:     op.PathParams,
 				QueryParams:    op.QueryParams,
