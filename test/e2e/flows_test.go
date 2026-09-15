@@ -474,9 +474,17 @@ func TestImportValidateWithTheTemplate(t *testing.T) {
 	if errors.As(err, &required) {
 		opts.Mappings = map[string]flows.Mapping{}
 		for _, u := range required.Unresolved {
-			if u.Suggestion == nil || u.Suggestion.Action != "create_new" {
-				t.Fatalf("column %q is unresolved for another reason: %+v",
-					u.Header, u)
+			// A core attribute resolves on its own, so one left
+			// here means the template no longer names its own
+			// columns the way the preview reads them. Everything
+			// else is a property column, and it is unresolved
+			// whether the workspace has nothing like it or
+			// something close enough to guess at; a person skips
+			// it either way.
+			if u.MatchType == "attribute" || suggests(u, "map_to_attribute") {
+				t.Fatalf("the core attribute column %q did not resolve: "+
+					"match %s, suggestion %s", u.Header, u.MatchType,
+					suggestedAction(u))
 			}
 			opts.Mappings[u.Column] = flows.Mapping{Action: "skip"}
 		}
@@ -493,6 +501,19 @@ func TestImportValidateWithTheTemplate(t *testing.T) {
 	if imp.Status != "validated" {
 		t.Errorf("import status = %s", imp.Status)
 	}
+}
+
+// suggestedAction names what the preview proposed for a column,
+// since the suggestion itself is a pointer and prints as one.
+func suggestedAction(u flows.Unresolved) string {
+	if u.Suggestion == nil {
+		return "none"
+	}
+	return u.Suggestion.Action
+}
+
+func suggests(u flows.Unresolved, action string) bool {
+	return u.Suggestion != nil && u.Suggestion.Action == action
 }
 
 func TestExportCreateAndDownload(t *testing.T) {
