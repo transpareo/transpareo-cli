@@ -3,6 +3,8 @@
 // other operation, and three resources.
 package mcp
 
+//go:generate go run ./gen
+
 import (
 	"bytes"
 	"encoding/json"
@@ -36,6 +38,21 @@ const (
 	kindRows
 )
 
+// String is the name the catalogue declares the kind under.
+func (k kind) String() string {
+	switch k {
+	case kindList:
+		return "list"
+	case kindGet:
+		return "get"
+	case kindWrite:
+		return "write"
+	case kindRows:
+		return "rows"
+	}
+	return "unknown"
+}
+
 // Tool describes one curated tool: which operation it calls, how
 // its arguments map onto the request, and the phrase a
 // destructive one demands.
@@ -51,115 +68,6 @@ type Tool struct {
 
 	// Description adds to what the registry says.
 	Description string
-}
-
-// curated is the tool table. Every operation of the registry is
-// either here, in viaCallAPIOnly, hidden from consumers, or a
-// user-only operation; a test enforces it.
-var curated = []Tool{
-	{Name: "me", Group: GroupIdentity, Operation: "get_me", Kind: kindGet,
-		Description: "Start here: what the credential allows, its scope and " +
-			"rate limit."},
-
-	{Name: "list_products", Group: GroupProducts, Operation: "list_products",
-		Kind: kindList},
-	{Name: "get_product", Group: GroupProducts, Operation: "get_product",
-		Kind: kindGet},
-	{Name: "create_product", Group: GroupProducts, Operation: "create_product",
-		Kind: kindWrite,
-		Description: "Call product_property_types first: a product missing a " +
-			"mandatory property is refused."},
-	{Name: "update_product", Group: GroupProducts, Operation: "update_product",
-		Kind: kindWrite},
-	{Name: "publish_product", Group: GroupProducts,
-		Operation: "publish_product", Kind: kindWrite},
-	{Name: "unpublish_product", Group: GroupProducts,
-		Operation: "unpublish_product", Kind: kindWrite},
-	{Name: "product_property_types", Group: GroupProducts,
-		Operation: "get_new_product", Kind: kindGet,
-		Description: "The property types a new product can carry, with the " +
-			"mandatory ones flagged: the body create_product needs."},
-	{Name: "list_components", Group: GroupProducts,
-		Operation: "list_components", Kind: kindList},
-	{Name: "get_component", Group: GroupProducts, Operation: "get_component",
-		Kind: kindGet},
-	{Name: "create_component", Group: GroupProducts,
-		Operation: "create_component", Kind: kindWrite},
-	{Name: "update_component", Group: GroupProducts,
-		Operation: "update_component", Kind: kindWrite},
-	{Name: "list_mediafiles", Group: GroupProducts,
-		Operation: "list_mediafiles", Kind: kindList},
-	{Name: "create_mediafile", Group: GroupProducts,
-		Operation: "create_mediafile", Kind: kindWrite,
-		Description: "A link goes in under url and the server reads the " +
-			"bytes; a small image can go in as base64 under data."},
-	{Name: "update_product_mediafiles", Group: GroupProducts,
-		Operation: "update_product_mediafiles", Kind: kindWrite,
-		Description: "Replaces a product's images with the ones named, in " +
-			"the order given."},
-	{Name: "list_brands", Group: GroupProducts, Operation: "list_brands",
-		Kind: kindList},
-	{Name: "create_brand", Group: GroupProducts, Operation: "create_brand",
-		Kind: kindWrite},
-
-	{Name: "dpp_requirements", Group: GroupDpps,
-		Operation: "get_dpp_requirements", Kind: kindGet,
-		Description: "The answer carries a body ready to fill for " +
-			"validate_dpp and create_dpp."},
-	{Name: "list_dpps", Group: GroupDpps, Operation: "list_dpps",
-		Kind: kindList},
-	{Name: "get_dpp", Group: GroupDpps, Operation: "get_dpp", Kind: kindGet},
-	{Name: "validate_dpp", Group: GroupDpps, Operation: "validate_dpp",
-		Kind: kindWrite,
-		Description: "Runs the checks a publish runs, writes nothing. Call " +
-			"it " +
-			"before create_dpp."},
-	{Name: "create_dpp", Group: GroupDpps, Operation: "create_dpp",
-		Kind: kindWrite},
-	{Name: "update_dpp", Group: GroupDpps, Operation: "update_dpp",
-		Kind: kindWrite},
-	{Name: "publish_dpp", Group: GroupDpps, Operation: "publish_dpp",
-		Kind: kindWrite,
-		Description: "Signs a snapshot into the ten-year archive. Publishing " +
-			"cannot be undone."},
-	{Name: "append_dpp_event", Group: GroupDpps, Operation: "append_dpp_event",
-		Kind: kindWrite,
-		Description: "Recalling a unit is an event here: a status change to " +
-			"suspended, so the passport goes on answering a scan with the " +
-			"recall."},
-	{Name: "update_dynamic_data", Group: GroupDpps,
-		Operation: "update_dpp_dynamic_data", Kind: kindWrite},
-	{Name: "void_dpp", Group: GroupDpps, Operation: "void_dpp", Kind: kindWrite,
-		Confirm: "void <id>",
-		Description: "For a unit that no longer exists. To recall one that " +
-			"is still in the field, use append_dpp_event instead."},
-	{Name: "supersede_dpp", Group: GroupDpps, Operation: "supersede_dpp",
-		Kind:    kindWrite,
-		Confirm: "supersede <id>"},
-	{Name: "reissue_dpp", Group: GroupDpps, Operation: "reissue_dpp",
-		Kind: kindWrite},
-	{Name: "bulk_validate_dpps", Group: GroupDpps,
-		Operation: "validate_dpps_bulk", Kind: kindRows},
-	{Name: "bulk_create_dpps", Group: GroupDpps, Operation: "bulk_create_dpps",
-		Kind: kindRows,
-		Description: "Rows are deduplicated by their identifiers, so " +
-			"resubmitting after a timeout creates nothing twice."},
-
-	{Name: "list_webhooks", Group: GroupWebhooks, Operation: "list_webhooks",
-		Kind: kindList},
-	{Name: "create_webhook", Group: GroupWebhooks, Operation: "create_webhook",
-		Kind:        kindWrite,
-		Description: "The answer carries the signing secret, shown only here."},
-	{Name: "test_webhook", Group: GroupWebhooks, Operation: "test_webhook",
-		Kind: kindWrite},
-	{Name: "regenerate_webhook_secret", Group: GroupWebhooks,
-		Operation: "regenerate_webhook_secret", Kind: kindWrite,
-		Confirm: "regenerate <id>",
-		Description: "The old secret stops working at once; the answer " +
-			"carries the new one, shown only here."},
-	{Name: "delete_webhook", Group: GroupWebhooks, Operation: "delete_webhook",
-		Kind:    kindWrite,
-		Confirm: "delete <id>"},
 }
 
 // viaCallAPIOnly lists the consumer-callable operations that have
@@ -231,10 +139,10 @@ var viaCallAPIOnly = map[string]string{
 
 // hostedOnly and localOnly are the tools one catalogue carries
 // and the other does not, each with the reason. Only a composed
-// tool may appear: the curated tables are derived from the same
-// document on both sides, so a curated difference is a
-// derivation bug rather than a decision. A test compares the two
-// catalogues and refuses any difference not listed here.
+// tool can appear: a curated one is generated from the row the
+// catalogue publishes, so the two sides carry the same set by
+// construction. A test compares the two catalogues and refuses
+// any difference not listed here.
 var hostedOnly = map[string]string{
 	"search": "deep research prescribes both this name and its shape; " +
 		"a client that finds anything else falls back to no research",
@@ -245,21 +153,6 @@ var hostedOnly = map[string]string{
 var localOnly = map[string]string{
 	"import_spreadsheet": "the flow starts from a path to a file on " +
 		"disk, which a hosted assistant has no way to reach",
-}
-
-// prose lists the curated tools whose description says something
-// different here than in the hosted catalogue, with the reason.
-// A tool is in here while one of the two wordings is being
-// corrected and comes straight out again once both say the same
-// thing; a test refuses an entry whose two descriptions already
-// agree. Everything else about a curated tool has to match,
-// because both sides render it from the same document.
-var prose = map[string]string{
-	"create_mediafile": "the hosted sentence predates mediafile.url: it " +
-		"says the bytes travel as base64 and sends anything larger to the " +
-		"application manager, which is the case the operation grew url " +
-		"for. The wording used here is the agreed replacement, waiting on " +
-		"a catalogue release",
 }
 
 // Tools returns the curated tools, filtered to the groups asked

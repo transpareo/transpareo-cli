@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"reflect"
 	"sort"
-	"strconv"
 	"strings"
 	"testing"
 
@@ -13,54 +12,69 @@ import (
 	"github.com/transpareo/transpareo-cli/spec"
 )
 
+// TestGeneratedToolsMatchTheCatalogue fails when tools.gen.go
+// lags the vendored catalogue, naming what to run. The table and
+// the instructions are derived, so this is the check that they
+// were derived from the document that is committed beside them.
+func TestGeneratedToolsMatchTheCatalogue(t *testing.T) {
+	doc := spec.Catalogue()
+	if instructions != doc.Instructions {
+		t.Errorf("the instructions differ from the vendored catalogue; "+
+			"run go generate ./internal/mcp/\n here  %q\n there %q",
+			instructions, doc.Instructions)
+	}
+	names := doc.CuratedNames()
+	if len(names) != len(curated) {
+		t.Fatalf("the catalogue curates %d tools and the generated table "+
+			"carries %d; run go generate ./internal/mcp/", len(names),
+			len(curated))
+	}
+	for i, name := range names {
+		want, got := doc.Tools[name], curated[i]
+		if got.Name != want.Name || got.Group != want.Group ||
+			got.Operation != want.Operation || got.Kind.String() != want.Kind ||
+			got.Confirm != want.Confirm || got.Description != want.Sentence {
+			t.Errorf("%s was generated as %+v, and the catalogue declares "+
+				"{Group:%s Operation:%s Kind:%s Confirm:%s Sentence:%s}; run "+
+				"go generate ./internal/mcp/", name, got, want.Group,
+				want.Operation, want.Kind, want.Confirm, want.Sentence)
+		}
+	}
+}
+
 // TestCatalogueMatchesTheHostedOne compares this server's tools
-// with the catalogue the hosted assistant server publishes. A
-// curated tool must agree on everything an assistant sees: the
-// name, the operation, the group, the flags, the confirm phrase,
-// the description and both schemas. Both sides render all of it
-// from the same specification, so a difference is one of the two
-// renderings being wrong, not a decision either side gets to
-// make. A composed tool is written twice by hand, so its absence
+// with the catalogue the hosted assistant server publishes.
+//
+// A curated tool is no longer compared on what it is: both sides
+// read that from the same row of the same document, and this side
+// generates its table from it. What is compared is what each side
+// built out of that row, because the building is done twice, once
+// in Ruby and once here. The description an assistant reads and
+// both schemas it fills in have to come out the same.
+//
+// A composed tool is still written twice by hand, so its absence
 // on one side is allowed when hostedOnly or localOnly gives the
-// reason, but one both sides carry must still agree on its group
-// and its flags.
+// reason, and one both sides carry must agree on its group and
+// its flags.
 func TestCatalogueMatchesTheHostedOne(t *testing.T) {
-	version, hosted := spec.Catalogue()
-	if version != spec.Version() {
+	doc := spec.Catalogue()
+	if doc.Version != spec.Version() {
 		t.Fatalf("the vendored catalogue is %s and the specification %s; "+
-			"re-vendor both, they move together", version, spec.Version())
+			"re-vendor both, they move together", doc.Version, spec.Version())
 	}
 
 	reg := registry.Default()
-	local := map[string]spec.CatalogueTool{}
 	for _, tool := range curated {
 		op := reg.Find(tool.Operation)
 		if op == nil {
+			t.Errorf("%s is curated over %s, which the registry does not "+
+				"carry; the two documents disagree about the API", tool.Name,
+				tool.Operation)
 			continue
 		}
-		local[tool.Name] = spec.CatalogueTool{
-			Name:         tool.Name,
-			Group:        tool.Group,
-			Operation:    tool.Operation,
-			Confirm:      tool.confirmPhrase(op),
-			Destructive:  op.Destructive,
-			Safe:         op.ReadOnly(),
-			Description:  tool.describe(op),
-			InputSchema:  marshal(t, tool.inputSchema(op)),
-			OutputSchema: marshal(t, tool.outputSchema(op)),
-		}
-	}
-
-	for name, want := range local {
-		got, ok := hosted[name]
-		if !ok {
-			t.Errorf("curated tool %s is missing from the hosted "+
-				"catalogue; a curated difference is a derivation bug, not "+
-				"something hostedOnly or localOnly may excuse", name)
-			continue
-		}
-		for _, difference := range differences(want, got) {
-			t.Errorf("curated tool %s: %s", name, difference)
+		hosted := doc.Tools[tool.Name]
+		for _, difference := range renderedDifferences(tool, op, hosted) {
+			t.Errorf("curated tool %s: %s", tool.Name, difference)
 		}
 	}
 
@@ -70,7 +84,7 @@ func TestCatalogueMatchesTheHostedOne(t *testing.T) {
 				"flags cannot be compared", tool.Name)
 			continue
 		}
-		got, ok := hosted[tool.Name]
+		got, ok := doc.Tools[tool.Name]
 		if !ok {
 			if localOnly[tool.Name] == "" {
 				t.Errorf("%s is a tool here and not in the hosted "+
@@ -103,17 +117,8 @@ func TestCatalogueMatchesTheHostedOne(t *testing.T) {
 		}
 	}
 
-	for name, tool := range hosted {
-		if _, ok := local[name]; ok {
-			continue
-		}
-		if serves(name) {
-			continue
-		}
-		if tool.Operation != "" {
-			t.Errorf("the hosted catalogue curates %s over %s and this "+
-				"server does not; a curated difference is a derivation bug",
-				name, tool.Operation)
+	for name, tool := range doc.Tools {
+		if tool.Operation != "" || serves(name) {
 			continue
 		}
 		if hostedOnly[name] == "" {
@@ -123,63 +128,58 @@ func TestCatalogueMatchesTheHostedOne(t *testing.T) {
 	}
 }
 
-// differences names every way the two renderings of one curated
-// tool disagree, in words rather than as two dumped structs: a
-// schema runs to tens of kilobytes and reading two of them side
-// by side is not how the difference is found.
-func differences(local, hosted spec.CatalogueTool) []string {
+// renderedDifferences names every way the two renderings of one
+// curated tool disagree, in words rather than as two dumped
+// documents: a schema runs to tens of kilobytes and reading two
+// of them side by side is not how the difference is found.
+func renderedDifferences(tool Tool, op *registry.Operation,
+	hosted spec.CatalogueTool) []string {
 	var out []string
-	note := func(what, here, there string) {
-		out = append(out, fmt.Sprintf("%s is %q here and %q there", what,
-			here, there))
+	if hosted.Destructive != op.Destructive {
+		out = append(out, fmt.Sprintf("destructive is %t here and %t there",
+			op.Destructive, hosted.Destructive))
 	}
-	if local.Group != hosted.Group {
-		note("the group", local.Group, hosted.Group)
+	if hosted.Safe != op.ReadOnly() {
+		out = append(out, fmt.Sprintf("safe is %t here and %t there",
+			op.ReadOnly(), hosted.Safe))
 	}
-	if local.Operation != hosted.Operation {
-		note("the operation", local.Operation, hosted.Operation)
-	}
-	if local.Confirm != hosted.Confirm {
-		note("the confirm phrase", local.Confirm, hosted.Confirm)
-	}
-	if local.Destructive != hosted.Destructive {
-		note("destructive", strconv.FormatBool(local.Destructive),
-			strconv.FormatBool(hosted.Destructive))
-	}
-	if local.Safe != hosted.Safe {
-		note("safe", strconv.FormatBool(local.Safe),
-			strconv.FormatBool(hosted.Safe))
-	}
-	out = append(out, describedDifferently(local, hosted)...)
+	out = append(out, describedDifferently(tool, op, hosted)...)
 	for _, schema := range []struct {
-		what          string
-		local, hosted json.RawMessage
+		what   string
+		local  any
+		hosted json.RawMessage
 	}{
-		{"input schema", local.InputSchema, hosted.InputSchema},
-		{"output schema", local.OutputSchema, hosted.OutputSchema},
+		{"input schema", tool.inputSchema(op), hosted.InputSchema},
+		{"output schema", tool.outputSchema(op), hosted.OutputSchema},
 	} {
-		for _, difference := range documentDifferences(schema.what,
-			schema.local, schema.hosted) {
+		local, err := json.Marshal(schema.local)
+		if err != nil {
+			out = append(out, "the "+schema.what+" here will not marshal: "+
+				err.Error())
+			continue
+		}
+		for _, difference := range documentDifferences(schema.what, local,
+			schema.hosted) {
 			out = append(out, "the "+difference)
 		}
 	}
 	return out
 }
 
-// describedDifferently compares the two descriptions. The prose
-// is compared as text, unless prose names the tool as one being
-// corrected. The example is compared as the call it is: the
-// hosted server writes a body's fields in the order the document
-// declares them and this one writes them in name order, because
-// Go marshals a map that way, and that is a difference in
-// spelling rather than in what an assistant is told to send.
-func describedDifferently(local, hosted spec.CatalogueTool) []string {
-	localProse, localExample := splitExample(local.Description)
+// describedDifferently compares the two descriptions. The example
+// is compared as the call it is: the hosted server writes a body's
+// fields in the order the document declares them and this one
+// writes them in name order, because Go marshals a map that way,
+// and that is a difference in spelling rather than in what an
+// assistant is told to send.
+func describedDifferently(tool Tool, op *registry.Operation,
+	hosted spec.CatalogueTool) []string {
+	localProse, localExample := splitExample(tool.describe(op))
 	hostedProse, hostedExample := splitExample(hosted.Description)
 	var out []string
-	if localProse != hostedProse && prose[local.Name] == "" {
+	if localProse != hostedProse {
 		out = append(out, fmt.Sprintf("the description is %q here and %q "+
-			"there, with no reason in prose", localProse, hostedProse))
+			"there", localProse, hostedProse))
 	}
 	if !sameCall(localExample, hostedExample) {
 		out = append(out, fmt.Sprintf("the example is %q here and %q there",
@@ -287,22 +287,13 @@ func brief(value any) string {
 	return string(data)
 }
 
-func marshal(t *testing.T, value any) json.RawMessage {
-	t.Helper()
-	data, err := json.Marshal(value)
-	if err != nil {
-		t.Fatalf("rendering a schema: %v", err)
-	}
-	return data
-}
-
-// TestAllowancesNameARealDifference keeps the three lists honest:
+// TestAllowancesNameARealDifference keeps the two lists honest:
 // an entry that no longer describes a difference is noise, and a
 // reason is the whole point of the entry.
 func TestAllowancesNameARealDifference(t *testing.T) {
-	_, hosted := spec.Catalogue()
+	doc := spec.Catalogue()
 	for name, reason := range hostedOnly {
-		if _, ok := hosted[name]; !ok {
+		if _, ok := doc.Tools[name]; !ok {
 			t.Errorf("hostedOnly names %s, which the hosted catalogue no "+
 				"longer carries", name)
 		}
@@ -319,40 +310,12 @@ func TestAllowancesNameARealDifference(t *testing.T) {
 			t.Errorf("localOnly names %s, which this server does not carry",
 				name)
 		}
-		if _, ok := hosted[name]; ok {
+		if _, ok := doc.Tools[name]; ok {
 			t.Errorf("localOnly names %s, which the hosted catalogue "+
 				"carries too", name)
 		}
 		if reason == "" {
 			t.Errorf("localOnly gives no reason for %s", name)
-		}
-	}
-	reg := registry.Default()
-	for name, reason := range prose {
-		if reason == "" {
-			t.Errorf("prose gives no reason for %s", name)
-		}
-		tool := Find(name)
-		if tool == nil {
-			t.Errorf("prose names %s, which is not a curated tool here", name)
-			continue
-		}
-		if _, ok := hosted[name]; !ok {
-			t.Errorf("prose names %s, which the hosted catalogue does not "+
-				"carry, so there is no second wording to differ from", name)
-			continue
-		}
-		op := reg.Find(tool.Operation)
-		if op == nil {
-			t.Errorf("prose names %s, whose operation %s is gone", name,
-				tool.Operation)
-			continue
-		}
-		here, _ := splitExample(tool.describe(op))
-		there, _ := splitExample(hosted[name].Description)
-		if here == there {
-			t.Errorf("prose names %s, whose description already matches the "+
-				"hosted one; take the entry out", name)
 		}
 	}
 }

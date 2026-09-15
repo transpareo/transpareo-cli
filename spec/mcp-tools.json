@@ -1,5 +1,6 @@
 {
-  "version": "1.18.0",
+  "version": "1.19.0",
+  "instructions": "Transpareo holds a workspace's products, components and Digital\nProduct Passports. Start with me to learn what the credential\nallows. For a new product call product_property_types before\ncreate_product. For passports of an existing product call\ndpp_requirements, then validate_dpp before create_dpp. publish_dpp\nsigns the passport and cannot be undone. Recalling a unit is a\nstatus change to suspended through append_dpp_event, not a void;\nvoid_dpp is for a unit that no longer exists. void_dpp and\nsupersede_dpp need the confirm argument with the stated phrase.\nAnything without a tool: search_operations, then call_api. Lists\nare paged; follow nextPage.",
   "tools": [
     {
       "name": "append_dpp_event",
@@ -179,7 +180,9 @@
         ],
         "destructive": false,
         "safe": false,
-        "group": "dpps"
+        "group": "dpps",
+        "kind": "write",
+        "sentence": "Recalling a unit is an event here: a status change to suspended, so the passport goes on answering a scan with the recall."
       }
     },
     {
@@ -307,7 +310,9 @@
         ],
         "destructive": false,
         "safe": false,
-        "group": "dpps"
+        "group": "dpps",
+        "kind": "rows",
+        "sentence": "Rows are deduplicated by their identifiers, so resubmitting after a timeout creates nothing twice."
       }
     },
     {
@@ -525,7 +530,8 @@
         ],
         "destructive": false,
         "safe": true,
-        "group": "dpps"
+        "group": "dpps",
+        "kind": "rows"
       }
     },
     {
@@ -652,7 +658,8 @@
         ],
         "destructive": false,
         "safe": false,
-        "group": "products"
+        "group": "products",
+        "kind": "write"
       }
     },
     {
@@ -982,7 +989,8 @@
         ],
         "destructive": false,
         "safe": false,
-        "group": "products"
+        "group": "products",
+        "kind": "write"
       }
     },
     {
@@ -1382,13 +1390,14 @@
         ],
         "destructive": false,
         "safe": false,
-        "group": "dpps"
+        "group": "dpps",
+        "kind": "write"
       }
     },
     {
       "name": "create_mediafile",
       "title": "Upload a mediafile",
-      "description": "Upload a mediafile. The bytes travel in the call as base64, so this is for a small image; a photograph is faster added in the application manager and attached with update_product_mediafiles.\nPermission: none beyond a valid token. Data tier: authorised (the workspace's own catalogue).\nExample: create_mediafile {\"mediafile\":{\"url\":\"https://images.example.com/rain-shell-hero.jpg\",\"name\":\"Rain shell hero shot\"}}",
+      "description": "Upload a mediafile. A link goes in under url and the server reads the bytes; a small image can go in as base64 under data.\nPermission: none beyond a valid token. Data tier: authorised (the workspace's own catalogue).\nExample: create_mediafile {\"mediafile\":{\"url\":\"https://images.example.com/rain-shell-hero.jpg\",\"name\":\"Rain shell hero shot\"}}",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -1451,7 +1460,9 @@
         "permission": [],
         "destructive": false,
         "safe": false,
-        "group": "products"
+        "group": "products",
+        "kind": "write",
+        "sentence": "A link goes in under url and the server reads the bytes; a small image can go in as base64 under data."
       }
     },
     {
@@ -2003,7 +2014,9 @@
         ],
         "destructive": false,
         "safe": false,
-        "group": "products"
+        "group": "products",
+        "kind": "write",
+        "sentence": "Call product_property_types first: a product missing a mandatory property is refused."
       }
     },
     {
@@ -2164,7 +2177,9 @@
         ],
         "destructive": false,
         "safe": false,
-        "group": "webhooks"
+        "group": "webhooks",
+        "kind": "write",
+        "sentence": "The answer carries the signing secret, shown only here."
       }
     },
     {
@@ -2212,7 +2227,9 @@
         ],
         "destructive": true,
         "safe": false,
-        "group": "webhooks"
+        "group": "webhooks",
+        "kind": "write",
+        "confirm": "delete <id>"
       }
     },
     {
@@ -2614,7 +2631,9 @@
         ],
         "destructive": false,
         "safe": true,
-        "group": "dpps"
+        "group": "dpps",
+        "kind": "get",
+        "sentence": "The answer carries a body ready to fill for validate_dpp and create_dpp."
       }
     },
     {
@@ -2993,7 +3012,8 @@
         "permission": [],
         "destructive": false,
         "safe": true,
-        "group": "products"
+        "group": "products",
+        "kind": "get"
       }
     },
     {
@@ -3401,7 +3421,8 @@
         ],
         "destructive": false,
         "safe": true,
-        "group": "dpps"
+        "group": "dpps",
+        "kind": "get"
       }
     },
     {
@@ -3887,7 +3908,8 @@
         "permission": [],
         "destructive": false,
         "safe": true,
-        "group": "products"
+        "group": "products",
+        "kind": "get"
       }
     },
     {
@@ -3987,7 +4009,8 @@
         "permission": [],
         "destructive": false,
         "safe": true,
-        "group": "products"
+        "group": "products",
+        "kind": "list"
       }
     },
     {
@@ -4108,7 +4131,8 @@
         "permission": [],
         "destructive": false,
         "safe": true,
-        "group": "products"
+        "group": "products",
+        "kind": "list"
       }
     },
     {
@@ -4492,7 +4516,8 @@
         ],
         "destructive": false,
         "safe": true,
-        "group": "dpps"
+        "group": "dpps",
+        "kind": "list"
       }
     },
     {
@@ -4579,7 +4604,8 @@
         "permission": [],
         "destructive": false,
         "safe": true,
-        "group": "products"
+        "group": "products",
+        "kind": "list"
       }
     },
     {
@@ -4736,7 +4762,8 @@
         "permission": [],
         "destructive": false,
         "safe": true,
-        "group": "products"
+        "group": "products",
+        "kind": "list"
       }
     },
     {
@@ -4884,7 +4911,8 @@
         ],
         "destructive": false,
         "safe": true,
-        "group": "webhooks"
+        "group": "webhooks",
+        "kind": "list"
       }
     },
     {
@@ -5020,7 +5048,9 @@
         "permission": [],
         "destructive": false,
         "safe": true,
-        "group": "identity"
+        "group": "identity",
+        "kind": "get",
+        "sentence": "Start here: what the credential allows, its scope and rate limit."
       }
     },
     {
@@ -5491,7 +5521,9 @@
         "permission": [],
         "destructive": false,
         "safe": true,
-        "group": "products"
+        "group": "products",
+        "kind": "get",
+        "sentence": "The property types a new product can carry, with the mandatory ones flagged: the body create_product needs."
       }
     },
     {
@@ -5556,7 +5588,9 @@
         ],
         "destructive": false,
         "safe": false,
-        "group": "dpps"
+        "group": "dpps",
+        "kind": "write",
+        "sentence": "Signs a snapshot into the ten-year archive. Publishing cannot be undone."
       }
     },
     {
@@ -6029,7 +6063,8 @@
         ],
         "destructive": false,
         "safe": false,
-        "group": "products"
+        "group": "products",
+        "kind": "write"
       }
     },
     {
@@ -6153,7 +6188,10 @@
         ],
         "destructive": true,
         "safe": false,
-        "group": "webhooks"
+        "group": "webhooks",
+        "kind": "write",
+        "sentence": "The old secret stops working at once; the answer carries the new one, shown only here.",
+        "confirm": "regenerate <id>"
       }
     },
     {
@@ -6508,7 +6546,8 @@
         ],
         "destructive": false,
         "safe": false,
-        "group": "dpps"
+        "group": "dpps",
+        "kind": "write"
       }
     },
     {
@@ -6969,7 +7008,9 @@
         ],
         "destructive": true,
         "safe": false,
-        "group": "dpps"
+        "group": "dpps",
+        "kind": "write",
+        "confirm": "supersede <id>"
       }
     },
     {
@@ -7088,7 +7129,8 @@
         ],
         "destructive": false,
         "safe": false,
-        "group": "webhooks"
+        "group": "webhooks",
+        "kind": "write"
       }
     },
     {
@@ -7561,7 +7603,8 @@
         ],
         "destructive": false,
         "safe": false,
-        "group": "products"
+        "group": "products",
+        "kind": "write"
       }
     },
     {
@@ -7894,7 +7937,8 @@
         ],
         "destructive": false,
         "safe": false,
-        "group": "products"
+        "group": "products",
+        "kind": "write"
       }
     },
     {
@@ -8294,7 +8338,8 @@
         ],
         "destructive": false,
         "safe": false,
-        "group": "dpps"
+        "group": "dpps",
+        "kind": "write"
       }
     },
     {
@@ -8352,7 +8397,8 @@
         ],
         "destructive": false,
         "safe": false,
-        "group": "dpps"
+        "group": "dpps",
+        "kind": "write"
       }
     },
     {
@@ -8899,7 +8945,8 @@
         ],
         "destructive": false,
         "safe": false,
-        "group": "products"
+        "group": "products",
+        "kind": "write"
       }
     },
     {
@@ -8948,7 +8995,9 @@
         ],
         "destructive": false,
         "safe": false,
-        "group": "products"
+        "group": "products",
+        "kind": "write",
+        "sentence": "Replaces a product's images with the ones named, in the order given."
       }
     },
     {
@@ -9171,7 +9220,9 @@
         ],
         "destructive": false,
         "safe": true,
-        "group": "dpps"
+        "group": "dpps",
+        "kind": "write",
+        "sentence": "Runs the checks a publish runs, writes nothing. Call it before create_dpp."
       }
     },
     {
@@ -9538,7 +9589,10 @@
         ],
         "destructive": true,
         "safe": false,
-        "group": "dpps"
+        "group": "dpps",
+        "kind": "write",
+        "sentence": "For a unit that no longer exists. To recall one that is still in the field, use append_dpp_event instead.",
+        "confirm": "void <id>"
       }
     },
     {

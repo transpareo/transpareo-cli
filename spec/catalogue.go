@@ -14,15 +14,27 @@ import (
 //go:embed mcp-tools.json
 var CatalogueJSON []byte
 
-// CatalogueTool is one tool of the hosted catalogue: what it is
-// called and what it answers to, and the three documents an
-// assistant actually reads. The guide link the hosted side adds
-// to every description is taken out when the catalogue is
-// vendored, so the description here is the comparable part.
+// CatalogueDoc is the vendored catalogue: the specification
+// version it was built from, the instructions an assistant reads
+// on connect, and the tools by name.
+type CatalogueDoc struct {
+	Version      string
+	Instructions string
+	Tools        map[string]CatalogueTool
+}
+
+// CatalogueTool is one tool of the hosted catalogue. The first
+// block is the declaration, which is what a tool is rather than
+// how it reads: both servers build their own tool from it. The
+// second is what that building produced on the hosted side, which
+// is what an assistant is shown. Comparing the second is how two
+// renderings of one declaration are held together.
 type CatalogueTool struct {
 	Name        string
 	Group       string
 	Operation   string
+	Kind        string
+	Sentence    string
 	Confirm     string
 	Destructive bool
 	Safe        bool
@@ -32,18 +44,20 @@ type CatalogueTool struct {
 	OutputSchema json.RawMessage
 }
 
-// Catalogue parses the vendored catalogue into its version and
-// its tools by name.
-func Catalogue() (string, map[string]CatalogueTool) {
+// Catalogue parses the vendored catalogue.
+func Catalogue() CatalogueDoc {
 	var doc struct {
-		Version string `json:"version"`
-		Tools   []struct {
+		Version      string `json:"version"`
+		Instructions string `json:"instructions"`
+		Tools        []struct {
 			Name         string          `json:"name"`
 			Description  string          `json:"description"`
 			OutputSchema json.RawMessage `json:"outputSchema"`
 			Extension    struct {
 				OperationID string `json:"operationId"`
 				Group       string `json:"group"`
+				Kind        string `json:"kind"`
+				Sentence    string `json:"sentence"`
 				Destructive bool   `json:"destructive"`
 				Safe        bool   `json:"safe"`
 				Confirm     string `json:"confirm"`
@@ -60,6 +74,8 @@ func Catalogue() (string, map[string]CatalogueTool) {
 			Name:      t.Name,
 			Group:     t.Extension.Group,
 			Operation: t.Extension.OperationID,
+			Kind:      t.Extension.Kind,
+			Sentence:  t.Extension.Sentence,
 			Confirm: confirmPhrase(t.Extension.Confirm,
 				declaredConfirm(t.InputSchema)),
 			Destructive:  t.Extension.Destructive,
@@ -69,21 +85,27 @@ func Catalogue() (string, map[string]CatalogueTool) {
 			OutputSchema: t.OutputSchema,
 		}
 	}
-	return doc.Version, tools
+	return CatalogueDoc{Version: doc.Version,
+		Instructions: doc.Instructions, Tools: tools}
 }
 
-// declaredConfirm reads the description of the confirm argument
-// out of an input schema.
-func declaredConfirm(schema json.RawMessage) string {
+// CuratedNames lists, in the order the document gives them, the
+// tools the catalogue declares over an operation. The rest are
+// composed by hand on one side or the other.
+func (d CatalogueDoc) CuratedNames() []string {
 	var doc struct {
-		Properties struct {
-			Confirm struct {
-				Description string `json:"description"`
-			} `json:"confirm"`
-		} `json:"properties"`
+		Tools []struct {
+			Name string `json:"name"`
+		} `json:"tools"`
 	}
-	json.Unmarshal(schema, &doc)
-	return doc.Properties.Confirm.Description
+	json.Unmarshal(CatalogueJSON, &doc)
+	var names []string
+	for _, t := range doc.Tools {
+		if d.Tools[t.Name].Operation != "" {
+			names = append(names, t.Name)
+		}
+	}
+	return names
 }
 
 // confirmPhrase takes the phrase the extension states, and falls
@@ -100,4 +122,18 @@ func confirmPhrase(stated, description string) string {
 		return ""
 	}
 	return phrase
+}
+
+// declaredConfirm reads the description of the confirm argument
+// out of an input schema.
+func declaredConfirm(schema json.RawMessage) string {
+	var doc struct {
+		Properties struct {
+			Confirm struct {
+				Description string `json:"description"`
+			} `json:"confirm"`
+		} `json:"properties"`
+	}
+	json.Unmarshal(schema, &doc)
+	return doc.Properties.Confirm.Description
 }

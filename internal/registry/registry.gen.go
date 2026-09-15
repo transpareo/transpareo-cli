@@ -4,7 +4,7 @@ package registry
 
 import "encoding/json"
 
-const generatedVersion = "1.18.0"
+const generatedVersion = "1.19.0"
 
 var generatedOperations = []Operation{
 	{
