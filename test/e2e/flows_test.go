@@ -22,6 +22,7 @@ import (
 
 	"github.com/transpareo/transpareo-cli/internal/flows"
 	"github.com/transpareo/transpareo-cli/internal/mcp"
+	"github.com/transpareo/transpareo-cli/internal/output"
 	"github.com/transpareo/transpareo-cli/pkg/transpareo"
 )
 
@@ -191,11 +192,23 @@ func throwawayProduct(t *testing.T, c *transpareo.Client) json.Number {
 	return created.ID
 }
 
-func TestPassportFlowOnAThrowawayProduct(t *testing.T) {
-	e := load(t)
-	c := e.client(t)
+// passport is one this run created, with what the workspace said
+// about publishing it. A workspace whose templates block a
+// publish answers a documented refusal to everything downstream
+// of one, so the checks carry the answer rather than ask again.
+type passport struct {
+	ID             json.Number
+	Code           string
+	PublishBlocked bool
+}
+
+// throwawayPassport fills the workspace's own create template for
+// the product and creates a passport from it. It is deleted with
+// the product it hangs from.
+func throwawayPassport(t *testing.T, c *transpareo.Client,
+	productID json.Number) passport {
+	t.Helper()
 	ctx := context.Background()
-	productID := throwawayProduct(t, c)
 
 	var requirements struct {
 		Templates struct {
@@ -250,14 +263,26 @@ func TestPassportFlowOnAThrowawayProduct(t *testing.T) {
 	if created.Code == "" || created.ID == "" {
 		t.Fatalf("created passport lacks an id or a code: %+v", created)
 	}
+	return passport{ID: created.ID, Code: created.Code,
+		PublishBlocked: requirements.Outlook.PublishBlocked ||
+			validation.PublishBlocked}
+}
+
+func TestPassportFlowOnAThrowawayProduct(t *testing.T) {
+	e := load(t)
+	c := e.client(t)
+	ctx := context.Background()
+	productID := throwawayProduct(t, c)
+	created := throwawayPassport(t, c, productID)
+
 	// A workspace whose templates block publishing answers a
 	// documented refusal; the flow up to here is what the suite
 	// proves on such a tenant.
-	_, err = c.Post(ctx, "/dpps/"+created.Code+"/publish",
+	_, err := c.Post(ctx, "/dpps/"+created.Code+"/publish",
 		map[string]any{"reason": "edit"}, nil)
 	switch {
 	case err == nil:
-	case (requirements.Outlook.PublishBlocked || validation.PublishBlocked) &&
+	case created.PublishBlocked &&
 		strings.HasPrefix(errorCode(err), "DPP_PUBLISH_"):
 		t.Logf("publish blocked by the workspace's templates: %v", err)
 	default:
@@ -307,6 +332,122 @@ func TestPassportFlowOnAThrowawayProduct(t *testing.T) {
 	}
 	if len(all.Events) > 0 && all.NextCursor == "" {
 		t.Error("the workspace feed answered events without a cursor")
+	}
+}
+
+// A passport freezes the product it was created from, so a
+// correction is the only way an edit made afterwards reaches it.
+func TestCorrectDppFollowsAProductEdit(t *testing.T) {
+	e := load(t)
+	c := e.client(t)
+	ctx := context.Background()
+	productID := throwawayProduct(t, c)
+	created := throwawayPassport(t, c, productID)
+
+	// The re-freeze mints a version only where it finds the
+	// product changed, so the product is moved first. The new name
+	// carries a run id of its own, which keeps the record within
+	// reach of the sweep.
+	_, err := c.Put(ctx, "/products/"+productID.String(),
+		map[string]any{"product": map[string]any{"name": runID()}}, nil)
+	if err != nil {
+		t.Fatalf("edit the product: %v", err)
+	}
+
+	var corrected struct {
+		Code      string `json:"code"`
+		Corrected bool   `json:"corrected"`
+		Version   int    `json:"version"`
+	}
+	_, err = c.Post(ctx, "/dpps/"+created.ID.String()+"/correct",
+		map[string]any{"description": "cli e2e correction"}, &corrected)
+	switch {
+	case err == nil:
+	case created.PublishBlocked && refusedForWantOfAPublish(err):
+		t.Skipf("a correction mints a signed version and this workspace "+
+			"blocks publishing: %v", err)
+	default:
+		t.Fatalf("correct: %v", err)
+	}
+	if corrected.Code != created.Code {
+		t.Errorf("the correction of passport %s answered code %q",
+			created.Code, corrected.Code)
+	}
+	if corrected.Corrected && corrected.Version < 1 {
+		t.Errorf("a minted correction carries no version: %+v", corrected)
+	}
+}
+
+// refusedForWantOfAPublish reports the two documented answers of
+// a correction on a workspace that cannot publish: no signing key
+// or context, and a corrected snapshot the templates still refuse.
+func refusedForWantOfAPublish(err error) bool {
+	var apiErr *transpareo.Error
+	if !errors.As(err, &apiErr) {
+		return false
+	}
+	return apiErr.Code == "DPP_PUBLISH_PRECONDITION" ||
+		apiErr.Status == http.StatusUnprocessableEntity
+}
+
+// onePixelPNG is the smallest thing the library accepts, as the
+// base64 a JSON caller sends.
+const onePixelPNG = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADU" +
+	"lEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+
+// The JSON way into the mediafile library and the way back out of
+// it. The delete runs through the command line, so the generated
+// command is proven against a host rather than only against a
+// stub, refusal without --yes included.
+func TestMediafileUploadAndDelete(t *testing.T) {
+	e := load(t)
+	c := e.client(t)
+	ctx := context.Background()
+
+	var created struct {
+		Mediafile struct {
+			ID    json.Number `json:"id"`
+			Name  string      `json:"name"`
+			URL   string      `json:"url"`
+			Image bool        `json:"image"`
+		} `json:"mediafile"`
+	}
+	body := map[string]any{"mediafile": map[string]any{
+		"data": onePixelPNG, "name": runID()}}
+	if _, err := c.Post(ctx, "/mediafiles", body, &created); err != nil {
+		var apiErr *transpareo.Error
+		if errors.As(err, &apiErr) && apiErr.Status == http.StatusForbidden {
+			t.Skipf("%s does not run the product mediafiles feature: %v",
+				e.host, err)
+		}
+		t.Fatalf("upload: %v", err)
+	}
+	file := created.Mediafile
+	if file.ID == "" || file.URL == "" || !file.Image {
+		t.Fatalf("the upload answered %+v", file)
+	}
+	// The check is the delete below; this one only keeps the
+	// library clean when an assertion above it fails first.
+	t.Cleanup(func() {
+		c.Delete(context.Background(), "/mediafiles/"+file.ID.String(), nil)
+	})
+
+	// A delete cannot be undone, so the command line refuses it
+	// until it is repeated with --yes.
+	out, errOut, code := run(t, e, "mediafiles", "delete", file.ID.String())
+	if code != output.ExitRefused {
+		t.Fatalf("a delete without --yes exited %d: %s%s", code, out, errOut)
+	}
+	out, errOut, code = run(t, e, "mediafiles", "delete", file.ID.String(),
+		"--yes")
+	if code != 0 {
+		t.Fatalf("mediafiles delete: exit %d: %s%s", code, out, errOut)
+	}
+	if _, err := c.Delete(ctx, "/mediafiles/"+file.ID.String(),
+		nil); err == nil {
+		t.Errorf("mediafile %s was still there after the delete", file.ID)
+	} else if apiErr := apiError(t, err); apiErr.Status != http.StatusNotFound {
+		t.Errorf("a deleted mediafile answered %d, want 404", apiErr.Status)
 	}
 }
 
