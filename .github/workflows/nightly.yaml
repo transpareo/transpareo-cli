@@ -41,14 +41,27 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       # Forks and local mirrors usually do not have the secret. The job
-      # then reports that and finishes green instead of failing.
+      # then reports that and finishes green instead of failing. On this
+      # repository a missing secret is a broken job, not a fork: without
+      # it the comparison never runs, both vendored documents go stale
+      # together, and every test that compares them with each other goes
+      # on passing. That is the silence this whole job exists to break,
+      # so here it fails instead.
       - name: Fetch the live specification and tool catalogue
         id: fetch
         env:
           TRANSPAREO_TEST_HOST: ${{ secrets.TRANSPAREO_TEST_HOST }}
+          CANONICAL: transpareo/transpareo-cli
         run: |
           set -euo pipefail
           if [ -z "${TRANSPAREO_TEST_HOST}" ]; then
+            if [ "${GITHUB_REPOSITORY}" = "${CANONICAL}" ]; then
+              echo "TRANSPAREO_TEST_HOST is not set. Nothing can be" \
+                "compared, and the vendored documents agree with each" \
+                "other whether or not they are current. Restore the" \
+                "secret." >&2
+              exit 1
+            fi
             echo "TRANSPAREO_TEST_HOST is not set; skipping the" \
               "specification comparison."
             echo "available=false" >> "$GITHUB_OUTPUT"
@@ -245,8 +258,10 @@ jobs:
 
   # The end-to-end suite runs against the test tenant with the
   # consumer stored as secrets. It creates and deletes its own
-  # records. Without the secrets it reports that and finishes
-  # green, like the specification job.
+  # records. Without the secrets a fork reports that and finishes
+  # green; on this repository they are missing only because
+  # something broke, and a green run that checked nothing is worse
+  # than a red one.
   end-to-end:
     name: end-to-end checks
     runs-on: ubuntu-latest
@@ -268,9 +283,15 @@ jobs:
           TRANSPAREO_TEST_READONLY_CLIENT_ID: ${{ secrets.TRANSPAREO_TEST_READONLY_CLIENT_ID }}
           TRANSPAREO_TEST_READONLY_CLIENT_SECRET: ${{ secrets.TRANSPAREO_TEST_READONLY_CLIENT_SECRET }}
           TRANSPAREO_TEST_SECOND_HOST: ${{ secrets.TRANSPAREO_TEST_SECOND_HOST }}
+          CANONICAL: transpareo/transpareo-cli
         run: |
           set -euo pipefail
           if [ -z "${TRANSPAREO_TEST_CLIENT_ID}" ]; then
+            if [ "${GITHUB_REPOSITORY}" = "${CANONICAL}" ]; then
+              echo "TRANSPAREO_TEST_CLIENT_ID is not set, so nothing ran" \
+                "against a real host. Restore the secret." >&2
+              exit 1
+            fi
             echo "TRANSPAREO_TEST_CLIENT_ID is not set; skipping."
             exit 0
           fi
