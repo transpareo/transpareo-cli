@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"strconv"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -157,39 +156,22 @@ func (a *App) checkHost(ctx context.Context, host string, add addCheck) {
 // built in: a newer major version is an error, a newer minor one
 // a warning, everything else fine.
 func compareVersions(builtIn, live string) (string, string) {
-	b, okB := parseVersion(builtIn)
-	l, okL := parseVersion(live)
+	drift, ok := spec.Compare(builtIn, live)
 	switch {
-	case !okB || !okL:
+	case !ok:
 		return statusWarn, "the versions cannot be compared"
-	case l[0] > b[0]:
+	case drift.Major > 0:
 		return statusError, fmt.Sprintf(
 			"this binary was built for %s and needs an upgrade", builtIn)
-	case l[0] < b[0]:
+	case drift.Major < 0:
 		return statusWarn, fmt.Sprintf(
 			"this binary was built for the newer %s", builtIn)
-	case l[1] > b[1]:
+	case drift.Minor > 0:
 		return statusWarn, fmt.Sprintf("this binary was built for %s; "+
 			"newer operations are reachable with `transpareo api`", builtIn)
 	default:
 		return statusOK, "the built-in specification is current"
 	}
-}
-
-func parseVersion(v string) ([3]int, bool) {
-	var out [3]int
-	parts := strings.Split(strings.TrimPrefix(v, "v"), ".")
-	if len(parts) < 2 {
-		return out, false
-	}
-	for i := 0; i < len(parts) && i < 3; i++ {
-		n, err := strconv.Atoi(parts[i])
-		if err != nil {
-			return out, false
-		}
-		out[i] = n
-	}
-	return out, true
 }
 
 func (a *App) checkTokenEndpoint(ctx context.Context, host string,

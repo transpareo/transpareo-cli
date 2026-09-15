@@ -9,6 +9,8 @@ import (
 	_ "embed"
 	"encoding/json"
 	"fmt"
+	"strconv"
+	"strings"
 )
 
 // JSON is the vendored specification, byte for byte as committed
@@ -29,4 +31,40 @@ func Version() string {
 		panic(fmt.Sprintf("spec: embedded openapi.json is invalid: %v", err))
 	}
 	return doc.Info.Version
+}
+
+// Drift is how far a live specification is ahead of the one a
+// binary was built from. Minor counts only within a major
+// version, because a new major renumbers the minors.
+type Drift struct {
+	Major int
+	Minor int
+}
+
+// Compare measures a live specification version against the one
+// built in. It reports false when either version is not a dotted
+// number, which is the one case a caller cannot rate.
+func Compare(builtIn, live string) (Drift, bool) {
+	b, okBuiltIn := parseVersion(builtIn)
+	l, okLive := parseVersion(live)
+	if !okBuiltIn || !okLive {
+		return Drift{}, false
+	}
+	return Drift{Major: l[0] - b[0], Minor: l[1] - b[1]}, true
+}
+
+func parseVersion(v string) ([3]int, bool) {
+	var out [3]int
+	parts := strings.Split(strings.TrimPrefix(v, "v"), ".")
+	if len(parts) < 2 {
+		return out, false
+	}
+	for i := 0; i < len(parts) && i < 3; i++ {
+		n, err := strconv.Atoi(parts[i])
+		if err != nil {
+			return out, false
+		}
+		out[i] = n
+	}
+	return out, true
 }

@@ -1,5 +1,12 @@
 # Builds and publishes a release for every v* tag.
 #
+# The drift job runs first and refuses a tag whose embedded
+# specification has fallen behind the one the test host serves. The
+# nightly job reports that drift every night, but four releases went
+# out on a four-versions-old document while it did, because a pull
+# request nobody merges is not a guard. Nothing is built until this
+# passes, and it fails rather than skips when it cannot reach a host.
+#
 # The goreleaser job produces the archives, packages, checksum file,
 # SBOMs and the keyless Sigstore bundle of the checksum file, pushes the
 # signing endpoint's container image to the GitHub registry and signs it,
@@ -20,9 +27,34 @@ permissions:
   packages: read
 
 jobs:
+  drift:
+    name: specification drift
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Go
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      # Fails when the embedded document is more than one minor version
+      # behind, and equally when it could not find out, which includes
+      # the secret being gone. The reason is on standard error.
+      - name: Measure the embedded specification against the live one
+        env:
+          TRANSPAREO_TEST_HOST: ${{ secrets.TRANSPAREO_TEST_HOST }}
+        run: go run ./spec/drift
+
   goreleaser:
     name: goreleaser
     runs-on: ubuntu-latest
+    needs:
+      - drift
     permissions:
       contents: write
       id-token: write
