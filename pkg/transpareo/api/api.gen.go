@@ -1942,6 +1942,9 @@ type Dpp struct {
 	// SupersededBy The code of the passport that replaced this one. Only present on a superseded passport.
 	SupersededBy *string `json:"supersededBy,omitempty"`
 
+	// Supersedes The code of the passport this one was issued to replace. Only present on a passport that replaced another, and no statement about its own status - a replacement is the live passport for its unit.
+	Supersedes *string `json:"supersedes,omitempty"`
+
 	// Type Example: Dpp
 	Type *string `json:"type,omitempty"`
 
@@ -3634,6 +3637,18 @@ type UpdateDppJSONBody struct {
 	Dpp *DppInput `json:"dpp,omitempty"`
 }
 
+// CorrectDppJSONBody defines parameters for CorrectDpp.
+type CorrectDppJSONBody struct {
+	// Description Free-text note carried onto the `corrected` event
+	Description *string `json:"description,omitempty"`
+}
+
+// CorrectDppParams defines parameters for CorrectDpp.
+type CorrectDppParams struct {
+	// IdempotencyKey Makes the request safe to repeat. The same key and body within 24 hours replays the stored response with `Idempotent-Replayed: true`; the same key with another body answers 422 `IDEMPOTENCY_KEY_REUSED`; a key whose first request is still running answers 409 `IDEMPOTENCY_IN_PROGRESS`.
+	IdempotencyKey *IdempotencyKey `json:"Idempotency-Key,omitempty"`
+}
+
 // UpdateDppDynamicDataJSONBody defines parameters for UpdateDppDynamicData.
 type UpdateDppDynamicDataJSONBody struct {
 	// DynamicData The keys to write onto the passport's dynamic-data surface. Sent keys are merged into the stored set; a key sent as an explicit null is removed. Field names are yours - no schema is imposed until the EU Battery Regulation's implementing acts pin the list.
@@ -3881,7 +3896,7 @@ type ListMediafilesParams struct {
 	// PerPage Records per page (default: 100, max: 500)
 	PerPage *PerPage `form:"per_page,omitempty" json:"per_page,omitempty"`
 
-	// Term Filter by file name
+	// Term Filter by display name or stored file name
 	Term *string `form:"term,omitempty" json:"term,omitempty"`
 }
 
@@ -3889,10 +3904,13 @@ type ListMediafilesParams struct {
 type CreateMediafileJSONBody struct {
 	Mediafile *struct {
 		// Data The bytes of the file as base64, bare or as a `data:` URI
-		Data string `json:"data"`
+		Data *string `json:"data,omitempty"`
 
 		// Name Optional display name
 		Name *string `json:"name,omitempty"`
+
+		// Url An https address the server reads the bytes from, instead of `data`
+		Url *string `json:"url,omitempty"`
 	} `json:"mediafile,omitempty"`
 }
 
@@ -4232,6 +4250,9 @@ type PublishDppJSONRequestBody PublishDppJSONBody
 
 // UpdateDppJSONRequestBody defines body for UpdateDpp for application/json ContentType.
 type UpdateDppJSONRequestBody UpdateDppJSONBody
+
+// CorrectDppJSONRequestBody defines body for CorrectDpp for application/json ContentType.
+type CorrectDppJSONRequestBody CorrectDppJSONBody
 
 // UpdateDppDynamicDataJSONRequestBody defines body for UpdateDppDynamicData for application/json ContentType.
 type UpdateDppDynamicDataJSONRequestBody UpdateDppDynamicDataJSONBody
@@ -4754,7 +4775,7 @@ type ClientInterface interface {
 
 	// ListComponents List components
 	//
-	// Returns a paginated list of components. A credential holding `component_access` receives every component of the workspace, drafts included; every other reader receives the published components.
+	// Returns a paginated list of components. A credential holding `component_access` or `component_write` receives every component of the workspace, drafts included; every other reader receives the published components.
 	//
 	// Supports full-text search and filtering by function, property category, type and publication.
 	//
@@ -5025,6 +5046,24 @@ type ClientInterface interface {
 	//
 	// Corresponds with PUT /dpps/{id} (the `UpdateDpp` operationId).
 	UpdateDpp(ctx context.Context, id Id, body UpdateDppJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CorrectDppWithBody Correct a DPP from its source
+	//
+	// Carries a correction made to the product onto a passport already written. A passport freezes the product identity, the components and the properties when it is created, so a product edited afterwards never reaches it on its own. Fix the product first and then call this, rather than issuing a second passport for a unit that already has one. The re-freeze reads what the create-time freeze read - the live product at model granularity, the lot's frozen values at batch and item - and mints a signed version anchored to a `corrected` event. A correction with nothing to correct mints nothing and answers `corrected` false, naming the version that still stands.
+	//
+	// Takes any type of body and a specified content type.
+	//
+	// Corresponds with POST /dpps/{id}/correct (the `CorrectDpp` operationId).
+	CorrectDppWithBody(ctx context.Context, id Id, params *CorrectDppParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CorrectDpp Correct a DPP from its source
+	//
+	// Carries a correction made to the product onto a passport already written. A passport freezes the product identity, the components and the properties when it is created, so a product edited afterwards never reaches it on its own. Fix the product first and then call this, rather than issuing a second passport for a unit that already has one. The re-freeze reads what the create-time freeze read - the live product at model granularity, the lot's frozen values at batch and item - and mints a signed version anchored to a `corrected` event. A correction with nothing to correct mints nothing and answers `corrected` false, naming the version that still stands.
+	//
+	// Takes a body of the `application/json` content type.
+	//
+	// Corresponds with POST /dpps/{id}/correct (the `CorrectDpp` operationId).
+	CorrectDpp(ctx context.Context, id Id, params *CorrectDppParams, body CorrectDppJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// UpdateDppDynamicDataWithBody Update dynamic data
 	//
@@ -5468,7 +5507,7 @@ type ClientInterface interface {
 
 	// ListMediafiles List mediafiles
 	//
-	// Returns paginated image mediafiles owned by the authenticated user or API consumer. Requires the product mediafiles feature. Any valid credential reaches it; no permission key gates it, and the list is confined to what the caller owns.
+	// Returns the workspace's paginated image mediafiles. Requires the product mediafiles feature. Any valid credential reaches it and no permission key gates it, so a caller can put a photo the workspace already holds on a product rather than uploading a second copy of it. A signed-in person sees what they and their groups own; taking a file away stays with whoever uploaded it.
 	//
 	// Corresponds with GET /mediafiles (the `ListMediafiles` operationId).
 	ListMediafiles(ctx context.Context, params *ListMediafilesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -5477,7 +5516,11 @@ type ClientInterface interface {
 	//
 	// Uploads a new image file. Requires the product mediafiles feature. Any valid credential reaches it; the upload is owned by the caller.
 	//
-	// A browser and the command line send the file itself as `multipart/form-data`. A caller that can only send JSON sends the bytes as base64 instead, bare or as a `data:` URI, in a body of the shape `{"mediafile": {"data": "iVBORw0KGgo...", "name": "Rain shell hero shot"}}`. The kind of file is read from the bytes, not from anything the caller says about them, and the same size, readability and content rules apply either way.
+	// A browser and the command line send the file itself as `multipart/form-data`. A caller that can only send JSON sends the bytes as base64 instead, bare or as a `data:` URI, in a body of the shape `{"mediafile": {"data": "iVBORw0KGgo...", "name": "Rain shell hero shot"}}`.
+	//
+	// A caller holding a link sends `mediafile.url` and the server reads the bytes itself, which is the practical way in for anything larger than a small image. Only https, only an address outside this network, at most three redirects, and the same size cap; a refusal says which of those it was.
+	//
+	// The kind of file is read from the bytes, not from anything the caller says about them, and the same size, readability and content rules apply whichever way it arrived.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -5488,12 +5531,23 @@ type ClientInterface interface {
 	//
 	// Uploads a new image file. Requires the product mediafiles feature. Any valid credential reaches it; the upload is owned by the caller.
 	//
-	// A browser and the command line send the file itself as `multipart/form-data`. A caller that can only send JSON sends the bytes as base64 instead, bare or as a `data:` URI, in a body of the shape `{"mediafile": {"data": "iVBORw0KGgo...", "name": "Rain shell hero shot"}}`. The kind of file is read from the bytes, not from anything the caller says about them, and the same size, readability and content rules apply either way.
+	// A browser and the command line send the file itself as `multipart/form-data`. A caller that can only send JSON sends the bytes as base64 instead, bare or as a `data:` URI, in a body of the shape `{"mediafile": {"data": "iVBORw0KGgo...", "name": "Rain shell hero shot"}}`.
+	//
+	// A caller holding a link sends `mediafile.url` and the server reads the bytes itself, which is the practical way in for anything larger than a small image. Only https, only an address outside this network, at most three redirects, and the same size cap; a refusal says which of those it was.
+	//
+	// The kind of file is read from the bytes, not from anything the caller says about them, and the same size, readability and content rules apply whichever way it arrived.
 	//
 	// Takes a body of the `application/json` content type.
 	//
 	// Corresponds with POST /mediafiles (the `CreateMediafile` operationId).
 	CreateMediafile(ctx context.Context, body CreateMediafileJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// DeleteMediafile Delete a mediafile
+	//
+	// Takes the file out of the library. The row is trashed rather than destroyed, so a person can restore it in the application manager. A file a record still shows answers 409 `MEDIAFILE_IN_USE` and names those records; take it off them first. The caller must own the file.
+	//
+	// Corresponds with DELETE /mediafiles/{id} (the `DeleteMediafile` operationId).
+	DeleteMediafile(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetNavigation Get navigation items
 	//
@@ -6268,7 +6322,7 @@ func (c *Client) ListComponentTypes(ctx context.Context, reqEditors ...RequestEd
 
 // ListComponents List components
 //
-// Returns a paginated list of components. A credential holding `component_access` receives every component of the workspace, drafts included; every other reader receives the published components.
+// Returns a paginated list of components. A credential holding `component_access` or `component_write` receives every component of the workspace, drafts included; every other reader receives the published components.
 //
 // Supports full-text search and filtering by function, property category, type and publication.
 //
@@ -6830,6 +6884,44 @@ func (c *Client) UpdateDppWithBody(ctx context.Context, id Id, contentType strin
 // Corresponds with PUT /dpps/{id} (the `UpdateDpp` operationId).
 func (c *Client) UpdateDpp(ctx context.Context, id Id, body UpdateDppJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewUpdateDppRequest(c.Server, id, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CorrectDppWithBody Correct a DPP from its source
+//
+// Carries a correction made to the product onto a passport already written. A passport freezes the product identity, the components and the properties when it is created, so a product edited afterwards never reaches it on its own. Fix the product first and then call this, rather than issuing a second passport for a unit that already has one. The re-freeze reads what the create-time freeze read - the live product at model granularity, the lot's frozen values at batch and item - and mints a signed version anchored to a `corrected` event. A correction with nothing to correct mints nothing and answers `corrected` false, naming the version that still stands.
+//
+// Takes any type of body and a specified content type.
+//
+// Corresponds with POST /dpps/{id}/correct (the `CorrectDpp` operationId).
+func (c *Client) CorrectDppWithBody(ctx context.Context, id Id, params *CorrectDppParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCorrectDppRequestWithBody(c.Server, id, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CorrectDpp Correct a DPP from its source
+//
+// Carries a correction made to the product onto a passport already written. A passport freezes the product identity, the components and the properties when it is created, so a product edited afterwards never reaches it on its own. Fix the product first and then call this, rather than issuing a second passport for a unit that already has one. The re-freeze reads what the create-time freeze read - the live product at model granularity, the lot's frozen values at batch and item - and mints a signed version anchored to a `corrected` event. A correction with nothing to correct mints nothing and answers `corrected` false, naming the version that still stands.
+//
+// Takes a body of the `application/json` content type.
+//
+// Corresponds with POST /dpps/{id}/correct (the `CorrectDpp` operationId).
+func (c *Client) CorrectDpp(ctx context.Context, id Id, params *CorrectDppParams, body CorrectDppJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCorrectDppRequest(c.Server, id, params, body)
 	if err != nil {
 		return nil, err
 	}
@@ -7782,7 +7874,7 @@ func (c *Client) GetMe(ctx context.Context, reqEditors ...RequestEditorFn) (*htt
 
 // ListMediafiles List mediafiles
 //
-// Returns paginated image mediafiles owned by the authenticated user or API consumer. Requires the product mediafiles feature. Any valid credential reaches it; no permission key gates it, and the list is confined to what the caller owns.
+// Returns the workspace's paginated image mediafiles. Requires the product mediafiles feature. Any valid credential reaches it and no permission key gates it, so a caller can put a photo the workspace already holds on a product rather than uploading a second copy of it. A signed-in person sees what they and their groups own; taking a file away stays with whoever uploaded it.
 //
 // Corresponds with GET /mediafiles (the `ListMediafiles` operationId).
 func (c *Client) ListMediafiles(ctx context.Context, params *ListMediafilesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -7801,7 +7893,11 @@ func (c *Client) ListMediafiles(ctx context.Context, params *ListMediafilesParam
 //
 // Uploads a new image file. Requires the product mediafiles feature. Any valid credential reaches it; the upload is owned by the caller.
 //
-// A browser and the command line send the file itself as `multipart/form-data`. A caller that can only send JSON sends the bytes as base64 instead, bare or as a `data:` URI, in a body of the shape `{"mediafile": {"data": "iVBORw0KGgo...", "name": "Rain shell hero shot"}}`. The kind of file is read from the bytes, not from anything the caller says about them, and the same size, readability and content rules apply either way.
+// A browser and the command line send the file itself as `multipart/form-data`. A caller that can only send JSON sends the bytes as base64 instead, bare or as a `data:` URI, in a body of the shape `{"mediafile": {"data": "iVBORw0KGgo...", "name": "Rain shell hero shot"}}`.
+//
+// A caller holding a link sends `mediafile.url` and the server reads the bytes itself, which is the practical way in for anything larger than a small image. Only https, only an address outside this network, at most three redirects, and the same size cap; a refusal says which of those it was.
+//
+// The kind of file is read from the bytes, not from anything the caller says about them, and the same size, readability and content rules apply whichever way it arrived.
 //
 // Takes any type of body and a specified content type.
 //
@@ -7822,13 +7918,34 @@ func (c *Client) CreateMediafileWithBody(ctx context.Context, contentType string
 //
 // Uploads a new image file. Requires the product mediafiles feature. Any valid credential reaches it; the upload is owned by the caller.
 //
-// A browser and the command line send the file itself as `multipart/form-data`. A caller that can only send JSON sends the bytes as base64 instead, bare or as a `data:` URI, in a body of the shape `{"mediafile": {"data": "iVBORw0KGgo...", "name": "Rain shell hero shot"}}`. The kind of file is read from the bytes, not from anything the caller says about them, and the same size, readability and content rules apply either way.
+// A browser and the command line send the file itself as `multipart/form-data`. A caller that can only send JSON sends the bytes as base64 instead, bare or as a `data:` URI, in a body of the shape `{"mediafile": {"data": "iVBORw0KGgo...", "name": "Rain shell hero shot"}}`.
+//
+// A caller holding a link sends `mediafile.url` and the server reads the bytes itself, which is the practical way in for anything larger than a small image. Only https, only an address outside this network, at most three redirects, and the same size cap; a refusal says which of those it was.
+//
+// The kind of file is read from the bytes, not from anything the caller says about them, and the same size, readability and content rules apply whichever way it arrived.
 //
 // Takes a body of the `application/json` content type.
 //
 // Corresponds with POST /mediafiles (the `CreateMediafile` operationId).
 func (c *Client) CreateMediafile(ctx context.Context, body CreateMediafileJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewCreateMediafileRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// DeleteMediafile Delete a mediafile
+//
+// Takes the file out of the library. The row is trashed rather than destroyed, so a person can restore it in the application manager. A file a record still shows answers 409 `MEDIAFILE_IN_USE` and names those records; take it off them first. The caller must own the file.
+//
+// Corresponds with DELETE /mediafiles/{id} (the `DeleteMediafile` operationId).
+func (c *Client) DeleteMediafile(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteMediafileRequest(c.Server, id)
 	if err != nil {
 		return nil, err
 	}
@@ -10669,6 +10786,68 @@ func NewUpdateDppRequestWithBody(server string, id Id, contentType string, body 
 	return req, nil
 }
 
+// NewCorrectDppRequest calls the generic CorrectDpp builder with application/json body
+func NewCorrectDppRequest(server string, id Id, params *CorrectDppParams, body CorrectDppJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCorrectDppRequestWithBody(server, id, params, "application/json", bodyReader)
+}
+
+// NewCorrectDppRequestWithBody constructs an http.Request for the CorrectDpp method, with any body, and a specified content type
+func NewCorrectDppRequestWithBody(server string, id Id, params *CorrectDppParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/dpps/%s/correct", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		if params.IdempotencyKey != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Idempotency-Key", *params.IdempotencyKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Idempotency-Key", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
 // NewUpdateDppDynamicDataRequest calls the generic UpdateDppDynamicData builder with application/json body
 func NewUpdateDppDynamicDataRequest(server string, id Id, body UpdateDppDynamicDataJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
@@ -12373,6 +12552,40 @@ func NewCreateMediafileRequestWithBody(server string, contentType string, body i
 	}
 
 	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewDeleteMediafileRequest constructs an http.Request for the DeleteMediafile method
+func NewDeleteMediafileRequest(server string, id Id) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/mediafiles/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
 
 	return req, nil
 }
@@ -14763,7 +14976,7 @@ type ClientWithResponsesInterface interface {
 
 	// ListComponentsWithResponse List components
 	//
-	// Returns a paginated list of components. A credential holding `component_access` receives every component of the workspace, drafts included; every other reader receives the published components.
+	// Returns a paginated list of components. A credential holding `component_access` or `component_write` receives every component of the workspace, drafts included; every other reader receives the published components.
 	//
 	// Supports full-text search and filtering by function, property category, type and publication.
 	//
@@ -15066,6 +15279,24 @@ type ClientWithResponsesInterface interface {
 	//
 	// Corresponds with PUT /dpps/{id} (the `UpdateDpp` operationId).
 	UpdateDppWithResponse(ctx context.Context, id Id, body UpdateDppJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateDppResponse, error)
+
+	// CorrectDppWithBodyWithResponse Correct a DPP from its source
+	//
+	// Carries a correction made to the product onto a passport already written. A passport freezes the product identity, the components and the properties when it is created, so a product edited afterwards never reaches it on its own. Fix the product first and then call this, rather than issuing a second passport for a unit that already has one. The re-freeze reads what the create-time freeze read - the live product at model granularity, the lot's frozen values at batch and item - and mints a signed version anchored to a `corrected` event. A correction with nothing to correct mints nothing and answers `corrected` false, naming the version that still stands.
+	//
+	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /dpps/{id}/correct (the `CorrectDpp` operationId).
+	CorrectDppWithBodyWithResponse(ctx context.Context, id Id, params *CorrectDppParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CorrectDppResponse, error)
+
+	// CorrectDppWithResponse Correct a DPP from its source
+	//
+	// Carries a correction made to the product onto a passport already written. A passport freezes the product identity, the components and the properties when it is created, so a product edited afterwards never reaches it on its own. Fix the product first and then call this, rather than issuing a second passport for a unit that already has one. The re-freeze reads what the create-time freeze read - the live product at model granularity, the lot's frozen values at batch and item - and mints a signed version anchored to a `corrected` event. A correction with nothing to correct mints nothing and answers `corrected` false, naming the version that still stands.
+	//
+	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /dpps/{id}/correct (the `CorrectDpp` operationId).
+	CorrectDppWithResponse(ctx context.Context, id Id, params *CorrectDppParams, body CorrectDppJSONRequestBody, reqEditors ...RequestEditorFn) (*CorrectDppResponse, error)
 
 	// UpdateDppDynamicDataWithBodyWithResponse Update dynamic data
 	//
@@ -15547,7 +15778,7 @@ type ClientWithResponsesInterface interface {
 
 	// ListMediafilesWithResponse List mediafiles
 	//
-	// Returns paginated image mediafiles owned by the authenticated user or API consumer. Requires the product mediafiles feature. Any valid credential reaches it; no permission key gates it, and the list is confined to what the caller owns.
+	// Returns the workspace's paginated image mediafiles. Requires the product mediafiles feature. Any valid credential reaches it and no permission key gates it, so a caller can put a photo the workspace already holds on a product rather than uploading a second copy of it. A signed-in person sees what they and their groups own; taking a file away stays with whoever uploaded it.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
@@ -15558,7 +15789,11 @@ type ClientWithResponsesInterface interface {
 	//
 	// Uploads a new image file. Requires the product mediafiles feature. Any valid credential reaches it; the upload is owned by the caller.
 	//
-	// A browser and the command line send the file itself as `multipart/form-data`. A caller that can only send JSON sends the bytes as base64 instead, bare or as a `data:` URI, in a body of the shape `{"mediafile": {"data": "iVBORw0KGgo...", "name": "Rain shell hero shot"}}`. The kind of file is read from the bytes, not from anything the caller says about them, and the same size, readability and content rules apply either way.
+	// A browser and the command line send the file itself as `multipart/form-data`. A caller that can only send JSON sends the bytes as base64 instead, bare or as a `data:` URI, in a body of the shape `{"mediafile": {"data": "iVBORw0KGgo...", "name": "Rain shell hero shot"}}`.
+	//
+	// A caller holding a link sends `mediafile.url` and the server reads the bytes itself, which is the practical way in for anything larger than a small image. Only https, only an address outside this network, at most three redirects, and the same size cap; a refusal says which of those it was.
+	//
+	// The kind of file is read from the bytes, not from anything the caller says about them, and the same size, readability and content rules apply whichever way it arrived.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -15569,12 +15804,25 @@ type ClientWithResponsesInterface interface {
 	//
 	// Uploads a new image file. Requires the product mediafiles feature. Any valid credential reaches it; the upload is owned by the caller.
 	//
-	// A browser and the command line send the file itself as `multipart/form-data`. A caller that can only send JSON sends the bytes as base64 instead, bare or as a `data:` URI, in a body of the shape `{"mediafile": {"data": "iVBORw0KGgo...", "name": "Rain shell hero shot"}}`. The kind of file is read from the bytes, not from anything the caller says about them, and the same size, readability and content rules apply either way.
+	// A browser and the command line send the file itself as `multipart/form-data`. A caller that can only send JSON sends the bytes as base64 instead, bare or as a `data:` URI, in a body of the shape `{"mediafile": {"data": "iVBORw0KGgo...", "name": "Rain shell hero shot"}}`.
+	//
+	// A caller holding a link sends `mediafile.url` and the server reads the bytes itself, which is the practical way in for anything larger than a small image. Only https, only an address outside this network, at most three redirects, and the same size cap; a refusal says which of those it was.
+	//
+	// The kind of file is read from the bytes, not from anything the caller says about them, and the same size, readability and content rules apply whichever way it arrived.
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with POST /mediafiles (the `CreateMediafile` operationId).
 	CreateMediafileWithResponse(ctx context.Context, body CreateMediafileJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateMediafileResponse, error)
+
+	// DeleteMediafileWithResponse Delete a mediafile
+	//
+	// Takes the file out of the library. The row is trashed rather than destroyed, so a person can restore it in the application manager. A file a record still shows answers 409 `MEDIAFILE_IN_USE` and names those records; take it off them first. The caller must own the file.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with DELETE /mediafiles/{id} (the `DeleteMediafile` operationId).
+	DeleteMediafileWithResponse(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*DeleteMediafileResponse, error)
 
 	// GetNavigationWithResponse Get navigation items
 	//
@@ -18353,6 +18601,107 @@ func (r UpdateDppResponse) ContentType() string {
 	return ""
 }
 
+type CorrectDppResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *struct {
+		Code *string `json:"code,omitempty"`
+
+		// Corrected False when the re-freeze found nothing to change, in which case no version was minted
+		Corrected   *bool      `json:"corrected,omitempty"`
+		HashValue   *string    `json:"hashValue,omitempty"`
+		PublishedAt *time.Time `json:"publishedAt,omitempty"`
+		Url         *string    `json:"url,omitempty"`
+		Version     *int       `json:"version,omitempty"`
+	}
+	// JSON401 the response for an HTTP 401 `application/json` response
+	JSON401 *Unauthorized
+	// JSON402 the response for an HTTP 402 `application/json` response
+	JSON402 *MembershipExpired
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
+	// JSON404 the response for an HTTP 404 `application/json` response
+	JSON404 *NotFound
+	// JSON409 the response for an HTTP 409 `application/json` response
+	JSON409 *Error
+	// JSON422 the response for an HTTP 422 `application/json` response
+	JSON422 *Error
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r CorrectDppResponse) GetJSON200() *struct {
+	Code *string `json:"code,omitempty"`
+
+	// Corrected False when the re-freeze found nothing to change, in which case no version was minted
+	Corrected   *bool      `json:"corrected,omitempty"`
+	HashValue   *string    `json:"hashValue,omitempty"`
+	PublishedAt *time.Time `json:"publishedAt,omitempty"`
+	Url         *string    `json:"url,omitempty"`
+	Version     *int       `json:"version,omitempty"`
+} {
+	return r.JSON200
+}
+
+// GetJSON401 returns the response for an HTTP 401 `application/json` response
+func (r CorrectDppResponse) GetJSON401() *Unauthorized {
+	return r.JSON401
+}
+
+// GetJSON402 returns the response for an HTTP 402 `application/json` response
+func (r CorrectDppResponse) GetJSON402() *MembershipExpired {
+	return r.JSON402
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r CorrectDppResponse) GetJSON403() *Forbidden {
+	return r.JSON403
+}
+
+// GetJSON404 returns the response for an HTTP 404 `application/json` response
+func (r CorrectDppResponse) GetJSON404() *NotFound {
+	return r.JSON404
+}
+
+// GetJSON409 returns the response for an HTTP 409 `application/json` response
+func (r CorrectDppResponse) GetJSON409() *Error {
+	return r.JSON409
+}
+
+// GetJSON422 returns the response for an HTTP 422 `application/json` response
+func (r CorrectDppResponse) GetJSON422() *Error {
+	return r.JSON422
+}
+
+// GetBody returns the raw response body bytes
+func (r CorrectDppResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r CorrectDppResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CorrectDppResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r CorrectDppResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
 type UpdateDppDynamicDataResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -20825,6 +21174,81 @@ func (r CreateMediafileResponse) StatusCode() int {
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
 func (r CreateMediafileResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type DeleteMediafileResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *struct {
+		// Status Example: OK
+		Status *string `json:"status,omitempty"`
+	}
+	// JSON401 the response for an HTTP 401 `application/json` response
+	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
+	// JSON404 the response for an HTTP 404 `application/json` response
+	JSON404 *NotFound
+	// JSON409 the response for an HTTP 409 `application/json` response
+	JSON409 *Error
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r DeleteMediafileResponse) GetJSON200() *struct {
+	// Status Example: OK
+	Status *string `json:"status,omitempty"`
+} {
+	return r.JSON200
+}
+
+// GetJSON401 returns the response for an HTTP 401 `application/json` response
+func (r DeleteMediafileResponse) GetJSON401() *Unauthorized {
+	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r DeleteMediafileResponse) GetJSON403() *Forbidden {
+	return r.JSON403
+}
+
+// GetJSON404 returns the response for an HTTP 404 `application/json` response
+func (r DeleteMediafileResponse) GetJSON404() *NotFound {
+	return r.JSON404
+}
+
+// GetJSON409 returns the response for an HTTP 409 `application/json` response
+func (r DeleteMediafileResponse) GetJSON409() *Error {
+	return r.JSON409
+}
+
+// GetBody returns the raw response body bytes
+func (r DeleteMediafileResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteMediafileResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteMediafileResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r DeleteMediafileResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
@@ -23920,7 +24344,7 @@ func (c *ClientWithResponses) ListComponentTypesWithResponse(ctx context.Context
 
 // ListComponentsWithResponse List components
 //
-// Returns a paginated list of components. A credential holding `component_access` receives every component of the workspace, drafts included; every other reader receives the published components.
+// Returns a paginated list of components. A credential holding `component_access` or `component_write` receives every component of the workspace, drafts included; every other reader receives the published components.
 //
 // Supports full-text search and filtering by function, property category, type and publication.
 //
@@ -24402,6 +24826,36 @@ func (c *ClientWithResponses) UpdateDppWithResponse(ctx context.Context, id Id, 
 		return nil, err
 	}
 	return ParseUpdateDppResponse(rsp)
+}
+
+// CorrectDppWithBodyWithResponse Correct a DPP from its source
+//
+// Carries a correction made to the product onto a passport already written. A passport freezes the product identity, the components and the properties when it is created, so a product edited afterwards never reaches it on its own. Fix the product first and then call this, rather than issuing a second passport for a unit that already has one. The re-freeze reads what the create-time freeze read - the live product at model granularity, the lot's frozen values at batch and item - and mints a signed version anchored to a `corrected` event. A correction with nothing to correct mints nothing and answers `corrected` false, naming the version that still stands.
+//
+// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /dpps/{id}/correct (the `CorrectDpp` operationId).
+func (c *ClientWithResponses) CorrectDppWithBodyWithResponse(ctx context.Context, id Id, params *CorrectDppParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CorrectDppResponse, error) {
+	rsp, err := c.CorrectDppWithBody(ctx, id, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCorrectDppResponse(rsp)
+}
+
+// CorrectDppWithResponse Correct a DPP from its source
+//
+// Carries a correction made to the product onto a passport already written. A passport freezes the product identity, the components and the properties when it is created, so a product edited afterwards never reaches it on its own. Fix the product first and then call this, rather than issuing a second passport for a unit that already has one. The re-freeze reads what the create-time freeze read - the live product at model granularity, the lot's frozen values at batch and item - and mints a signed version anchored to a `corrected` event. A correction with nothing to correct mints nothing and answers `corrected` false, naming the version that still stands.
+//
+// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /dpps/{id}/correct (the `CorrectDpp` operationId).
+func (c *ClientWithResponses) CorrectDppWithResponse(ctx context.Context, id Id, params *CorrectDppParams, body CorrectDppJSONRequestBody, reqEditors ...RequestEditorFn) (*CorrectDppResponse, error) {
+	rsp, err := c.CorrectDpp(ctx, id, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCorrectDppResponse(rsp)
 }
 
 // UpdateDppDynamicDataWithBodyWithResponse Update dynamic data
@@ -25184,7 +25638,7 @@ func (c *ClientWithResponses) GetMeWithResponse(ctx context.Context, reqEditors 
 
 // ListMediafilesWithResponse List mediafiles
 //
-// Returns paginated image mediafiles owned by the authenticated user or API consumer. Requires the product mediafiles feature. Any valid credential reaches it; no permission key gates it, and the list is confined to what the caller owns.
+// Returns the workspace's paginated image mediafiles. Requires the product mediafiles feature. Any valid credential reaches it and no permission key gates it, so a caller can put a photo the workspace already holds on a product rather than uploading a second copy of it. A signed-in person sees what they and their groups own; taking a file away stays with whoever uploaded it.
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -25201,7 +25655,11 @@ func (c *ClientWithResponses) ListMediafilesWithResponse(ctx context.Context, pa
 //
 // Uploads a new image file. Requires the product mediafiles feature. Any valid credential reaches it; the upload is owned by the caller.
 //
-// A browser and the command line send the file itself as `multipart/form-data`. A caller that can only send JSON sends the bytes as base64 instead, bare or as a `data:` URI, in a body of the shape `{"mediafile": {"data": "iVBORw0KGgo...", "name": "Rain shell hero shot"}}`. The kind of file is read from the bytes, not from anything the caller says about them, and the same size, readability and content rules apply either way.
+// A browser and the command line send the file itself as `multipart/form-data`. A caller that can only send JSON sends the bytes as base64 instead, bare or as a `data:` URI, in a body of the shape `{"mediafile": {"data": "iVBORw0KGgo...", "name": "Rain shell hero shot"}}`.
+//
+// A caller holding a link sends `mediafile.url` and the server reads the bytes itself, which is the practical way in for anything larger than a small image. Only https, only an address outside this network, at most three redirects, and the same size cap; a refusal says which of those it was.
+//
+// The kind of file is read from the bytes, not from anything the caller says about them, and the same size, readability and content rules apply whichever way it arrived.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -25218,7 +25676,11 @@ func (c *ClientWithResponses) CreateMediafileWithBodyWithResponse(ctx context.Co
 //
 // Uploads a new image file. Requires the product mediafiles feature. Any valid credential reaches it; the upload is owned by the caller.
 //
-// A browser and the command line send the file itself as `multipart/form-data`. A caller that can only send JSON sends the bytes as base64 instead, bare or as a `data:` URI, in a body of the shape `{"mediafile": {"data": "iVBORw0KGgo...", "name": "Rain shell hero shot"}}`. The kind of file is read from the bytes, not from anything the caller says about them, and the same size, readability and content rules apply either way.
+// A browser and the command line send the file itself as `multipart/form-data`. A caller that can only send JSON sends the bytes as base64 instead, bare or as a `data:` URI, in a body of the shape `{"mediafile": {"data": "iVBORw0KGgo...", "name": "Rain shell hero shot"}}`.
+//
+// A caller holding a link sends `mediafile.url` and the server reads the bytes itself, which is the practical way in for anything larger than a small image. Only https, only an address outside this network, at most three redirects, and the same size cap; a refusal says which of those it was.
+//
+// The kind of file is read from the bytes, not from anything the caller says about them, and the same size, readability and content rules apply whichever way it arrived.
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
@@ -25229,6 +25691,21 @@ func (c *ClientWithResponses) CreateMediafileWithResponse(ctx context.Context, b
 		return nil, err
 	}
 	return ParseCreateMediafileResponse(rsp)
+}
+
+// DeleteMediafileWithResponse Delete a mediafile
+//
+// Takes the file out of the library. The row is trashed rather than destroyed, so a person can restore it in the application manager. A file a record still shows answers 409 `MEDIAFILE_IN_USE` and names those records; take it off them first. The caller must own the file.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with DELETE /mediafiles/{id} (the `DeleteMediafile` operationId).
+func (c *ClientWithResponses) DeleteMediafileWithResponse(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*DeleteMediafileResponse, error) {
+	rsp, err := c.DeleteMediafile(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteMediafileResponse(rsp)
 }
 
 // GetNavigationWithResponse Get navigation items
@@ -28100,6 +28577,83 @@ func ParseUpdateDppResponse(rsp *http.Response) (*UpdateDppResponse, error) {
 	return response, nil
 }
 
+// ParseCorrectDppResponse parses an HTTP response from a CorrectDppWithResponse call
+func ParseCorrectDppResponse(rsp *http.Response) (*CorrectDppResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CorrectDppResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			Code *string `json:"code,omitempty"`
+
+			// Corrected False when the re-freeze found nothing to change, in which case no version was minted
+			Corrected   *bool      `json:"corrected,omitempty"`
+			HashValue   *string    `json:"hashValue,omitempty"`
+			PublishedAt *time.Time `json:"publishedAt,omitempty"`
+			Url         *string    `json:"url,omitempty"`
+			Version     *int       `json:"version,omitempty"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 402:
+		var dest MembershipExpired
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON402 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
+
+	}
+
+	return response, nil
+}
+
 // ParseUpdateDppDynamicDataResponse parses an HTTP response from a UpdateDppDynamicDataWithResponse call
 func ParseUpdateDppDynamicDataResponse(rsp *http.Response) (*UpdateDppDynamicDataResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -30074,6 +30628,63 @@ func ParseCreateMediafileResponse(rsp *http.Response) (*CreateMediafileResponse,
 			return nil, err
 		}
 		response.JSON422 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseDeleteMediafileResponse parses an HTTP response from a DeleteMediafileWithResponse call
+func ParseDeleteMediafileResponse(rsp *http.Response) (*DeleteMediafileResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteMediafileResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			// Status Example: OK
+			Status *string `json:"status,omitempty"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
 
 	}
 

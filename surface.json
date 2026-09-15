@@ -230,6 +230,16 @@
     "operationId": "get_bulk_task"
   },
   {
+    "path": "transpareo dpps correct",
+    "args": "<id>",
+    "flags": [
+      "file",
+      "output",
+      "set"
+    ],
+    "operationId": "correct_dpp"
+  },
+  {
     "path": "transpareo dpps create",
     "flags": [
       "file",
@@ -580,6 +590,14 @@
       "upload"
     ],
     "operationId": "create_mediafile"
+  },
+  {
+    "path": "transpareo mediafiles delete",
+    "args": "<id>",
+    "flags": [
+      "output"
+    ],
+    "operationId": "delete_mediafile"
   },
   {
     "path": "transpareo mediafiles list",
