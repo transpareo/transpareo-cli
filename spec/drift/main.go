@@ -83,8 +83,15 @@ func stale(builtIn, live string) (bool, string) {
 // liveVersion reads info.version off the host's specification. A
 // release must not die on one flaky request, so it asks three
 // times before giving up.
+//
+// The document is served through a shared cache whose key takes
+// in the query string, and a cached answer is not evidence about
+// the host: an entry older than the code the host runs has been
+// seen served for hours. reload=1 is the supported bypass and
+// reaches the application; an arbitrary parameter would only buy
+// an entry of this command's own.
 func liveVersion(host string) (string, error) {
-	url := "https://" + host + "/apidocs/openapi.json"
+	url := "https://" + host + "/apidocs/openapi.json?reload=1"
 	client := &http.Client{Timeout: 30 * time.Second}
 	var err error
 	for attempt := 1; attempt <= 3; attempt++ {
