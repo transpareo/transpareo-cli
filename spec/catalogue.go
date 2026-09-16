@@ -24,11 +24,11 @@ type CatalogueDoc struct {
 }
 
 // CatalogueTool is one tool of the hosted catalogue. The first
-// block is the declaration, which is what a tool is rather than
-// how it reads: both servers build their own tool from it. The
-// second is what that building produced on the hosted side, which
-// is what an assistant is shown. Comparing the second is how two
-// renderings of one declaration are held together.
+// block is the declaration, what a tool is, and both servers build
+// their own tool from it. The second is what that building
+// produced on the hosted side, which is what an assistant is
+// shown. Comparing the second is how two renderings of one
+// declaration are held together.
 type CatalogueTool struct {
 	Name        string
 	Group       string

@@ -70,10 +70,10 @@ jobs:
           # Both documents are served through a shared cache whose key
           # takes in the query string, so a bare fetch can answer from
           # an entry older than the code the host is running, and this
-          # job would vendor what that entry held rather than what the
+          # job would vendor what that entry held in place of what the
           # host renders. reload=1 is the supported bypass and goes to
-          # the application; an arbitrary parameter would only buy an
-          # entry of this job's own.
+          # the application; an arbitrary parameter only buys an entry
+          # of this job's own.
           curl --fail --silent --show-error --location \
             --output "$RUNNER_TEMP/live.json" \
             "https://${TRANSPAREO_TEST_HOST}/apidocs/openapi.json?reload=1"

@@ -1,8 +1,8 @@
 # Running the signer in a container
 
 `ghcr.io/transpareo/transpareo-signer` is the signing endpoint as
-an image, for a workspace that runs containers rather than the
-systemd unit the deb, rpm and apk carry. It is built from the
+an image, for a workspace that runs containers. The deb, rpm and
+apk carry the same endpoint as a systemd unit. It is built from the
 same release as the binary, for amd64 and arm64, on a distroless
 base: no shell, no package manager, nothing in it but the
 endpoint and the certificate authorities it needs to fetch the
@@ -25,8 +25,8 @@ cosign verify ghcr.io/transpareo/transpareo-signer:latest \
   --certificate-oidc-issuer https://token.actions.githubusercontent.com
 ```
 
-Pin a version rather than `latest` in anything that runs
-unattended, so an upgrade is a change you make.
+Pin an exact version in anything that runs unattended, so an
+upgrade is a change you make.
 
 ## Keys
 
@@ -42,8 +42,8 @@ docker run --rm --user "$(id -u):$(id -g)" \
   signer keygen --dir /keys
 ```
 
-`--user` makes the two key files belong to you rather than to the
-image's account. Paste the public halves it prints into the BYOK
+`--user` gives you the two key files; without it the image's
+account owns them. Paste the public halves it prints into the BYOK
 form on the signing keys page, P-256 in the P-256 field and
 Ed25519 in the Ed25519 field. The private halves stay in
 `keys/`, mode 0600, and nothing uploads them.

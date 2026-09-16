@@ -56,8 +56,8 @@ type Operation struct {
 	// of one JSON object per line; Task marks an operation whose
 	// answer can carry a statusUrl to poll; Idempotent marks one
 	// that takes an Idempotency-Key, so a caller repeating it
-	// with the same key gets the first answer back rather than a
-	// second record.
+	// with the same key gets the first answer back, and no second
+	// record.
 	Destructive bool `json:"destructive,omitempty"`
 	Safe        bool `json:"safe,omitempty"`
 	NDJSON      bool `json:"ndjson,omitempty"`
@@ -88,7 +88,7 @@ type RequestBody struct {
 }
 
 // carriesFile reports whether the body declares a binary field,
-// which marks bytes sent as an attachment rather than inline.
+// which marks bytes the caller sends as a file.
 func (b *RequestBody) carriesFile() bool {
 	var schema struct {
 		Properties map[string]struct {

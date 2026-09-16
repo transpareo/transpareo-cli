@@ -329,9 +329,9 @@ func (c *Client) exchange(ctx context.Context, method, target string,
 }
 
 // logRetry records the attempt that is about to be repeated: the
-// request, the step that failed when it was the token exchange
-// rather than the request itself, how long the attempt took, the
-// error, and the wait before the next one.
+// request, the step when a token exchange was the failing part,
+// how long the attempt took, the error, and the wait before the
+// next one.
 func (c *Client) logRetry(method, target, step string, attempt int,
 	elapsed, wait time.Duration, apiErr *Error) {
 	if c.logger == nil {

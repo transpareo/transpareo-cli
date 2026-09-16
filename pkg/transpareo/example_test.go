@@ -58,7 +58,7 @@ func ExampleListAll() {
 
 // The passport flow: ask what a passport needs, validate the
 // body, write it, publish it. Validation answers valid false
-// with the failing fields rather than an error.
+// and names the failing fields.
 func ExampleClient_Post() {
 	client, _ := transpareo.FromProfile("acme")
 	ctx := context.Background()

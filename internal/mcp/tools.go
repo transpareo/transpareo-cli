@@ -250,9 +250,8 @@ func (t Tool) confirmPhrase(op *registry.Operation) string {
 
 // example builds one example call from the request example and
 // placeholder path arguments. Each value is kept as the document
-// spells it rather than decoded and written out again, so the
-// fields of a body stay in their declared order, which is the
-// order that reads as an explanation.
+// spells it, so the fields of a body stay in their declared
+// order, which is the order that reads as an explanation.
 func (t Tool) example(op *registry.Operation) string {
 	args := map[string]json.RawMessage{}
 	for _, p := range op.PathParams {

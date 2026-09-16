@@ -52,18 +52,17 @@ protocol.
 
 ## Tools
 
-Tools are curated, not generated one per endpoint: forty domain
-tools cover the flows, and two escape hatches reach the rest.
+Forty curated tools cover the flows, and two escape hatches reach
+every other endpoint.
 
 Which operations are curated, under what names, in which groups,
 of which shape and behind which confirm phrase is one declaration,
 published by the workspace in its tool catalogue. This server
-generates its table from the vendored copy of that document rather
-than keeping a second one, so the tools it serves and the tools a
-workspace's own endpoint serves cannot describe the API
-differently. Each side still builds the description and the
-schemas from that declaration in its own code, and a test compares
-what the two buildings produced.
+generates its table from the vendored copy of that document, so
+the tools it serves and the tools a workspace's own endpoint
+serves cannot describe the API differently. Each side still builds
+the description and the schemas from that declaration in its own
+code, and a test compares what the two buildings produced.
 
 - Identity: `me`.
 - Discovery: `search_operations(query)` finds operations by words

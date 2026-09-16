@@ -22,8 +22,8 @@ the BYOK form of the application manager, one per curve: the
 P-256 key signs the passport's selective-disclosure proof, the
 Ed25519 key the whole-document proofs of component library
 entries and the other artefacts. An existing key file is kept
-unless `--force` is given. Keys are files rather than keyring
-entries because the endpoint is a daemon on a server, where the
+unless `--force` is given. Keys are files, because the endpoint
+is a daemon on a server, where the
 desktop keyrings the tool otherwise uses are not available.
 
 ## Serving

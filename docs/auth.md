@@ -38,7 +38,7 @@ owner.
 The token the check minted is stored beside the secret, and
 every later invocation reuses it until sixty seconds before it
 expires, so a script that runs the tool in a loop exchanges the
-secret once an hour rather than once a command. The token
+secret once an hour, whatever the number of commands. The token
 endpoint allows ten exchanges a minute per consumer, which a
 run on a stored profile never meets. A 401 that reports an
 expired token drops the stored token and exchanges again.

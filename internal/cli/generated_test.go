@@ -202,8 +202,8 @@ func TestGeneratedDestructiveNeedsYesAndSetBuildsBody(t *testing.T) {
 
 // A command whose operation replays an answer takes the key, so a
 // script that runs it again after a timeout gets the first result
-// back rather than a second record. A command whose operation
-// replays nothing does not offer the option at all.
+// back, and no second record. A command whose operation replays
+// nothing does not offer the option at all.
 func TestGeneratedIdempotencyKeyOption(t *testing.T) {
 	h := generatedHarness(t)
 	h.login()

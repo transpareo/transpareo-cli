@@ -42,8 +42,7 @@ Finish with: "Delete the product you created."
   did not follow it.
 - Extra round trips: a `product_property_types` or
   `dpp_requirements` call skipped and then needed.
-- The confirm phrase invented rather than taken from the tool
-  description.
+- The confirm phrase invented, with the tool description ignored.
 - Anything the skill says that the assistant ignored.
 
 Each finding becomes a change to the skill text, a tool

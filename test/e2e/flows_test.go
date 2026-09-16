@@ -138,7 +138,8 @@ func missingProperties(err error) []string {
 // declaredUnfillable reports whether every type the platform
 // still misses is one this check said it cannot fill. A missing
 // type outside that set means the values went out and did not
-// take, which is a failure rather than a reason to skip.
+// take. The check fails on such a type; only one it declared
+// unfillable is a reason to skip.
 func declaredUnfillable(unfillable, missing []string) bool {
 	for _, name := range missing {
 		if !slices.Contains(unfillable, name) {
@@ -195,7 +196,7 @@ func throwawayProduct(t *testing.T, c *transpareo.Client) json.Number {
 // passport is one this run created, with what the workspace said
 // about publishing it. A workspace whose templates block a
 // publish answers a documented refusal to everything downstream
-// of one, so the checks carry the answer rather than ask again.
+// of one, so the checks carry that answer with them.
 type passport struct {
 	ID             json.Number
 	Code           string
@@ -396,9 +397,8 @@ const onePixelPNG = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADU" +
 	"lEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
 
 // The JSON way into the mediafile library and the way back out of
-// it. The delete runs through the command line, so the generated
-// command is proven against a host rather than only against a
-// stub, refusal without --yes included.
+// it. The delete runs through the command line, so a host proves
+// the generated command, refusal without --yes included.
 func TestMediafileUploadAndDelete(t *testing.T) {
 	e := load(t)
 	c := e.client(t)

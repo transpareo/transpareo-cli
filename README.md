@@ -217,7 +217,7 @@ profile name:
 That snippet works in Claude Desktop (`claude_desktop_config.json`),
 Claude Code (`~/.claude.json`) and Cursor (`.cursor/mcp.json`).
 
-The server offers curated tools rather than one per endpoint:
+The server offers curated tools covering the flows:
 `me`; products, components and brands; the passport flow from
 `dpp_requirements` through `validate_dpp`, `create_dpp` and
 `publish_dpp` to `void_dpp` and the bulk calls; imports, exports,

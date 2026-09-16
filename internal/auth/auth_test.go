@@ -195,8 +195,8 @@ func TestDeleteProfile(t *testing.T) {
 }
 
 // TestTokenStoreKeepsTheTokenBesideTheSecret proves the token
-// round-trips through the profile's store, is absent rather than
-// an error before a run stored one, and goes with a new login of
+// round-trips through the profile's store, reads as absent
+// before a run stored one, and goes with a new login of
 // the same name and with the profile's deletion.
 func TestTokenStoreKeepsTheTokenBesideTheSecret(t *testing.T) {
 	r, mem := newResolver(t, nil)

@@ -129,9 +129,9 @@ func TestCatalogueMatchesTheHostedOne(t *testing.T) {
 }
 
 // renderedDifferences names every way the two renderings of one
-// curated tool disagree, in words rather than as two dumped
-// documents: a schema runs to tens of kilobytes and reading two
-// of them side by side is not how the difference is found.
+// curated tool disagree, in words: a schema runs to tens of
+// kilobytes and reading two of them side by side is not how the
+// difference is found.
 func renderedDifferences(tool Tool, op *registry.Operation,
 	hosted spec.CatalogueTool) []string {
 	var out []string
@@ -169,9 +169,9 @@ func renderedDifferences(tool Tool, op *registry.Operation,
 // describedDifferently compares the two descriptions. The example
 // is compared as the call it is: the hosted server writes a body's
 // fields in the order the document declares them and this one
-// writes them in name order, because Go marshals a map that way,
-// and that is a difference in spelling rather than in what an
-// assistant is told to send.
+// writes them in name order, because Go marshals a map that way.
+// The two differ in spelling while telling an assistant to send
+// the same call.
 func describedDifferently(tool Tool, op *registry.Operation,
 	hosted spec.CatalogueTool) []string {
 	localProse, localExample := splitExample(tool.describe(op))

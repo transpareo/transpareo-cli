@@ -82,9 +82,9 @@ func (a *App) operations() *registry.Registry {
 }
 
 // GeneratorApp builds the App the generators render from. It
-// reads the vendored document rather than the compiled table, so
-// what they write cannot lag behind the specification in the
-// tree, whatever order `go generate` reaches the packages in.
+// reads the vendored document, so what they write keeps up with
+// the specification in the tree, whatever order `go generate`
+// reaches the packages in.
 func GeneratorApp() (*App, error) {
 	reg, err := registry.Load(spec.JSON)
 	if err != nil {

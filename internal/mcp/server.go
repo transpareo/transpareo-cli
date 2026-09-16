@@ -42,8 +42,8 @@ type Options struct {
 	Logger *slog.Logger
 }
 
-// composedTool is a tool written by hand rather than derived
-// from an operation. The server keeps the group and the built
+// composedTool is a tool the server writes by hand, with no
+// operation behind it. The server keeps the group and the built
 // tool so the catalogue can be compared with the hosted one.
 type composedTool struct {
 	Name  string

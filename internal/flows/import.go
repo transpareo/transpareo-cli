@@ -31,8 +31,8 @@ type Import struct {
 	Body        json.RawMessage
 }
 
-// Preview is what the upload looks like and what a mapping may
-// target, present while the import is fresh.
+// Preview describes the upload and what a mapping may target,
+// present while the import is fresh.
 type Preview struct {
 	Columns            []Column       `json:"columns"`
 	CoreAttributes     []string       `json:"coreAttributes"`

@@ -5,7 +5,7 @@
 # nightly job reports that drift every night, but four releases went
 # out on a four-versions-old document while it did, because a pull
 # request nobody merges is not a guard. Nothing is built until this
-# passes, and it fails rather than skips when it cannot reach a host.
+# passes, and a host it cannot reach fails the job too.
 #
 # The goreleaser job produces the archives, packages, checksum file,
 # SBOMs and the keyless Sigstore bundle of the checksum file, pushes the

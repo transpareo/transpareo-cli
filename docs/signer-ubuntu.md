@@ -18,7 +18,7 @@ deployment.
 - The clock in step with the world: `timedatectl` says
   `System clock synchronized: yes`. A request whose timestamp is
   more than five minutes off is refused, so a drifting clock
-  looks like a broken endpoint.
+  makes every request fail.
 - The host name of the workspace, from the address bar of the
   application manager, `acme.transpareo.com` for instance. The
   key that signs the platform's requests is published there.

@@ -55,8 +55,8 @@ func main() {
 
 // stale reports whether a binary built from builtIn may go out
 // against a host serving live, and why not. One minor version
-// behind is what a release in the days after an API release
-// looks like; two means the vendored document was left behind.
+// behind is normal in the days after an API release; two means
+// the vendored document was left behind.
 // A binary built from a newer document than the host serves is
 // an API release that has not reached that host yet, which is
 // not a reason to hold the tag.

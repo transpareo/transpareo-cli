@@ -30,7 +30,7 @@ func neutralHost(host string) bool {
 }
 
 // The angle brackets stay in, so the documented https://<host>/api
-// form yields the placeholder rather than a truncation of it.
+// form yields the whole placeholder.
 var urlPattern = regexp.MustCompile("https?://[^\\s\"'`\\\\)\\]},]+")
 
 // hostsIn lists the host of every absolute URL in the document,
