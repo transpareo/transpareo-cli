@@ -1,6 +1,6 @@
 # Command reference
 
-Every command of `transpareo`, generated from API specification 2.1.0. `--help` on any command prints the same example and permission key.
+Every command of `transpareo`, generated from API specification 2.3.0. `--help` on any command prints the same example and permission key.
 
 | Option on every command | What it does |
 |---|---|
@@ -1024,6 +1024,23 @@ transpareo exports get <id>
 
 `GET /exports/{id}` · operation `get_export` · permission `export_access`
 
+### transpareo exports list
+
+List exports.
+
+```sh
+transpareo exports list --status <status>
+```
+
+| Option | What it does |
+|---|---|
+| `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
+| `--page` \<n\> | Page number |
+| `--per-page` \<n\> | Records per page (default: 100, max: 500) |
+| `--status` \<value\> | Keep only the exports in these statuses, comma-separated: pending, running, completed, failed |
+
+`GET /exports` · operation `list_exports` · permission `export_access`
+
 ## Grants
 
 Self-service partner grants: short-lived credentials scoped to one passport, issued from a scanned code.
@@ -1117,6 +1134,23 @@ transpareo imports get <id>
 
 `GET /imports/{id}` · operation `get_import` · permission `import_access`
 
+### transpareo imports list
+
+List imports.
+
+```sh
+transpareo imports list --status <status>
+```
+
+| Option | What it does |
+|---|---|
+| `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
+| `--page` \<n\> | Page number |
+| `--per-page` \<n\> | Records per page (default: 100, max: 500) |
+| `--status` \<value\> | Keep only the runs in these statuses, comma-separated: fresh, mapped, validating, validated, importing, completed, failed, restoring, reverted |
+
+`GET /imports` · operation `list_imports` · permission `import_access`
+
 ### transpareo imports map
 
 Send the column mapping of a fresh import.
@@ -1173,7 +1207,7 @@ transpareo imports run --file catalogue.xlsx --type products --auto
 | Option | What it does |
 |---|---|
 | `--accept-suggestions` | take every exact match of the preview |
-| `--auto` | let the platform map and write in one call, making a property type for every column that matches none |
+| `--auto` | let the platform map, write and publish in one call, making a property type for every column that matches none |
 | `--execute` | write the records when the validation passes |
 | `--file` \<value\> | the spreadsheet or JSON file to import |
 | `--map` \<value\>... | Column=target (repeatable) |

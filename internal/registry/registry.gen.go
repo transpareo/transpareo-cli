@@ -4,7 +4,7 @@ package registry
 
 import "encoding/json"
 
-const generatedVersion = "2.1.0"
+const generatedVersion = "2.3.0"
 
 var generatedOperations = []Operation{
 	{
@@ -289,7 +289,7 @@ var generatedOperations = []Operation{
 		Method:      "PUT",
 		Path:        "/components/{id}/publish",
 		Summary:     "Publish a component",
-		Description: "Makes the component visible in the storefront catalogue. Publishing also publishes the component library entry and recomputes the property categories and types. Only while the storefront is enabled; otherwise 403. The caller must own the component, or hold `component_write`.",
+		Description: "Makes the component visible in the storefront catalogue, and lets a product's component rows link to it by name. Publishing also publishes the component library entry and recomputes the property categories and types. Only while the storefront is enabled; otherwise 403, since a workspace without a storefront publishes a component as it is created. The caller must own the component, or hold `component_write`.",
 		PathParams: []Param{
 			{Name: "id", In: "path", Description: "Record ID", Required: true, Schema: json.RawMessage(`{"type":"integer"}`)},
 		},
@@ -871,6 +871,26 @@ var generatedOperations = []Operation{
 		Security:            []string{"oauth2"},
 	},
 	{
+		ID:          "list_exports",
+		Group:       "exports",
+		Tag:         "Exports",
+		Method:      "GET",
+		Path:        "/exports",
+		Summary:     "List exports",
+		Description: "The exports this consumer started, newest first. One started in an earlier session, or by another program holding the same credential, is found here: the answer names each run's `statusUrl`, and a completed one its `downloadUrl`.\n\nA row says where a run stands as the record has it. The progress of a running export, and its state at the moment of asking, come from `GET /exports/{id}`, which reads the task behind the run.\n\nNarrow the list with `status` to find the archive that is ready, or the run that is still packing.",
+		QueryParams: []Param{
+			{Name: "status", In: "query", Description: "Keep only the exports in these statuses, comma-separated: pending, running, completed, failed", Schema: json.RawMessage(`{"type":"string"}`)},
+			{Name: "page", In: "query", Description: "Page number", Schema: json.RawMessage(`{"default":1,"minimum":1,"type":"integer"}`)},
+			{Name: "per_page", In: "query", Description: "Records per page (default: 100, max: 500)", Schema: json.RawMessage(`{"default":100,"maximum":500,"type":"integer"}`)},
+		},
+		ResponseStatus:      "200",
+		ResponseContentType: "application/json",
+		ResponseSchema:      json.RawMessage("{\"properties\":{\"exports\":{\"items\":{\"description\":\"One export as a list answers it: where the run stands as the record has it, and where its archive is. The progress of a running export is read from `GET /exports/{id}`.\",\"example\":{\"archiveSize\":184320,\"code\":\"k7m2pq\",\"completedAt\":\"2026-09-08T09:13:01Z\",\"componentCount\":40,\"createdAt\":\"2026-09-08T09:12:44Z\",\"dataType\":\"dpps\",\"downloadUrl\":\"https://example.com/api/exports/42/download\",\"format\":\"jsonld\",\"id\":42,\"productCount\":12,\"recordCount\":64,\"status\":\"completed\",\"statusUrl\":\"https://example.com/api/exports/42\"},\"properties\":{\"archiveSize\":{\"description\":\"Archive bytes. On `completed`.\",\"type\":\"integer\"},\"code\":{\"description\":\"The short code the application manager lists the export under\",\"type\":\"string\"},\"completedAt\":{\"format\":\"date-time\",\"type\":\"string\"},\"componentCount\":{\"type\":\"integer\"},\"createdAt\":{\"format\":\"date-time\",\"type\":\"string\"},\"dataType\":{\"enum\":[\"dpps\"],\"type\":\"string\"},\"downloadUrl\":{\"description\":\"Where to fetch the archive. On `completed`.\",\"format\":\"uri\",\"type\":\"string\"},\"format\":{\"enum\":[\"jsonld\",\"csv\",\"xlsx\",\"sql\"],\"type\":\"string\"},\"id\":{\"type\":\"integer\"},\"productCount\":{\"type\":\"integer\"},\"recordCount\":{\"description\":\"Passports, products and components exported. On `completed`.\",\"type\":\"integer\"},\"status\":{\"enum\":[\"pending\",\"running\",\"completed\",\"failed\"],\"type\":\"string\"},\"statusUrl\":{\"description\":\"Where the whole export is read, and where a running one is polled\",\"format\":\"uri\",\"type\":\"string\"}},\"required\":[\"id\",\"status\",\"statusUrl\"],\"type\":\"object\"},\"type\":\"array\"}},\"type\":\"object\"}"),
+		ResponseExample:     json.RawMessage(`{"exports":[{"archiveSize":184320,"code":"k7m2pq","completedAt":"2026-09-08T09:13:01Z","componentCount":40,"createdAt":"2026-09-08T09:12:44Z","dataType":"dpps","downloadUrl":"https://example.com/api/exports/42/download","format":"jsonld","id":42,"productCount":12,"recordCount":64,"status":"completed","statusUrl":"https://example.com/api/exports/42"}]}`),
+		Permission:          []string{"export_access"},
+		Security:            []string{"oauth2"},
+	},
+	{
 		ID:          "create_export",
 		Group:       "exports",
 		Tag:         "Exports",
@@ -1062,13 +1082,33 @@ var generatedOperations = []Operation{
 		Security:            []string{"oauth2"},
 	},
 	{
+		ID:          "list_imports",
+		Group:       "imports",
+		Tag:         "Imports",
+		Method:      "GET",
+		Path:        "/imports",
+		Summary:     "List imports",
+		Description: "The runs this consumer started, newest first. A run started in an earlier session, or by another program holding the same credential, is found here: the answer names each run's `statusUrl`, which `GET /imports/{id}` reads in full.\n\nA row carries what names a run and how it went. The preview, the mapping, the problems found (`errorGroups` and `rowErrors`) and the progress of a running task belong to one run and are read from `GET /imports/{id}`, which keeps a page of runs small.\n\nNarrow the list with `status` to the runs still waiting on a decision (`fresh`, `validated`) or the ones that are over (`completed`, `failed`).",
+		QueryParams: []Param{
+			{Name: "status", In: "query", Description: "Keep only the runs in these statuses, comma-separated: fresh, mapped, validating, validated, importing, completed, failed, restoring, reverted", Schema: json.RawMessage(`{"type":"string"}`)},
+			{Name: "page", In: "query", Description: "Page number", Schema: json.RawMessage(`{"default":1,"minimum":1,"type":"integer"}`)},
+			{Name: "per_page", In: "query", Description: "Records per page (default: 100, max: 500)", Schema: json.RawMessage(`{"default":100,"maximum":500,"type":"integer"}`)},
+		},
+		ResponseStatus:      "200",
+		ResponseContentType: "application/json",
+		ResponseSchema:      json.RawMessage("{\"properties\":{\"imports\":{\"items\":{\"description\":\"One import as a list answers it: what names the run and how it went. The preview, the mapping, the problems found and the progress of a running task are read from `GET /imports/{id}`.\",\"example\":{\"completedAt\":\"2026-09-08T09:13:30Z\",\"createdAt\":\"2026-09-08T09:12:44Z\",\"createdCount\":238,\"dataType\":\"components\",\"failedCount\":0,\"fileFormat\":\"xlsx\",\"id\":12,\"originalFilename\":\"catalogue.xlsx\",\"revertable\":true,\"startedAt\":\"2026-09-08T09:12:50Z\",\"status\":\"completed\",\"statusUrl\":\"https://example.com/api/imports/12\",\"totalEntries\":240,\"unchangedCount\":0,\"updatedCount\":2},\"properties\":{\"completedAt\":{\"format\":\"date-time\",\"type\":\"string\"},\"createdAt\":{\"format\":\"date-time\",\"type\":\"string\"},\"createdCount\":{\"type\":\"integer\"},\"dataType\":{\"enum\":[\"components\",\"products\",\"dpps\"],\"type\":\"string\"},\"failedCount\":{\"type\":\"integer\"},\"fileFormat\":{\"enum\":[\"xlsx\",\"json\",\"csv\",\"ods\"],\"type\":\"string\"},\"id\":{\"type\":\"integer\"},\"originalFilename\":{\"type\":\"string\"},\"revertable\":{\"description\":\"A completed or failed run with a backup or created records can be reverted\",\"type\":\"boolean\"},\"startedAt\":{\"format\":\"date-time\",\"type\":\"string\"},\"status\":{\"enum\":[\"fresh\",\"mapped\",\"validating\",\"validated\",\"importing\",\"completed\",\"failed\",\"restoring\",\"reverted\"],\"type\":\"string\"},\"statusUrl\":{\"description\":\"Where the whole run is read, and where a running one is polled\",\"format\":\"uri\",\"type\":\"string\"},\"totalEntries\":{\"description\":\"Rows the file holds\",\"type\":\"integer\"},\"unchangedCount\":{\"type\":\"integer\"},\"updatedCount\":{\"type\":\"integer\"}},\"required\":[\"id\",\"dataType\",\"status\",\"statusUrl\"],\"type\":\"object\"},\"type\":\"array\"}},\"type\":\"object\"}"),
+		ResponseExample:     json.RawMessage(`{"imports":[{"completedAt":"2026-09-08T09:13:30Z","createdAt":"2026-09-08T09:12:44Z","createdCount":238,"dataType":"components","failedCount":0,"fileFormat":"xlsx","id":12,"originalFilename":"catalogue.xlsx","revertable":true,"startedAt":"2026-09-08T09:12:50Z","status":"completed","statusUrl":"https://example.com/api/imports/12","totalEntries":240,"unchangedCount":0,"updatedCount":2}]}`),
+		Permission:          []string{"import_access"},
+		Security:            []string{"oauth2"},
+	},
+	{
 		ID:          "create_import",
 		Group:       "imports",
 		Tag:         "Imports",
 		Method:      "POST",
 		Path:        "/imports",
 		Summary:     "Upload a spreadsheet to import",
-		Description: "One multipart request, the shape every upload API has: `curl -F file=@catalogue.xlsx -F dataType=components`. The importer reads xlsx, csv, ods and json. When every column resolves on its own (the canonical headers of the template `GET /imports/example` serves, or a JSON file whose entries carry the canonical keys) the import comes back `mapped`. Otherwise it is `fresh` and the answer carries the `preview` to write the mapping from; send that with `PUT /imports/{id}/mappings`, or along with the file as `mappings`.\n\n`options[auto]=true` imports straight away: the upload takes the mapping the mapping form would prefill, a column nothing matches becoming a property type under its own heading, and comes back `validating`; a clean validation goes on into the import on its own, one with errors stops at `validated` for the caller to decide. Poll the import until `status` is `completed`, `validated` or `failed`. A required attribute no column covers answers 422 `IMPORT_MAPPING_INCOMPLETE` with nothing saved.\n\nThe upload is held for a limited time; once it is gone, the run endpoints answer 410 `IMPORT_EXPIRED`.",
+		Description: "One multipart request, the shape every upload API has: `curl -F file=@catalogue.xlsx -F dataType=components`. The importer reads xlsx, csv, ods and json. When every column resolves on its own (the canonical headers of the template `GET /imports/example` serves, or a JSON file whose entries carry the canonical keys) the import comes back `mapped`. Otherwise it is `fresh` and the answer carries the `preview` to write the mapping from; send that with `PUT /imports/{id}/mappings`, or along with the file as `mappings`.\n\n`options[auto]=true` imports straight away: the upload takes the mapping the mapping form would prefill, a column nothing matches becoming a property type under its own heading, and comes back `validating`; a clean validation goes on into the import on its own, one with errors stops at `validated` for the caller to decide. An automatic run publishes what it imports unless `options[published]=false` says otherwise. Poll the import until `status` is `completed`, `validated` or `failed`. A required attribute no column covers answers 422 `IMPORT_MAPPING_INCOMPLETE` with nothing saved.\n\nThe upload is held for a limited time; once it is gone, the run endpoints answer 410 `IMPORT_EXPIRED`.",
 		RequestBodies: []RequestBody{
 			{ContentType: "multipart/form-data", Schema: json.RawMessage("{\"properties\":{\"dataType\":{\"default\":\"components\",\"enum\":[\"components\",\"products\",\"dpps\"],\"type\":\"string\"},\"file\":{\"description\":\"The spreadsheet, at most 50 MB, 100000 rows and 2000000 cells\",\"format\":\"binary\",\"type\":\"string\"},\"mappings\":{\"description\":\"The mapping of `ImportMappingsInput`, sent as nested form fields\",\"type\":\"object\"},\"options\":{\"description\":\"The options of `ImportMappingsInput`, sent as nested form fields\",\"type\":\"object\"},\"valueSeparator\":{\"default\":\"|\",\"description\":\"What separates several values in one cell\",\"type\":\"string\"}},\"required\":[\"file\"],\"type\":\"object\"}"), Example: json.RawMessage(`{"dataType":"components","file":"(binary)"}`)},
 		},
@@ -1169,7 +1209,7 @@ var generatedOperations = []Operation{
 			{Name: "id", In: "path", Description: "Record ID", Required: true, Schema: json.RawMessage(`{"type":"integer"}`)},
 		},
 		RequestBodies: []RequestBody{
-			{ContentType: "application/json", Schema: json.RawMessage("{\"description\":\"One action per column of the upload, keyed by the column as the preview names it, plus the options a run reads. Every required attribute of the data type must be covered by a column mapped to it, unless the rows carry it on their own, as a JSON upload does with `name`.\",\"example\":{\"mappings\":{\"artikelname\":{\"action\":\"map_to_attribute\",\"coreAttribute\":\"name\"},\"farbe\":{\"action\":\"create_new\",\"typeName\":\"Colour\"},\"gewicht\":{\"action\":\"use_existing\",\"typeId\":\"6650\"},\"intern\":{\"action\":\"skip\"}},\"options\":{\"published\":false}},\"properties\":{\"mappings\":{\"additionalProperties\":{\"properties\":{\"action\":{\"description\":\"`map_to_attribute` feeds a core attribute, `use_existing` a property type by id, `create_new` a property type by name (this changes the schema of the workspace for good and is never inferred), `skip` drops the column\",\"enum\":[\"map_to_attribute\",\"use_existing\",\"create_new\",\"skip\"],\"type\":\"string\"},\"coreAttribute\":{\"description\":\"With `map_to_attribute`, one of the preview's `coreAttributes`\",\"type\":\"string\"},\"isSingleValue\":{\"description\":\"Whether the column holds one value per row; defaults to what the preview found\",\"type\":\"boolean\"},\"typeId\":{\"description\":\"With `use_existing`, the id of one of the preview's `propertyTypes`\",\"type\":\"string\"},\"typeName\":{\"description\":\"With `create_new`, the name of the property type to create\",\"type\":\"string\"}},\"required\":[\"action\"],\"type\":\"object\"},\"type\":\"object\"},\"options\":{\"properties\":{\"auto\":{\"description\":\"Carry a clean validation into the import on its own. On the upload it also takes the suggested mapping, so the whole run needs no further call.\",\"type\":\"boolean\"},\"backup\":{\"description\":\"Take the backup a revert restores from. Defaults to true.\",\"type\":\"boolean\"},\"notify\":{\"description\":\"Mail the owner how the run ended. A consumer has no mailbox, so this applies to a run a person started.\",\"type\":\"boolean\"},\"published\":{\"description\":\"Publish the records the import creates\",\"type\":\"boolean\"}},\"type\":\"object\"}},\"required\":[\"mappings\"],\"type\":\"object\"}"), Example: json.RawMessage(`{"mappings":{"artikelname":{"action":"map_to_attribute","coreAttribute":"name"},"farbe":{"action":"create_new","typeName":"Colour"},"gewicht":{"action":"use_existing","typeId":"6650"},"intern":{"action":"skip"}},"options":{"published":false}}`)},
+			{ContentType: "application/json", Schema: json.RawMessage("{\"description\":\"One action per column of the upload, keyed by the column as the preview names it, plus the options a run reads. Every required attribute of the data type must be covered by a column mapped to it, unless the rows carry it on their own, as a JSON upload does with `name`.\",\"example\":{\"mappings\":{\"artikelname\":{\"action\":\"map_to_attribute\",\"coreAttribute\":\"name\"},\"farbe\":{\"action\":\"create_new\",\"typeName\":\"Colour\"},\"gewicht\":{\"action\":\"use_existing\",\"typeId\":\"6650\"},\"intern\":{\"action\":\"skip\"}},\"options\":{\"published\":false}},\"properties\":{\"mappings\":{\"additionalProperties\":{\"properties\":{\"action\":{\"description\":\"`map_to_attribute` feeds a core attribute, `use_existing` a property type by id, `create_new` a property type by name (this changes the schema of the workspace for good and is never inferred), `skip` drops the column\",\"enum\":[\"map_to_attribute\",\"use_existing\",\"create_new\",\"skip\"],\"type\":\"string\"},\"coreAttribute\":{\"description\":\"With `map_to_attribute`, one of the preview's `coreAttributes`\",\"type\":\"string\"},\"isSingleValue\":{\"description\":\"Whether the column holds one value per row; defaults to what the preview found\",\"type\":\"boolean\"},\"typeId\":{\"description\":\"With `use_existing`, the id of one of the preview's `propertyTypes`\",\"type\":\"string\"},\"typeName\":{\"description\":\"With `create_new`, the name of the property type to create\",\"type\":\"string\"}},\"required\":[\"action\"],\"type\":\"object\"},\"type\":\"object\"},\"options\":{\"properties\":{\"auto\":{\"description\":\"Carry a clean validation into the import on its own. On the upload it also takes the suggested mapping and publishes what it imports unless `published` is false, so the whole run needs no further call. For a sheet whose mapping is clear, the headings of the import template or ones already seen to resolve in this workspace; a column nothing matches becomes a property type under its own heading, so an uncertain sheet goes through the preview instead.\",\"type\":\"boolean\"},\"backup\":{\"description\":\"Take the backup a revert restores from. Defaults to true.\",\"type\":\"boolean\"},\"notify\":{\"description\":\"Mail the owner how the run ended. A consumer has no mailbox, so this applies to a run a person started.\",\"type\":\"boolean\"},\"published\":{\"description\":\"Publish the records the import creates. A workspace without a storefront publishes them as they are created either way; with one, a component links to product rows by name only once it is published.\",\"type\":\"boolean\"}},\"type\":\"object\"}},\"required\":[\"mappings\"],\"type\":\"object\"}"), Example: json.RawMessage(`{"mappings":{"artikelname":{"action":"map_to_attribute","coreAttribute":"name"},"farbe":{"action":"create_new","typeName":"Colour"},"gewicht":{"action":"use_existing","typeId":"6650"},"intern":{"action":"skip"}},"options":{"published":false}}`)},
 		},
 		RequestRequired:     true,
 		ResponseStatus:      "200",
@@ -1957,7 +1997,7 @@ var generatedOperations = []Operation{
 		Method:      "PUT",
 		Path:        "/products/{id}/publish",
 		Summary:     "Publish a product",
-		Description: "Makes the product publicly visible in the catalog. Requires ownership or admin rights. Available only when the public product catalog is enabled; returns `403` otherwise.",
+		Description: "Makes the product publicly visible in the catalog. Only while the storefront is enabled; otherwise 403, since a workspace without a storefront publishes a product as it is created. Requires ownership or admin rights. Available only when the public product catalog is enabled; returns `403` otherwise.",
 		PathParams: []Param{
 			{Name: "id", In: "path", Description: "Record ID", Required: true, Schema: json.RawMessage(`{"type":"integer"}`)},
 		},

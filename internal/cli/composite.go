@@ -222,9 +222,11 @@ no mapping option.
 --auto leaves the whole run to the platform: the upload takes the
 mapping the mapping form would prefill, every column that matches
 no property type becomes one under its own heading, and a clean
-validation carries on into the write without --execute. It
+validation carries on into the write without --execute. What it
+writes is published, which --published=false holds back. It
 changes the schema of the workspace, so use it on a sheet whose
-headings are already the ones you want.`,
+headings are already the ones you want, and send an uncertain one
+through the preview instead.`,
 		Example: `  transpareo imports run --file catalogue.xlsx --type products
   transpareo imports run --file catalogue.xlsx --type products \
       --accept-suggestions --map "Farbe=new:Colour" --execute
@@ -261,8 +263,8 @@ headings are already the ones you want.`,
 	f.BoolVar(&execute, "execute", false,
 		"write the records when the validation passes")
 	f.BoolVar(&auto, "auto", false,
-		"let the platform map and write in one call, making a "+
-			"property type for every column that matches none")
+		"let the platform map, write and publish in one call, making "+
+			"a property type for every column that matches none")
 	f.BoolVar(&published, "published", false,
 		"publish the records the import creates")
 	f.BoolVar(&skipBackup, "skip-backup", false,

@@ -780,6 +780,69 @@ func (e ExportInputFormat) Valid() bool {
 	}
 }
 
+// Defines values for ExportSummaryDataType.
+const (
+	ExportSummaryDataTypeDpps ExportSummaryDataType = "dpps"
+)
+
+// Valid indicates whether the value is a known member of the ExportSummaryDataType enum.
+func (e ExportSummaryDataType) Valid() bool {
+	switch e {
+	case ExportSummaryDataTypeDpps:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ExportSummaryFormat.
+const (
+	ExportSummaryFormatCsv    ExportSummaryFormat = "csv"
+	ExportSummaryFormatJsonld ExportSummaryFormat = "jsonld"
+	ExportSummaryFormatSql    ExportSummaryFormat = "sql"
+	ExportSummaryFormatXlsx   ExportSummaryFormat = "xlsx"
+)
+
+// Valid indicates whether the value is a known member of the ExportSummaryFormat enum.
+func (e ExportSummaryFormat) Valid() bool {
+	switch e {
+	case ExportSummaryFormatCsv:
+		return true
+	case ExportSummaryFormatJsonld:
+		return true
+	case ExportSummaryFormatSql:
+		return true
+	case ExportSummaryFormatXlsx:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ExportSummaryStatus.
+const (
+	ExportSummaryStatusCompleted ExportSummaryStatus = "completed"
+	ExportSummaryStatusFailed    ExportSummaryStatus = "failed"
+	ExportSummaryStatusPending   ExportSummaryStatus = "pending"
+	ExportSummaryStatusRunning   ExportSummaryStatus = "running"
+)
+
+// Valid indicates whether the value is a known member of the ExportSummaryStatus enum.
+func (e ExportSummaryStatus) Valid() bool {
+	switch e {
+	case ExportSummaryStatusCompleted:
+		return true
+	case ExportSummaryStatusFailed:
+		return true
+	case ExportSummaryStatusPending:
+		return true
+	case ExportSummaryStatusRunning:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for ImportDataType.
 const (
 	ImportDataTypeComponents ImportDataType = "components"
@@ -930,6 +993,90 @@ func (e ImportPreviewColumnsSuggestedAction) Valid() bool {
 	case ImportPreviewColumnsSuggestedActionSkip:
 		return true
 	case ImportPreviewColumnsSuggestedActionUseExisting:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ImportSummaryDataType.
+const (
+	ImportSummaryDataTypeComponents ImportSummaryDataType = "components"
+	ImportSummaryDataTypeDpps       ImportSummaryDataType = "dpps"
+	ImportSummaryDataTypeProducts   ImportSummaryDataType = "products"
+)
+
+// Valid indicates whether the value is a known member of the ImportSummaryDataType enum.
+func (e ImportSummaryDataType) Valid() bool {
+	switch e {
+	case ImportSummaryDataTypeComponents:
+		return true
+	case ImportSummaryDataTypeDpps:
+		return true
+	case ImportSummaryDataTypeProducts:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ImportSummaryFileFormat.
+const (
+	ImportSummaryFileFormatCsv  ImportSummaryFileFormat = "csv"
+	ImportSummaryFileFormatJson ImportSummaryFileFormat = "json"
+	ImportSummaryFileFormatOds  ImportSummaryFileFormat = "ods"
+	ImportSummaryFileFormatXlsx ImportSummaryFileFormat = "xlsx"
+)
+
+// Valid indicates whether the value is a known member of the ImportSummaryFileFormat enum.
+func (e ImportSummaryFileFormat) Valid() bool {
+	switch e {
+	case ImportSummaryFileFormatCsv:
+		return true
+	case ImportSummaryFileFormatJson:
+		return true
+	case ImportSummaryFileFormatOds:
+		return true
+	case ImportSummaryFileFormatXlsx:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ImportSummaryStatus.
+const (
+	ImportSummaryStatusCompleted  ImportSummaryStatus = "completed"
+	ImportSummaryStatusFailed     ImportSummaryStatus = "failed"
+	ImportSummaryStatusFresh      ImportSummaryStatus = "fresh"
+	ImportSummaryStatusImporting  ImportSummaryStatus = "importing"
+	ImportSummaryStatusMapped     ImportSummaryStatus = "mapped"
+	ImportSummaryStatusRestoring  ImportSummaryStatus = "restoring"
+	ImportSummaryStatusReverted   ImportSummaryStatus = "reverted"
+	ImportSummaryStatusValidated  ImportSummaryStatus = "validated"
+	ImportSummaryStatusValidating ImportSummaryStatus = "validating"
+)
+
+// Valid indicates whether the value is a known member of the ImportSummaryStatus enum.
+func (e ImportSummaryStatus) Valid() bool {
+	switch e {
+	case ImportSummaryStatusCompleted:
+		return true
+	case ImportSummaryStatusFailed:
+		return true
+	case ImportSummaryStatusFresh:
+		return true
+	case ImportSummaryStatusImporting:
+		return true
+	case ImportSummaryStatusMapped:
+		return true
+	case ImportSummaryStatusRestoring:
+		return true
+	case ImportSummaryStatusReverted:
+		return true
+	case ImportSummaryStatusValidated:
+		return true
+	case ImportSummaryStatusValidating:
 		return true
 	default:
 		return false
@@ -2457,6 +2604,43 @@ type ExportInputDataType string
 // ExportInputFormat `jsonld` packs one document per passport, product and component into a tar archive; the tabular formats flatten the catalogue into one sheet each
 type ExportInputFormat string
 
+// ExportSummary One export as a list answers it: where the run stands as the record has it, and where its archive is. The progress of a running export is read from `GET /exports/{id}`.
+//
+// Example: {"archiveSize":184320,"code":"k7m2pq","completedAt":"2026-09-08T09:13:01Z","componentCount":40,"createdAt":"2026-09-08T09:12:44Z","dataType":"dpps","downloadUrl":"https://example.com/api/exports/42/download","format":"jsonld","id":42,"productCount":12,"recordCount":64,"status":"completed","statusUrl":"https://example.com/api/exports/42"}
+type ExportSummary struct {
+	// ArchiveSize Archive bytes. On `completed`.
+	ArchiveSize *int `json:"archiveSize,omitempty"`
+
+	// Code The short code the application manager lists the export under
+	Code           *string                `json:"code,omitempty"`
+	CompletedAt    *time.Time             `json:"completedAt,omitempty"`
+	ComponentCount *int                   `json:"componentCount,omitempty"`
+	CreatedAt      *time.Time             `json:"createdAt,omitempty"`
+	DataType       *ExportSummaryDataType `json:"dataType,omitempty"`
+
+	// DownloadUrl Where to fetch the archive. On `completed`.
+	DownloadUrl  *string              `json:"downloadUrl,omitempty"`
+	Format       *ExportSummaryFormat `json:"format,omitempty"`
+	Id           int                  `json:"id"`
+	ProductCount *int                 `json:"productCount,omitempty"`
+
+	// RecordCount Passports, products and components exported. On `completed`.
+	RecordCount *int                `json:"recordCount,omitempty"`
+	Status      ExportSummaryStatus `json:"status"`
+
+	// StatusUrl Where the whole export is read, and where a running one is polled
+	StatusUrl string `json:"statusUrl"`
+}
+
+// ExportSummaryDataType defines model for ExportSummary.DataType.
+type ExportSummaryDataType string
+
+// ExportSummaryFormat defines model for ExportSummary.Format.
+type ExportSummaryFormat string
+
+// ExportSummaryStatus defines model for ExportSummary.Status.
+type ExportSummaryStatus string
+
 // Favorite Example: {"createdAt":"2026-02-03T09:15:00Z","favorable":{"id":11,"name":"Hydrating Face Cream","permalink":"/products/naturacare-hydrating-face-cream","type":"Product"},"id":19,"type":"Favorite"}
 type Favorite struct {
 	CreatedAt *time.Time `json:"createdAt,omitempty"`
@@ -2619,7 +2803,7 @@ type ImportMappingsInput struct {
 		TypeName *string `json:"typeName,omitempty"`
 	} `json:"mappings"`
 	Options *struct {
-		// Auto Carry a clean validation into the import on its own. On the upload it also takes the suggested mapping, so the whole run needs no further call.
+		// Auto Carry a clean validation into the import on its own. On the upload it also takes the suggested mapping and publishes what it imports unless `published` is false, so the whole run needs no further call. For a sheet whose mapping is clear, the headings of the import template or ones already seen to resolve in this workspace; a column nothing matches becomes a property type under its own heading, so an uncertain sheet goes through the preview instead.
 		Auto *bool `json:"auto,omitempty"`
 
 		// Backup Take the backup a revert restores from. Defaults to true.
@@ -2628,7 +2812,7 @@ type ImportMappingsInput struct {
 		// Notify Mail the owner how the run ended. A consumer has no mailbox, so this applies to a run a person started.
 		Notify *bool `json:"notify,omitempty"`
 
-		// Published Publish the records the import creates
+		// Published Publish the records the import creates. A workspace without a storefront publishes them as they are created either way; with one, a component links to product rows by name only once it is published.
 		Published *bool `json:"published,omitempty"`
 	} `json:"options,omitempty"`
 }
@@ -2688,6 +2872,42 @@ type ImportPreviewColumnsMatchType string
 
 // ImportPreviewColumnsSuggestedAction defines model for ImportPreview.Columns.SuggestedAction.
 type ImportPreviewColumnsSuggestedAction string
+
+// ImportSummary One import as a list answers it: what names the run and how it went. The preview, the mapping, the problems found and the progress of a running task are read from `GET /imports/{id}`.
+//
+// Example: {"completedAt":"2026-09-08T09:13:30Z","createdAt":"2026-09-08T09:12:44Z","createdCount":238,"dataType":"components","failedCount":0,"fileFormat":"xlsx","id":12,"originalFilename":"catalogue.xlsx","revertable":true,"startedAt":"2026-09-08T09:12:50Z","status":"completed","statusUrl":"https://example.com/api/imports/12","totalEntries":240,"unchangedCount":0,"updatedCount":2}
+type ImportSummary struct {
+	CompletedAt      *time.Time               `json:"completedAt,omitempty"`
+	CreatedAt        *time.Time               `json:"createdAt,omitempty"`
+	CreatedCount     *int                     `json:"createdCount,omitempty"`
+	DataType         ImportSummaryDataType    `json:"dataType"`
+	FailedCount      *int                     `json:"failedCount,omitempty"`
+	FileFormat       *ImportSummaryFileFormat `json:"fileFormat,omitempty"`
+	Id               int                      `json:"id"`
+	OriginalFilename *string                  `json:"originalFilename,omitempty"`
+
+	// Revertable A completed or failed run with a backup or created records can be reverted
+	Revertable *bool               `json:"revertable,omitempty"`
+	StartedAt  *time.Time          `json:"startedAt,omitempty"`
+	Status     ImportSummaryStatus `json:"status"`
+
+	// StatusUrl Where the whole run is read, and where a running one is polled
+	StatusUrl string `json:"statusUrl"`
+
+	// TotalEntries Rows the file holds
+	TotalEntries   *int `json:"totalEntries,omitempty"`
+	UnchangedCount *int `json:"unchangedCount,omitempty"`
+	UpdatedCount   *int `json:"updatedCount,omitempty"`
+}
+
+// ImportSummaryDataType defines model for ImportSummary.DataType.
+type ImportSummaryDataType string
+
+// ImportSummaryFileFormat defines model for ImportSummary.FileFormat.
+type ImportSummaryFileFormat string
+
+// ImportSummaryStatus defines model for ImportSummary.Status.
+type ImportSummaryStatus string
 
 // Language defines model for Language.
 type Language struct {
@@ -3775,6 +3995,18 @@ type ListEventsParams struct {
 	Limit *int `form:"limit,omitempty" json:"limit,omitempty"`
 }
 
+// ListExportsParams defines parameters for ListExports.
+type ListExportsParams struct {
+	// Status Keep only the exports in these statuses, comma-separated: pending, running, completed, failed
+	Status *string `form:"status,omitempty" json:"status,omitempty"`
+
+	// Page Page number
+	Page *Page `form:"page,omitempty" json:"page,omitempty"`
+
+	// PerPage Records per page (default: 100, max: 500)
+	PerPage *PerPage `form:"per_page,omitempty" json:"per_page,omitempty"`
+}
+
 // CreateExportJSONBody defines parameters for CreateExport.
 type CreateExportJSONBody struct {
 	// Export What to export and how. Every field is optional; the default is the whole passport catalogue as JSON-LD.
@@ -3839,6 +4071,18 @@ type CreateFormSubmissionJSONBody struct {
 type CreateGrantParams struct {
 	// IdempotencyKey Makes the request safe to repeat. The same key and body within 24 hours replays the stored response with `Idempotent-Replayed: true`; the same key with another body answers 422 `IDEMPOTENCY_KEY_REUSED`; a key whose first request is still running answers 409 `IDEMPOTENCY_IN_PROGRESS`.
 	IdempotencyKey *IdempotencyKey `json:"Idempotency-Key,omitempty"`
+}
+
+// ListImportsParams defines parameters for ListImports.
+type ListImportsParams struct {
+	// Status Keep only the runs in these statuses, comma-separated: fresh, mapped, validating, validated, importing, completed, failed, restoring, reverted
+	Status *string `form:"status,omitempty" json:"status,omitempty"`
+
+	// Page Page number
+	Page *Page `form:"page,omitempty" json:"page,omitempty"`
+
+	// PerPage Records per page (default: 100, max: 500)
+	PerPage *PerPage `form:"per_page,omitempty" json:"per_page,omitempty"`
 }
 
 // CreateImportMultipartBody defines parameters for CreateImport.
@@ -4885,7 +5129,7 @@ type ClientInterface interface {
 
 	// PublishComponent Publish a component
 	//
-	// Makes the component visible in the storefront catalogue. Publishing also publishes the component library entry and recomputes the property categories and types. Only while the storefront is enabled; otherwise 403. The caller must own the component, or hold `component_write`.
+	// Makes the component visible in the storefront catalogue, and lets a product's component rows link to it by name. Publishing also publishes the component library entry and recomputes the property categories and types. Only while the storefront is enabled; otherwise 403, since a workspace without a storefront publishes a component as it is created. The caller must own the component, or hold `component_write`.
 	//
 	// Corresponds with PUT /components/{id}/publish (the `PublishComponent` operationId).
 	PublishComponent(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -5246,6 +5490,17 @@ type ClientInterface interface {
 	// Corresponds with GET /events (the `ListEvents` operationId).
 	ListEvents(ctx context.Context, params *ListEventsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// ListExports List exports
+	//
+	// The exports this consumer started, newest first. One started in an earlier session, or by another program holding the same credential, is found here: the answer names each run's `statusUrl`, and a completed one its `downloadUrl`.
+	//
+	// A row says where a run stands as the record has it. The progress of a running export, and its state at the moment of asking, come from `GET /exports/{id}`, which reads the task behind the run.
+	//
+	// Narrow the list with `status` to find the archive that is ready, or the run that is still packing.
+	//
+	// Corresponds with GET /exports (the `ListExports` operationId).
+	ListExports(ctx context.Context, params *ListExportsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// CreateExportWithBody Start a passport export
 	//
 	// Packs the whole passport catalogue into an archive in the background and answers at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.
@@ -5383,11 +5638,22 @@ type ClientInterface interface {
 	// Corresponds with POST /grant (the `CreateGrant` operationId).
 	CreateGrant(ctx context.Context, params *CreateGrantParams, body CreateGrantJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// ListImports List imports
+	//
+	// The runs this consumer started, newest first. A run started in an earlier session, or by another program holding the same credential, is found here: the answer names each run's `statusUrl`, which `GET /imports/{id}` reads in full.
+	//
+	// A row carries what names a run and how it went. The preview, the mapping, the problems found (`errorGroups` and `rowErrors`) and the progress of a running task belong to one run and are read from `GET /imports/{id}`, which keeps a page of runs small.
+	//
+	// Narrow the list with `status` to the runs still waiting on a decision (`fresh`, `validated`) or the ones that are over (`completed`, `failed`).
+	//
+	// Corresponds with GET /imports (the `ListImports` operationId).
+	ListImports(ctx context.Context, params *ListImportsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// CreateImportWithBody Upload a spreadsheet to import
 	//
 	// One multipart request, the shape every upload API has: `curl -F file=@catalogue.xlsx -F dataType=components`. The importer reads xlsx, csv, ods and json. When every column resolves on its own (the canonical headers of the template `GET /imports/example` serves, or a JSON file whose entries carry the canonical keys) the import comes back `mapped`. Otherwise it is `fresh` and the answer carries the `preview` to write the mapping from; send that with `PUT /imports/{id}/mappings`, or along with the file as `mappings`.
 	//
-	// `options[auto]=true` imports straight away: the upload takes the mapping the mapping form would prefill, a column nothing matches becoming a property type under its own heading, and comes back `validating`; a clean validation goes on into the import on its own, one with errors stops at `validated` for the caller to decide. Poll the import until `status` is `completed`, `validated` or `failed`. A required attribute no column covers answers 422 `IMPORT_MAPPING_INCOMPLETE` with nothing saved.
+	// `options[auto]=true` imports straight away: the upload takes the mapping the mapping form would prefill, a column nothing matches becoming a property type under its own heading, and comes back `validating`; a clean validation goes on into the import on its own, one with errors stops at `validated` for the caller to decide. An automatic run publishes what it imports unless `options[published]=false` says otherwise. Poll the import until `status` is `completed`, `validated` or `failed`. A required attribute no column covers answers 422 `IMPORT_MAPPING_INCOMPLETE` with nothing saved.
 	//
 	// The upload is held for a limited time; once it is gone, the run endpoints answer 410 `IMPORT_EXPIRED`.
 	//
@@ -5921,7 +6187,7 @@ type ClientInterface interface {
 
 	// PublishProduct Publish a product
 	//
-	// Makes the product publicly visible in the catalog. Requires ownership or admin rights. Available only when the public product catalog is enabled; returns `403` otherwise.
+	// Makes the product publicly visible in the catalog. Only while the storefront is enabled; otherwise 403, since a workspace without a storefront publishes a product as it is created. Requires ownership or admin rights. Available only when the public product catalog is enabled; returns `403` otherwise.
 	//
 	// Corresponds with PUT /products/{id}/publish (the `PublishProduct` operationId).
 	PublishProduct(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -6520,7 +6786,7 @@ func (c *Client) UpdateComponent(ctx context.Context, id Id, body UpdateComponen
 
 // PublishComponent Publish a component
 //
-// Makes the component visible in the storefront catalogue. Publishing also publishes the component library entry and recomputes the property categories and types. Only while the storefront is enabled; otherwise 403. The caller must own the component, or hold `component_write`.
+// Makes the component visible in the storefront catalogue, and lets a product's component rows link to it by name. Publishing also publishes the component library entry and recomputes the property categories and types. Only while the storefront is enabled; otherwise 403, since a workspace without a storefront publishes a component as it is created. The caller must own the component, or hold `component_write`.
 //
 // Corresponds with PUT /components/{id}/publish (the `PublishComponent` operationId).
 func (c *Client) PublishComponent(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -7271,6 +7537,27 @@ func (c *Client) ListEvents(ctx context.Context, params *ListEventsParams, reqEd
 	return c.Client.Do(req)
 }
 
+// ListExports List exports
+//
+// The exports this consumer started, newest first. One started in an earlier session, or by another program holding the same credential, is found here: the answer names each run's `statusUrl`, and a completed one its `downloadUrl`.
+//
+// A row says where a run stands as the record has it. The progress of a running export, and its state at the moment of asking, come from `GET /exports/{id}`, which reads the task behind the run.
+//
+// Narrow the list with `status` to find the archive that is ready, or the run that is still packing.
+//
+// Corresponds with GET /exports (the `ListExports` operationId).
+func (c *Client) ListExports(ctx context.Context, params *ListExportsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListExportsRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 // CreateExportWithBody Start a passport export
 //
 // Packs the whole passport catalogue into an archive in the background and answers at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.
@@ -7558,11 +7845,32 @@ func (c *Client) CreateGrant(ctx context.Context, params *CreateGrantParams, bod
 	return c.Client.Do(req)
 }
 
+// ListImports List imports
+//
+// The runs this consumer started, newest first. A run started in an earlier session, or by another program holding the same credential, is found here: the answer names each run's `statusUrl`, which `GET /imports/{id}` reads in full.
+//
+// A row carries what names a run and how it went. The preview, the mapping, the problems found (`errorGroups` and `rowErrors`) and the progress of a running task belong to one run and are read from `GET /imports/{id}`, which keeps a page of runs small.
+//
+// Narrow the list with `status` to the runs still waiting on a decision (`fresh`, `validated`) or the ones that are over (`completed`, `failed`).
+//
+// Corresponds with GET /imports (the `ListImports` operationId).
+func (c *Client) ListImports(ctx context.Context, params *ListImportsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListImportsRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 // CreateImportWithBody Upload a spreadsheet to import
 //
 // One multipart request, the shape every upload API has: `curl -F file=@catalogue.xlsx -F dataType=components`. The importer reads xlsx, csv, ods and json. When every column resolves on its own (the canonical headers of the template `GET /imports/example` serves, or a JSON file whose entries carry the canonical keys) the import comes back `mapped`. Otherwise it is `fresh` and the answer carries the `preview` to write the mapping from; send that with `PUT /imports/{id}/mappings`, or along with the file as `mappings`.
 //
-// `options[auto]=true` imports straight away: the upload takes the mapping the mapping form would prefill, a column nothing matches becoming a property type under its own heading, and comes back `validating`; a clean validation goes on into the import on its own, one with errors stops at `validated` for the caller to decide. Poll the import until `status` is `completed`, `validated` or `failed`. A required attribute no column covers answers 422 `IMPORT_MAPPING_INCOMPLETE` with nothing saved.
+// `options[auto]=true` imports straight away: the upload takes the mapping the mapping form would prefill, a column nothing matches becoming a property type under its own heading, and comes back `validating`; a clean validation goes on into the import on its own, one with errors stops at `validated` for the caller to decide. An automatic run publishes what it imports unless `options[published]=false` says otherwise. Poll the import until `status` is `completed`, `validated` or `failed`. A required attribute no column covers answers 422 `IMPORT_MAPPING_INCOMPLETE` with nothing saved.
 //
 // The upload is held for a limited time; once it is gone, the run endpoints answer 410 `IMPORT_EXPIRED`.
 //
@@ -8696,7 +9004,7 @@ func (c *Client) UpdateProductMediafiles(ctx context.Context, id Id, body Update
 
 // PublishProduct Publish a product
 //
-// Makes the product publicly visible in the catalog. Requires ownership or admin rights. Available only when the public product catalog is enabled; returns `403` otherwise.
+// Makes the product publicly visible in the catalog. Only while the storefront is enabled; otherwise 403, since a workspace without a storefront publishes a product as it is created. Requires ownership or admin rights. Available only when the public product catalog is enabled; returns `403` otherwise.
 //
 // Corresponds with PUT /products/{id}/publish (the `PublishProduct` operationId).
 func (c *Client) PublishProduct(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -11477,6 +11785,84 @@ func NewListEventsRequest(server string, params *ListEventsParams) (*http.Reques
 	return req, nil
 }
 
+// NewListExportsRequest constructs an http.Request for the ListExports method
+func NewListExportsRequest(server string, params *ListExportsParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/exports")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.Status != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "status", *params.Status, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Page != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "page", *params.Page, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.PerPage != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "per_page", *params.PerPage, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewCreateExportRequest calls the generic CreateExport builder with application/json body
 func NewCreateExportRequest(server string, params *CreateExportParams, body CreateExportJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
@@ -11865,6 +12251,84 @@ func NewCreateGrantRequestWithBody(server string, params *CreateGrantParams, con
 			req.Header.Set("Idempotency-Key", headerParam0)
 		}
 
+	}
+
+	return req, nil
+}
+
+// NewListImportsRequest constructs an http.Request for the ListImports method
+func NewListImportsRequest(server string, params *ListImportsParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/imports")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.Status != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "status", *params.Status, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Page != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "page", *params.Page, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.PerPage != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "per_page", *params.PerPage, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
 	}
 
 	return req, nil
@@ -15272,7 +15736,7 @@ type ClientWithResponsesInterface interface {
 
 	// PublishComponentWithResponse Publish a component
 	//
-	// Makes the component visible in the storefront catalogue. Publishing also publishes the component library entry and recomputes the property categories and types. Only while the storefront is enabled; otherwise 403. The caller must own the component, or hold `component_write`.
+	// Makes the component visible in the storefront catalogue, and lets a product's component rows link to it by name. Publishing also publishes the component library entry and recomputes the property categories and types. Only while the storefront is enabled; otherwise 403, since a workspace without a storefront publishes a component as it is created. The caller must own the component, or hold `component_write`.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
@@ -15667,6 +16131,19 @@ type ClientWithResponsesInterface interface {
 	// Corresponds with GET /events (the `ListEvents` operationId).
 	ListEventsWithResponse(ctx context.Context, params *ListEventsParams, reqEditors ...RequestEditorFn) (*ListEventsResponse, error)
 
+	// ListExportsWithResponse List exports
+	//
+	// The exports this consumer started, newest first. One started in an earlier session, or by another program holding the same credential, is found here: the answer names each run's `statusUrl`, and a completed one its `downloadUrl`.
+	//
+	// A row says where a run stands as the record has it. The progress of a running export, and its state at the moment of asking, come from `GET /exports/{id}`, which reads the task behind the run.
+	//
+	// Narrow the list with `status` to find the archive that is ready, or the run that is still packing.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /exports (the `ListExports` operationId).
+	ListExportsWithResponse(ctx context.Context, params *ListExportsParams, reqEditors ...RequestEditorFn) (*ListExportsResponse, error)
+
 	// CreateExportWithBodyWithResponse Start a passport export
 	//
 	// Packs the whole passport catalogue into an archive in the background and answers at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.
@@ -15814,11 +16291,24 @@ type ClientWithResponsesInterface interface {
 	// Corresponds with POST /grant (the `CreateGrant` operationId).
 	CreateGrantWithResponse(ctx context.Context, params *CreateGrantParams, body CreateGrantJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateGrantResponse, error)
 
+	// ListImportsWithResponse List imports
+	//
+	// The runs this consumer started, newest first. A run started in an earlier session, or by another program holding the same credential, is found here: the answer names each run's `statusUrl`, which `GET /imports/{id}` reads in full.
+	//
+	// A row carries what names a run and how it went. The preview, the mapping, the problems found (`errorGroups` and `rowErrors`) and the progress of a running task belong to one run and are read from `GET /imports/{id}`, which keeps a page of runs small.
+	//
+	// Narrow the list with `status` to the runs still waiting on a decision (`fresh`, `validated`) or the ones that are over (`completed`, `failed`).
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /imports (the `ListImports` operationId).
+	ListImportsWithResponse(ctx context.Context, params *ListImportsParams, reqEditors ...RequestEditorFn) (*ListImportsResponse, error)
+
 	// CreateImportWithBodyWithResponse Upload a spreadsheet to import
 	//
 	// One multipart request, the shape every upload API has: `curl -F file=@catalogue.xlsx -F dataType=components`. The importer reads xlsx, csv, ods and json. When every column resolves on its own (the canonical headers of the template `GET /imports/example` serves, or a JSON file whose entries carry the canonical keys) the import comes back `mapped`. Otherwise it is `fresh` and the answer carries the `preview` to write the mapping from; send that with `PUT /imports/{id}/mappings`, or along with the file as `mappings`.
 	//
-	// `options[auto]=true` imports straight away: the upload takes the mapping the mapping form would prefill, a column nothing matches becoming a property type under its own heading, and comes back `validating`; a clean validation goes on into the import on its own, one with errors stops at `validated` for the caller to decide. Poll the import until `status` is `completed`, `validated` or `failed`. A required attribute no column covers answers 422 `IMPORT_MAPPING_INCOMPLETE` with nothing saved.
+	// `options[auto]=true` imports straight away: the upload takes the mapping the mapping form would prefill, a column nothing matches becoming a property type under its own heading, and comes back `validating`; a clean validation goes on into the import on its own, one with errors stops at `validated` for the caller to decide. An automatic run publishes what it imports unless `options[published]=false` says otherwise. Poll the import until `status` is `completed`, `validated` or `failed`. A required attribute no column covers answers 422 `IMPORT_MAPPING_INCOMPLETE` with nothing saved.
 	//
 	// The upload is held for a limited time; once it is gone, the run endpoints answer 410 `IMPORT_EXPIRED`.
 	//
@@ -16410,7 +16900,7 @@ type ClientWithResponsesInterface interface {
 
 	// PublishProductWithResponse Publish a product
 	//
-	// Makes the product publicly visible in the catalog. Requires ownership or admin rights. Available only when the public product catalog is enabled; returns `403` otherwise.
+	// Makes the product publicly visible in the catalog. Only while the storefront is enabled; otherwise 403, since a workspace without a storefront publishes a product as it is created. Requires ownership or admin rights. Available only when the public product catalog is enabled; returns `403` otherwise.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
@@ -19632,6 +20122,77 @@ func (r ListEventsResponse) ContentType() string {
 	return ""
 }
 
+// ListExportsResponse200Headers the declared response headers of an HTTP 200 response for ListExports
+type ListExportsResponse200Headers struct {
+	APICount   *int
+	APIOffset  *int
+	APIPage    *int
+	APIPerPage *int
+	APITotal   *int
+	Link       *string
+}
+
+type ListExportsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *struct {
+		Exports *[]ExportSummary `json:"exports,omitempty"`
+	}
+	// JSON401 the response for an HTTP 401 `application/json` response
+	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
+	// Headers200 the parsed response headers for an HTTP 200 response
+	Headers200 *ListExportsResponse200Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r ListExportsResponse) GetJSON200() *struct {
+	Exports *[]ExportSummary `json:"exports,omitempty"`
+} {
+	return r.JSON200
+}
+
+// GetJSON401 returns the response for an HTTP 401 `application/json` response
+func (r ListExportsResponse) GetJSON401() *Unauthorized {
+	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r ListExportsResponse) GetJSON403() *Forbidden {
+	return r.JSON403
+}
+
+// GetBody returns the raw response body bytes
+func (r ListExportsResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r ListExportsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListExportsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r ListExportsResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
 type CreateExportResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -20266,6 +20827,77 @@ func (r CreateGrantResponse) StatusCode() int {
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
 func (r CreateGrantResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// ListImportsResponse200Headers the declared response headers of an HTTP 200 response for ListImports
+type ListImportsResponse200Headers struct {
+	APICount   *int
+	APIOffset  *int
+	APIPage    *int
+	APIPerPage *int
+	APITotal   *int
+	Link       *string
+}
+
+type ListImportsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *struct {
+		Imports *[]ImportSummary `json:"imports,omitempty"`
+	}
+	// JSON401 the response for an HTTP 401 `application/json` response
+	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
+	// Headers200 the parsed response headers for an HTTP 200 response
+	Headers200 *ListImportsResponse200Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r ListImportsResponse) GetJSON200() *struct {
+	Imports *[]ImportSummary `json:"imports,omitempty"`
+} {
+	return r.JSON200
+}
+
+// GetJSON401 returns the response for an HTTP 401 `application/json` response
+func (r ListImportsResponse) GetJSON401() *Unauthorized {
+	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r ListImportsResponse) GetJSON403() *Forbidden {
+	return r.JSON403
+}
+
+// GetBody returns the raw response body bytes
+func (r ListImportsResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r ListImportsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListImportsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r ListImportsResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
@@ -24837,7 +25469,7 @@ func (c *ClientWithResponses) UpdateComponentWithResponse(ctx context.Context, i
 
 // PublishComponentWithResponse Publish a component
 //
-// Makes the component visible in the storefront catalogue. Publishing also publishes the component library entry and recomputes the property categories and types. Only while the storefront is enabled; otherwise 403. The caller must own the component, or hold `component_write`.
+// Makes the component visible in the storefront catalogue, and lets a product's component rows link to it by name. Publishing also publishes the component library entry and recomputes the property categories and types. Only while the storefront is enabled; otherwise 403, since a workspace without a storefront publishes a component as it is created. The caller must own the component, or hold `component_write`.
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -25466,6 +26098,25 @@ func (c *ClientWithResponses) ListEventsWithResponse(ctx context.Context, params
 	return ParseListEventsResponse(rsp)
 }
 
+// ListExportsWithResponse List exports
+//
+// The exports this consumer started, newest first. One started in an earlier session, or by another program holding the same credential, is found here: the answer names each run's `statusUrl`, and a completed one its `downloadUrl`.
+//
+// A row says where a run stands as the record has it. The progress of a running export, and its state at the moment of asking, come from `GET /exports/{id}`, which reads the task behind the run.
+//
+// Narrow the list with `status` to find the archive that is ready, or the run that is still packing.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /exports (the `ListExports` operationId).
+func (c *ClientWithResponses) ListExportsWithResponse(ctx context.Context, params *ListExportsParams, reqEditors ...RequestEditorFn) (*ListExportsResponse, error) {
+	rsp, err := c.ListExports(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListExportsResponse(rsp)
+}
+
 // CreateExportWithBodyWithResponse Start a passport export
 //
 // Packs the whole passport catalogue into an archive in the background and answers at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.
@@ -25703,11 +26354,30 @@ func (c *ClientWithResponses) CreateGrantWithResponse(ctx context.Context, param
 	return ParseCreateGrantResponse(rsp)
 }
 
+// ListImportsWithResponse List imports
+//
+// The runs this consumer started, newest first. A run started in an earlier session, or by another program holding the same credential, is found here: the answer names each run's `statusUrl`, which `GET /imports/{id}` reads in full.
+//
+// A row carries what names a run and how it went. The preview, the mapping, the problems found (`errorGroups` and `rowErrors`) and the progress of a running task belong to one run and are read from `GET /imports/{id}`, which keeps a page of runs small.
+//
+// Narrow the list with `status` to the runs still waiting on a decision (`fresh`, `validated`) or the ones that are over (`completed`, `failed`).
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /imports (the `ListImports` operationId).
+func (c *ClientWithResponses) ListImportsWithResponse(ctx context.Context, params *ListImportsParams, reqEditors ...RequestEditorFn) (*ListImportsResponse, error) {
+	rsp, err := c.ListImports(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListImportsResponse(rsp)
+}
+
 // CreateImportWithBodyWithResponse Upload a spreadsheet to import
 //
 // One multipart request, the shape every upload API has: `curl -F file=@catalogue.xlsx -F dataType=components`. The importer reads xlsx, csv, ods and json. When every column resolves on its own (the canonical headers of the template `GET /imports/example` serves, or a JSON file whose entries carry the canonical keys) the import comes back `mapped`. Otherwise it is `fresh` and the answer carries the `preview` to write the mapping from; send that with `PUT /imports/{id}/mappings`, or along with the file as `mappings`.
 //
-// `options[auto]=true` imports straight away: the upload takes the mapping the mapping form would prefill, a column nothing matches becoming a property type under its own heading, and comes back `validating`; a clean validation goes on into the import on its own, one with errors stops at `validated` for the caller to decide. Poll the import until `status` is `completed`, `validated` or `failed`. A required attribute no column covers answers 422 `IMPORT_MAPPING_INCOMPLETE` with nothing saved.
+// `options[auto]=true` imports straight away: the upload takes the mapping the mapping form would prefill, a column nothing matches becoming a property type under its own heading, and comes back `validating`; a clean validation goes on into the import on its own, one with errors stops at `validated` for the caller to decide. An automatic run publishes what it imports unless `options[published]=false` says otherwise. Poll the import until `status` is `completed`, `validated` or `failed`. A required attribute no column covers answers 422 `IMPORT_MAPPING_INCOMPLETE` with nothing saved.
 //
 // The upload is held for a limited time; once it is gone, the run endpoints answer 410 `IMPORT_EXPIRED`.
 //
@@ -26659,7 +27329,7 @@ func (c *ClientWithResponses) UpdateProductMediafilesWithResponse(ctx context.Co
 
 // PublishProductWithResponse Publish a product
 //
-// Makes the product publicly visible in the catalog. Requires ownership or admin rights. Available only when the public product catalog is enabled; returns `403` otherwise.
+// Makes the product publicly visible in the catalog. Only while the storefront is enabled; otherwise 403, since a workspace without a storefront publishes a product as it is created. Requires ownership or admin rights. Available only when the public product catalog is enabled; returns `403` otherwise.
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -29628,6 +30298,96 @@ func ParseListEventsResponse(rsp *http.Response) (*ListEventsResponse, error) {
 	return response, nil
 }
 
+// ParseListExportsResponse parses an HTTP response from a ListExportsWithResponse call
+func ParseListExportsResponse(rsp *http.Response) (*ListExportsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListExportsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			Exports *[]ExportSummary `json:"exports,omitempty"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 200:
+		var headers ListExportsResponse200Headers
+		if values := rsp.Header.Values("API-Count"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "API-Count", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.APICount = &value
+		}
+		if values := rsp.Header.Values("API-Offset"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "API-Offset", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.APIOffset = &value
+		}
+		if values := rsp.Header.Values("API-Page"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "API-Page", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.APIPage = &value
+		}
+		if values := rsp.Header.Values("API-Per-Page"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "API-Per-Page", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.APIPerPage = &value
+		}
+		if values := rsp.Header.Values("API-Total"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "API-Total", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.APITotal = &value
+		}
+		if values := rsp.Header.Values("Link"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "Link", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.Link = &value
+		}
+		response.Headers200 = &headers
+	}
+
+	return response, nil
+}
+
 // ParseCreateExportResponse parses an HTTP response from a CreateExportWithResponse call
 func ParseCreateExportResponse(rsp *http.Response) (*CreateExportResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -30112,6 +30872,96 @@ func ParseCreateGrantResponse(rsp *http.Response) (*CreateGrantResponse, error) 
 		}
 		response.JSON429 = &dest
 
+	}
+
+	return response, nil
+}
+
+// ParseListImportsResponse parses an HTTP response from a ListImportsWithResponse call
+func ParseListImportsResponse(rsp *http.Response) (*ListImportsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListImportsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			Imports *[]ImportSummary `json:"imports,omitempty"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 200:
+		var headers ListImportsResponse200Headers
+		if values := rsp.Header.Values("API-Count"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "API-Count", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.APICount = &value
+		}
+		if values := rsp.Header.Values("API-Offset"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "API-Offset", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.APIOffset = &value
+		}
+		if values := rsp.Header.Values("API-Page"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "API-Page", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.APIPage = &value
+		}
+		if values := rsp.Header.Values("API-Per-Page"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "API-Per-Page", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.APIPerPage = &value
+		}
+		if values := rsp.Header.Values("API-Total"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "API-Total", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.APITotal = &value
+		}
+		if values := rsp.Header.Values("Link"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "Link", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.Link = &value
+		}
+		response.Headers200 = &headers
 	}
 
 	return response, nil

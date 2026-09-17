@@ -90,12 +90,16 @@ var viaCallAPIOnly = map[string]string{
 	"get_dpp_private_properties": "restricted tier, read on purpose only",
 	"get_dpp_version_private_properties": "restricted tier, read on purpose " +
 		"only",
-	"list_events":              "tail_events reads the feed",
-	"create_export":            "export_catalogue runs the flow",
-	"get_export":               "export_catalogue runs the flow",
-	"download_export":          "binary download, for the command line",
-	"create_import":            "import_spreadsheet runs the flow",
-	"get_import":               "import_spreadsheet runs the flow",
+	"list_events":   "tail_events reads the feed",
+	"create_export": "export_catalogue runs the flow",
+	"get_export":    "export_catalogue runs the flow",
+	"list_exports": "export_catalogue waits for the archive it started; " +
+		"the runs of earlier sessions are a lookup",
+	"download_export": "binary download, for the command line",
+	"create_import":   "import_spreadsheet runs the flow",
+	"get_import":      "import_spreadsheet runs the flow",
+	"list_imports": "import_spreadsheet waits for the run it started; " +
+		"the runs of earlier sessions are a lookup",
 	"get_import_example":       "binary download, for the command line",
 	"get_import_supplier_form": "binary download, for the command line",
 	"map_import":               "import_spreadsheet runs the flow",

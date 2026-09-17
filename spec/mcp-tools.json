@@ -1,5 +1,5 @@
 {
-  "version": "2.1.0",
+  "version": "2.3.0",
   "instructions": "Transpareo holds a workspace's products, components and Digital\nProduct Passports. Start with me to learn what the credential\nallows. For a new product call product_property_types before\ncreate_product. For passports of an existing product call\ndpp_requirements, then validate_dpp before create_dpp. A passport\nof a batch or an item names its lot in batchIdentifier and the lot\nis created with the first passport that names it; there is no\nseparate lot step. list_lots shows the lots a product already\nhas. A run of passports goes through bulk_create_dpps with the\nlot in shared. publish_dpp\nsigns the passport and cannot be undone. Recalling a unit is a\nstatus change to suspended through append_dpp_event, not a void;\nvoid_dpp is for a unit that no longer exists. void_dpp and\nsupersede_dpp need the confirm argument with the stated phrase.\nA spreadsheet you have read goes in through import_spreadsheet as\nrows keyed by the column headers, never as base64; when it\nanswers a preview, propose the column mapping to the person and\ncall again with the same rows and mappings, using create_new for\ncolumns that should become property types.\nAnything without a tool: search_operations, then call_api. Lists\nare paged; follow nextPage.",
   "tools": [
     {

@@ -208,9 +208,12 @@ func TestLoadVendoredSpecification(t *testing.T) {
 			t.Errorf("%s: idempotent %v, want %v", id, got, want)
 		}
 	}
+	// A list of runs carries a statusUrl per row and none of its
+	// own, so it answers no task to wait for.
 	for id, want := range map[string]bool{"bulk_create_dpps": true,
 		"create_export": true, "get_import": true, "validate_import": true,
-		"list_dpps": false, "create_dpp": false} {
+		"list_dpps": false, "create_dpp": false, "list_imports": false,
+		"list_exports": false} {
 		if reg.Find(id).Task != want {
 			t.Errorf("%s: task %v, want %v", id, reg.Find(id).Task, want)
 		}

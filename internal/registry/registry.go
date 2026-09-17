@@ -430,7 +430,9 @@ func (r *resolver) response(op *Operation, v any) error {
 }
 
 // answersTask reports whether a success response's JSON schema
-// carries a statusUrl property.
+// carries a statusUrl of its own to poll. A list of runs, whose
+// rows each name theirs, answers no single task, so the property
+// has to sit at the top of the schema.
 func (r *resolver) answersTask(resp map[string]any) bool {
 	_, media := firstMedia(resp["content"])
 	if media == nil {
@@ -440,7 +442,10 @@ func (r *resolver) answersTask(resp map[string]any) bool {
 	if err != nil {
 		return false
 	}
-	return strings.Contains(string(marshal(schema)), `"statusUrl"`)
+	object, _ := schema.(map[string]any)
+	properties, _ := object["properties"].(map[string]any)
+	_, found := properties["statusUrl"]
+	return found
 }
 
 // deref follows a $ref at the top of v only, for request bodies

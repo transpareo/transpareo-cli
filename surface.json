@@ -470,6 +470,16 @@
     "operationId": "get_export"
   },
   {
+    "path": "transpareo exports list",
+    "flags": [
+      "output",
+      "page",
+      "per-page",
+      "status"
+    ],
+    "operationId": "list_exports"
+  },
+  {
     "path": "transpareo grants create",
     "flags": [
       "file",
@@ -522,6 +532,16 @@
       "wait"
     ],
     "operationId": "get_import"
+  },
+  {
+    "path": "transpareo imports list",
+    "flags": [
+      "output",
+      "page",
+      "per-page",
+      "status"
+    ],
+    "operationId": "list_imports"
   },
   {
     "path": "transpareo imports map",

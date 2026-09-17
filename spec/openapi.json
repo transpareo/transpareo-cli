@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Transpareo API",
-    "version": "2.1.0",
+    "version": "2.3.0",
     "description": "This site runs on the [Transpareo](https://transpareo.com) product information platform. The REST API gives programs access to products, product components, brands, Digital Product Passports, categories and configuration. The version is selected with the `Accept` header, not a path segment.\n\nThe guide at [/apidocs/guide](/apidocs/guide) is the narrative companion to this reference: credentials, permissions, pagination, idempotency, the passport flows, the event feed, webhooks, rate limits and the error format. It is also served as Markdown at [/apidocs/guide.md](/apidocs/guide.md).\n\nPrograms authenticate with the OAuth 2.0 client credentials grant. Exchange the client id and secret once, then send the token on every request:\n\n```\ncurl -X POST https://<host>/api/oauth/token -d grant_type=client_credentials -d client_id=<key> -d client_secret=<secret>\n\ncurl https://<host>/api/me -H \"Authorization: Bearer <access_token>\"\n```\n\nAn assistant that speaks the Model Context Protocol connects to `/mcp` on this host and calls these operations as tools, named in the catalogue at [/apidocs/mcp-tools.json](/apidocs/mcp-tools.json) and explained by the guide's Assistants section.",
     "contact": {
       "name": "Transpareo Support",
@@ -2641,6 +2641,95 @@
           "normalize": true
         }
       },
+      "ExportSummary": {
+        "type": "object",
+        "description": "One export as a list answers it: where the run stands as the record has it, and where its archive is. The progress of a running export is read from `GET /exports/{id}`.",
+        "required": [
+          "id",
+          "status",
+          "statusUrl"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "code": {
+            "type": "string",
+            "description": "The short code the application manager lists the export under"
+          },
+          "dataType": {
+            "type": "string",
+            "enum": [
+              "dpps"
+            ]
+          },
+          "format": {
+            "type": "string",
+            "enum": [
+              "jsonld",
+              "csv",
+              "xlsx",
+              "sql"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "running",
+              "completed",
+              "failed"
+            ]
+          },
+          "recordCount": {
+            "type": "integer",
+            "description": "Passports, products and components exported. On `completed`."
+          },
+          "productCount": {
+            "type": "integer"
+          },
+          "componentCount": {
+            "type": "integer"
+          },
+          "archiveSize": {
+            "type": "integer",
+            "description": "Archive bytes. On `completed`."
+          },
+          "completedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "statusUrl": {
+            "type": "string",
+            "format": "uri",
+            "description": "Where the whole export is read, and where a running one is polled"
+          },
+          "downloadUrl": {
+            "type": "string",
+            "format": "uri",
+            "description": "Where to fetch the archive. On `completed`."
+          }
+        },
+        "example": {
+          "id": 42,
+          "code": "k7m2pq",
+          "dataType": "dpps",
+          "format": "jsonld",
+          "status": "completed",
+          "recordCount": 64,
+          "productCount": 12,
+          "componentCount": 40,
+          "archiveSize": 184320,
+          "completedAt": "2026-09-08T09:13:01Z",
+          "createdAt": "2026-09-08T09:12:44Z",
+          "statusUrl": "https://example.com/api/exports/42",
+          "downloadUrl": "https://example.com/api/exports/42/download"
+        }
+      },
       "Favorite": {
         "type": "object",
         "properties": {
@@ -3011,7 +3100,7 @@
             "properties": {
               "published": {
                 "type": "boolean",
-                "description": "Publish the records the import creates"
+                "description": "Publish the records the import creates. A workspace without a storefront publishes them as they are created either way; with one, a component links to product rows by name only once it is published."
               },
               "backup": {
                 "type": "boolean",
@@ -3019,7 +3108,7 @@
               },
               "auto": {
                 "type": "boolean",
-                "description": "Carry a clean validation into the import on its own. On the upload it also takes the suggested mapping, so the whole run needs no further call."
+                "description": "Carry a clean validation into the import on its own. On the upload it also takes the suggested mapping and publishes what it imports unless `published` is false, so the whole run needs no further call. For a sheet whose mapping is clear, the headings of the import template or ones already seen to resolve in this workspace; a column nothing matches becomes a property type under its own heading, so an uncertain sheet goes through the preview instead."
               },
               "notify": {
                 "type": "boolean",
@@ -3196,6 +3285,109 @@
               "inputType": "list"
             }
           ]
+        }
+      },
+      "ImportSummary": {
+        "type": "object",
+        "description": "One import as a list answers it: what names the run and how it went. The preview, the mapping, the problems found and the progress of a running task are read from `GET /imports/{id}`.",
+        "required": [
+          "id",
+          "dataType",
+          "status",
+          "statusUrl"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "dataType": {
+            "type": "string",
+            "enum": [
+              "components",
+              "products",
+              "dpps"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "fresh",
+              "mapped",
+              "validating",
+              "validated",
+              "importing",
+              "completed",
+              "failed",
+              "restoring",
+              "reverted"
+            ]
+          },
+          "originalFilename": {
+            "type": "string"
+          },
+          "fileFormat": {
+            "type": "string",
+            "enum": [
+              "xlsx",
+              "json",
+              "csv",
+              "ods"
+            ]
+          },
+          "totalEntries": {
+            "type": "integer",
+            "description": "Rows the file holds"
+          },
+          "createdCount": {
+            "type": "integer"
+          },
+          "updatedCount": {
+            "type": "integer"
+          },
+          "unchangedCount": {
+            "type": "integer"
+          },
+          "failedCount": {
+            "type": "integer"
+          },
+          "revertable": {
+            "type": "boolean",
+            "description": "A completed or failed run with a backup or created records can be reverted"
+          },
+          "startedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "completedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "statusUrl": {
+            "type": "string",
+            "format": "uri",
+            "description": "Where the whole run is read, and where a running one is polled"
+          }
+        },
+        "example": {
+          "id": 12,
+          "dataType": "components",
+          "status": "completed",
+          "originalFilename": "catalogue.xlsx",
+          "fileFormat": "xlsx",
+          "totalEntries": 240,
+          "createdCount": 238,
+          "updatedCount": 2,
+          "unchangedCount": 0,
+          "failedCount": 0,
+          "revertable": true,
+          "startedAt": "2026-09-08T09:12:50Z",
+          "completedAt": "2026-09-08T09:13:30Z",
+          "createdAt": "2026-09-08T09:12:44Z",
+          "statusUrl": "https://example.com/api/imports/12"
         }
       },
       "Language": {
@@ -5674,7 +5866,7 @@
           "Components"
         ],
         "summary": "Publish a component",
-        "description": "Makes the component visible in the storefront catalogue. Publishing also publishes the component library entry and recomputes the property categories and types. Only while the storefront is enabled; otherwise 403. The caller must own the component, or hold `component_write`.",
+        "description": "Makes the component visible in the storefront catalogue, and lets a product's component rows link to it by name. Publishing also publishes the component library entry and recomputes the property categories and types. Only while the storefront is enabled; otherwise 403, since a workspace without a storefront publishes a component as it is created. The caller must own the component, or hold `component_write`.",
         "operationId": "publish_component",
         "x-permission": [
           "component_access",
@@ -8192,6 +8384,101 @@
       }
     },
     "/exports": {
+      "get": {
+        "tags": [
+          "Exports"
+        ],
+        "summary": "List exports",
+        "description": "The exports this consumer started, newest first. One started in an earlier session, or by another program holding the same credential, is found here: the answer names each run's `statusUrl`, and a completed one its `downloadUrl`.\n\nA row says where a run stands as the record has it. The progress of a running export, and its state at the moment of asking, come from `GET /exports/{id}`, which reads the task behind the run.\n\nNarrow the list with `status` to find the archive that is ready, or the run that is still packing.",
+        "operationId": "list_exports",
+        "x-permission": "export_access",
+        "security": [
+          {
+            "oauth2": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Keep only the exports in these statuses, comma-separated: pending, running, completed, failed"
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "$ref": "#/components/parameters/per_page"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of exports",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "exports": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ExportSummary"
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "exports": [
+                    {
+                      "id": 42,
+                      "code": "k7m2pq",
+                      "dataType": "dpps",
+                      "format": "jsonld",
+                      "status": "completed",
+                      "recordCount": 64,
+                      "productCount": 12,
+                      "componentCount": 40,
+                      "archiveSize": 184320,
+                      "completedAt": "2026-09-08T09:13:01Z",
+                      "createdAt": "2026-09-08T09:12:44Z",
+                      "statusUrl": "https://example.com/api/exports/42",
+                      "downloadUrl": "https://example.com/api/exports/42/download"
+                    }
+                  ]
+                }
+              }
+            },
+            "headers": {
+              "API-Total": {
+                "$ref": "#/components/headers/API-Total"
+              },
+              "API-Count": {
+                "$ref": "#/components/headers/API-Count"
+              },
+              "API-Offset": {
+                "$ref": "#/components/headers/API-Offset"
+              },
+              "API-Page": {
+                "$ref": "#/components/headers/API-Page"
+              },
+              "API-Per-Page": {
+                "$ref": "#/components/headers/API-Per-Page"
+              },
+              "Link": {
+                "$ref": "#/components/headers/Link"
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        }
+      },
       "post": {
         "tags": [
           "Exports"
@@ -8850,12 +9137,109 @@
       }
     },
     "/imports": {
+      "get": {
+        "tags": [
+          "Imports"
+        ],
+        "summary": "List imports",
+        "description": "The runs this consumer started, newest first. A run started in an earlier session, or by another program holding the same credential, is found here: the answer names each run's `statusUrl`, which `GET /imports/{id}` reads in full.\n\nA row carries what names a run and how it went. The preview, the mapping, the problems found (`errorGroups` and `rowErrors`) and the progress of a running task belong to one run and are read from `GET /imports/{id}`, which keeps a page of runs small.\n\nNarrow the list with `status` to the runs still waiting on a decision (`fresh`, `validated`) or the ones that are over (`completed`, `failed`).",
+        "operationId": "list_imports",
+        "x-permission": "import_access",
+        "security": [
+          {
+            "oauth2": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Keep only the runs in these statuses, comma-separated: fresh, mapped, validating, validated, importing, completed, failed, restoring, reverted"
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "$ref": "#/components/parameters/per_page"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of imports",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "imports": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ImportSummary"
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "imports": [
+                    {
+                      "id": 12,
+                      "dataType": "components",
+                      "status": "completed",
+                      "originalFilename": "catalogue.xlsx",
+                      "fileFormat": "xlsx",
+                      "totalEntries": 240,
+                      "createdCount": 238,
+                      "updatedCount": 2,
+                      "unchangedCount": 0,
+                      "failedCount": 0,
+                      "revertable": true,
+                      "startedAt": "2026-09-08T09:12:50Z",
+                      "completedAt": "2026-09-08T09:13:30Z",
+                      "createdAt": "2026-09-08T09:12:44Z",
+                      "statusUrl": "https://example.com/api/imports/12"
+                    }
+                  ]
+                }
+              }
+            },
+            "headers": {
+              "API-Total": {
+                "$ref": "#/components/headers/API-Total"
+              },
+              "API-Count": {
+                "$ref": "#/components/headers/API-Count"
+              },
+              "API-Offset": {
+                "$ref": "#/components/headers/API-Offset"
+              },
+              "API-Page": {
+                "$ref": "#/components/headers/API-Page"
+              },
+              "API-Per-Page": {
+                "$ref": "#/components/headers/API-Per-Page"
+              },
+              "Link": {
+                "$ref": "#/components/headers/Link"
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        }
+      },
       "post": {
         "tags": [
           "Imports"
         ],
         "summary": "Upload a spreadsheet to import",
-        "description": "One multipart request, the shape every upload API has: `curl -F file=@catalogue.xlsx -F dataType=components`. The importer reads xlsx, csv, ods and json. When every column resolves on its own (the canonical headers of the template `GET /imports/example` serves, or a JSON file whose entries carry the canonical keys) the import comes back `mapped`. Otherwise it is `fresh` and the answer carries the `preview` to write the mapping from; send that with `PUT /imports/{id}/mappings`, or along with the file as `mappings`.\n\n`options[auto]=true` imports straight away: the upload takes the mapping the mapping form would prefill, a column nothing matches becoming a property type under its own heading, and comes back `validating`; a clean validation goes on into the import on its own, one with errors stops at `validated` for the caller to decide. Poll the import until `status` is `completed`, `validated` or `failed`. A required attribute no column covers answers 422 `IMPORT_MAPPING_INCOMPLETE` with nothing saved.\n\nThe upload is held for a limited time; once it is gone, the run endpoints answer 410 `IMPORT_EXPIRED`.",
+        "description": "One multipart request, the shape every upload API has: `curl -F file=@catalogue.xlsx -F dataType=components`. The importer reads xlsx, csv, ods and json. When every column resolves on its own (the canonical headers of the template `GET /imports/example` serves, or a JSON file whose entries carry the canonical keys) the import comes back `mapped`. Otherwise it is `fresh` and the answer carries the `preview` to write the mapping from; send that with `PUT /imports/{id}/mappings`, or along with the file as `mappings`.\n\n`options[auto]=true` imports straight away: the upload takes the mapping the mapping form would prefill, a column nothing matches becoming a property type under its own heading, and comes back `validating`; a clean validation goes on into the import on its own, one with errors stops at `validated` for the caller to decide. An automatic run publishes what it imports unless `options[published]=false` says otherwise. Poll the import until `status` is `completed`, `validated` or `failed`. A required attribute no column covers answers 422 `IMPORT_MAPPING_INCOMPLETE` with nothing saved.\n\nThe upload is held for a limited time; once it is gone, the run endpoints answer 410 `IMPORT_EXPIRED`.",
         "operationId": "create_import",
         "x-permission": "import_access",
         "security": [
@@ -11795,7 +12179,7 @@
           "Products"
         ],
         "summary": "Publish a product",
-        "description": "Makes the product publicly visible in the catalog. Requires ownership or admin rights. Available only when the public product catalog is enabled; returns `403` otherwise.",
+        "description": "Makes the product publicly visible in the catalog. Only while the storefront is enabled; otherwise 403, since a workspace without a storefront publishes a product as it is created. Requires ownership or admin rights. Available only when the public product catalog is enabled; returns `403` otherwise.",
         "operationId": "publish_product",
         "x-permission": "product_access",
         "security": [

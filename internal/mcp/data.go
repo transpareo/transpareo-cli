@@ -124,8 +124,9 @@ func (s *Server) addDataTools() {
 					"as the mapping form would prefill them, every column " +
 					"matching no property type becomes a new property type " +
 					"under its own heading, and a clean validation goes on " +
-					"into the write. Changes the schema of the workspace, " +
-					"so ask the person before setting it"},
+					"into the write, which publishes what it writes unless " +
+					"published is false. Changes the schema of the " +
+					"workspace, so ask the person before setting it"},
 			"published": map[string]any{"type": "boolean",
 				"description": "Publish the records the import creates"},
 		}),
