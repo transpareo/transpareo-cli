@@ -38,7 +38,16 @@ func compositeHarness(t *testing.T) *harness {
 	rowErrors := []map[string]any{}
 	mux.HandleFunc("POST /api/imports", func(w http.ResponseWriter,
 		r *http.Request) {
-		r.ParseMultipartForm(1 << 20)
+		record(r)
+		// With auto in the options the platform maps and writes
+		// from the upload itself, and the answer is the run.
+		if strings.Contains(h.lastBody(),
+			"name=\"options[auto]\"\r\n\r\ntrue") {
+			state = "completed"
+			writeJSON(w, 201, map[string]any{"id": 12, "status": "validating",
+				"statusUrl": h.server.URL + "/api/imports/12"})
+			return
+		}
 		state = "fresh"
 		writeJSON(w, 201, map[string]any{"id": 12, "status": "fresh",
 			"preview":   testPreview,
@@ -198,6 +207,41 @@ func TestImportsRunSkipBackupAsksForNoBackup(t *testing.T) {
 	h.mu.Unlock()
 	if sent != `{"options":{"backup":false}}` {
 		t.Errorf("execute body = %s", sent)
+	}
+}
+
+// --auto writes the rows from the upload, so the command sends
+// the option, skips the mapping and execute calls, and is a write
+// that --read-only refuses.
+func TestImportsRunAuto(t *testing.T) {
+	h := compositeHarness(t)
+	h.login()
+	mux := h.server.Config.Handler.(*http.ServeMux)
+	mux.HandleFunc("POST /api/imports/12/mappings", func(w http.ResponseWriter,
+		r *http.Request) {
+		t.Error("an automatic run sent a mapping")
+	})
+	file := filepath.Join(t.TempDir(), "catalogue.xlsx")
+	os.WriteFile(file, []byte("XLSX"), 0o600)
+	out, errOut, code := h.run("imports", "run", "--file", file, "--type",
+		"products", "--auto")
+	if code != 0 {
+		t.Fatalf("code = %d, out = %s, err = %s", code, out, errOut)
+	}
+	var sent string
+	h.mu.Lock()
+	for i, r := range h.requests {
+		if r.URL.Path == "/api/imports" {
+			sent = h.bodies[i]
+		}
+	}
+	h.mu.Unlock()
+	if !strings.Contains(sent, "name=\"options[auto]\"\r\n\r\ntrue") {
+		t.Errorf("the upload carries no options[auto]: %s", sent)
+	}
+	if _, _, code := h.run("imports", "run", "--file", file, "--type",
+		"products", "--auto", "--read-only"); code != 4 {
+		t.Errorf("--read-only must refuse an automatic run, got %d", code)
 	}
 }
 

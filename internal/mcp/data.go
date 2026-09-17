@@ -98,7 +98,9 @@ func (s *Server) addDataTools() {
 			"and the core attributes to target; write the mappings and call " +
 			"again with the same sheet. The tool never creates a property " +
 			"type unless a mapping " +
-			"says create_new. Permission: import_access plus the write " +
+			"says create_new or auto is set, and with auto the rows are " +
+			"written in that one call, without execute. " +
+			"Permission: import_access plus the write " +
 			"permission of the data type. Data tier: authorised. Example: " +
 			"import_spreadsheet {\"rows\": [{\"Name\": \"Aqua\", " +
 			"\"Origin\": \"Germany\"}], \"dataType\": \"products\"}",
@@ -117,6 +119,13 @@ func (s *Server) addDataTools() {
 				"description": "Take every exact match of the preview"},
 			"execute": map[string]any{"type": "boolean",
 				"description": "Write the records after a clean validation"},
+			"auto": map[string]any{"type": "boolean",
+				"description": "Import straight away: the columns are mapped " +
+					"as the mapping form would prefill them, every column " +
+					"matching no property type becomes a new property type " +
+					"under its own heading, and a clean validation goes on " +
+					"into the write. Changes the schema of the workspace, " +
+					"so ask the person before setting it"},
 			"published": map[string]any{"type": "boolean",
 				"description": "Publish the records the import creates"},
 		}),
@@ -274,8 +283,14 @@ func (s *Server) importSpreadsheet(ctx context.Context,
 		DataType: stringArg(args["dataType"]), Mappings: mappings}
 	opts.AcceptSuggestions, _ = args["acceptSuggestions"].(bool)
 	opts.Execute, _ = args["execute"].(bool)
+	var options flows.MappingOptions
 	if published, ok := args["published"].(bool); ok {
-		opts.Options = &flows.MappingOptions{Published: &published}
+		options.Published = &published
+		opts.Options = &options
+	}
+	if auto, ok := args["auto"].(bool); ok {
+		options.Auto = &auto
+		opts.Options = &options
 	}
 	imp, err := flows.Run(ctx, client, opts)
 	var required *flows.ErrMappingRequired
@@ -285,7 +300,7 @@ func (s *Server) importSpreadsheet(ctx context.Context,
 		var doc any
 		json.Unmarshal(imp.Body, &doc)
 		text := fmt.Sprintf("import %s %s", imp.ID, imp.Status)
-		if !opts.Execute {
+		if !opts.Execute && !opts.Automatic() {
 			text += "; validation passed, call again with execute true to write"
 		}
 		return &sdk.CallToolResult{

@@ -90,10 +90,14 @@ type Mapping struct {
 
 // MappingOptions are the options a run reads. Backup left out
 // means the platform takes one, which a revert restores from;
-// false runs without it.
+// false runs without it. Auto maps the columns and writes the
+// rows in the one call. ImportMappingsInput also declares notify,
+// which mails the owner how the run ended; a consumer has no
+// mailbox, so this client never sends it.
 type MappingOptions struct {
 	Published *bool `json:"published,omitempty"`
 	Backup    *bool `json:"backup,omitempty"`
+	Auto      *bool `json:"auto,omitempty"`
 }
 
 // Unresolved is one column the flow could not map on its own.
@@ -132,34 +136,14 @@ func (e *ErrValidationFailed) Error() string {
 		len(e.Import.RowErrors))
 }
 
-// Upload sends a file as a new import and answers its state.
-func Upload(ctx context.Context, c *transpareo.Client, path, dataType string,
-	valueSeparator string) (*Import, error) {
-	content, err := os.ReadFile(path)
-	if err != nil {
-		return nil, err
-	}
-	return upload(ctx, c, filepath.Base(path), content, dataType,
-		valueSeparator)
-}
-
-// UploadRows sends rows a caller already read as a new import,
-// one object per row keyed by the column headers. The extension
-// picks the reader on the platform's side, so they travel as a
-// JSON file.
-func UploadRows(ctx context.Context, c *transpareo.Client,
-	rows []map[string]any, dataType, valueSeparator string) (*Import, error) {
-	content, err := json.Marshal(rows)
-	if err != nil {
-		return nil, err
-	}
-	return upload(ctx, c, "rows.json", content, dataType, valueSeparator)
-}
-
-// upload posts the bytes as the multipart file every import
+// upload posts the sheet as the multipart file every import
 // starts from.
-func upload(ctx context.Context, c *transpareo.Client, name string,
-	content []byte, dataType, valueSeparator string) (*Import, error) {
+func (o RunOptions) upload(ctx context.Context,
+	c *transpareo.Client) (*Import, error) {
+	name, content, err := o.sheet()
+	if err != nil {
+		return nil, err
+	}
 	var buf bytes.Buffer
 	writer := multipart.NewWriter(&buf)
 	part, err := writer.CreateFormFile("file", name)
@@ -169,11 +153,19 @@ func upload(ctx context.Context, c *transpareo.Client, name string,
 	if _, err := part.Write(content); err != nil {
 		return nil, err
 	}
-	if dataType != "" {
-		writer.WriteField("dataType", dataType)
+	if o.DataType != "" {
+		writer.WriteField("dataType", o.DataType)
 	}
-	if valueSeparator != "" {
-		writer.WriteField("valueSeparator", valueSeparator)
+	if o.ValueSeparator != "" {
+		writer.WriteField("valueSeparator", o.ValueSeparator)
+	}
+	// The options travel with the upload for an automatic run,
+	// where the upload is the step that maps. Every other run
+	// sends them with the mapping.
+	if o.Automatic() {
+		if err := writeOptions(writer, o.Options); err != nil {
+			return nil, err
+		}
 	}
 	if err := writer.Close(); err != nil {
 		return nil, err
@@ -185,6 +177,40 @@ func upload(ctx context.Context, c *transpareo.Client, name string,
 		return nil, err
 	}
 	return decodeImport(resp.Body)
+}
+
+// sheet is the file to send under the name that picks the reader
+// on the platform's side: the rows the caller read, as JSON, or
+// the file it named on disk.
+func (o RunOptions) sheet() (string, []byte, error) {
+	if len(o.Rows) > 0 {
+		content, err := json.Marshal(o.Rows)
+		return "rows.json", content, err
+	}
+	content, err := os.ReadFile(o.Path)
+	return filepath.Base(o.Path), content, err
+}
+
+// writeOptions sends the run options as the nested form fields
+// the upload takes, options[auto] and the rest.
+func writeOptions(w *multipart.Writer, options *MappingOptions) error {
+	data, err := json.Marshal(options)
+	if err != nil {
+		return err
+	}
+	var fields map[string]any
+	if err := json.Unmarshal(data, &fields); err != nil {
+		return err
+	}
+	names := make([]string, 0, len(fields))
+	for name := range fields {
+		names = append(names, name)
+	}
+	sort.Strings(names)
+	for _, name := range names {
+		w.WriteField("options["+name+"]", fmt.Sprint(fields[name]))
+	}
+	return nil
 }
 
 // Get reads an import.
@@ -401,24 +427,52 @@ type RunOptions struct {
 	Progress          func(*transpareo.Task)
 }
 
-// upload sends whichever sheet the caller gave.
-func (o RunOptions) upload(ctx context.Context,
-	c *transpareo.Client) (*Import, error) {
-	if len(o.Rows) > 0 {
-		return UploadRows(ctx, c, o.Rows, o.DataType, o.ValueSeparator)
+// Automatic reports whether the platform maps the columns and
+// writes the rows without a further call, which makes the run a
+// write however Execute is set.
+func (o RunOptions) Automatic() bool {
+	return o.Options != nil && o.Options.Auto != nil && *o.Options.Auto
+}
+
+// awaitAuto waits out a run the platform maps, validates and
+// writes on its own. Completed is the one ending in which the
+// rows landed: it stops at validated when the dry run found rows
+// it cannot write, and at failed when the run broke, and both
+// come back as ErrValidationFailed with the import attached.
+func awaitAuto(ctx context.Context, c *transpareo.Client, imp *Import,
+	progress func(*transpareo.Task)) (*Import, error) {
+	statusURL := imp.StatusURL
+	if statusURL == "" {
+		statusURL = "/imports/" + imp.ID.String()
 	}
-	return Upload(ctx, c, o.Path, o.DataType, o.ValueSeparator)
+	task, err := c.WaitForTask(ctx, statusURL,
+		&transpareo.WaitOptions{OnPoll: progress})
+	if err != nil {
+		return nil, err
+	}
+	done, err := decodeImport(task.Body)
+	if err != nil {
+		return nil, err
+	}
+	if done.Status != "completed" {
+		return done, &ErrValidationFailed{Import: done}
+	}
+	return done, nil
 }
 
 // Run uploads, maps, validates and, when asked and clean,
-// executes. It stops with ErrMappingRequired when columns stay
-// unresolved and with ErrValidationFailed when the dry run found
-// problems; the import is attached to both.
+// executes. An automatic run leaves all of that to the platform
+// and waits for the answer. It stops with ErrMappingRequired when
+// columns stay unresolved and with ErrValidationFailed when the
+// dry run found problems; the import is attached to both.
 func Run(ctx context.Context, c *transpareo.Client, opts RunOptions) (*Import,
 	error) {
 	imp, err := opts.upload(ctx, c)
 	if err != nil {
 		return nil, err
+	}
+	if opts.Automatic() {
+		return awaitAuto(ctx, c, imp, opts.Progress)
 	}
 	id := imp.ID.String()
 	if imp.Status == "fresh" {

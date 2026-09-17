@@ -84,10 +84,12 @@ code, and a test compares what the two buildings produced.
   `batchIdentifier`, so the two lot tools are reads.
 - Data: `import_spreadsheet` takes a sheet as rows keyed by the
   column headers, or as a path to a file on this machine, and
-  carries it through mapping, validation and the write;
-  `export_catalogue` starts an export and waits for the archive;
-  `tail_events` reads the event feed; `wait_for_task` polls a bulk
-  task to its end.
+  carries it through mapping, validation and the write. Its `auto`
+  leaves all three to the platform, which makes a property type
+  for every column that matches none, so the description tells an
+  assistant to ask the person first. `export_catalogue` starts an
+  export and waits for the archive; `tail_events` reads the event
+  feed; `wait_for_task` polls a bulk task to its end.
 - Webhooks: `list_webhooks`, `create_webhook`, `test_webhook`,
   `regenerate_webhook_secret`, `delete_webhook`. The create and
   regenerate tools answer the signing secret, because nothing

@@ -2619,8 +2619,14 @@ type ImportMappingsInput struct {
 		TypeName *string `json:"typeName,omitempty"`
 	} `json:"mappings"`
 	Options *struct {
+		// Auto Carry a clean validation into the import on its own. On the upload it also takes the suggested mapping, so the whole run needs no further call.
+		Auto *bool `json:"auto,omitempty"`
+
 		// Backup Take the backup a revert restores from. Defaults to true.
 		Backup *bool `json:"backup,omitempty"`
+
+		// Notify Mail the owner how the run ended. A consumer has no mailbox, so this applies to a run a person started.
+		Notify *bool `json:"notify,omitempty"`
 
 		// Published Publish the records the import creates
 		Published *bool `json:"published,omitempty"`
@@ -5381,6 +5387,8 @@ type ClientInterface interface {
 	//
 	// One multipart request, the shape every upload API has: `curl -F file=@catalogue.xlsx -F dataType=components`. The importer reads xlsx, csv, ods and json. When every column resolves on its own (the canonical headers of the template `GET /imports/example` serves, or a JSON file whose entries carry the canonical keys) the import comes back `mapped`. Otherwise it is `fresh` and the answer carries the `preview` to write the mapping from; send that with `PUT /imports/{id}/mappings`, or along with the file as `mappings`.
 	//
+	// `options[auto]=true` imports straight away: the upload takes the mapping the mapping form would prefill, a column nothing matches becoming a property type under its own heading, and comes back `validating`; a clean validation goes on into the import on its own, one with errors stops at `validated` for the caller to decide. Poll the import until `status` is `completed`, `validated` or `failed`. A required attribute no column covers answers 422 `IMPORT_MAPPING_INCOMPLETE` with nothing saved.
+	//
 	// The upload is held for a limited time; once it is gone, the run endpoints answer 410 `IMPORT_EXPIRED`.
 	//
 	// Takes any type of body and a specified content type.
@@ -7553,6 +7561,8 @@ func (c *Client) CreateGrant(ctx context.Context, params *CreateGrantParams, bod
 // CreateImportWithBody Upload a spreadsheet to import
 //
 // One multipart request, the shape every upload API has: `curl -F file=@catalogue.xlsx -F dataType=components`. The importer reads xlsx, csv, ods and json. When every column resolves on its own (the canonical headers of the template `GET /imports/example` serves, or a JSON file whose entries carry the canonical keys) the import comes back `mapped`. Otherwise it is `fresh` and the answer carries the `preview` to write the mapping from; send that with `PUT /imports/{id}/mappings`, or along with the file as `mappings`.
+//
+// `options[auto]=true` imports straight away: the upload takes the mapping the mapping form would prefill, a column nothing matches becoming a property type under its own heading, and comes back `validating`; a clean validation goes on into the import on its own, one with errors stops at `validated` for the caller to decide. Poll the import until `status` is `completed`, `validated` or `failed`. A required attribute no column covers answers 422 `IMPORT_MAPPING_INCOMPLETE` with nothing saved.
 //
 // The upload is held for a limited time; once it is gone, the run endpoints answer 410 `IMPORT_EXPIRED`.
 //
@@ -15807,6 +15817,8 @@ type ClientWithResponsesInterface interface {
 	// CreateImportWithBodyWithResponse Upload a spreadsheet to import
 	//
 	// One multipart request, the shape every upload API has: `curl -F file=@catalogue.xlsx -F dataType=components`. The importer reads xlsx, csv, ods and json. When every column resolves on its own (the canonical headers of the template `GET /imports/example` serves, or a JSON file whose entries carry the canonical keys) the import comes back `mapped`. Otherwise it is `fresh` and the answer carries the `preview` to write the mapping from; send that with `PUT /imports/{id}/mappings`, or along with the file as `mappings`.
+	//
+	// `options[auto]=true` imports straight away: the upload takes the mapping the mapping form would prefill, a column nothing matches becoming a property type under its own heading, and comes back `validating`; a clean validation goes on into the import on its own, one with errors stops at `validated` for the caller to decide. Poll the import until `status` is `completed`, `validated` or `failed`. A required attribute no column covers answers 422 `IMPORT_MAPPING_INCOMPLETE` with nothing saved.
 	//
 	// The upload is held for a limited time; once it is gone, the run endpoints answer 410 `IMPORT_EXPIRED`.
 	//
@@ -25694,6 +25706,8 @@ func (c *ClientWithResponses) CreateGrantWithResponse(ctx context.Context, param
 // CreateImportWithBodyWithResponse Upload a spreadsheet to import
 //
 // One multipart request, the shape every upload API has: `curl -F file=@catalogue.xlsx -F dataType=components`. The importer reads xlsx, csv, ods and json. When every column resolves on its own (the canonical headers of the template `GET /imports/example` serves, or a JSON file whose entries carry the canonical keys) the import comes back `mapped`. Otherwise it is `fresh` and the answer carries the `preview` to write the mapping from; send that with `PUT /imports/{id}/mappings`, or along with the file as `mappings`.
+//
+// `options[auto]=true` imports straight away: the upload takes the mapping the mapping form would prefill, a column nothing matches becoming a property type under its own heading, and comes back `validating`; a clean validation goes on into the import on its own, one with errors stops at `validated` for the caller to decide. Poll the import until `status` is `completed`, `validated` or `failed`. A required attribute no column covers answers 422 `IMPORT_MAPPING_INCOMPLETE` with nothing saved.
 //
 // The upload is held for a limited time; once it is gone, the run endpoints answer 410 `IMPORT_EXPIRED`.
 //

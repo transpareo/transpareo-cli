@@ -551,6 +551,7 @@
     "args": "--file <path> --type <components|products|dpps>",
     "flags": [
       "accept-suggestions",
+      "auto",
       "execute",
       "file",
       "map",

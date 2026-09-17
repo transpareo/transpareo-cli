@@ -1,6 +1,6 @@
 # Command reference
 
-Every command of `transpareo`, generated from API specification 2.0.0. `--help` on any command prints the same example and permission key.
+Every command of `transpareo`, generated from API specification 2.1.0. `--help` on any command prints the same example and permission key.
 
 | Option on every command | What it does |
 |---|---|
@@ -1177,11 +1177,13 @@ transpareo imports run --file <path> --type <components|products|dpps>
 transpareo imports run --file catalogue.xlsx --type products
 transpareo imports run --file catalogue.xlsx --type products \
     --accept-suggestions --map "Farbe=new:Colour" --execute
+transpareo imports run --file catalogue.xlsx --type products --auto
 ```
 
 | Option | What it does |
 |---|---|
 | `--accept-suggestions` | take every exact match of the preview |
+| `--auto` | let the platform map and write in one call, making a property type for every column that matches none |
 | `--execute` | write the records when the validation passes |
 | `--file` \<value\> | the spreadsheet or JSON file to import |
 | `--map` \<value\>... | Column=target (repeatable) |

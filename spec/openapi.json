@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Transpareo API",
-    "version": "2.0.0",
+    "version": "2.1.0",
     "description": "This site runs on the [Transpareo](https://transpareo.com) product information platform. The REST API gives programs access to products, product components, brands, Digital Product Passports, categories and configuration. The version is selected with the `Accept` header, not a path segment.\n\nThe guide at [/apidocs/guide](/apidocs/guide) is the narrative companion to this reference: credentials, permissions, pagination, idempotency, the passport flows, the event feed, webhooks, rate limits and the error format. It is also served as Markdown at [/apidocs/guide.md](/apidocs/guide.md).\n\nPrograms authenticate with the OAuth 2.0 client credentials grant. Exchange the client id and secret once, then send the token on every request:\n\n```\ncurl -X POST https://<host>/api/oauth/token -d grant_type=client_credentials -d client_id=<key> -d client_secret=<secret>\n\ncurl https://<host>/api/me -H \"Authorization: Bearer <access_token>\"\n```\n\nAn assistant that speaks the Model Context Protocol connects to `/mcp` on this host and calls these operations as tools, named in the catalogue at [/apidocs/mcp-tools.json](/apidocs/mcp-tools.json) and explained by the guide's Assistants section.",
     "contact": {
       "name": "Transpareo Support",
@@ -3016,6 +3016,14 @@
               "backup": {
                 "type": "boolean",
                 "description": "Take the backup a revert restores from. Defaults to true."
+              },
+              "auto": {
+                "type": "boolean",
+                "description": "Carry a clean validation into the import on its own. On the upload it also takes the suggested mapping, so the whole run needs no further call."
+              },
+              "notify": {
+                "type": "boolean",
+                "description": "Mail the owner how the run ended. A consumer has no mailbox, so this applies to a run a person started."
               }
             }
           }
@@ -8847,7 +8855,7 @@
           "Imports"
         ],
         "summary": "Upload a spreadsheet to import",
-        "description": "One multipart request, the shape every upload API has: `curl -F file=@catalogue.xlsx -F dataType=components`. The importer reads xlsx, csv, ods and json. When every column resolves on its own (the canonical headers of the template `GET /imports/example` serves, or a JSON file whose entries carry the canonical keys) the import comes back `mapped`. Otherwise it is `fresh` and the answer carries the `preview` to write the mapping from; send that with `PUT /imports/{id}/mappings`, or along with the file as `mappings`.\n\nThe upload is held for a limited time; once it is gone, the run endpoints answer 410 `IMPORT_EXPIRED`.",
+        "description": "One multipart request, the shape every upload API has: `curl -F file=@catalogue.xlsx -F dataType=components`. The importer reads xlsx, csv, ods and json. When every column resolves on its own (the canonical headers of the template `GET /imports/example` serves, or a JSON file whose entries carry the canonical keys) the import comes back `mapped`. Otherwise it is `fresh` and the answer carries the `preview` to write the mapping from; send that with `PUT /imports/{id}/mappings`, or along with the file as `mappings`.\n\n`options[auto]=true` imports straight away: the upload takes the mapping the mapping form would prefill, a column nothing matches becoming a property type under its own heading, and comes back `validating`; a clean validation goes on into the import on its own, one with errors stops at `validated` for the caller to decide. Poll the import until `status` is `completed`, `validated` or `failed`. A required attribute no column covers answers 422 `IMPORT_MAPPING_INCOMPLETE` with nothing saved.\n\nThe upload is held for a limited time; once it is gone, the run endpoints answer 410 `IMPORT_EXPIRED`.",
         "operationId": "create_import",
         "x-permission": "import_access",
         "security": [

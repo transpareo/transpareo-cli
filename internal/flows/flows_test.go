@@ -300,6 +300,80 @@ func TestRunUploadsRowsAsAJSONFile(t *testing.T) {
 	}
 }
 
+// An automatic run is the upload and nothing else: the options
+// travel with it, and the platform maps, validates and writes
+// without the mapping and execute calls.
+func TestAutomaticRunIsTheUploadAlone(t *testing.T) {
+	h, c := newHost(t)
+	var sent string
+	h.mux.HandleFunc("POST /api/imports", func(w http.ResponseWriter,
+		r *http.Request) {
+		body, _ := io.ReadAll(r.Body)
+		sent = string(body)
+		writeJSON(w, 201, map[string]any{"id": 12, "status": "validating",
+			"statusUrl": h.URL + "/api/imports/12"})
+	})
+	h.mux.HandleFunc("GET /api/imports/12", func(w http.ResponseWriter,
+		r *http.Request) {
+		writeJSON(w, 200, map[string]any{"id": 12, "status": "completed",
+			"createdCount": 240, "rowErrors": []any{}, "failedCount": 0})
+	})
+	refuse := func(name string) {
+		h.mux.HandleFunc(name, func(w http.ResponseWriter, r *http.Request) {
+			t.Errorf("an automatic run called %s", name)
+			writeJSON(w, 500, map[string]any{})
+		})
+	}
+	refuse("PUT /api/imports/12/mappings")
+	refuse("POST /api/imports/12/execute")
+
+	auto := true
+	file := filepath.Join(t.TempDir(), "catalogue.xlsx")
+	os.WriteFile(file, []byte("XLSX"), 0o600)
+	imp, err := Run(context.Background(), c, RunOptions{Path: file,
+		DataType: "products", Options: &MappingOptions{Auto: &auto}})
+	if err != nil {
+		t.Fatalf("run: %v", err)
+	}
+	if imp.Status != "completed" {
+		t.Errorf("status = %s", imp.Status)
+	}
+	if !strings.Contains(sent, "name=\"options[auto]\"\r\n\r\ntrue") {
+		t.Errorf("the upload carries no options[auto]: %s", sent)
+	}
+}
+
+// An automatic run the platform stopped at validated wrote
+// nothing, so it reaches the caller as a failure however it is
+// spelled.
+func TestAutomaticRunStoppedAtValidatedFails(t *testing.T) {
+	h, c := newHost(t)
+	h.mux.HandleFunc("POST /api/imports", func(w http.ResponseWriter,
+		r *http.Request) {
+		writeJSON(w, 201, map[string]any{"id": 12, "status": "validating",
+			"statusUrl": h.URL + "/api/imports/12"})
+	})
+	h.mux.HandleFunc("GET /api/imports/12", func(w http.ResponseWriter,
+		r *http.Request) {
+		writeJSON(w, 200, map[string]any{"id": 12, "status": "validated",
+			"failedCount": 1,
+			"rowErrors": []map[string]any{{"row": 3, "code": "validation_name",
+				"field": "name", "message": "is required"}}})
+	})
+	auto := true
+	file := filepath.Join(t.TempDir(), "catalogue.xlsx")
+	os.WriteFile(file, []byte("XLSX"), 0o600)
+	imp, err := Run(context.Background(), c, RunOptions{Path: file,
+		Options: &MappingOptions{Auto: &auto}})
+	var failed *ErrValidationFailed
+	if !errors.As(err, &failed) {
+		t.Fatalf("err = %v, want a validation failure", err)
+	}
+	if imp == nil || len(imp.RowErrors) != 1 {
+		t.Errorf("the failing rows did not come back: %+v", imp)
+	}
+}
+
 func TestValidateReportsRowErrors(t *testing.T) {
 	h, c := newHost(t)
 	h.mux.HandleFunc("POST /api/imports/5/validate", func(w http.ResponseWriter,

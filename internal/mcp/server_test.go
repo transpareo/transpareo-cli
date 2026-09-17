@@ -1,6 +1,7 @@
 package mcp
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"io"
@@ -612,12 +613,28 @@ func TestDataTools(t *testing.T) {
 			map[string]any{"events": []map[string]any{{"id": "e1"}},
 				"nextCursor": "e1"})
 	})
-	var uploadName string
+	mux.HandleFunc("GET /api/imports/12", func(w http.ResponseWriter,
+		r *http.Request) {
+		writeJSON(w, 200, map[string]any{"id": 12, "status": "completed",
+			"createdCount": 1, "rowErrors": []any{}, "failedCount": 0})
+	})
+	var uploadName, autoUpload string
 	mux.HandleFunc("POST /api/imports", func(w http.ResponseWriter,
 		r *http.Request) {
+		body, _ := io.ReadAll(r.Body)
+		r.Body = io.NopCloser(bytes.NewReader(body))
 		r.ParseMultipartForm(1 << 20)
 		if r.MultipartForm != nil && len(r.MultipartForm.File["file"]) > 0 {
 			uploadName = r.MultipartForm.File["file"][0].Filename
+		}
+		// With auto in the options the platform maps and writes
+		// from the upload itself, and the answer is the run.
+		if strings.Contains(string(body),
+			"name=\"options[auto]\"\r\n\r\ntrue") {
+			autoUpload = string(body)
+			writeJSON(w, 201, map[string]any{"id": 12, "status": "validating",
+				"statusUrl": host.URL + "/api/imports/12"})
+			return
 		}
 		writeJSON(w, 201, map[string]any{"id": 12, "status": "fresh",
 			"preview": map[string]any{"columns": []map[string]any{
@@ -684,6 +701,21 @@ func TestDataTools(t *testing.T) {
 	if !result.IsError ||
 		!strings.Contains(text(result), "rows or name a path") {
 		t.Errorf("import_spreadsheet with neither = %q", text(result))
+	}
+
+	// With auto the platform maps and writes from the upload, so
+	// the answer is a finished run and never asks for execute.
+	result = call(t, session, "import_spreadsheet",
+		map[string]any{"rows": []any{map[string]any{"Farbe": "rot"}},
+			"auto": true})
+	if result.IsError || !strings.Contains(text(result), "import 12 completed") {
+		t.Errorf("import_spreadsheet with auto = %q", text(result))
+	}
+	if strings.Contains(text(result), "execute") {
+		t.Errorf("an automatic run asked for execute: %q", text(result))
+	}
+	if !strings.Contains(autoUpload, "name=\"options[auto]\"\r\n\r\ntrue") {
+		t.Errorf("the upload carries no options[auto]: %s", autoUpload)
 	}
 
 	readOnly := connect(t, host, Options{ReadOnly: true})

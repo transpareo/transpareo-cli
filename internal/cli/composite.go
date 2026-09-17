@@ -70,7 +70,7 @@ one, or skip.`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return a.importsMap(cmd.Context(), args[0], mappingsFile, specs,
 				accept,
-				runOptions(cmd, published, skipBackup))
+				runOptions(cmd, published, skipBackup, false))
 		},
 	}
 	f := cmd.Flags()
@@ -90,8 +90,8 @@ one, or skip.`,
 // the platform's defaults stay in force otherwise. The flag says
 // what to skip and the API field says what to take, so one is the
 // negation of the other.
-func runOptions(cmd *cobra.Command, published,
-	skipBackup bool) *flows.MappingOptions {
+func runOptions(cmd *cobra.Command, published, skipBackup,
+	auto bool) *flows.MappingOptions {
 	var opts flows.MappingOptions
 	set := false
 	if cmd.Flags().Changed("published") {
@@ -101,6 +101,10 @@ func runOptions(cmd *cobra.Command, published,
 	if cmd.Flags().Changed("skip-backup") {
 		backup := !skipBackup
 		opts.Backup = &backup
+		set = true
+	}
+	if cmd.Flags().Changed("auto") {
+		opts.Auto = &auto
 		set = true
 	}
 	if !set {
@@ -203,7 +207,7 @@ func (a *App) mappingError(err error) error {
 func (a *App) importsRunCommand() *cobra.Command {
 	var file, dataType, mappingsFile, separator string
 	var specs []string
-	var accept, execute, published, skipBackup bool
+	var accept, execute, published, skipBackup, auto bool
 	cmd := &cobra.Command{
 		Use:   "run --file <path> --type <components|products|dpps>",
 		Short: "Upload, map, validate and, with --execute, run an import",
@@ -213,10 +217,18 @@ findings. Exit code 5 means columns need a mapping (they are in
 the output), 3 that the validation found failing rows. Records
 are written only with --execute and only when the validation
 passed. A template file or a JSON file with canonical keys needs
-no mapping option.`,
+no mapping option.
+
+--auto leaves the whole run to the platform: the upload takes the
+mapping the mapping form would prefill, every column that matches
+no property type becomes one under its own heading, and a clean
+validation carries on into the write without --execute. It
+changes the schema of the workspace, so use it on a sheet whose
+headings are already the ones you want.`,
 		Example: `  transpareo imports run --file catalogue.xlsx --type products
   transpareo imports run --file catalogue.xlsx --type products \
-      --accept-suggestions --map "Farbe=new:Colour" --execute`,
+      --accept-suggestions --map "Farbe=new:Colour" --execute
+  transpareo imports run --file catalogue.xlsx --type products --auto`,
 		Args:        cobra.NoArgs,
 		Annotations: map[string]string{annotationOperation: "execute_import"},
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -231,7 +243,7 @@ no mapping option.`,
 			return a.importsRun(cmd.Context(), flows.RunOptions{
 				Path: file, DataType: dataType, ValueSeparator: separator,
 				Mappings: explicit, AcceptSuggestions: accept, Execute: execute,
-				Options:  runOptions(cmd, published, skipBackup),
+				Options:  runOptions(cmd, published, skipBackup, auto),
 				Progress: a.progress(),
 			})
 		},
@@ -248,6 +260,9 @@ no mapping option.`,
 		"take every exact match of the preview")
 	f.BoolVar(&execute, "execute", false,
 		"write the records when the validation passes")
+	f.BoolVar(&auto, "auto", false,
+		"let the platform map and write in one call, making a "+
+			"property type for every column that matches none")
 	f.BoolVar(&published, "published", false,
 		"publish the records the import creates")
 	f.BoolVar(&skipBackup, "skip-backup", false,
@@ -260,8 +275,10 @@ func (a *App) importsRun(ctx context.Context, opts flows.RunOptions) error {
 	if err != nil {
 		return err
 	}
+	// An automatic run writes the rows from the upload, so the
+	// guard has to weigh it as the write it is.
 	op := reg.Find("validate_import")
-	if opts.Execute {
+	if opts.Execute || opts.Automatic() {
 		op = reg.Find("execute_import")
 	}
 	if err := a.refuseUnlessAllowed(op, "POST"); err != nil {
