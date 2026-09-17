@@ -2074,7 +2074,7 @@ type DppInput struct {
 	// DynamicData Values that change over the unit's life, keyed by the vocabulary term of their property type. They ride on the separately signed dynamic surface and never enter a signed per-version snapshot; `PATCH /dpps/{id}/dynamic_data` writes them afterwards.
 	DynamicData *map[string]interface{} `json:"dynamicData,omitempty"`
 
-	// Granularity Which unit the passport stands for, and therefore which identifiers it needs
+	// Granularity Which unit the passport stands for, and therefore which identifiers it needs. Left out, the passport takes the workspace's default granularity, so name it when the passport is for a batch or an item.
 	Granularity *DppInputGranularity `json:"granularity,omitempty"`
 	Locale      *string              `json:"locale,omitempty"`
 
@@ -2094,7 +2094,7 @@ type DppInput struct {
 	UnlockableType *string `json:"unlockableType,omitempty"`
 }
 
-// DppInputGranularity Which unit the passport stands for, and therefore which identifiers it needs
+// DppInputGranularity Which unit the passport stands for, and therefore which identifiers it needs. Left out, the passport takes the workspace's default granularity, so name it when the passport is for a batch or an item.
 type DppInputGranularity string
 
 // DppRequirements What a passport of one product needs at one granularity, and what the product still lacks, before anything is written. Field names throughout are the wire names, so a program copies them into a create or a bulk row as they are.
@@ -2548,7 +2548,7 @@ type Import struct {
 	// Mappings The stored mapping, one action per column, in the shape of `ImportMappingsInput`
 	Mappings *map[string]map[string]interface{} `json:"mappings,omitempty"`
 
-	// Options The options the run reads, `published` and `skipBackup`
+	// Options The options the run reads, `published` and `backup`
 	Options          *map[string]interface{} `json:"options,omitempty"`
 	OriginalFilename *string                 `json:"originalFilename,omitempty"`
 
@@ -2619,11 +2619,11 @@ type ImportMappingsInput struct {
 		TypeName *string `json:"typeName,omitempty"`
 	} `json:"mappings"`
 	Options *struct {
+		// Backup Take the backup a revert restores from. Defaults to true.
+		Backup *bool `json:"backup,omitempty"`
+
 		// Published Publish the records the import creates
 		Published *bool `json:"published,omitempty"`
-
-		// SkipBackup Execute without the backup a revert would restore from
-		SkipBackup *bool `json:"skipBackup,omitempty"`
 	} `json:"options,omitempty"`
 }
 
@@ -2673,7 +2673,7 @@ type ImportPreview struct {
 		Unit      *string `json:"unit,omitempty"`
 	} `json:"propertyTypes,omitempty"`
 
-	// RequiredAttributes The attributes a mapping must cover
+	// RequiredAttributes The attributes a mapping must cover, which are the ones that identify a row. A product row that creates a product also needs `brand_name`, `category` and `components_input`; one that resolves to a product the workspace already holds needs none of them.
 	RequiredAttributes *[]string `json:"requiredAttributes,omitempty"`
 }
 
@@ -2779,6 +2779,32 @@ type LeadgenInput struct {
 	Published         *bool   `json:"published,omitempty"`
 	Recipient         *string `json:"recipient,omitempty"`
 	SubmitButtonLabel *string `json:"submitButtonLabel,omitempty"`
+}
+
+// Lot A lot batch and item passports freeze from. It holds the product's components and properties as they stood when the lot was created, so every passport of the lot carries the same frozen data.
+type Lot struct {
+	CreatedAt *time.Time `json:"createdAt,omitempty"`
+
+	// DppsCount Passports issued against the lot, drafts included
+	DppsCount *int `json:"dppsCount,omitempty"`
+	Id        *int `json:"id,omitempty"`
+
+	// Identifier The lot number, the value a passport of the lot carries as `batchIdentifier`
+	//
+	// Example: L2026-09
+	Identifier *string `json:"identifier,omitempty"`
+
+	// ManufacturedOn Only present when set
+	ManufacturedOn *openapi_types.Date `json:"manufacturedOn,omitempty"`
+
+	// ProductId The product the lot was made of
+	ProductId *int `json:"productId,omitempty"`
+
+	// PublishedDppsCount Passports of the lot that have published at least once
+	PublishedDppsCount *int `json:"publishedDppsCount,omitempty"`
+
+	// Type Example: Lot
+	Type *string `json:"type,omitempty"`
 }
 
 // Mediafile defines model for Mediafile.
@@ -3851,8 +3877,8 @@ type GetImportSupplierFormParamsDataType string
 // ExecuteImportJSONBody defines parameters for ExecuteImport.
 type ExecuteImportJSONBody struct {
 	Options *struct {
-		Published  *bool `json:"published,omitempty"`
-		SkipBackup *bool `json:"skipBackup,omitempty"`
+		Backup    *bool `json:"backup,omitempty"`
+		Published *bool `json:"published,omitempty"`
 	} `json:"options,omitempty"`
 }
 
@@ -3887,6 +3913,21 @@ type GetLeadgenRequestsParams struct {
 
 // GetLeadgenRequestsParamsFormat defines parameters for GetLeadgenRequests.
 type GetLeadgenRequestsParamsFormat string
+
+// ListLotsParams defines parameters for ListLots.
+type ListLotsParams struct {
+	// ProductId Keep only the lots of this product
+	ProductId *int `form:"product_id,omitempty" json:"product_id,omitempty"`
+
+	// Identifier Keep only the lot with this identifier, the value a passport carries as `batchIdentifier`
+	Identifier *string `form:"identifier,omitempty" json:"identifier,omitempty"`
+
+	// Page Page number
+	Page *Page `form:"page,omitempty" json:"page,omitempty"`
+
+	// PerPage Records per page (default: 100, max: 500)
+	PerPage *PerPage `form:"per_page,omitempty" json:"per_page,omitempty"`
+}
 
 // ListMediafilesParams defines parameters for ListMediafiles.
 type ListMediafilesParams struct {
@@ -5370,7 +5411,7 @@ type ClientInterface interface {
 
 	// ExecuteImportWithBody Execute an import
 	//
-	// Writes the rows in the background, after a backup a revert can restore from unless `options.skipBackup` is set. Poll the `statusUrl` until `status` is `completed` or `failed`.
+	// Writes the rows in the background, after a backup a revert can restore from. Send `options.backup` as `false` to run without one. Poll the `statusUrl` until `status` is `completed` or `failed`.
 	//
 	// Besides `import_access` this needs the write permission of the data type: `component_write` for components, `product_access` for products, `dpp_bulk_write` for passports. The rows count against the consumer's bulk item cap for the minute.
 	//
@@ -5381,7 +5422,7 @@ type ClientInterface interface {
 
 	// ExecuteImport Execute an import
 	//
-	// Writes the rows in the background, after a backup a revert can restore from unless `options.skipBackup` is set. Poll the `statusUrl` until `status` is `completed` or `failed`.
+	// Writes the rows in the background, after a backup a revert can restore from. Send `options.backup` as `false` to run without one. Poll the `statusUrl` until `status` is `completed` or `failed`.
 	//
 	// Besides `import_access` this needs the write permission of the data type: `component_write` for components, `product_access` for products, `dpp_bulk_write` for passports. The rows count against the consumer's bulk item cap for the minute.
 	//
@@ -5497,6 +5538,22 @@ type ClientInterface interface {
 	//
 	// Corresponds with GET /localization (the `GetLocalization` operationId).
 	GetLocalization(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListLots List lots
+	//
+	// The lots batch and item passports freeze from, newest first. A lot is created with the first passport that names its identifier and reused by every later passport of the same lot, so there is nothing to create here: to issue a passport of a new lot, name the lot in `batchIdentifier` on `POST /dpps` or in the shared line of a bulk create.
+	//
+	// Narrow the list with `product_id` to see which lots a product already has, or with `identifier` to find the lot a passport names.
+	//
+	// Corresponds with GET /lots (the `ListLots` operationId).
+	ListLots(ctx context.Context, params *ListLotsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetLot Get a lot
+	//
+	// One lot with the number of passports issued against it, and how many of those have published.
+	//
+	// Corresponds with GET /lots/{id} (the `GetLot` operationId).
+	GetLot(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetMe What the presented token allows
 	//
@@ -7567,7 +7624,7 @@ func (c *Client) GetImport(ctx context.Context, id Id, reqEditors ...RequestEdit
 
 // ExecuteImportWithBody Execute an import
 //
-// Writes the rows in the background, after a backup a revert can restore from unless `options.skipBackup` is set. Poll the `statusUrl` until `status` is `completed` or `failed`.
+// Writes the rows in the background, after a backup a revert can restore from. Send `options.backup` as `false` to run without one. Poll the `statusUrl` until `status` is `completed` or `failed`.
 //
 // Besides `import_access` this needs the write permission of the data type: `component_write` for components, `product_access` for products, `dpp_bulk_write` for passports. The rows count against the consumer's bulk item cap for the minute.
 //
@@ -7588,7 +7645,7 @@ func (c *Client) ExecuteImportWithBody(ctx context.Context, id Id, contentType s
 
 // ExecuteImport Execute an import
 //
-// Writes the rows in the background, after a backup a revert can restore from unless `options.skipBackup` is set. Poll the `statusUrl` until `status` is `completed` or `failed`.
+// Writes the rows in the background, after a backup a revert can restore from. Send `options.backup` as `false` to run without one. Poll the `statusUrl` until `status` is `completed` or `failed`.
 //
 // Besides `import_access` this needs the write permission of the data type: `component_write` for components, `product_access` for products, `dpp_bulk_write` for passports. The rows count against the consumer's bulk item cap for the minute.
 //
@@ -7845,6 +7902,42 @@ func (c *Client) GetLeadgenRequests(ctx context.Context, id Id, params *GetLeadg
 // Corresponds with GET /localization (the `GetLocalization` operationId).
 func (c *Client) GetLocalization(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetLocalizationRequest(c.Server)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// ListLots List lots
+//
+// The lots batch and item passports freeze from, newest first. A lot is created with the first passport that names its identifier and reused by every later passport of the same lot, so there is nothing to create here: to issue a passport of a new lot, name the lot in `batchIdentifier` on `POST /dpps` or in the shared line of a bulk create.
+//
+// Narrow the list with `product_id` to see which lots a product already has, or with `identifier` to find the lot a passport names.
+//
+// Corresponds with GET /lots (the `ListLots` operationId).
+func (c *Client) ListLots(ctx context.Context, params *ListLotsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListLotsRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// GetLot Get a lot
+//
+// One lot with the number of passports issued against it, and how many of those have published.
+//
+// Corresponds with GET /lots/{id} (the `GetLot` operationId).
+func (c *Client) GetLot(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetLotRequest(c.Server, id)
 	if err != nil {
 		return nil, err
 	}
@@ -12411,6 +12504,130 @@ func NewGetLocalizationRequest(server string) (*http.Request, error) {
 	return req, nil
 }
 
+// NewListLotsRequest constructs an http.Request for the ListLots method
+func NewListLotsRequest(server string, params *ListLotsParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/lots")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.ProductId != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "product_id", *params.ProductId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Identifier != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "identifier", *params.Identifier, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Page != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "page", *params.Page, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.PerPage != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "per_page", *params.PerPage, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetLotRequest constructs an http.Request for the GetLot method
+func NewGetLotRequest(server string, id int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/lots/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewGetMeRequest constructs an http.Request for the GetMe method
 func NewGetMeRequest(server string) (*http.Request, error) {
 	var err error
@@ -15627,7 +15844,7 @@ type ClientWithResponsesInterface interface {
 
 	// ExecuteImportWithBodyWithResponse Execute an import
 	//
-	// Writes the rows in the background, after a backup a revert can restore from unless `options.skipBackup` is set. Poll the `statusUrl` until `status` is `completed` or `failed`.
+	// Writes the rows in the background, after a backup a revert can restore from. Send `options.backup` as `false` to run without one. Poll the `statusUrl` until `status` is `completed` or `failed`.
 	//
 	// Besides `import_access` this needs the write permission of the data type: `component_write` for components, `product_access` for products, `dpp_bulk_write` for passports. The rows count against the consumer's bulk item cap for the minute.
 	//
@@ -15638,7 +15855,7 @@ type ClientWithResponsesInterface interface {
 
 	// ExecuteImportWithResponse Execute an import
 	//
-	// Writes the rows in the background, after a backup a revert can restore from unless `options.skipBackup` is set. Poll the `statusUrl` until `status` is `completed` or `failed`.
+	// Writes the rows in the background, after a backup a revert can restore from. Send `options.backup` as `false` to run without one. Poll the `statusUrl` until `status` is `completed` or `failed`.
 	//
 	// Besides `import_access` this needs the write permission of the data type: `component_write` for components, `product_access` for products, `dpp_bulk_write` for passports. The rows count against the consumer's bulk item cap for the minute.
 	//
@@ -15766,6 +15983,26 @@ type ClientWithResponsesInterface interface {
 	//
 	// Corresponds with GET /localization (the `GetLocalization` operationId).
 	GetLocalizationWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetLocalizationResponse, error)
+
+	// ListLotsWithResponse List lots
+	//
+	// The lots batch and item passports freeze from, newest first. A lot is created with the first passport that names its identifier and reused by every later passport of the same lot, so there is nothing to create here: to issue a passport of a new lot, name the lot in `batchIdentifier` on `POST /dpps` or in the shared line of a bulk create.
+	//
+	// Narrow the list with `product_id` to see which lots a product already has, or with `identifier` to find the lot a passport names.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /lots (the `ListLots` operationId).
+	ListLotsWithResponse(ctx context.Context, params *ListLotsParams, reqEditors ...RequestEditorFn) (*ListLotsResponse, error)
+
+	// GetLotWithResponse Get a lot
+	//
+	// One lot with the number of passports issued against it, and how many of those have published.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /lots/{id} (the `GetLot` operationId).
+	GetLotWithResponse(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*GetLotResponse, error)
 
 	// GetMeWithResponse What the presented token allows
 	//
@@ -20995,6 +21232,139 @@ func (r GetLocalizationResponse) ContentType() string {
 	return ""
 }
 
+// ListLotsResponse200Headers the declared response headers of an HTTP 200 response for ListLots
+type ListLotsResponse200Headers struct {
+	APICount   *int
+	APIOffset  *int
+	APIPage    *int
+	APIPerPage *int
+	APITotal   *int
+	Link       *string
+}
+
+type ListLotsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *struct {
+		Lots *[]Lot `json:"lots,omitempty"`
+	}
+	// JSON401 the response for an HTTP 401 `application/json` response
+	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
+	// Headers200 the parsed response headers for an HTTP 200 response
+	Headers200 *ListLotsResponse200Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r ListLotsResponse) GetJSON200() *struct {
+	Lots *[]Lot `json:"lots,omitempty"`
+} {
+	return r.JSON200
+}
+
+// GetJSON401 returns the response for an HTTP 401 `application/json` response
+func (r ListLotsResponse) GetJSON401() *Unauthorized {
+	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r ListLotsResponse) GetJSON403() *Forbidden {
+	return r.JSON403
+}
+
+// GetBody returns the raw response body bytes
+func (r ListLotsResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r ListLotsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListLotsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r ListLotsResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type GetLotResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *Lot
+	// JSON401 the response for an HTTP 401 `application/json` response
+	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
+	// JSON404 the response for an HTTP 404 `application/json` response
+	JSON404 *NotFound
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r GetLotResponse) GetJSON200() *Lot {
+	return r.JSON200
+}
+
+// GetJSON401 returns the response for an HTTP 401 `application/json` response
+func (r GetLotResponse) GetJSON401() *Unauthorized {
+	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r GetLotResponse) GetJSON403() *Forbidden {
+	return r.JSON403
+}
+
+// GetJSON404 returns the response for an HTTP 404 `application/json` response
+func (r GetLotResponse) GetJSON404() *NotFound {
+	return r.JSON404
+}
+
+// GetBody returns the raw response body bytes
+func (r GetLotResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r GetLotResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetLotResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetLotResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
 type GetMeResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -25385,7 +25755,7 @@ func (c *ClientWithResponses) GetImportWithResponse(ctx context.Context, id Id, 
 
 // ExecuteImportWithBodyWithResponse Execute an import
 //
-// Writes the rows in the background, after a backup a revert can restore from unless `options.skipBackup` is set. Poll the `statusUrl` until `status` is `completed` or `failed`.
+// Writes the rows in the background, after a backup a revert can restore from. Send `options.backup` as `false` to run without one. Poll the `statusUrl` until `status` is `completed` or `failed`.
 //
 // Besides `import_access` this needs the write permission of the data type: `component_write` for components, `product_access` for products, `dpp_bulk_write` for passports. The rows count against the consumer's bulk item cap for the minute.
 //
@@ -25402,7 +25772,7 @@ func (c *ClientWithResponses) ExecuteImportWithBodyWithResponse(ctx context.Cont
 
 // ExecuteImportWithResponse Execute an import
 //
-// Writes the rows in the background, after a backup a revert can restore from unless `options.skipBackup` is set. Poll the `statusUrl` until `status` is `completed` or `failed`.
+// Writes the rows in the background, after a backup a revert can restore from. Send `options.backup` as `false` to run without one. Poll the `statusUrl` until `status` is `completed` or `failed`.
 //
 // Besides `import_access` this needs the write permission of the data type: `component_write` for components, `product_access` for products, `dpp_bulk_write` for passports. The rows count against the consumer's bulk item cap for the minute.
 //
@@ -25619,6 +25989,38 @@ func (c *ClientWithResponses) GetLocalizationWithResponse(ctx context.Context, r
 		return nil, err
 	}
 	return ParseGetLocalizationResponse(rsp)
+}
+
+// ListLotsWithResponse List lots
+//
+// The lots batch and item passports freeze from, newest first. A lot is created with the first passport that names its identifier and reused by every later passport of the same lot, so there is nothing to create here: to issue a passport of a new lot, name the lot in `batchIdentifier` on `POST /dpps` or in the shared line of a bulk create.
+//
+// Narrow the list with `product_id` to see which lots a product already has, or with `identifier` to find the lot a passport names.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /lots (the `ListLots` operationId).
+func (c *ClientWithResponses) ListLotsWithResponse(ctx context.Context, params *ListLotsParams, reqEditors ...RequestEditorFn) (*ListLotsResponse, error) {
+	rsp, err := c.ListLots(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListLotsResponse(rsp)
+}
+
+// GetLotWithResponse Get a lot
+//
+// One lot with the number of passports issued against it, and how many of those have published.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /lots/{id} (the `GetLot` operationId).
+func (c *ClientWithResponses) GetLotWithResponse(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*GetLotResponse, error) {
+	rsp, err := c.GetLot(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetLotResponse(rsp)
 }
 
 // GetMeWithResponse What the presented token allows
@@ -30456,6 +30858,143 @@ func ParseGetLocalizationResponse(rsp *http.Response) (*GetLocalizationResponse,
 			return nil, err
 		}
 		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListLotsResponse parses an HTTP response from a ListLotsWithResponse call
+func ParseListLotsResponse(rsp *http.Response) (*ListLotsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListLotsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			Lots *[]Lot `json:"lots,omitempty"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 200:
+		var headers ListLotsResponse200Headers
+		if values := rsp.Header.Values("API-Count"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "API-Count", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.APICount = &value
+		}
+		if values := rsp.Header.Values("API-Offset"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "API-Offset", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.APIOffset = &value
+		}
+		if values := rsp.Header.Values("API-Page"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "API-Page", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.APIPage = &value
+		}
+		if values := rsp.Header.Values("API-Per-Page"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "API-Per-Page", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.APIPerPage = &value
+		}
+		if values := rsp.Header.Values("API-Total"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "API-Total", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.APITotal = &value
+		}
+		if values := rsp.Header.Values("Link"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "Link", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.Link = &value
+		}
+		response.Headers200 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseGetLotResponse parses an HTTP response from a GetLotWithResponse call
+func ParseGetLotResponse(rsp *http.Response) (*GetLotResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetLotResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Lot
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
 
 	}
 

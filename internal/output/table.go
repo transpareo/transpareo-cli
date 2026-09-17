@@ -11,8 +11,8 @@ import (
 
 // summaryKeys are the columns a list shows on a terminal when
 // no --fields narrows it, in this order, each when present.
-var summaryKeys = []string{"id", "code", "name", "title", "status",
-	"granularity", "dataType", "url", "updatedAt", "createdAt"}
+var summaryKeys = []string{"id", "code", "identifier", "name", "title",
+	"status", "granularity", "dataType", "url", "updatedAt", "createdAt"}
 
 // maxCell bounds a table cell so one long value does not push
 // the rest off screen.

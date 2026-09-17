@@ -53,9 +53,8 @@ func TestGeneratedToolsMatchTheCatalogue(t *testing.T) {
 // both schemas it fills in have to come out the same.
 //
 // A composed tool is still written twice by hand, so its absence
-// on one side is allowed when hostedOnly or localOnly gives the
-// reason, and one both sides carry must agree on its group and
-// its flags.
+// here is allowed when hostedOnly gives the reason, and one both
+// sides carry must agree on its group and its flags.
 func TestCatalogueMatchesTheHostedOne(t *testing.T) {
 	doc := spec.Catalogue()
 	if doc.Version != spec.Version() {
@@ -86,10 +85,9 @@ func TestCatalogueMatchesTheHostedOne(t *testing.T) {
 		}
 		got, ok := doc.Tools[tool.Name]
 		if !ok {
-			if localOnly[tool.Name] == "" {
-				t.Errorf("%s is a tool here and not in the hosted "+
-					"catalogue, with no reason in localOnly", tool.Name)
-			}
+			t.Errorf("%s is a tool here and the hosted catalogue has no "+
+				"tool of that name, so an assistant that moves between "+
+				"the two servers loses it", tool.Name)
 			continue
 		}
 		if got.Operation != "" {
@@ -287,8 +285,8 @@ func brief(value any) string {
 	return string(data)
 }
 
-// TestAllowancesNameARealDifference keeps the two lists honest:
-// an entry that no longer describes a difference is noise, and a
+// TestAllowancesNameARealDifference keeps the list honest: an
+// entry that no longer describes a difference is noise, and a
 // reason is the whole point of the entry.
 func TestAllowancesNameARealDifference(t *testing.T) {
 	doc := spec.Catalogue()
@@ -303,19 +301,6 @@ func TestAllowancesNameARealDifference(t *testing.T) {
 		}
 		if reason == "" {
 			t.Errorf("hostedOnly gives no reason for %s", name)
-		}
-	}
-	for name, reason := range localOnly {
-		if !serves(name) {
-			t.Errorf("localOnly names %s, which this server does not carry",
-				name)
-		}
-		if _, ok := doc.Tools[name]; ok {
-			t.Errorf("localOnly names %s, which the hosted catalogue "+
-				"carries too", name)
-		}
-		if reason == "" {
-			t.Errorf("localOnly gives no reason for %s", name)
 		}
 	}
 }

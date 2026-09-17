@@ -88,20 +88,26 @@ func (s *Server) addDataTools() {
 
 	s.addTool(GroupData, &sdk.Tool{
 		Name: "import_spreadsheet",
-		Description: "Upload a spreadsheet or JSON file from a path on this " +
-			"machine, map its columns, validate and, only with execute true " +
-			"after a clean validation, write the records. When columns stay " +
+		Description: "Send a sheet as rows, one object per row keyed by the " +
+			"column headers, or as a path to a spreadsheet or JSON file on " +
+			"this machine. The tool maps the columns, validates and, only " +
+			"with execute true after a clean validation, writes the " +
+			"records. When columns stay " +
 			"unresolved the answer lists them with the platform's " +
 			"suggestions " +
 			"and the core attributes to target; write the mappings and call " +
-			"again. The tool never creates a property type unless a mapping " +
+			"again with the same sheet. The tool never creates a property " +
+			"type unless a mapping " +
 			"says create_new. Permission: import_access plus the write " +
 			"permission of the data type. Data tier: authorised. Example: " +
-			"import_spreadsheet {\"path\": \"/data/catalogue.xlsx\", " +
-			"\"dataType\": \"products\", \"acceptSuggestions\": true}",
+			"import_spreadsheet {\"rows\": [{\"Name\": \"Aqua\", " +
+			"\"Origin\": \"Germany\"}], \"dataType\": \"products\"}",
 		InputSchema: schema(map[string]any{
+			"rows": map[string]any{"type": "array",
+				"items":       map[string]any{"type": "object"},
+				"description": "One object per row, keyed by the column headers"},
 			"path": map[string]any{"type": "string",
-				"description": "File path on this machine"},
+				"description": "Instead of rows: a file on this machine"},
 			"dataType": map[string]any{"type": "string",
 				"enum": []string{"components", "products", "dpps"}},
 			"mappings": map[string]any{"type": "object",
@@ -113,7 +119,7 @@ func (s *Server) addDataTools() {
 				"description": "Write the records after a clean validation"},
 			"published": map[string]any{"type": "boolean",
 				"description": "Publish the records the import creates"},
-		}, "path"),
+		}),
 		Annotations: &sdk.ToolAnnotations{Title: "Import a spreadsheet"},
 	}, s.importSpreadsheet)
 }
@@ -247,8 +253,15 @@ func (s *Server) importSpreadsheet(ctx context.Context,
 		return failure(err)
 	}
 	path := stringArg(args["path"])
-	if path == "" {
-		return failure(errors.New("path is required"))
+	var rows []map[string]any
+	if raw, ok := args["rows"].([]any); ok {
+		data, _ := json.Marshal(raw)
+		if err := json.Unmarshal(data, &rows); err != nil {
+			return failure(fmt.Errorf("rows: %w", err))
+		}
+	}
+	if path == "" && len(rows) == 0 {
+		return failure(errors.New("send the sheet as rows or name a path"))
 	}
 	var mappings map[string]flows.Mapping
 	if raw, ok := args["mappings"].(map[string]any); ok {
@@ -257,8 +270,8 @@ func (s *Server) importSpreadsheet(ctx context.Context,
 			return failure(fmt.Errorf("mappings: %w", err))
 		}
 	}
-	opts := flows.RunOptions{Path: path, DataType: stringArg(args["dataType"]),
-		Mappings: mappings}
+	opts := flows.RunOptions{Path: path, Rows: rows,
+		DataType: stringArg(args["dataType"]), Mappings: mappings}
 	opts.AcceptSuggestions, _ = args["acceptSuggestions"].(bool)
 	opts.Execute, _ = args["execute"].(bool)
 	if published, ok := args["published"].(bool); ok {

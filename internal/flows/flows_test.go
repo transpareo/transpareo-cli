@@ -258,6 +258,48 @@ func TestRunImportFlow(t *testing.T) {
 	}
 }
 
+// A sheet a caller has already read goes up as a JSON file,
+// because the extension is what picks the reader on the other
+// side.
+func TestRunUploadsRowsAsAJSONFile(t *testing.T) {
+	h, c := newHost(t)
+	var sent string
+	h.mux.HandleFunc("POST /api/imports", func(w http.ResponseWriter,
+		r *http.Request) {
+		body, _ := io.ReadAll(r.Body)
+		sent = string(body)
+		writeJSON(w, 201, map[string]any{"id": 12, "status": "mapped"})
+	})
+	h.mux.HandleFunc("POST /api/imports/12/validate",
+		func(w http.ResponseWriter, r *http.Request) {
+			writeJSON(w, 202, map[string]any{"id": 12, "status": "validating",
+				"statusUrl": h.URL + "/api/imports/12"})
+		})
+	h.mux.HandleFunc("GET /api/imports/12", func(w http.ResponseWriter,
+		r *http.Request) {
+		writeJSON(w, 200, map[string]any{"id": 12, "status": "validated",
+			"rowErrors": []any{}, "failedCount": 0})
+	})
+	rows := []map[string]any{{"Name": "Aqua", "Origin": "Germany"}}
+	imp, err := Run(context.Background(), c, RunOptions{Rows: rows,
+		DataType: "products"})
+	if err != nil {
+		t.Fatalf("run: %v", err)
+	}
+	if imp.Status != "validated" {
+		t.Errorf("status = %s", imp.Status)
+	}
+	if !strings.Contains(sent, `filename="rows.json"`) {
+		t.Errorf("upload = %s", sent)
+	}
+	if !strings.Contains(sent, `[{"Name":"Aqua","Origin":"Germany"}]`) {
+		t.Errorf("upload = %s", sent)
+	}
+	if !strings.Contains(sent, "products") {
+		t.Errorf("upload carries no dataType: %s", sent)
+	}
+}
+
 func TestValidateReportsRowErrors(t *testing.T) {
 	h, c := newHost(t)
 	h.mux.HandleFunc("POST /api/imports/5/validate", func(w http.ResponseWriter,

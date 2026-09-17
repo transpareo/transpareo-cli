@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"mime/multipart"
 	"net/http"
 	"os"
@@ -89,10 +88,12 @@ type Mapping struct {
 	IsSingleValue *bool  `json:"isSingleValue,omitempty"`
 }
 
-// MappingOptions are the options a run reads.
+// MappingOptions are the options a run reads. Backup left out
+// means the platform takes one, which a revert restores from;
+// false runs without it.
 type MappingOptions struct {
-	Published  *bool `json:"published,omitempty"`
-	SkipBackup *bool `json:"skipBackup,omitempty"`
+	Published *bool `json:"published,omitempty"`
+	Backup    *bool `json:"backup,omitempty"`
 }
 
 // Unresolved is one column the flow could not map on its own.
@@ -134,18 +135,38 @@ func (e *ErrValidationFailed) Error() string {
 // Upload sends a file as a new import and answers its state.
 func Upload(ctx context.Context, c *transpareo.Client, path, dataType string,
 	valueSeparator string) (*Import, error) {
-	file, err := os.Open(path)
+	content, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}
-	defer file.Close()
+	return upload(ctx, c, filepath.Base(path), content, dataType,
+		valueSeparator)
+}
+
+// UploadRows sends rows a caller already read as a new import,
+// one object per row keyed by the column headers. The extension
+// picks the reader on the platform's side, so they travel as a
+// JSON file.
+func UploadRows(ctx context.Context, c *transpareo.Client,
+	rows []map[string]any, dataType, valueSeparator string) (*Import, error) {
+	content, err := json.Marshal(rows)
+	if err != nil {
+		return nil, err
+	}
+	return upload(ctx, c, "rows.json", content, dataType, valueSeparator)
+}
+
+// upload posts the bytes as the multipart file every import
+// starts from.
+func upload(ctx context.Context, c *transpareo.Client, name string,
+	content []byte, dataType, valueSeparator string) (*Import, error) {
 	var buf bytes.Buffer
 	writer := multipart.NewWriter(&buf)
-	part, err := writer.CreateFormFile("file", filepath.Base(path))
+	part, err := writer.CreateFormFile("file", name)
 	if err != nil {
 		return nil, err
 	}
-	if _, err := io.Copy(part, file); err != nil {
+	if _, err := part.Write(content); err != nil {
 		return nil, err
 	}
 	if dataType != "" {
@@ -367,7 +388,10 @@ func runStep(ctx context.Context, c *transpareo.Client, id, step string,
 
 // RunOptions drive Run.
 type RunOptions struct {
+	// Path is a file on this machine, Rows a sheet the caller
+	// already read. Rows wins when both are given.
 	Path              string
+	Rows              []map[string]any
 	DataType          string
 	ValueSeparator    string
 	Mappings          map[string]Mapping
@@ -377,13 +401,22 @@ type RunOptions struct {
 	Progress          func(*transpareo.Task)
 }
 
+// upload sends whichever sheet the caller gave.
+func (o RunOptions) upload(ctx context.Context,
+	c *transpareo.Client) (*Import, error) {
+	if len(o.Rows) > 0 {
+		return UploadRows(ctx, c, o.Rows, o.DataType, o.ValueSeparator)
+	}
+	return Upload(ctx, c, o.Path, o.DataType, o.ValueSeparator)
+}
+
 // Run uploads, maps, validates and, when asked and clean,
 // executes. It stops with ErrMappingRequired when columns stay
 // unresolved and with ErrValidationFailed when the dry run found
 // problems; the import is attached to both.
 func Run(ctx context.Context, c *transpareo.Client, opts RunOptions) (*Import,
 	error) {
-	imp, err := Upload(ctx, c, opts.Path, opts.DataType, opts.ValueSeparator)
+	imp, err := opts.upload(ctx, c)
 	if err != nil {
 		return nil, err
 	}

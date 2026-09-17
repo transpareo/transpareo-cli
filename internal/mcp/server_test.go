@@ -612,9 +612,13 @@ func TestDataTools(t *testing.T) {
 			map[string]any{"events": []map[string]any{{"id": "e1"}},
 				"nextCursor": "e1"})
 	})
+	var uploadName string
 	mux.HandleFunc("POST /api/imports", func(w http.ResponseWriter,
 		r *http.Request) {
 		r.ParseMultipartForm(1 << 20)
+		if r.MultipartForm != nil && len(r.MultipartForm.File["file"]) > 0 {
+			uploadName = r.MultipartForm.File["file"][0].Filename
+		}
 		writeJSON(w, 201, map[string]any{"id": 12, "status": "fresh",
 			"preview": map[string]any{"columns": []map[string]any{
 				{"header": "Farbe", "column": "farbe",
@@ -658,6 +662,28 @@ func TestDataTools(t *testing.T) {
 	unresolved, _ := structured(t, result)["unresolved"].([]any)
 	if len(unresolved) != 1 {
 		t.Errorf("unresolved = %v", structured(t, result))
+	}
+	if uploadName != "c.xlsx" {
+		t.Errorf("the file went up as %q", uploadName)
+	}
+
+	// The instructions tell an assistant to send a sheet it has
+	// read as rows, so the tool takes rows and makes the file
+	// itself.
+	result = call(t, session, "import_spreadsheet",
+		map[string]any{"rows": []any{map[string]any{"Farbe": "rot"}},
+			"dataType": "products"})
+	if !result.IsError ||
+		!strings.Contains(text(result), "1 columns need a mapping") {
+		t.Errorf("import_spreadsheet with rows = %q", text(result))
+	}
+	if uploadName != "rows.json" {
+		t.Errorf("the rows went up as %q", uploadName)
+	}
+	result = call(t, session, "import_spreadsheet", map[string]any{})
+	if !result.IsError ||
+		!strings.Contains(text(result), "rows or name a path") {
+		t.Errorf("import_spreadsheet with neither = %q", text(result))
 	}
 
 	readOnly := connect(t, host, Options{ReadOnly: true})

@@ -42,18 +42,17 @@ protocol.
 - `--profile <name>` selects the workspace, as everywhere.
 - `--tools <group,...>` narrows the tools to groups: `products`
   (products, components, brands and the property types), `dpps`
-  (passports, requirements, validation and bulk calls), `data`
-  (imports, exports, tasks and the event feed, once those tools
-  exist) and `webhooks`. `me`, `search_operations` and `call_api`
-  are always present. A catalogue assistant does not carry webhook
-  tools.
+  (passports, requirements, validation, lots and bulk calls),
+  `data` (imports, exports, tasks and the event feed) and
+  `webhooks`. `me`, `search_operations` and `call_api` are always
+  present. A catalogue assistant does not carry webhook tools.
 - `--read-only` removes every tool that changes data and keeps the
   validations. `call_api` refuses writes in that mode too.
 
 ## Tools
 
-Forty curated tools cover the flows, and two escape hatches reach
-every other endpoint.
+Forty-two curated tools cover the flows, and two escape hatches
+reach every other endpoint.
 
 Which operations are curated, under what names, in which groups,
 of which shape and behind which confirm phrase is one declaration,
@@ -80,7 +79,15 @@ code, and a test compares what the two buildings produced.
   `validate_dpp`, `create_dpp`, `update_dpp`, `publish_dpp`,
   `append_dpp_event`, `update_dynamic_data`, `void_dpp`,
   `supersede_dpp`, `reissue_dpp`, `bulk_validate_dpps`,
-  `bulk_create_dpps`.
+  `bulk_create_dpps`, `list_lots`, `get_lot`. A lot comes into
+  being with the first passport that names it in
+  `batchIdentifier`, so the two lot tools are reads.
+- Data: `import_spreadsheet` takes a sheet as rows keyed by the
+  column headers, or as a path to a file on this machine, and
+  carries it through mapping, validation and the write;
+  `export_catalogue` starts an export and waits for the archive;
+  `tail_events` reads the event feed; `wait_for_task` polls a bulk
+  task to its end.
 - Webhooks: `list_webhooks`, `create_webhook`, `test_webhook`,
   `regenerate_webhook_secret`, `delete_webhook`. The create and
   regenerate tools answer the signing secret, because nothing
@@ -144,10 +151,13 @@ subprocess that should never see the secret.
 On connect the server tells the assistant to start with `me`; to
 call `product_property_types` before `create_product`; for
 passports of an existing product to call `dpp_requirements`, then
-`validate_dpp` before `create_dpp`; that `publish_dpp` signs and
-cannot be undone; that `void_dpp` and `supersede_dpp` need
-`confirm`; to use `search_operations` then `call_api` for anything
-without a tool; and that lists are paged.
+`validate_dpp` before `create_dpp`; that a passport of a batch or
+an item names its lot in `batchIdentifier`, which is what creates
+the lot; that `publish_dpp` signs and cannot be undone; that
+`void_dpp` and `supersede_dpp` need `confirm`; that a sheet it has
+read goes in through `import_spreadsheet` as rows; to use
+`search_operations` then `call_api` for anything without a tool;
+and that lists are paged.
 
 ## Coverage
 

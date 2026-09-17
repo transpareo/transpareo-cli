@@ -137,22 +137,18 @@ var viaCallAPIOnly = map[string]string{
 		"term",
 }
 
-// hostedOnly and localOnly are the tools one catalogue carries
-// and the other does not, each with the reason. Only a composed
+// hostedOnly lists the tools the hosted catalogue carries and
+// this server does not, each with the reason. Only a composed
 // tool can appear: a curated one is generated from the row the
 // catalogue publishes, so the two sides carry the same set by
 // construction. A test compares the two catalogues and refuses
-// any difference not listed here.
+// any other difference, in either direction: a composed tool of
+// this server is one the hosted catalogue carries too.
 var hostedOnly = map[string]string{
 	"search": "deep research prescribes both this name and its shape; " +
 		"a client that finds anything else falls back to no research",
 	"fetch": "deep research prescribes both this name and its shape; " +
 		"a client that finds anything else falls back to no research",
-}
-
-var localOnly = map[string]string{
-	"import_spreadsheet": "the flow starts from a path to a file on " +
-		"disk, which a hosted assistant has no way to reach",
 }
 
 // Tools returns the curated tools, filtered to the groups asked

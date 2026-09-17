@@ -193,6 +193,11 @@ func throwawayProduct(t *testing.T, c *transpareo.Client) json.Number {
 	return created.ID
 }
 
+// lotIdentifier is the lot every passport of this suite names.
+// The platform creates the lot with the first passport that names
+// it, so this is also the name the lot endpoints answer under.
+const lotIdentifier = "L-e2e"
+
 // passport is one this run created, with what the workspace said
 // about publishing it. A workspace whose templates block a
 // publish answers a documented refusal to everything downstream
@@ -231,7 +236,7 @@ func throwawayPassport(t *testing.T, c *transpareo.Client,
 		t.Fatalf("requirements carry no create template: %+v", requirements)
 	}
 	dppTemplate["modelIdentifier"] = "CLI-E2E"
-	dppTemplate["batchIdentifier"] = "L-e2e"
+	dppTemplate["batchIdentifier"] = lotIdentifier
 	dppTemplate["serialIdentifier"] = fmt.Sprintf("%d",
 		time.Now().UnixNano()%1000000)
 	dppTemplate["description"] = "cli e2e"
@@ -298,6 +303,39 @@ func TestPassportFlowOnAThrowawayProduct(t *testing.T) {
 	}
 	if fetched["code"] != created.Code {
 		t.Errorf("fetched = %v", fetched)
+	}
+
+	// The passport named a lot in batchIdentifier, and naming it is
+	// what creates the lot; the lot endpoints read it back.
+	var lots struct {
+		Lots []struct {
+			ID         json.Number `json:"id"`
+			Identifier string      `json:"identifier"`
+			ProductID  json.Number `json:"productId"`
+			DppsCount  int         `json:"dppsCount"`
+		} `json:"lots"`
+	}
+	_, err = c.Get(ctx, "/lots",
+		map[string][]string{"product_id": {productID.String()}}, &lots)
+	if err != nil {
+		t.Fatalf("list lots: %v", err)
+	}
+	if len(lots.Lots) != 1 || lots.Lots[0].Identifier != lotIdentifier {
+		t.Fatalf("the product's lots are %+v, want the one %s the passport "+
+			"named", lots.Lots, lotIdentifier)
+	}
+	lot := lots.Lots[0]
+	if lot.ProductID.String() != productID.String() || lot.DppsCount < 1 {
+		t.Errorf("lot %s belongs to product %s and counts %d passports",
+			lot.Identifier, lot.ProductID, lot.DppsCount)
+	}
+	var fetchedLot map[string]any
+	if _, err := c.Get(ctx, "/lots/"+lot.ID.String(), nil,
+		&fetchedLot); err != nil {
+		t.Fatalf("get lot: %v", err)
+	}
+	if fetchedLot["identifier"] != lotIdentifier {
+		t.Errorf("get lot answered %v", fetchedLot)
 	}
 
 	rows := "{\"modelIdentifier\": \"" + runID() + "\", \"unlockableId\": " +

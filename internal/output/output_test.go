@@ -53,6 +53,24 @@ func TestPrintTableOnTerminal(t *testing.T) {
 	}
 }
 
+// A lot carries no name, and its identifier is what a person
+// reads it by, so the summary columns have to carry that key.
+func TestPrintTableOfLots(t *testing.T) {
+	p, out, _ := newPrinter(true, Options{})
+	lots := json.RawMessage(`[{"id": 7, "type": "Lot",
+	  "identifier": "L2026-09", "productId": 11, "dppsCount": 250}]`)
+	if err := p.Print(lots); err != nil {
+		t.Fatal(err)
+	}
+	if !strings.HasPrefix(strings.TrimSpace(out.String()),
+		"id  identifier") {
+		t.Errorf("table = %q", out.String())
+	}
+	if !strings.Contains(out.String(), "L2026-09") {
+		t.Errorf("table = %q", out.String())
+	}
+}
+
 func TestPrintObjectOnTerminal(t *testing.T) {
 	p, out, _ := newPrinter(true, Options{})
 	p.Print(map[string]any{"name": "ERP", "permissions": []string{"a", "b"},

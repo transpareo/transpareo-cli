@@ -173,6 +173,34 @@ func TestImportsRunValidatesAndExecutes(t *testing.T) {
 	}
 }
 
+// The flag names what to skip and the API field names what to
+// take, so a run started with --skip-backup asks for backup
+// false. Without the flag the body carries no backup at all and
+// the platform takes one.
+func TestImportsRunSkipBackupAsksForNoBackup(t *testing.T) {
+	h := compositeHarness(t)
+	h.login()
+	file := filepath.Join(t.TempDir(), "catalogue.xlsx")
+	os.WriteFile(file, []byte("XLSX"), 0o600)
+	out, errOut, code := h.run("imports", "run", "--file", file, "--type",
+		"products", "--accept-suggestions", "--map", "Farbe=skip",
+		"--execute", "--skip-backup")
+	if code != 0 {
+		t.Fatalf("code = %d, out = %s, err = %s", code, out, errOut)
+	}
+	var sent string
+	h.mu.Lock()
+	for i, r := range h.requests {
+		if strings.HasSuffix(r.URL.Path, "/execute") {
+			sent = h.bodies[i]
+		}
+	}
+	h.mu.Unlock()
+	if sent != `{"options":{"backup":false}}` {
+		t.Errorf("execute body = %s", sent)
+	}
+}
+
 func TestImportsRunExitsThreeOnRowErrors(t *testing.T) {
 	h := compositeHarness(t)
 	h.login()

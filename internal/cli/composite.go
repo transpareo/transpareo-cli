@@ -87,7 +87,9 @@ one, or skip.`,
 }
 
 // runOptions builds the options only when a flag was given, so
-// the platform's defaults stay in force otherwise.
+// the platform's defaults stay in force otherwise. The flag says
+// what to skip and the API field says what to take, so one is the
+// negation of the other.
 func runOptions(cmd *cobra.Command, published,
 	skipBackup bool) *flows.MappingOptions {
 	var opts flows.MappingOptions
@@ -97,7 +99,8 @@ func runOptions(cmd *cobra.Command, published,
 		set = true
 	}
 	if cmd.Flags().Changed("skip-backup") {
-		opts.SkipBackup = &skipBackup
+		backup := !skipBackup
+		opts.Backup = &backup
 		set = true
 	}
 	if !set {
