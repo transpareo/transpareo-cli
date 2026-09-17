@@ -1,6 +1,6 @@
 # Command reference
 
-Every command of `transpareo`, generated from API specification 1.19.0. `--help` on any command prints the same example and permission key.
+Every command of `transpareo`, generated from API specification 2.0.0. `--help` on any command prints the same example and permission key.
 
 | Option on every command | What it does |
 |---|---|
@@ -12,7 +12,7 @@ Every command of `transpareo`, generated from API specification 1.19.0. `--help`
 | `--read-only` | refuse every operation that changes data |
 | `--yes` | confirm an operation that cannot be undone |
 
-[General](#general) · [Brands](#brands) · [Categories](#categories) · [Components](#components) · [Configuration](#configuration) · [Coupons](#coupons) · [DPPs](#dpps) · [Events](#events) · [Exports](#exports) · [Grants](#grants) · [Imports](#imports) · [Mediafiles](#mediafiles) · [Permalinks](#permalinks) · [Plans](#plans) · [Products](#products) · [Reference Data](#reference-data) · [Search](#search) · [Webhooks](#webhooks)
+[General](#general) · [Brands](#brands) · [Categories](#categories) · [Components](#components) · [Configuration](#configuration) · [Coupons](#coupons) · [DPPs](#dpps) · [Events](#events) · [Exports](#exports) · [Grants](#grants) · [Imports](#imports) · [Lots](#lots) · [Mediafiles](#mediafiles) · [Permalinks](#permalinks) · [Plans](#plans) · [Products](#products) · [Reference Data](#reference-data) · [Search](#search) · [Webhooks](#webhooks)
 
 ## General
 
@@ -1224,6 +1224,43 @@ transpareo imports validate <id>
 | `--wait` | poll the statusUrl until the work is done |
 
 `POST /imports/{id}/validate` · operation `validate_import` · permission `import_access`
+
+## Lots
+
+The lots batch and item passports freeze from, created with the first passport that names them.
+
+### transpareo lots get
+
+Get a lot.
+
+```sh
+transpareo lots get <id>
+transpareo lots get <id>
+```
+
+| Option | What it does |
+|---|---|
+| `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
+
+`GET /lots/{id}` · operation `get_lot` · permission `dpp_read`
+
+### transpareo lots list
+
+List lots.
+
+```sh
+transpareo lots list --product-id <product_id>
+```
+
+| Option | What it does |
+|---|---|
+| `--identifier` \<value\> | Keep only the lot with this identifier, the value a passport carries as 'batchIdentifier' |
+| `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
+| `--page` \<n\> | Page number |
+| `--per-page` \<n\> | Records per page (default: 100, max: 500) |
+| `--product-id` \<n\> | Keep only the lots of this product |
+
+`GET /lots` · operation `list_lots` · permission `dpp_read`
 
 ## Mediafiles
 

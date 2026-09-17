@@ -581,6 +581,25 @@
     "operationId": "validate_import"
   },
   {
+    "path": "transpareo lots get",
+    "args": "<id>",
+    "flags": [
+      "output"
+    ],
+    "operationId": "get_lot"
+  },
+  {
+    "path": "transpareo lots list",
+    "flags": [
+      "identifier",
+      "output",
+      "page",
+      "per-page",
+      "product-id"
+    ],
+    "operationId": "list_lots"
+  },
+  {
     "path": "transpareo mcp",
     "args": "[--tools <group,...>] [--read-only]",
     "flags": [

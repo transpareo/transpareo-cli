@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Transpareo API",
-    "version": "1.19.0",
+    "version": "2.0.0",
     "description": "This site runs on the [Transpareo](https://transpareo.com) product information platform. The REST API gives programs access to products, product components, brands, Digital Product Passports, categories and configuration. The version is selected with the `Accept` header, not a path segment.\n\nThe guide at [/apidocs/guide](/apidocs/guide) is the narrative companion to this reference: credentials, permissions, pagination, idempotency, the passport flows, the event feed, webhooks, rate limits and the error format. It is also served as Markdown at [/apidocs/guide.md](/apidocs/guide.md).\n\nPrograms authenticate with the OAuth 2.0 client credentials grant. Exchange the client id and secret once, then send the token on every request:\n\n```\ncurl -X POST https://<host>/api/oauth/token -d grant_type=client_credentials -d client_id=<key> -d client_secret=<secret>\n\ncurl https://<host>/api/me -H \"Authorization: Bearer <access_token>\"\n```\n\nAn assistant that speaks the Model Context Protocol connects to `/mcp` on this host and calls these operations as tools, named in the catalogue at [/apidocs/mcp-tools.json](/apidocs/mcp-tools.json) and explained by the guide's Assistants section.",
     "contact": {
       "name": "Transpareo Support",
@@ -43,6 +43,10 @@
     {
       "name": "DPPs",
       "description": "Digital Product Passports: QR code links to product data, compliant with EU ESPR regulation"
+    },
+    {
+      "name": "Lots",
+      "description": "The lots batch and item passports freeze from, created with the first passport that names them"
     },
     {
       "name": "Grants",
@@ -1790,8 +1794,7 @@
           },
           "granularity": {
             "type": "string",
-            "default": "model",
-            "description": "Which unit the passport stands for, and therefore which identifiers it needs",
+            "description": "Which unit the passport stands for, and therefore which identifiers it needs. Left out, the passport takes the workspace's default granularity, so name it when the passport is for a batch or an item.",
             "enum": [
               "model",
               "batch",
@@ -2836,7 +2839,7 @@
           },
           "options": {
             "type": "object",
-            "description": "The options the run reads, `published` and `skipBackup`"
+            "description": "The options the run reads, `published` and `backup`"
           },
           "errorGroups": {
             "type": "array",
@@ -3010,9 +3013,9 @@
                 "type": "boolean",
                 "description": "Publish the records the import creates"
               },
-              "skipBackup": {
+              "backup": {
                 "type": "boolean",
-                "description": "Execute without the backup a revert would restore from"
+                "description": "Take the backup a revert restores from. Defaults to true."
               }
             }
           }
@@ -3117,7 +3120,7 @@
             "items": {
               "type": "string"
             },
-            "description": "The attributes a mapping must cover"
+            "description": "The attributes a mapping must cover, which are the ones that identify a row. A product row that creates a product also needs `brand_name`, `category` and `components_input`; one that resolves to a product the workspace already holds needs none of them."
           },
           "propertyTypes": {
             "type": "array",
@@ -3399,6 +3402,45 @@
                 }
               }
             }
+          }
+        }
+      },
+      "Lot": {
+        "type": "object",
+        "description": "A lot batch and item passports freeze from. It holds the product's components and properties as they stood when the lot was created, so every passport of the lot carries the same frozen data.",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "type": {
+            "type": "string",
+            "example": "Lot"
+          },
+          "identifier": {
+            "type": "string",
+            "description": "The lot number, the value a passport of the lot carries as `batchIdentifier`",
+            "example": "L2026-09"
+          },
+          "productId": {
+            "type": "integer",
+            "description": "The product the lot was made of"
+          },
+          "manufacturedOn": {
+            "type": "string",
+            "format": "date",
+            "description": "Only present when set"
+          },
+          "dppsCount": {
+            "type": "integer",
+            "description": "Passports issued against the lot, drafts included"
+          },
+          "publishedDppsCount": {
+            "type": "integer",
+            "description": "Passports of the lot that have published at least once"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       },
@@ -9182,7 +9224,7 @@
           "Imports"
         ],
         "summary": "Execute an import",
-        "description": "Writes the rows in the background, after a backup a revert can restore from unless `options.skipBackup` is set. Poll the `statusUrl` until `status` is `completed` or `failed`.\n\nBesides `import_access` this needs the write permission of the data type: `component_write` for components, `product_access` for products, `dpp_bulk_write` for passports. The rows count against the consumer's bulk item cap for the minute.",
+        "description": "Writes the rows in the background, after a backup a revert can restore from. Send `options.backup` as `false` to run without one. Poll the `statusUrl` until `status` is `completed` or `failed`.\n\nBesides `import_access` this needs the write permission of the data type: `component_write` for components, `product_access` for products, `dpp_bulk_write` for passports. The rows count against the consumer's bulk item cap for the minute.",
         "operationId": "execute_import",
         "x-permission": "import_access",
         "security": [
@@ -9205,7 +9247,7 @@
                   "options": {
                     "type": "object",
                     "properties": {
-                      "skipBackup": {
+                      "backup": {
                         "type": "boolean"
                       },
                       "published": {
@@ -9674,6 +9716,169 @@
           },
           "406": {
             "description": "Unsupported format (only csv and xlsx are available)"
+          }
+        }
+      }
+    },
+    "/lots": {
+      "get": {
+        "tags": [
+          "Lots"
+        ],
+        "summary": "List lots",
+        "description": "The lots batch and item passports freeze from, newest first. A lot is created with the first passport that names its identifier and reused by every later passport of the same lot, so there is nothing to create here: to issue a passport of a new lot, name the lot in `batchIdentifier` on `POST /dpps` or in the shared line of a bulk create.\n\nNarrow the list with `product_id` to see which lots a product already has, or with `identifier` to find the lot a passport names.",
+        "operationId": "list_lots",
+        "x-permission": "dpp_read",
+        "security": [
+          {
+            "userToken": []
+          },
+          {
+            "oauth2": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Keep only the lots of this product"
+          },
+          {
+            "name": "identifier",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Keep only the lot with this identifier, the value a passport carries as `batchIdentifier`"
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "$ref": "#/components/parameters/per_page"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of lots",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "lots": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Lot"
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "lots": [
+                    {
+                      "id": 7,
+                      "type": "Lot",
+                      "identifier": "L2026-09",
+                      "productId": 11,
+                      "manufacturedOn": "2026-09-01",
+                      "dppsCount": 250,
+                      "publishedDppsCount": 250,
+                      "createdAt": "2026-09-01T08:15:00Z"
+                    }
+                  ]
+                }
+              }
+            },
+            "headers": {
+              "API-Total": {
+                "$ref": "#/components/headers/API-Total"
+              },
+              "API-Count": {
+                "$ref": "#/components/headers/API-Count"
+              },
+              "API-Offset": {
+                "$ref": "#/components/headers/API-Offset"
+              },
+              "API-Page": {
+                "$ref": "#/components/headers/API-Page"
+              },
+              "API-Per-Page": {
+                "$ref": "#/components/headers/API-Per-Page"
+              },
+              "Link": {
+                "$ref": "#/components/headers/Link"
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        }
+      }
+    },
+    "/lots/{id}": {
+      "get": {
+        "tags": [
+          "Lots"
+        ],
+        "summary": "Get a lot",
+        "description": "One lot with the number of passports issued against it, and how many of those have published.",
+        "operationId": "get_lot",
+        "x-permission": "dpp_read",
+        "security": [
+          {
+            "userToken": []
+          },
+          {
+            "oauth2": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The lot",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Lot"
+                },
+                "example": {
+                  "id": 7,
+                  "type": "Lot",
+                  "identifier": "L2026-09",
+                  "productId": 11,
+                  "manufacturedOn": "2026-09-01",
+                  "dppsCount": 250,
+                  "publishedDppsCount": 250,
+                  "createdAt": "2026-09-01T08:15:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
           }
         }
       }
