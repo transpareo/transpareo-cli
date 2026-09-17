@@ -305,7 +305,6 @@ Get a brand.
 
 ```sh
 transpareo brands get <id>
-transpareo brands get <id>
 ```
 
 | Option | What it does |
@@ -408,7 +407,6 @@ Get a component.
 
 ```sh
 transpareo components get <id>
-transpareo components get <id>
 ```
 
 | Option | What it does |
@@ -444,7 +442,6 @@ Publish a component.
 
 ```sh
 transpareo components publish <id>
-transpareo components publish <id>
 ```
 
 | Option | What it does |
@@ -458,7 +455,6 @@ transpareo components publish <id>
 Unpublish a component.
 
 ```sh
-transpareo components unpublish <id>
 transpareo components unpublish <id>
 ```
 
@@ -606,7 +602,6 @@ transpareo dpps bulk validate --file body.json
 Poll an asynchronous bulk create.
 
 ```sh
-transpareo dpps bulk-task <taskId>
 transpareo dpps bulk-task <taskId>
 ```
 
@@ -892,7 +887,6 @@ Read the private properties of one version.
 
 ```sh
 transpareo dpps version-private-properties <code> <version>
-transpareo dpps version-private-properties <code> <version>
 ```
 
 | Option | What it does |
@@ -906,7 +900,6 @@ transpareo dpps version-private-properties <code> <version>
 List the registered versions of a DPP.
 
 ```sh
-transpareo dpps versions list <id>
 transpareo dpps versions list <id>
 ```
 
@@ -1008,7 +1001,6 @@ Download an export archive.
 
 ```sh
 transpareo exports download <id>
-transpareo exports download <id>
 ```
 
 | Option | What it does |
@@ -1022,7 +1014,6 @@ transpareo exports download <id>
 Poll an export.
 
 ```sh
-transpareo exports get <id>
 transpareo exports get <id>
 ```
 
@@ -1116,7 +1107,6 @@ transpareo imports execute <id> --file body.json
 Poll an import.
 
 ```sh
-transpareo imports get <id>
 transpareo imports get <id>
 ```
 
@@ -1217,7 +1207,6 @@ Validate an import.
 
 ```sh
 transpareo imports validate <id>
-transpareo imports validate <id>
 ```
 
 | Option | What it does |
@@ -1236,7 +1225,6 @@ The lots batch and item passports freeze from, created with the first passport t
 Get a lot.
 
 ```sh
-transpareo lots get <id>
 transpareo lots get <id>
 ```
 
@@ -1346,7 +1334,6 @@ Subscription plans and pricing.
 Get a subscription plan.
 
 ```sh
-transpareo plans get <id>
 transpareo plans get <id>
 ```
 
@@ -1517,7 +1504,6 @@ Publish a product.
 
 ```sh
 transpareo products publish <id>
-transpareo products publish <id>
 ```
 
 | Option | What it does |
@@ -1531,7 +1517,6 @@ transpareo products publish <id>
 Unpublish a product.
 
 ```sh
-transpareo products unpublish <id>
 transpareo products unpublish <id>
 ```
 
@@ -1716,7 +1701,6 @@ Get a webhook subscription.
 
 ```sh
 transpareo webhooks get <id>
-transpareo webhooks get <id>
 ```
 
 | Option | What it does |
@@ -1761,7 +1745,6 @@ transpareo webhooks secret regenerate <id> --yes
 Send a test delivery.
 
 ```sh
-transpareo webhooks test <id>
 transpareo webhooks test <id>
 ```
 

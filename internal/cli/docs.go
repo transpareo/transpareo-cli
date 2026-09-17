@@ -143,11 +143,21 @@ func writeCommandDoc(b *strings.Builder, cmd *cobra.Command,
 	fmt.Fprintf(b, "### %s\n\n%s.\n\n", cmd.CommandPath(),
 		strings.TrimSuffix(cmd.Short, "."))
 	var block []string
+	var usage string
 	if args := argsOf(cmd); args != "" {
-		block = append(block, cmd.CommandPath()+" "+args)
+		usage = cmd.CommandPath() + " " + args
+		block = append(block, usage)
 	}
+	// An example often opens with the usage line, and the same
+	// call printed twice reads as two calls that differ somewhere
+	// the reader has to hunt for.
 	if example := strings.TrimSpace(cmd.Example); example != "" {
-		block = append(block, strings.ReplaceAll(example, "\n  ", "\n"))
+		for _, line := range strings.Split(
+			strings.ReplaceAll(example, "\n  ", "\n"), "\n") {
+			if line != usage {
+				block = append(block, line)
+			}
+		}
 	}
 	if len(block) > 0 {
 		fmt.Fprintf(b, "```sh\n%s\n```\n\n", strings.Join(block, "\n"))

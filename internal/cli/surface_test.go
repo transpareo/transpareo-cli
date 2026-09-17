@@ -76,3 +76,25 @@ func TestMarkdownReference(t *testing.T) {
 		t.Error("docs/cli.md is stale; run go generate ./...")
 	}
 }
+
+// A command whose example is the usage line prints it once. The
+// two are built from different halves of the specification and
+// land on the same string often enough that the reference used to
+// show a doubled call under a third of the get commands.
+func TestMarkdownReferencePrintsACallOnce(t *testing.T) {
+	app := &App{Getenv: func(string) string { return "" }}
+	doc, err := app.Markdown(app.Root())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(doc, "```sh\ntranspareo imports get <id>\n```") {
+		t.Error("transpareo imports get does not print its one call alone")
+	}
+	var previous string
+	for _, line := range strings.Split(doc, "\n") {
+		if strings.HasPrefix(line, "transpareo ") && line == previous {
+			t.Errorf("the reference prints %q twice in a row", line)
+		}
+		previous = line
+	}
+}
