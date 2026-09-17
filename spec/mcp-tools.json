@@ -1,6 +1,6 @@
 {
-  "version": "1.19.0",
-  "instructions": "Transpareo holds a workspace's products, components and Digital\nProduct Passports. Start with me to learn what the credential\nallows. For a new product call product_property_types before\ncreate_product. For passports of an existing product call\ndpp_requirements, then validate_dpp before create_dpp. publish_dpp\nsigns the passport and cannot be undone. Recalling a unit is a\nstatus change to suspended through append_dpp_event, not a void;\nvoid_dpp is for a unit that no longer exists. void_dpp and\nsupersede_dpp need the confirm argument with the stated phrase.\nAnything without a tool: search_operations, then call_api. Lists\nare paged; follow nextPage.",
+  "version": "2.0.0",
+  "instructions": "Transpareo holds a workspace's products, components and Digital\nProduct Passports. Start with me to learn what the credential\nallows. For a new product call product_property_types before\ncreate_product. For passports of an existing product call\ndpp_requirements, then validate_dpp before create_dpp. A passport\nof a batch or an item names its lot in batchIdentifier and the lot\nis created with the first passport that names it; there is no\nseparate lot step. list_lots shows the lots a product already\nhas. A run of passports goes through bulk_create_dpps with the\nlot in shared. publish_dpp\nsigns the passport and cannot be undone. Recalling a unit is a\nstatus change to suspended through append_dpp_event, not a void;\nvoid_dpp is for a unit that no longer exists. void_dpp and\nsupersede_dpp need the confirm argument with the stated phrase.\nA spreadsheet goes in through import_spreadsheet as base64; when\nit answers a preview, propose the column mapping to the person\nand call again with mappings, using create_new for columns that\nshould become property types.\nAnything without a tool: search_operations, then call_api. Lists\nare paged; follow nextPage.",
   "tools": [
     {
       "name": "append_dpp_event",
@@ -1023,8 +1023,7 @@
               },
               "granularity": {
                 "type": "string",
-                "default": "model",
-                "description": "Which unit the passport stands for, and therefore which identifiers it needs",
+                "description": "Which unit the passport stands for, and therefore which identifiers it needs. Left out, the passport takes the workspace's default granularity, so name it when the passport is for a batch or an item.",
                 "enum": [
                   "model",
                   "batch",
@@ -3426,6 +3425,87 @@
       }
     },
     {
+      "name": "get_lot",
+      "title": "Get a lot",
+      "description": "Get a lot\nPermission: dpp_read. Data tier: authorised (the workspace's own catalogue).\nExample: get_lot {\"id\":\"<id>\"}",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The id in the path"
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Keep only these fields of the record, such as id, name or status"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "outputSchema": {
+        "type": "object",
+        "description": "A lot batch and item passports freeze from. It holds the product's components and properties as they stood when the lot was created, so every passport of the lot carries the same frozen data.",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "type": {
+            "type": "string",
+            "example": "Lot"
+          },
+          "identifier": {
+            "type": "string",
+            "description": "The lot number, the value a passport of the lot carries as `batchIdentifier`",
+            "example": "L2026-09"
+          },
+          "productId": {
+            "type": "integer",
+            "description": "The product the lot was made of"
+          },
+          "manufacturedOn": {
+            "type": "string",
+            "format": "date",
+            "description": "Only present when set"
+          },
+          "dppsCount": {
+            "type": "integer",
+            "description": "Passports issued against the lot, drafts included"
+          },
+          "publishedDppsCount": {
+            "type": "integer",
+            "description": "Passports of the lot that have published at least once"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "x-transpareo": {
+        "operationId": "get_lot",
+        "method": "GET",
+        "path": "/lots/{id}",
+        "permission": [
+          "dpp_read"
+        ],
+        "destructive": false,
+        "safe": true,
+        "group": "dpps",
+        "kind": "get"
+      }
+    },
+    {
       "name": "get_product",
       "title": "Get a product",
       "description": "Get a product\nPermission: none, the endpoint is public. Data tier: public.\nExample: get_product {\"id\":\"<id>\"}",
@@ -3910,6 +3990,70 @@
         "safe": true,
         "group": "products",
         "kind": "get"
+      }
+    },
+    {
+      "name": "import_spreadsheet",
+      "title": "Import a spreadsheet",
+      "description": "Run a spreadsheet import whole: the sheet goes up as base64, the columns are mapped, the rows are checked and then written. A sheet whose columns are not all resolved comes back with its preview and nothing is written; propose one action per column to the person and call again with mappings, using create_new for a column that should become a property type. A sheet with rows the dry run cannot write comes back with those rows and none of it lands. At most 750 KB of bytes; a larger sheet goes through the command line. Permission: import_access, and the write permission of the data type to write the rows. Data tier: authorised. Example: import_spreadsheet {\"data\": \"<base64>\", \"fileName\": \"catalogue.csv\"}",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "string",
+            "description": "The spreadsheet as base64, at most 750 KB of bytes"
+          },
+          "fileName": {
+            "type": "string",
+            "description": "The name of the file; its extension picks the reader: xlsx, csv, ods or json"
+          },
+          "dataType": {
+            "type": "string",
+            "enum": [
+              "components",
+              "products",
+              "dpps"
+            ],
+            "description": "What the rows are (default components)"
+          },
+          "valueSeparator": {
+            "type": "string",
+            "description": "What separates several values in one cell"
+          },
+          "mappings": {
+            "type": "object",
+            "description": "One action per column, the mappings of ImportMappingsInput: map_to_attribute with coreAttribute, use_existing with typeId, create_new with typeName, or skip"
+          },
+          "options": {
+            "type": "object",
+            "description": "The run options of ImportMappingsInput: backup, published, force, auto, notify"
+          },
+          "wait": {
+            "type": "boolean",
+            "description": "Wait for the rows to be written (default true)"
+          }
+        },
+        "required": [
+          "data",
+          "fileName"
+        ]
+      },
+      "outputSchema": {
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "x-transpareo": {
+        "permission": [
+          "import_access"
+        ],
+        "destructive": false,
+        "safe": false,
+        "group": "data"
       }
     },
     {
@@ -4518,6 +4662,118 @@
         "safe": true,
         "group": "dpps",
         "kind": "list"
+      }
+    },
+    {
+      "name": "list_lots",
+      "title": "List lots",
+      "description": "List lots. The lots batch and item passports freeze from. Narrow by product_id or identifier; a lot is created by the first passport that names it, never here.\nPermission: dpp_read. Data tier: authorised (the workspace's own catalogue).\nExample: list_lots {\"per_page\":20}",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "product_id": {
+            "type": "integer",
+            "description": "Keep only the lots of this product"
+          },
+          "identifier": {
+            "type": "string",
+            "description": "Keep only the lot with this identifier, the value a passport carries as `batchIdentifier`"
+          },
+          "page": {
+            "type": "integer",
+            "default": 1,
+            "minimum": 1,
+            "description": "Page number"
+          },
+          "per_page": {
+            "type": "integer",
+            "default": 100,
+            "maximum": 500,
+            "description": "Records per page (default: 100, max: 500)"
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Keep only these fields of each item, such as id, name or status"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "description": "A lot batch and item passports freeze from. It holds the product's components and properties as they stood when the lot was created, so every passport of the lot carries the same frozen data.",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "type": {
+                  "type": "string",
+                  "example": "Lot"
+                },
+                "identifier": {
+                  "type": "string",
+                  "description": "The lot number, the value a passport of the lot carries as `batchIdentifier`",
+                  "example": "L2026-09"
+                },
+                "productId": {
+                  "type": "integer",
+                  "description": "The product the lot was made of"
+                },
+                "manufacturedOn": {
+                  "type": "string",
+                  "format": "date",
+                  "description": "Only present when set"
+                },
+                "dppsCount": {
+                  "type": "integer",
+                  "description": "Passports issued against the lot, drafts included"
+                },
+                "publishedDppsCount": {
+                  "type": "integer",
+                  "description": "Passports of the lot that have published at least once"
+                },
+                "createdAt": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            }
+          },
+          "page": {
+            "type": "integer"
+          },
+          "total": {
+            "type": "integer"
+          },
+          "nextPage": {
+            "type": "integer"
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "x-transpareo": {
+        "operationId": "list_lots",
+        "method": "GET",
+        "path": "/lots",
+        "permission": [
+          "dpp_read"
+        ],
+        "destructive": false,
+        "safe": true,
+        "group": "dpps",
+        "kind": "list",
+        "sentence": "The lots batch and item passports freeze from. Narrow by product_id or identifier; a lot is created by the first passport that names it, never here."
       }
     },
     {
@@ -7975,8 +8231,7 @@
               },
               "granularity": {
                 "type": "string",
-                "default": "model",
-                "description": "Which unit the passport stands for, and therefore which identifiers it needs",
+                "description": "Which unit the passport stands for, and therefore which identifiers it needs. Left out, the passport takes the workspace's default granularity, so name it when the passport is for a batch or an item.",
                 "enum": [
                   "model",
                   "batch",
@@ -9030,8 +9285,7 @@
               },
               "granularity": {
                 "type": "string",
-                "default": "model",
-                "description": "Which unit the passport stands for, and therefore which identifiers it needs",
+                "description": "Which unit the passport stands for, and therefore which identifiers it needs. Left out, the passport takes the workspace's default granularity, so name it when the passport is for a batch or an item.",
                 "enum": [
                   "model",
                   "batch",

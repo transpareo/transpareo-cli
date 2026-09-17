@@ -7,11 +7,20 @@ const instructions = `Transpareo holds a workspace's products, components and Di
 Product Passports. Start with me to learn what the credential
 allows. For a new product call product_property_types before
 create_product. For passports of an existing product call
-dpp_requirements, then validate_dpp before create_dpp. publish_dpp
+dpp_requirements, then validate_dpp before create_dpp. A passport
+of a batch or an item names its lot in batchIdentifier and the lot
+is created with the first passport that names it; there is no
+separate lot step. list_lots shows the lots a product already
+has. A run of passports goes through bulk_create_dpps with the
+lot in shared. publish_dpp
 signs the passport and cannot be undone. Recalling a unit is a
 status change to suspended through append_dpp_event, not a void;
 void_dpp is for a unit that no longer exists. void_dpp and
 supersede_dpp need the confirm argument with the stated phrase.
+A spreadsheet goes in through import_spreadsheet as base64; when
+it answers a preview, propose the column mapping to the person
+and call again with mappings, using create_new for columns that
+should become property types.
 Anything without a tool: search_operations, then call_api. Lists
 are paged; follow nextPage.`
 
@@ -106,6 +115,12 @@ var curated = []Tool{
 		Kind:      kindGet,
 	},
 	{
+		Name:      "get_lot",
+		Group:     GroupDpps,
+		Operation: "get_lot",
+		Kind:      kindGet,
+	},
+	{
 		Name:      "get_product",
 		Group:     GroupProducts,
 		Operation: "get_product",
@@ -128,6 +143,13 @@ var curated = []Tool{
 		Group:     GroupDpps,
 		Operation: "list_dpps",
 		Kind:      kindList,
+	},
+	{
+		Name:        "list_lots",
+		Group:       GroupDpps,
+		Operation:   "list_lots",
+		Kind:        kindList,
+		Description: `The lots batch and item passports freeze from. Narrow by product_id or identifier; a lot is created by the first passport that names it, never here.`,
 	},
 	{
 		Name:      "list_mediafiles",

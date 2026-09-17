@@ -188,6 +188,8 @@ any of them shows an example and the permission it needs;
 - `transpareo imports run --file <path> --type <components|products|dpps>`: Upload, map, validate and, with --execute, run an import (import_access)
 - `transpareo imports supplier-form`: Download the blank supplier form (import_access)
 - `transpareo imports validate <id>`: Validate an import (import_access)
+- `transpareo lots get <id>`: Get a lot (dpp_read)
+- `transpareo lots list`: List lots (dpp_read)
 - `transpareo mcp [--tools <group,...>] [--read-only]`: Start the Model Context Protocol server over standard input and output
 - `transpareo me`: Show what the current credential allows (GET /me)
 - `transpareo mediafiles create`: Upload a mediafile
