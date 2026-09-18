@@ -108,34 +108,54 @@ func TestParseMapSpec(t *testing.T) {
 	}
 }
 
-func TestResolveMappingsAcceptsSafeSuggestionsOnly(t *testing.T) {
+// An accepted run takes the preview's suggestion for every column
+// the platform recognised, a similarity match included, since that
+// is the one its mapping page prefills. Only a column matched to
+// nothing is left for a person, and the fuzzy ones come back as
+// guesses to show.
+func TestResolveMappingsTakesWhatThePlatformMatched(t *testing.T) {
 	imp := &Import{Status: "fresh", Preview: &preview}
-	resolved, err := ResolveMappings(imp, nil, true)
+	resolved, guesses, err := ResolveMappings(imp, nil, true, false)
 	var required *ErrMappingRequired
 	if !errors.As(err, &required) {
 		t.Fatalf("err = %v", err)
 	}
 	if resolved["artikelname"].CoreAttribute != "name" ||
-		resolved["gewicht"].TypeID != "6650" {
+		resolved["gewicht"].TypeID != "6650" ||
+		resolved["intern"].TypeID != "7" {
 		t.Errorf("resolved = %+v", resolved)
 	}
-	if len(required.Unresolved) != 2 ||
+	if len(required.Unresolved) != 1 ||
 		required.Unresolved[0].Header != "Farbe" ||
-		required.Unresolved[1].MatchType != "fuzzy" {
+		required.Unresolved[0].MatchType != "none" {
 		t.Errorf("unresolved = %+v", required.Unresolved)
 	}
 	if required.Unresolved[0].Suggestion.Action != "create_new" {
 		t.Error("the suggestion is reported, not applied")
 	}
-	if !strings.Contains(err.Error(), "Farbe, Intern") {
-		t.Errorf("message = %q", err)
+	if len(guesses) != 1 || guesses[0].Header != "Intern" ||
+		guesses[0].Target != "Internal" || guesses[0].Similarity != 0.6 {
+		t.Errorf("guesses = %+v", guesses)
+	}
+
+	// The stricter run leaves the similarity match alone as well.
+	resolved, guesses, err = ResolveMappings(imp, nil, true, true)
+	if !errors.As(err, &required) {
+		t.Fatalf("err = %v", err)
+	}
+	if _, taken := resolved["intern"]; taken || len(guesses) != 0 {
+		t.Errorf("exact only took %+v and guessed %+v", resolved, guesses)
+	}
+	if len(required.Unresolved) != 2 ||
+		required.Unresolved[1].MatchType != "fuzzy" {
+		t.Errorf("unresolved = %+v", required.Unresolved)
 	}
 
 	explicit := map[string]Mapping{
 		"Farbe":  {Action: "use_existing", TypeName: "Colour"},
 		"intern": {Action: "skip"},
 	}
-	resolved, err = ResolveMappings(imp, explicit, true)
+	resolved, guesses, err = ResolveMappings(imp, explicit, true, false)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -143,19 +163,23 @@ func TestResolveMappingsAcceptsSafeSuggestionsOnly(t *testing.T) {
 		resolved["intern"].Action != "skip" || len(resolved) != 4 {
 		t.Errorf("resolved = %+v", resolved)
 	}
+	if len(guesses) != 0 {
+		t.Errorf("a column mapped by hand is no guess: %+v", guesses)
+	}
 
-	_, err = ResolveMappings(imp, map[string]Mapping{"Nope": {Action: "skip"}},
-		false)
+	_, _, err = ResolveMappings(imp,
+		map[string]Mapping{"Nope": {Action: "skip"}}, false, false)
 	if err == nil || !strings.Contains(err.Error(), "no column") {
 		t.Errorf("unknown column: %v", err)
 	}
-	_, err = ResolveMappings(imp,
+	_, _, err = ResolveMappings(imp,
 		map[string]Mapping{"Farbe": {Action: "use_existing",
-			TypeName: "Nothing"}}, false)
+			TypeName: "Nothing"}}, false, false)
 	if err == nil || !strings.Contains(err.Error(), "no property type") {
 		t.Errorf("unknown type: %v", err)
 	}
-	if _, err := ResolveMappings(imp, nil, false); !IsMappingRequired(err) {
+	if _, _, err := ResolveMappings(imp, nil, false,
+		false); !IsMappingRequired(err) {
 		t.Error("without suggestions every column is unresolved")
 	}
 }

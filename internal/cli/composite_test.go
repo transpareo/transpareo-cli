@@ -14,12 +14,16 @@ var testPreview = map[string]any{
 		{"header": "Artikelname", "column": "artikelname",
 			"suggestedAction": "map_to_attribute",
 			"coreAttribute":   "name", "matchType": "attribute"},
+		{"header": "Gewicht", "column": "gewicht",
+			"suggestedAction": "use_existing", "typeId": "6650",
+			"typeName": "Weight", "matchType": "fuzzy", "similarity": 0.8},
 		{"header": "Farbe", "column": "farbe", "suggestedAction": "create_new",
 			"typeName": "Farbe", "matchType": "none",
 			"sampleValues": []string{"rot"}},
 	},
 	"coreAttributes": []string{"name", "gtin"},
-	"propertyTypes":  []map[string]any{{"id": "9", "name": "Colour"}},
+	"propertyTypes": []map[string]any{{"id": "9", "name": "Colour"},
+		{"id": "6650", "name": "Weight"}},
 }
 
 // compositeHarness adds the import, export and event endpoints.
@@ -152,6 +156,41 @@ func TestImportsMapExitsFiveOnUnresolvedColumns(t *testing.T) {
 	}
 }
 
+// A similarity match is what the mapping page prefills, so an
+// accepted mapping takes it and says so on standard error, where
+// the answer itself stays clean. --skip-fuzzy hands the same
+// column back instead.
+func TestImportsMapTakesAndPrintsAGuess(t *testing.T) {
+	h := compositeHarness(t)
+	h.login()
+	out, _, code := h.run("imports", "map", "12", "--accept-suggestions",
+		"--skip-fuzzy", "--map", "Farbe=skip")
+	if code != 5 {
+		t.Fatalf("--skip-fuzzy must hand the column back, got %d: %s", code,
+			out)
+	}
+	var report map[string]any
+	json.Unmarshal([]byte(out), &report)
+	unresolved, _ := report["unresolved"].([]any)
+	if len(unresolved) != 1 ||
+		unresolved[0].(map[string]any)["header"] != "Gewicht" {
+		t.Errorf("report = %s", out)
+	}
+
+	out, errOut, code := h.run("imports", "map", "12",
+		"--accept-suggestions", "--map", "Farbe=skip")
+	if code != 0 {
+		t.Fatalf("code = %d, out = %s, err = %s", code, out, errOut)
+	}
+	if !strings.Contains(errOut, "guessed Gewicht as Weight (80% alike)") {
+		t.Errorf("the guess was not reported: %q", errOut)
+	}
+	if body := h.lastBody(); !strings.Contains(body,
+		`"gewicht":{"action":"use_existing","typeId":"6650"}`) {
+		t.Errorf("mapping body = %s", body)
+	}
+}
+
 func TestImportsRunValidatesAndExecutes(t *testing.T) {
 	h := compositeHarness(t)
 	h.login()
@@ -255,7 +294,8 @@ func TestImportsRunExitsThreeOnRowErrors(t *testing.T) {
 			value: "fail",
 			next:  h.server.Client().Transport}}
 	}, "imports", "run", "--file", file, "--type", "products",
-		"--map", "Artikelname=name", "--map", "Farbe=skip", "--execute")
+		"--map", "Artikelname=name", "--map", "Gewicht=skip",
+		"--map", "Farbe=skip", "--execute")
 	if code != 3 {
 		t.Fatalf("row errors must exit 3, got %d: %s", code, out)
 	}

@@ -1205,11 +1205,12 @@ transpareo imports map 12 --accept-suggestions
 
 | Option | What it does |
 |---|---|
-| `--accept-suggestions` | take every exact match of the preview |
+| `--accept-suggestions` | take the preview's suggestion for every column it matched |
 | `--map` \<value\>... | Column=target (repeatable) |
 | `--mappings` \<value\> | mapping file (ImportMappingsInput) |
 | `--published` | publish the records the import creates |
 | `--skip-backup` | execute without the backup a revert needs |
+| `--skip-fuzzy` | with --accept-suggestions, leave a similarity match to a person |
 
 `PUT /imports/{id}/mappings` · operation `map_import` · permission `import_access`
 
@@ -1245,7 +1246,7 @@ transpareo imports run --file catalogue.xlsx --type products --auto
 
 | Option | What it does |
 |---|---|
-| `--accept-suggestions` | take every exact match of the preview |
+| `--accept-suggestions` | take the preview's suggestion for every column it matched |
 | `--auto` | let the platform map, write and publish in one call, making a property type for every column that matches none |
 | `--execute` | write the records when the validation passes |
 | `--file` \<value\> | the spreadsheet or JSON file to import |
@@ -1253,6 +1254,7 @@ transpareo imports run --file catalogue.xlsx --type products --auto
 | `--mappings` \<value\> | mapping file (ImportMappingsInput) |
 | `--published` | publish the records the import creates |
 | `--skip-backup` | execute without the backup a revert needs |
+| `--skip-fuzzy` | with --accept-suggestions, leave a similarity match to a person |
 | `--type` \<value\> | components, products or dpps |
 | `--value-separator` \<value\> | what separates several values in a cell |
 

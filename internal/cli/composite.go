@@ -35,6 +35,16 @@ func (a *App) addCompositeCommands(root *cobra.Command) {
 	group("events").AddCommand(a.eventsTailCommand())
 }
 
+// guess prints one column a similarity match mapped, so whoever
+// reads the run sees what nobody chose.
+func (a *App) guess() func(flows.Guess) {
+	printer := a.Printer()
+	return func(guess flows.Guess) {
+		printer.Message("guessed %s as %s (%.0f%% alike)", guess.Header,
+			guess.Target, guess.Similarity*100)
+	}
+}
+
 // progress prints task polls to stderr.
 func (a *App) progress() func(*transpareo.Task) {
 	printer := a.Printer()
@@ -46,16 +56,18 @@ func (a *App) progress() func(*transpareo.Task) {
 func (a *App) importsMapCommand() *cobra.Command {
 	var mappingsFile string
 	var specs []string
-	var accept, published, skipBackup bool
+	var accept, skipFuzzy, published, skipBackup bool
 	cmd := &cobra.Command{
 		Use:   "map <id>",
 		Short: "Send the column mapping of a fresh import",
 		Long: `Reads the import's preview and sends one action per column: from a
 mapping file, from --map options, or from the preview's own
-suggestions with --accept-suggestions, which takes every exact
-match and stops with exit code 5 and the unresolved columns when
-one is fuzzy or unmatched. It never creates a property type on
-its own.
+suggestions with --accept-suggestions, which takes every column
+the platform recognised, a similarity match included, and prints
+the guesses it took. A column it matched to nothing stops the run
+with exit code 5 and the unresolved columns. --skip-fuzzy leaves
+the similarity matches to you as well. It never creates a
+property type on its own.
 
 A --map target is a core attribute (name, gtin), property:<type
 name> for an existing property type, new:<type name> to create
@@ -69,7 +81,7 @@ one, or skip.`,
 		Annotations: map[string]string{annotationOperation: "map_import"},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return a.importsMap(cmd.Context(), args[0], mappingsFile, specs,
-				accept,
+				accept, skipFuzzy,
 				runOptions(cmd, published, skipBackup, false))
 		},
 	}
@@ -78,7 +90,9 @@ one, or skip.`,
 		"mapping file (ImportMappingsInput)")
 	f.StringArrayVar(&specs, "map", nil, "Column=target (repeatable)")
 	f.BoolVar(&accept, "accept-suggestions", false,
-		"take every exact match of the preview")
+		"take the preview's suggestion for every column it matched")
+	f.BoolVar(&skipFuzzy, "skip-fuzzy", false,
+		"with --accept-suggestions, leave a similarity match to a person")
 	f.BoolVar(&published, "published", false,
 		"publish the records the import creates")
 	f.BoolVar(&skipBackup, "skip-backup", false,
@@ -115,7 +129,7 @@ func runOptions(cmd *cobra.Command, published, skipBackup,
 
 func (a *App) importsMap(ctx context.Context, id, mappingsFile string,
 	specs []string,
-	accept bool, options *flows.MappingOptions) error {
+	accept, skipFuzzy bool, options *flows.MappingOptions) error {
 	reg, err := a.Registry()
 	if err != nil {
 		return err
@@ -135,7 +149,12 @@ func (a *App) importsMap(ctx context.Context, id, mappingsFile string,
 	if err != nil {
 		return err
 	}
-	mappings, err := flows.ResolveMappings(imp, explicit, accept)
+	mappings, guesses, err := flows.ResolveMappings(imp, explicit, accept,
+		skipFuzzy)
+	report := a.guess()
+	for _, guess := range guesses {
+		report(guess)
+	}
 	if err != nil {
 		return a.mappingError(err)
 	}
@@ -207,7 +226,7 @@ func (a *App) mappingError(err error) error {
 func (a *App) importsRunCommand() *cobra.Command {
 	var file, dataType, mappingsFile, separator string
 	var specs []string
-	var accept, execute, published, skipBackup, auto bool
+	var accept, skipFuzzy, execute, published, skipBackup, auto bool
 	cmd := &cobra.Command{
 		Use:   "run --file <path> --type <components|products|dpps>",
 		Short: "Upload, map, validate and, with --execute, run an import",
@@ -244,9 +263,10 @@ through the preview instead.`,
 			}
 			return a.importsRun(cmd.Context(), flows.RunOptions{
 				Path: file, DataType: dataType, ValueSeparator: separator,
-				Mappings: explicit, AcceptSuggestions: accept, Execute: execute,
+				Mappings: explicit, AcceptSuggestions: accept,
+				ExactOnly: skipFuzzy, Execute: execute,
 				Options:  runOptions(cmd, published, skipBackup, auto),
-				Progress: a.progress(),
+				Progress: a.progress(), OnGuess: a.guess(),
 			})
 		},
 	}
@@ -259,7 +279,9 @@ through the preview instead.`,
 		"mapping file (ImportMappingsInput)")
 	f.StringArrayVar(&specs, "map", nil, "Column=target (repeatable)")
 	f.BoolVar(&accept, "accept-suggestions", false,
-		"take every exact match of the preview")
+		"take the preview's suggestion for every column it matched")
+	f.BoolVar(&skipFuzzy, "skip-fuzzy", false,
+		"with --accept-suggestions, leave a similarity match to a person")
 	f.BoolVar(&execute, "execute", false,
 		"write the records when the validation passes")
 	f.BoolVar(&auto, "auto", false,

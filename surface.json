@@ -572,7 +572,8 @@
       "map",
       "mappings",
       "published",
-      "skip-backup"
+      "skip-backup",
+      "skip-fuzzy"
     ],
     "operationId": "map_import"
   },
@@ -599,6 +600,7 @@
       "mappings",
       "published",
       "skip-backup",
+      "skip-fuzzy",
       "type",
       "value-separator"
     ],

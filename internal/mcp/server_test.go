@@ -640,7 +640,11 @@ func TestDataTools(t *testing.T) {
 			"preview": map[string]any{"columns": []map[string]any{
 				{"header": "Farbe", "column": "farbe",
 					"suggestedAction": "create_new",
-					"typeName":        "Farbe", "matchType": "none"}},
+					"typeName":        "Farbe", "matchType": "none"},
+				{"header": "Gewicht", "column": "gewicht",
+					"suggestedAction": "use_existing", "typeId": "6650",
+					"typeName": "Weight", "matchType": "fuzzy",
+					"similarity": 0.8}},
 				"coreAttributes": []string{"name"}}})
 	})
 	session := connect(t, host, Options{})
@@ -680,6 +684,11 @@ func TestDataTools(t *testing.T) {
 	if len(unresolved) != 1 {
 		t.Errorf("unresolved = %v", structured(t, result))
 	}
+	// The similarity match is taken, as the mapping page would,
+	// and the answer says which column it was.
+	if !strings.Contains(text(result), "mapped Gewicht as Weight") {
+		t.Errorf("the guess was not reported: %q", text(result))
+	}
 	if uploadName != "c.xlsx" {
 		t.Errorf("the file went up as %q", uploadName)
 	}
@@ -689,7 +698,7 @@ func TestDataTools(t *testing.T) {
 	// itself.
 	result = call(t, session, "import_spreadsheet",
 		map[string]any{"rows": []any{map[string]any{"Farbe": "rot"}},
-			"dataType": "products"})
+			"dataType": "products", "acceptSuggestions": true})
 	if !result.IsError ||
 		!strings.Contains(text(result), "1 columns need a mapping") {
 		t.Errorf("import_spreadsheet with rows = %q", text(result))

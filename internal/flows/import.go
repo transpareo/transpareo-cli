@@ -100,6 +100,29 @@ type MappingOptions struct {
 	Auto      *bool `json:"auto,omitempty"`
 }
 
+// Guess is a column a run mapped from the platform's similarity
+// match, with the name it landed on. Whoever reads the run sees
+// these as the mappings nobody chose.
+type Guess struct {
+	Header     string  `json:"header"`
+	Target     string  `json:"target"`
+	Similarity float64 `json:"similarity"`
+	Mapping    Mapping `json:"mapping"`
+}
+
+// targetName is what a guess landed on, in the words a person
+// reads it by: the core attribute or the property type's name,
+// where the mapping itself carries the type's id.
+func targetName(col Column) string {
+	switch {
+	case col.CoreAttribute != "":
+		return col.CoreAttribute
+	case col.TypeName != "":
+		return col.TypeName
+	}
+	return col.SuggestedAction
+}
+
 // Unresolved is one column the flow could not map on its own.
 type Unresolved struct {
 	Column       string   `json:"column"`
@@ -261,14 +284,19 @@ func ParseMapSpec(spec string) (column string, m Mapping, err error) {
 }
 
 // ResolveMappings completes the mappings for a fresh import: the
-// explicit ones, then the preview's own suggestions when
-// acceptSuggestions is set and the match is exact or an
-// attribute. It never creates a property type on its own. The
-// columns left over come back as ErrMappingRequired.
+// explicit ones, then the preview's own suggestion for every
+// column the platform recognised, when acceptSuggestions is set.
+// A fuzzy match counts as recognised, since it is the suggestion
+// the mapping page prefills and an automatic run takes; exactOnly
+// leaves those to a person. The fuzzy ones taken come back as
+// guesses, to show whoever reads the run. A column the platform
+// matched to nothing is always left over, and the leftovers come
+// back as ErrMappingRequired. It never creates a property type on
+// its own.
 func ResolveMappings(imp *Import, explicit map[string]Mapping,
-	acceptSuggestions bool) (map[string]Mapping, error) {
+	acceptSuggestions, exactOnly bool) (map[string]Mapping, []Guess, error) {
 	if imp.Preview == nil {
-		return explicit, nil
+		return explicit, nil, nil
 	}
 	byHeader := map[string]string{}
 	for _, col := range imp.Preview.Columns {
@@ -279,12 +307,13 @@ func ResolveMappings(imp *Import, explicit map[string]Mapping,
 	for name, m := range explicit {
 		key, ok := byHeader[strings.ToLower(name)]
 		if !ok {
-			return nil, fmt.Errorf("the upload has no column %q", name)
+			return nil, nil, fmt.Errorf("the upload has no column %q", name)
 		}
 		if m.Action == "use_existing" && m.TypeID == "" {
 			id := typeIDByName(imp.Preview, m.TypeName)
 			if id == "" {
-				return nil, fmt.Errorf("no property type named %q", m.TypeName)
+				return nil, nil, fmt.Errorf("no property type named %q",
+					m.TypeName)
 			}
 			m.TypeID = id
 			m.TypeName = ""
@@ -292,14 +321,19 @@ func ResolveMappings(imp *Import, explicit map[string]Mapping,
 		resolved[key] = m
 	}
 	var unresolved []Unresolved
+	var guesses []Guess
 	for _, col := range imp.Preview.Columns {
 		if _, ok := resolved[col.Column]; ok {
 			continue
 		}
 		suggestion := suggestionOf(col)
-		if acceptSuggestions && suggestion != nil &&
-			(col.MatchType == "exact" || col.MatchType == "attribute") {
+		if acceptSuggestions && suggestion != nil && takeable(col, exactOnly) {
 			resolved[col.Column] = *suggestion
+			if col.MatchType == "fuzzy" {
+				guesses = append(guesses, Guess{Header: col.Header,
+					Target:     targetName(col),
+					Similarity: col.Similarity, Mapping: *suggestion})
+			}
 			continue
 		}
 		unresolved = append(unresolved, Unresolved{Column: col.Column,
@@ -308,10 +342,24 @@ func ResolveMappings(imp *Import, explicit map[string]Mapping,
 			SampleValues: col.SampleValues})
 	}
 	if len(unresolved) > 0 {
-		return resolved, &ErrMappingRequired{Import: imp,
+		return resolved, guesses, &ErrMappingRequired{Import: imp,
 			Unresolved: unresolved}
 	}
-	return resolved, nil
+	return resolved, guesses, nil
+}
+
+// takeable reports whether a run may take the preview's own
+// suggestion for the column. The platform resolves an exact and
+// an attribute match on its own and matches a fuzzy one by
+// similarity, which is the suggestion its mapping page prefills.
+func takeable(col Column, exactOnly bool) bool {
+	switch col.MatchType {
+	case "exact", "attribute":
+		return true
+	case "fuzzy":
+		return !exactOnly
+	}
+	return false
 }
 
 // suggestionOf renders the preview's suggestion as a mapping, or
@@ -422,9 +470,19 @@ type RunOptions struct {
 	ValueSeparator    string
 	Mappings          map[string]Mapping
 	AcceptSuggestions bool
-	Execute           bool
-	Options           *MappingOptions
-	Progress          func(*transpareo.Task)
+
+	// ExactOnly leaves a column the platform matched by similarity
+	// to a person, where an accepted run would take its suggestion.
+	ExactOnly bool
+
+	Execute bool
+	Options *MappingOptions
+
+	Progress func(*transpareo.Task)
+
+	// OnGuess is called for every column the run mapped from a
+	// similarity match, so a caller can show what nobody chose.
+	OnGuess func(Guess)
 }
 
 // Automatic reports whether the platform maps the columns and
@@ -476,8 +534,13 @@ func Run(ctx context.Context, c *transpareo.Client, opts RunOptions) (*Import,
 	}
 	id := imp.ID.String()
 	if imp.Status == "fresh" {
-		mappings, err := ResolveMappings(imp, opts.Mappings,
-			opts.AcceptSuggestions)
+		mappings, guesses, err := ResolveMappings(imp, opts.Mappings,
+			opts.AcceptSuggestions, opts.ExactOnly)
+		if opts.OnGuess != nil {
+			for _, guess := range guesses {
+				opts.OnGuess(guess)
+			}
+		}
 		if err != nil {
 			return imp, err
 		}

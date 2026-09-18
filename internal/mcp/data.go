@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	sdk "github.com/modelcontextprotocol/go-sdk/mcp"
@@ -116,7 +117,9 @@ func (s *Server) addDataTools() {
 				"description": "One action per column, as " +
 					"ImportMappingsInput.mappings"},
 			"acceptSuggestions": map[string]any{"type": "boolean",
-				"description": "Take every exact match of the preview"},
+				"description": "Take the preview's suggestion for every " +
+					"column the platform matched, one it matched by " +
+					"similarity included; the answer names those guesses"},
 			"execute": map[string]any{"type": "boolean",
 				"description": "Write the records after a clean validation"},
 			"auto": map[string]any{"type": "boolean",
@@ -160,6 +163,16 @@ func (s *Server) addTool(group string, tool *sdk.Tool,
 		}
 		return handler(ctx, args), nil
 	})
+}
+
+// guessedColumns names the columns a similarity match mapped, so
+// the answer says which mappings nobody chose.
+func guessedColumns(guesses []flows.Guess) string {
+	names := make([]string, 0, len(guesses))
+	for _, guess := range guesses {
+		names = append(names, guess.Header+" as "+guess.Target)
+	}
+	return strings.Join(names, ", ")
 }
 
 func schema(props map[string]any, required ...string) map[string]any {
@@ -280,8 +293,12 @@ func (s *Server) importSpreadsheet(ctx context.Context,
 			return failure(fmt.Errorf("mappings: %w", err))
 		}
 	}
+	var guesses []flows.Guess
 	opts := flows.RunOptions{Path: path, Rows: rows,
 		DataType: stringArg(args["dataType"]), Mappings: mappings}
+	opts.OnGuess = func(guess flows.Guess) {
+		guesses = append(guesses, guess)
+	}
 	opts.AcceptSuggestions, _ = args["acceptSuggestions"].(bool)
 	opts.Execute, _ = args["execute"].(bool)
 	var options flows.MappingOptions
@@ -301,6 +318,9 @@ func (s *Server) importSpreadsheet(ctx context.Context,
 		var doc any
 		json.Unmarshal(imp.Body, &doc)
 		text := fmt.Sprintf("import %s %s", imp.ID, imp.Status)
+		if guessed := guessedColumns(guesses); guessed != "" {
+			text += "; mapped " + guessed + " by similarity"
+		}
 		if !opts.Execute && !opts.Automatic() {
 			text += "; validation passed, call again with execute true to write"
 		}
@@ -315,9 +335,13 @@ func (s *Server) importSpreadsheet(ctx context.Context,
 			structured["coreAttributes"] = required.Import.Preview.CoreAttributes
 			structured["propertyTypes"] = required.Import.Preview.PropertyTypes
 		}
+		text := err.Error() + "; write mappings for them and call again"
+		if guessed := guessedColumns(guesses); guessed != "" {
+			structured["guessed"] = guesses
+			text += "; mapped " + guessed + " by similarity"
+		}
 		return &sdk.CallToolResult{IsError: true,
-			Content: []sdk.Content{&sdk.TextContent{Text: err.Error() +
-				"; write mappings for them and call again"}},
+			Content:           []sdk.Content{&sdk.TextContent{Text: text}},
 			StructuredContent: structured}
 	case errors.As(err, &failed):
 		var doc any
