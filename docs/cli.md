@@ -1,6 +1,6 @@
 # Command reference
 
-Every command of `transpareo`, generated from API specification 2.3.0. `--help` on any command prints the same example and permission key.
+Every command of `transpareo`, generated from API specification 2.4.1. `--help` on any command prints the same example and permission key.
 
 | Option on every command | What it does |
 |---|---|
@@ -12,7 +12,7 @@ Every command of `transpareo`, generated from API specification 2.3.0. `--help` 
 | `--read-only` | refuse every operation that changes data |
 | `--yes` | confirm an operation that cannot be undone |
 
-[General](#general) · [Brands](#brands) · [Categories](#categories) · [Components](#components) · [Configuration](#configuration) · [Coupons](#coupons) · [DPPs](#dpps) · [Events](#events) · [Exports](#exports) · [Grants](#grants) · [Imports](#imports) · [Lots](#lots) · [Mediafiles](#mediafiles) · [Permalinks](#permalinks) · [Plans](#plans) · [Products](#products) · [Reference Data](#reference-data) · [Search](#search) · [Webhooks](#webhooks)
+[General](#general) · [Brands](#brands) · [Categories](#categories) · [Components](#components) · [Configuration](#configuration) · [Coupons](#coupons) · [DPPs](#dpps) · [Events](#events) · [Exports](#exports) · [Grants](#grants) · [Help](#help) · [Imports](#imports) · [Lots](#lots) · [Mediafiles](#mediafiles) · [Permalinks](#permalinks) · [Plans](#plans) · [Products](#products) · [Reference Data](#reference-data) · [Search](#search) · [Webhooks](#webhooks)
 
 ## General
 
@@ -1061,6 +1061,45 @@ transpareo grants create --file body.json
 | `--set` \<value\>... | body field as key=value, nested with dots (repeatable) |
 
 `POST /grant` · operation `create_grant` · permission `dpp_events` or `dpp_history` or `dpp_dynamic`
+
+## Help
+
+The help articles the application manager shows a person: how something is done on the screens, in the reader's language.
+
+### transpareo articles get
+
+Read a help article.
+
+```sh
+transpareo articles get <key>
+transpareo articles get <key> --locale <locale>
+```
+
+| Option | What it does |
+|---|---|
+| `--locale` \<value\> | The reader's language as a language code. The workspace's default language when absent. |
+| `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
+
+`GET /help/{key}` · operation `get_help_article` · any consumer token
+
+### transpareo articles list
+
+Search the help articles.
+
+```sh
+transpareo articles list --term <term>
+```
+
+| Option | What it does |
+|---|---|
+| `--category` \<value\> | Keep only the articles of this category key |
+| `--locale` \<value\> | The reader's language as a language code. The workspace's default language when absent, and English when this server publishes no help in the one asked for. |
+| `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
+| `--page` \<n\> | Page number |
+| `--per-page` \<n\> | Records per page (default: 100, max: 500) |
+| `--term` \<value\> | Words to look for, or the question itself |
+
+`GET /help` · operation `list_help` · any consumer token
 
 ## Imports
 

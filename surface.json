@@ -10,6 +10,27 @@
     ]
   },
   {
+    "path": "transpareo articles get",
+    "args": "<key>",
+    "flags": [
+      "locale",
+      "output"
+    ],
+    "operationId": "get_help_article"
+  },
+  {
+    "path": "transpareo articles list",
+    "flags": [
+      "category",
+      "locale",
+      "output",
+      "page",
+      "per-page",
+      "term"
+    ],
+    "operationId": "list_help"
+  },
+  {
     "path": "transpareo auth grant",
     "args": "--code <passport code>",
     "flags": [

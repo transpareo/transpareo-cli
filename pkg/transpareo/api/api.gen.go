@@ -843,6 +843,21 @@ func (e ExportSummaryStatus) Valid() bool {
 	}
 }
 
+// Defines values for HelpArticleBodyFormat.
+const (
+	Markdown HelpArticleBodyFormat = "markdown"
+)
+
+// Valid indicates whether the value is a known member of the HelpArticleBodyFormat enum.
+func (e HelpArticleBodyFormat) Valid() bool {
+	switch e {
+	case Markdown:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for ImportDataType.
 const (
 	ImportDataTypeComponents ImportDataType = "components"
@@ -2705,6 +2720,102 @@ type GrantInput struct {
 	Serial *string `json:"serial,omitempty"`
 }
 
+// HelpArticle One help article whole: everything a summary carries, plus the body and the articles next to it.
+type HelpArticle struct {
+	// Body The article as Markdown. A `%{site_name}` placeholder is resolved to the workspace's name, and a link into the application manager is rendered as an anchor carrying its address, so a reader can name the page a person should open.
+	Body       *string                `json:"body,omitempty"`
+	BodyFormat *HelpArticleBodyFormat `json:"bodyFormat,omitempty"`
+
+	// Category The key of the section the article sits in
+	//
+	// Example: data_import
+	Category *string `json:"category,omitempty"`
+
+	// CategoryTitle The name of that section in the language answered
+	//
+	// Example: Import & export
+	CategoryTitle *string `json:"categoryTitle,omitempty"`
+
+	// Key The stable identifier of the topic, the same in every language. `GET /help/{key}` reads the article.
+	//
+	// Example: data_export
+	Key *string `json:"key,omitempty"`
+
+	// Locale The language this article was served in, which can differ from the one asked for when the article has no copy in it
+	//
+	// Example: de
+	Locale *string `json:"locale,omitempty"`
+
+	// Related Articles covering neighbouring ground, most similar first, as the little that is needed to read one
+	Related *[]struct {
+		Key   *string `json:"key,omitempty"`
+		Title *string `json:"title,omitempty"`
+	} `json:"related,omitempty"`
+
+	// ShowToc Whether the reader shows a table of contents for this article
+	ShowToc *bool `json:"showToc,omitempty"`
+
+	// Summary One or two sentences saying what the article covers
+	Summary *string   `json:"summary,omitempty"`
+	Tags    *[]string `json:"tags,omitempty"`
+
+	// Title The heading a person sees, with its placeholders resolved
+	//
+	// Example: Exporting your catalogue
+	Title *string `json:"title,omitempty"`
+
+	// Type Example: HelpArticle
+	Type *string `json:"type,omitempty"`
+
+	// Url The page a person opens this article at in the application manager
+	//
+	// Example: https://<host>/admin/help/data_export
+	Url *string `json:"url,omitempty"`
+}
+
+// HelpArticleBodyFormat defines model for HelpArticle.BodyFormat.
+type HelpArticleBodyFormat string
+
+// HelpSummary What a help article is about, without its body. A list answers these, so a reader chooses an article before paying for its prose.
+type HelpSummary struct {
+	// Category The key of the section the article sits in
+	//
+	// Example: data_import
+	Category *string `json:"category,omitempty"`
+
+	// CategoryTitle The name of that section in the language answered
+	//
+	// Example: Import & export
+	CategoryTitle *string `json:"categoryTitle,omitempty"`
+
+	// Key The stable identifier of the topic, the same in every language. `GET /help/{key}` reads the article.
+	//
+	// Example: data_export
+	Key *string `json:"key,omitempty"`
+
+	// Locale The language this article was served in, which can differ from the one asked for when the article has no copy in it
+	//
+	// Example: de
+	Locale *string `json:"locale,omitempty"`
+
+	// Summary One or two sentences saying what the article covers
+	Summary *string   `json:"summary,omitempty"`
+	Tags    *[]string `json:"tags,omitempty"`
+
+	// Title The heading a person sees, with its placeholders resolved
+	//
+	// Example: Exporting your catalogue
+	Title *string `json:"title,omitempty"`
+
+	// Type Example: HelpArticle
+	Type *string `json:"type,omitempty"`
+
+	// Url The page a person opens this article at in the application manager
+	//
+	// Example: https://<host>/admin/help/data_export
+	Url *string `json:"url,omitempty"`
+}
+
 // Import One import and where it stands. `preview` is present while the import is `fresh`; `progress` while a task runs; `errorGroups` and `rowErrors` once a validation or a run has found problems.
 //
 // Example: {"createdAt":"2026-09-08T09:12:44Z","createdCount":0,"dataType":"components","errorGroups":[],"failedCount":0,"fileFormat":"xlsx","id":12,"mappings":{"artikelname":{"action":"map_to_attribute","coreAttribute":"name","isSingleValue":true}},"options":{"published":false},"originalFilename":"catalogue.xlsx","revertable":false,"rowErrors":[],"status":"mapped","statusUrl":"https://example.com/api/imports/12","totalEntries":240,"unchangedCount":0,"updatedCount":0}
@@ -2744,7 +2855,7 @@ type Import struct {
 	// Progress Percent of the running task, while one runs
 	Progress *int `json:"progress,omitempty"`
 
-	// Revertable A completed or failed run with a backup or created records can be reverted
+	// Revertable A completed or failed component or product run with a backup or created records can be reverted; a passport run never can
 	Revertable *bool `json:"revertable,omitempty"`
 
 	// RowErrors One entry per failing row, so the rows can be patched and sent again. Capped at 1000 entries. Each phase replaces the entries of the one before, so they describe the phase that ran last, and `errorGroups` says the same thing grouped by cause.
@@ -4071,6 +4182,30 @@ type CreateFormSubmissionJSONBody struct {
 type CreateGrantParams struct {
 	// IdempotencyKey Makes the request safe to repeat. The same key and body within 24 hours replays the stored response with `Idempotent-Replayed: true`; the same key with another body answers 422 `IDEMPOTENCY_KEY_REUSED`; a key whose first request is still running answers 409 `IDEMPOTENCY_IN_PROGRESS`.
 	IdempotencyKey *IdempotencyKey `json:"Idempotency-Key,omitempty"`
+}
+
+// ListHelpParams defines parameters for ListHelp.
+type ListHelpParams struct {
+	// Term Words to look for, or the question itself
+	Term *string `form:"term,omitempty" json:"term,omitempty"`
+
+	// Category Keep only the articles of this category key
+	Category *string `form:"category,omitempty" json:"category,omitempty"`
+
+	// Locale The reader's language as a language code. The workspace's default language when absent, and English when this server publishes no help in the one asked for.
+	Locale *string `form:"locale,omitempty" json:"locale,omitempty"`
+
+	// Page Page number
+	Page *Page `form:"page,omitempty" json:"page,omitempty"`
+
+	// PerPage Records per page (default: 100, max: 500)
+	PerPage *PerPage `form:"per_page,omitempty" json:"per_page,omitempty"`
+}
+
+// GetHelpArticleParams defines parameters for GetHelpArticle.
+type GetHelpArticleParams struct {
+	// Locale The reader's language as a language code. The workspace's default language when absent.
+	Locale *string `form:"locale,omitempty" json:"locale,omitempty"`
 }
 
 // ListImportsParams defines parameters for ListImports.
@@ -5638,6 +5773,24 @@ type ClientInterface interface {
 	// Corresponds with POST /grant (the `CreateGrant` operationId).
 	CreateGrant(ctx context.Context, params *CreateGrantParams, body CreateGrantJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// ListHelp Search the help articles
+	//
+	// The articles the application manager shows a person: where a setting lives, what a button does, which step comes before which. Give `term` the question in the reader's own words: every word is matched on its own and the words a question is phrased with are dropped, so a whole sentence finds what a keyword would. Hits come back best first, a title match ahead of one in the body.
+	//
+	// An answer with no hits says the articles cover nothing by that name. To tell that apart from a workspace whose help content has not arrived yet, call again with no `term`: the total is then the whole set this workspace can read.
+	//
+	// Summaries only, so choosing an article is cheap; `GET /help/{key}` reads one.
+	//
+	// Corresponds with GET /help (the `ListHelp` operationId).
+	ListHelp(ctx context.Context, params *ListHelpParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetHelpArticle Read a help article
+	//
+	// One article whole, as Markdown a reader can quote, with the articles next to it named. An article with no copy in the language asked for answers its English one and says so in `locale`.
+	//
+	// Corresponds with GET /help/{key} (the `GetHelpArticle` operationId).
+	GetHelpArticle(ctx context.Context, key string, params *GetHelpArticleParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// ListImports List imports
 	//
 	// The runs this consumer started, newest first. A run started in an earlier session, or by another program holding the same credential, is found here: the answer names each run's `statusUrl`, which `GET /imports/{id}` reads in full.
@@ -5685,7 +5838,7 @@ type ClientInterface interface {
 
 	// ExecuteImportWithBody Execute an import
 	//
-	// Writes the rows in the background, after a backup a revert can restore from. Send `options.backup` as `false` to run without one. Poll the `statusUrl` until `status` is `completed` or `failed`.
+	// Writes the rows in the background, after a backup a revert can restore from. Send `options.backup` as `false` to run without one. A passport import takes no backup and cannot be reverted, since a passport's versions are signed and its way out is a void. Poll the `statusUrl` until `status` is `completed` or `failed`.
 	//
 	// Besides `import_access` this needs the write permission of the data type: `component_write` for components, `product_access` for products, `dpp_bulk_write` for passports. The rows count against the consumer's bulk item cap for the minute.
 	//
@@ -5696,7 +5849,7 @@ type ClientInterface interface {
 
 	// ExecuteImport Execute an import
 	//
-	// Writes the rows in the background, after a backup a revert can restore from. Send `options.backup` as `false` to run without one. Poll the `statusUrl` until `status` is `completed` or `failed`.
+	// Writes the rows in the background, after a backup a revert can restore from. Send `options.backup` as `false` to run without one. A passport import takes no backup and cannot be reverted, since a passport's versions are signed and its way out is a void. Poll the `statusUrl` until `status` is `completed` or `failed`.
 	//
 	// Besides `import_access` this needs the write permission of the data type: `component_write` for components, `product_access` for products, `dpp_bulk_write` for passports. The rows count against the consumer's bulk item cap for the minute.
 	//
@@ -7845,6 +7998,44 @@ func (c *Client) CreateGrant(ctx context.Context, params *CreateGrantParams, bod
 	return c.Client.Do(req)
 }
 
+// ListHelp Search the help articles
+//
+// The articles the application manager shows a person: where a setting lives, what a button does, which step comes before which. Give `term` the question in the reader's own words: every word is matched on its own and the words a question is phrased with are dropped, so a whole sentence finds what a keyword would. Hits come back best first, a title match ahead of one in the body.
+//
+// An answer with no hits says the articles cover nothing by that name. To tell that apart from a workspace whose help content has not arrived yet, call again with no `term`: the total is then the whole set this workspace can read.
+//
+// Summaries only, so choosing an article is cheap; `GET /help/{key}` reads one.
+//
+// Corresponds with GET /help (the `ListHelp` operationId).
+func (c *Client) ListHelp(ctx context.Context, params *ListHelpParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListHelpRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// GetHelpArticle Read a help article
+//
+// One article whole, as Markdown a reader can quote, with the articles next to it named. An article with no copy in the language asked for answers its English one and says so in `locale`.
+//
+// Corresponds with GET /help/{key} (the `GetHelpArticle` operationId).
+func (c *Client) GetHelpArticle(ctx context.Context, key string, params *GetHelpArticleParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetHelpArticleRequest(c.Server, key, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 // ListImports List imports
 //
 // The runs this consumer started, newest first. A run started in an earlier session, or by another program holding the same credential, is found here: the answer names each run's `statusUrl`, which `GET /imports/{id}` reads in full.
@@ -7942,7 +8133,7 @@ func (c *Client) GetImport(ctx context.Context, id Id, reqEditors ...RequestEdit
 
 // ExecuteImportWithBody Execute an import
 //
-// Writes the rows in the background, after a backup a revert can restore from. Send `options.backup` as `false` to run without one. Poll the `statusUrl` until `status` is `completed` or `failed`.
+// Writes the rows in the background, after a backup a revert can restore from. Send `options.backup` as `false` to run without one. A passport import takes no backup and cannot be reverted, since a passport's versions are signed and its way out is a void. Poll the `statusUrl` until `status` is `completed` or `failed`.
 //
 // Besides `import_access` this needs the write permission of the data type: `component_write` for components, `product_access` for products, `dpp_bulk_write` for passports. The rows count against the consumer's bulk item cap for the minute.
 //
@@ -7963,7 +8154,7 @@ func (c *Client) ExecuteImportWithBody(ctx context.Context, id Id, contentType s
 
 // ExecuteImport Execute an import
 //
-// Writes the rows in the background, after a backup a revert can restore from. Send `options.backup` as `false` to run without one. Poll the `statusUrl` until `status` is `completed` or `failed`.
+// Writes the rows in the background, after a backup a revert can restore from. Send `options.backup` as `false` to run without one. A passport import takes no backup and cannot be reverted, since a passport's versions are signed and its way out is a void. Poll the `statusUrl` until `status` is `completed` or `failed`.
 //
 // Besides `import_access` this needs the write permission of the data type: `component_write` for components, `product_access` for products, `dpp_bulk_write` for passports. The rows count against the consumer's bulk item cap for the minute.
 //
@@ -12256,6 +12447,169 @@ func NewCreateGrantRequestWithBody(server string, params *CreateGrantParams, con
 	return req, nil
 }
 
+// NewListHelpRequest constructs an http.Request for the ListHelp method
+func NewListHelpRequest(server string, params *ListHelpParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/help")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.Term != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "term", *params.Term, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Category != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "category", *params.Category, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Locale != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "locale", *params.Locale, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Page != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "page", *params.Page, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.PerPage != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "per_page", *params.PerPage, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetHelpArticleRequest constructs an http.Request for the GetHelpArticle method
+func NewGetHelpArticleRequest(server string, key string, params *GetHelpArticleParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "key", key, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/help/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.Locale != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "locale", *params.Locale, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewListImportsRequest constructs an http.Request for the ListImports method
 func NewListImportsRequest(server string, params *ListImportsParams) (*http.Request, error) {
 	var err error
@@ -16291,6 +16645,28 @@ type ClientWithResponsesInterface interface {
 	// Corresponds with POST /grant (the `CreateGrant` operationId).
 	CreateGrantWithResponse(ctx context.Context, params *CreateGrantParams, body CreateGrantJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateGrantResponse, error)
 
+	// ListHelpWithResponse Search the help articles
+	//
+	// The articles the application manager shows a person: where a setting lives, what a button does, which step comes before which. Give `term` the question in the reader's own words: every word is matched on its own and the words a question is phrased with are dropped, so a whole sentence finds what a keyword would. Hits come back best first, a title match ahead of one in the body.
+	//
+	// An answer with no hits says the articles cover nothing by that name. To tell that apart from a workspace whose help content has not arrived yet, call again with no `term`: the total is then the whole set this workspace can read.
+	//
+	// Summaries only, so choosing an article is cheap; `GET /help/{key}` reads one.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /help (the `ListHelp` operationId).
+	ListHelpWithResponse(ctx context.Context, params *ListHelpParams, reqEditors ...RequestEditorFn) (*ListHelpResponse, error)
+
+	// GetHelpArticleWithResponse Read a help article
+	//
+	// One article whole, as Markdown a reader can quote, with the articles next to it named. An article with no copy in the language asked for answers its English one and says so in `locale`.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /help/{key} (the `GetHelpArticle` operationId).
+	GetHelpArticleWithResponse(ctx context.Context, key string, params *GetHelpArticleParams, reqEditors ...RequestEditorFn) (*GetHelpArticleResponse, error)
+
 	// ListImportsWithResponse List imports
 	//
 	// The runs this consumer started, newest first. A run started in an earlier session, or by another program holding the same credential, is found here: the answer names each run's `statusUrl`, which `GET /imports/{id}` reads in full.
@@ -16346,7 +16722,7 @@ type ClientWithResponsesInterface interface {
 
 	// ExecuteImportWithBodyWithResponse Execute an import
 	//
-	// Writes the rows in the background, after a backup a revert can restore from. Send `options.backup` as `false` to run without one. Poll the `statusUrl` until `status` is `completed` or `failed`.
+	// Writes the rows in the background, after a backup a revert can restore from. Send `options.backup` as `false` to run without one. A passport import takes no backup and cannot be reverted, since a passport's versions are signed and its way out is a void. Poll the `statusUrl` until `status` is `completed` or `failed`.
 	//
 	// Besides `import_access` this needs the write permission of the data type: `component_write` for components, `product_access` for products, `dpp_bulk_write` for passports. The rows count against the consumer's bulk item cap for the minute.
 	//
@@ -16357,7 +16733,7 @@ type ClientWithResponsesInterface interface {
 
 	// ExecuteImportWithResponse Execute an import
 	//
-	// Writes the rows in the background, after a backup a revert can restore from. Send `options.backup` as `false` to run without one. Poll the `statusUrl` until `status` is `completed` or `failed`.
+	// Writes the rows in the background, after a backup a revert can restore from. Send `options.backup` as `false` to run without one. A passport import takes no backup and cannot be reverted, since a passport's versions are signed and its way out is a void. Poll the `statusUrl` until `status` is `completed` or `failed`.
 	//
 	// Besides `import_access` this needs the write permission of the data type: `component_write` for components, `product_access` for products, `dpp_bulk_write` for passports. The rows count against the consumer's bulk item cap for the minute.
 	//
@@ -20827,6 +21203,125 @@ func (r CreateGrantResponse) StatusCode() int {
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
 func (r CreateGrantResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// ListHelpResponse200Headers the declared response headers of an HTTP 200 response for ListHelp
+type ListHelpResponse200Headers struct {
+	APICount   *int
+	APIOffset  *int
+	APIPage    *int
+	APIPerPage *int
+	APITotal   *int
+	Link       *string
+}
+
+type ListHelpResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *struct {
+		Help *[]HelpSummary `json:"help,omitempty"`
+	}
+	// JSON401 the response for an HTTP 401 `application/json` response
+	JSON401 *Unauthorized
+	// Headers200 the parsed response headers for an HTTP 200 response
+	Headers200 *ListHelpResponse200Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r ListHelpResponse) GetJSON200() *struct {
+	Help *[]HelpSummary `json:"help,omitempty"`
+} {
+	return r.JSON200
+}
+
+// GetJSON401 returns the response for an HTTP 401 `application/json` response
+func (r ListHelpResponse) GetJSON401() *Unauthorized {
+	return r.JSON401
+}
+
+// GetBody returns the raw response body bytes
+func (r ListHelpResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r ListHelpResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListHelpResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r ListHelpResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type GetHelpArticleResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *HelpArticle
+	// JSON401 the response for an HTTP 401 `application/json` response
+	JSON401 *Unauthorized
+	// JSON404 the response for an HTTP 404 `application/json` response
+	JSON404 *NotFound
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r GetHelpArticleResponse) GetJSON200() *HelpArticle {
+	return r.JSON200
+}
+
+// GetJSON401 returns the response for an HTTP 401 `application/json` response
+func (r GetHelpArticleResponse) GetJSON401() *Unauthorized {
+	return r.JSON401
+}
+
+// GetJSON404 returns the response for an HTTP 404 `application/json` response
+func (r GetHelpArticleResponse) GetJSON404() *NotFound {
+	return r.JSON404
+}
+
+// GetBody returns the raw response body bytes
+func (r GetHelpArticleResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r GetHelpArticleResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetHelpArticleResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetHelpArticleResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
@@ -26354,6 +26849,40 @@ func (c *ClientWithResponses) CreateGrantWithResponse(ctx context.Context, param
 	return ParseCreateGrantResponse(rsp)
 }
 
+// ListHelpWithResponse Search the help articles
+//
+// The articles the application manager shows a person: where a setting lives, what a button does, which step comes before which. Give `term` the question in the reader's own words: every word is matched on its own and the words a question is phrased with are dropped, so a whole sentence finds what a keyword would. Hits come back best first, a title match ahead of one in the body.
+//
+// An answer with no hits says the articles cover nothing by that name. To tell that apart from a workspace whose help content has not arrived yet, call again with no `term`: the total is then the whole set this workspace can read.
+//
+// Summaries only, so choosing an article is cheap; `GET /help/{key}` reads one.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /help (the `ListHelp` operationId).
+func (c *ClientWithResponses) ListHelpWithResponse(ctx context.Context, params *ListHelpParams, reqEditors ...RequestEditorFn) (*ListHelpResponse, error) {
+	rsp, err := c.ListHelp(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListHelpResponse(rsp)
+}
+
+// GetHelpArticleWithResponse Read a help article
+//
+// One article whole, as Markdown a reader can quote, with the articles next to it named. An article with no copy in the language asked for answers its English one and says so in `locale`.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /help/{key} (the `GetHelpArticle` operationId).
+func (c *ClientWithResponses) GetHelpArticleWithResponse(ctx context.Context, key string, params *GetHelpArticleParams, reqEditors ...RequestEditorFn) (*GetHelpArticleResponse, error) {
+	rsp, err := c.GetHelpArticle(ctx, key, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetHelpArticleResponse(rsp)
+}
+
 // ListImportsWithResponse List imports
 //
 // The runs this consumer started, newest first. A run started in an earlier session, or by another program holding the same credential, is found here: the answer names each run's `statusUrl`, which `GET /imports/{id}` reads in full.
@@ -26439,7 +26968,7 @@ func (c *ClientWithResponses) GetImportWithResponse(ctx context.Context, id Id, 
 
 // ExecuteImportWithBodyWithResponse Execute an import
 //
-// Writes the rows in the background, after a backup a revert can restore from. Send `options.backup` as `false` to run without one. Poll the `statusUrl` until `status` is `completed` or `failed`.
+// Writes the rows in the background, after a backup a revert can restore from. Send `options.backup` as `false` to run without one. A passport import takes no backup and cannot be reverted, since a passport's versions are signed and its way out is a void. Poll the `statusUrl` until `status` is `completed` or `failed`.
 //
 // Besides `import_access` this needs the write permission of the data type: `component_write` for components, `product_access` for products, `dpp_bulk_write` for passports. The rows count against the consumer's bulk item cap for the minute.
 //
@@ -26456,7 +26985,7 @@ func (c *ClientWithResponses) ExecuteImportWithBodyWithResponse(ctx context.Cont
 
 // ExecuteImportWithResponse Execute an import
 //
-// Writes the rows in the background, after a backup a revert can restore from. Send `options.backup` as `false` to run without one. Poll the `statusUrl` until `status` is `completed` or `failed`.
+// Writes the rows in the background, after a backup a revert can restore from. Send `options.backup` as `false` to run without one. A passport import takes no backup and cannot be reverted, since a passport's versions are signed and its way out is a void. Poll the `statusUrl` until `status` is `completed` or `failed`.
 //
 // Besides `import_access` this needs the write permission of the data type: `component_write` for components, `product_access` for products, `dpp_bulk_write` for passports. The rows count against the consumer's bulk item cap for the minute.
 //
@@ -30871,6 +31400,129 @@ func ParseCreateGrantResponse(rsp *http.Response) (*CreateGrantResponse, error) 
 			return nil, err
 		}
 		response.JSON429 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListHelpResponse parses an HTTP response from a ListHelpWithResponse call
+func ParseListHelpResponse(rsp *http.Response) (*ListHelpResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListHelpResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			Help *[]HelpSummary `json:"help,omitempty"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 200:
+		var headers ListHelpResponse200Headers
+		if values := rsp.Header.Values("API-Count"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "API-Count", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.APICount = &value
+		}
+		if values := rsp.Header.Values("API-Offset"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "API-Offset", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.APIOffset = &value
+		}
+		if values := rsp.Header.Values("API-Page"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "API-Page", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.APIPage = &value
+		}
+		if values := rsp.Header.Values("API-Per-Page"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "API-Per-Page", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.APIPerPage = &value
+		}
+		if values := rsp.Header.Values("API-Total"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "API-Total", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.APITotal = &value
+		}
+		if values := rsp.Header.Values("Link"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "Link", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.Link = &value
+		}
+		response.Headers200 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseGetHelpArticleResponse parses an HTTP response from a GetHelpArticleWithResponse call
+func ParseGetHelpArticleResponse(rsp *http.Response) (*GetHelpArticleResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetHelpArticleResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest HelpArticle
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
 
 	}
 

@@ -31,6 +31,8 @@ func TestCommandWords(t *testing.T) {
 		"list_product_properties":            "products properties list",
 		"update_product_mediafiles":          "products mediafiles update",
 		"list_product_categories":            "categories list",
+		"list_help":                          "articles list",
+		"get_help_article":                   "articles get",
 		"regenerate_webhook_secret":          "webhooks secret regenerate",
 		"test_webhook":                       "webhooks test",
 		"create_export":                      "exports create",

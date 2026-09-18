@@ -811,6 +811,21 @@ func TestVersionAndUsageErrors(t *testing.T) {
 	}
 }
 
+// `help <command>` explains that command, the way every command
+// line does. A group generated under the name help would take
+// the word over, which is why the help articles are named
+// otherwise.
+func TestHelpExplainsACommand(t *testing.T) {
+	h := newHarness(t)
+	out, _, code := h.run("help", "dpps")
+	if code != 0 || !strings.Contains(out, "transpareo dpps [command]") {
+		t.Errorf("help dpps = %q, code %d", out, code)
+	}
+	if _, _, code := h.run("articles", "list", "--help"); code != 0 {
+		t.Errorf("articles list --help: code %d", code)
+	}
+}
+
 func TestCompareVersions(t *testing.T) {
 	cases := []struct{ builtIn, live, want string }{
 		{"1.6.0", "1.6.0", statusOK},

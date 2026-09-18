@@ -21,7 +21,18 @@ A spreadsheet you have read goes in through import_spreadsheet as
 rows keyed by the column headers, never as base64; when it
 answers a preview, propose the column mapping to the person and
 call again with the same rows and mappings, using create_new for
-columns that should become property types.
+columns that should become property types. Set auto where the
+mapping is clear: the headings are those of the import template,
+or ones you have already seen resolve in this workspace. While
+any column is uncertain, work from the preview.
+A run started earlier, or in another session, is found with
+list_imports or list_exports and read with wait_for_task on its
+statusUrl.
+A question about how a person does something in the application
+manager is answered from the help articles: search_help for the
+topic, then read_help for the article. The API guide describes the
+calls a program makes; the help articles describe the screens a
+person uses.
 Anything without a tool: search_operations, then call_api. Lists
 are paged; follow nextPage.`
 
@@ -146,6 +157,19 @@ var curated = []Tool{
 		Kind:      kindList,
 	},
 	{
+		Name:      "list_exports",
+		Group:     GroupData,
+		Operation: "list_exports",
+		Kind:      kindList,
+	},
+	{
+		Name:        "list_imports",
+		Group:       GroupData,
+		Operation:   "list_imports",
+		Kind:        kindList,
+		Description: `The runs this credential started, newest first. A run begun earlier, or in another session, is found again here.`,
+	},
+	{
 		Name:        "list_lots",
 		Group:       GroupDpps,
 		Operation:   "list_lots",
@@ -192,10 +216,18 @@ var curated = []Tool{
 		Description: `Signs a snapshot into the ten-year archive. Publishing cannot be undone.`,
 	},
 	{
-		Name:      "publish_product",
-		Group:     GroupProducts,
-		Operation: "publish_product",
-		Kind:      kindWrite,
+		Name:        "publish_product",
+		Group:       GroupProducts,
+		Operation:   "publish_product",
+		Kind:        kindWrite,
+		Description: `A storefront action: a workspace without one publishes a product as it is created and answers 403 here.`,
+	},
+	{
+		Name:        "read_help",
+		Group:       GroupHelp,
+		Operation:   "get_help_article",
+		Kind:        kindGet,
+		Description: `One article whole, as markdown, with the address of the page a person opens it at.`,
 	},
 	{
 		Name:        "regenerate_webhook_secret",
@@ -210,6 +242,13 @@ var curated = []Tool{
 		Group:     GroupDpps,
 		Operation: "reissue_dpp",
 		Kind:      kindWrite,
+	},
+	{
+		Name:        "search_help",
+		Group:       GroupHelp,
+		Operation:   "list_help",
+		Kind:        kindList,
+		Description: `How a person does something in the application manager, from the articles it shows them. Give term the question in the reader's own words. A call with no term answers the whole set, which is how an empty answer is told apart from a workspace whose help content has not arrived.`,
 	},
 	{
 		Name:      "supersede_dpp",

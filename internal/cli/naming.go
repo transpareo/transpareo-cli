@@ -26,10 +26,15 @@ var handWritten = map[string]bool{
 }
 
 // commandOverrides names the command words of operations whose
-// derived name would read badly.
+// derived name would read badly. The help articles are here for a
+// harder reason: their tag would put them under `transpareo
+// help`, where they would shadow the command every command line
+// answers `help <command>` with.
 var commandOverrides = map[string]string{
 	"list_product_categories": "categories list",
 	"append_dpp_event":        "dpps events append",
+	"list_help":               "articles list",
+	"get_help_article":        "articles get",
 }
 
 // Exposed reports whether the command line offers an operation:

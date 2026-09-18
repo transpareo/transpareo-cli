@@ -32,6 +32,7 @@ var groups = map[string]string{
 	"dpps":      "GroupDpps",
 	"data":      "GroupData",
 	"webhooks":  "GroupWebhooks",
+	"help":      "GroupHelp",
 }
 
 // kinds maps a catalogue kind onto the constant that decides how

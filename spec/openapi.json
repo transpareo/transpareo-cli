@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Transpareo API",
-    "version": "2.3.0",
+    "version": "2.4.1",
     "description": "This site runs on the [Transpareo](https://transpareo.com) product information platform. The REST API gives programs access to products, product components, brands, Digital Product Passports, categories and configuration. The version is selected with the `Accept` header, not a path segment.\n\nThe guide at [/apidocs/guide](/apidocs/guide) is the narrative companion to this reference: credentials, permissions, pagination, idempotency, the passport flows, the event feed, webhooks, rate limits and the error format. It is also served as Markdown at [/apidocs/guide.md](/apidocs/guide.md).\n\nPrograms authenticate with the OAuth 2.0 client credentials grant. Exchange the client id and secret once, then send the token on every request:\n\n```\ncurl -X POST https://<host>/api/oauth/token -d grant_type=client_credentials -d client_id=<key> -d client_secret=<secret>\n\ncurl https://<host>/api/me -H \"Authorization: Bearer <access_token>\"\n```\n\nAn assistant that speaks the Model Context Protocol connects to `/mcp` on this host and calls these operations as tools, named in the catalogue at [/apidocs/mcp-tools.json](/apidocs/mcp-tools.json) and explained by the guide's Assistants section.",
     "contact": {
       "name": "Transpareo Support",
@@ -107,6 +107,10 @@
     {
       "name": "Feedback",
       "description": "User feedback on products, components, or brands"
+    },
+    {
+      "name": "Help",
+      "description": "The help articles the application manager shows a person: how something is done on the screens, in the reader's language"
     },
     {
       "name": "Configuration",
@@ -2855,6 +2859,99 @@
           "dppCode": "A1B2C3D4E"
         }
       },
+      "HelpArticle": {
+        "type": "object",
+        "description": "One help article whole: everything a summary carries, plus the body and the articles next to it.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/HelpSummary"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "body": {
+                "type": "string",
+                "description": "The article as Markdown. A `%{site_name}` placeholder is resolved to the workspace's name, and a link into the application manager is rendered as an anchor carrying its address, so a reader can name the page a person should open."
+              },
+              "bodyFormat": {
+                "type": "string",
+                "enum": [
+                  "markdown"
+                ]
+              },
+              "showToc": {
+                "type": "boolean",
+                "description": "Whether the reader shows a table of contents for this article"
+              },
+              "related": {
+                "type": "array",
+                "description": "Articles covering neighbouring ground, most similar first, as the little that is needed to read one",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "HelpSummary": {
+        "type": "object",
+        "description": "What a help article is about, without its body. A list answers these, so a reader chooses an article before paying for its prose.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "example": "HelpArticle"
+          },
+          "key": {
+            "type": "string",
+            "description": "The stable identifier of the topic, the same in every language. `GET /help/{key}` reads the article.",
+            "example": "data_export"
+          },
+          "title": {
+            "type": "string",
+            "description": "The heading a person sees, with its placeholders resolved",
+            "example": "Exporting your catalogue"
+          },
+          "summary": {
+            "type": "string",
+            "description": "One or two sentences saying what the article covers"
+          },
+          "category": {
+            "type": "string",
+            "description": "The key of the section the article sits in",
+            "example": "data_import"
+          },
+          "categoryTitle": {
+            "type": "string",
+            "description": "The name of that section in the language answered",
+            "example": "Import & export"
+          },
+          "locale": {
+            "type": "string",
+            "description": "The language this article was served in, which can differ from the one asked for when the article has no copy in it",
+            "example": "de"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "url": {
+            "type": "string",
+            "description": "The page a person opens this article at in the application manager",
+            "example": "https://<host>/admin/help/data_export"
+          }
+        }
+      },
       "Import": {
         "type": "object",
         "description": "One import and where it stands. `preview` is present while the import is `fresh`; `progress` while a task runs; `errorGroups` and `rowErrors` once a validation or a run has found problems.",
@@ -2996,7 +3093,7 @@
           },
           "revertable": {
             "type": "boolean",
-            "description": "A completed or failed run with a backup or created records can be reverted"
+            "description": "A completed or failed component or product run with a backup or created records can be reverted; a passport run never can"
           },
           "progress": {
             "type": "integer",
@@ -9136,6 +9233,191 @@
         }
       }
     },
+    "/help": {
+      "get": {
+        "tags": [
+          "Help"
+        ],
+        "summary": "Search the help articles",
+        "description": "The articles the application manager shows a person: where a setting lives, what a button does, which step comes before which. Give `term` the question in the reader's own words: every word is matched on its own and the words a question is phrased with are dropped, so a whole sentence finds what a keyword would. Hits come back best first, a title match ahead of one in the body.\n\nAn answer with no hits says the articles cover nothing by that name. To tell that apart from a workspace whose help content has not arrived yet, call again with no `term`: the total is then the whole set this workspace can read.\n\nSummaries only, so choosing an article is cheap; `GET /help/{key}` reads one.",
+        "operationId": "list_help",
+        "x-permission": [],
+        "security": [
+          {
+            "userToken": []
+          },
+          {
+            "oauth2": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "term",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Words to look for, or the question itself"
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Keep only the articles of this category key"
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "The reader's language as a language code. The workspace's default language when absent, and English when this server publishes no help in the one asked for."
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "$ref": "#/components/parameters/per_page"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The articles the query names",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "help": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/HelpSummary"
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "help": [
+                    {
+                      "type": "HelpArticle",
+                      "key": "data_export",
+                      "title": "Exporting your catalogue",
+                      "summary": "How an export is started, what each format carries, and where the archive is downloaded.",
+                      "category": "data_import",
+                      "categoryTitle": "Import & export",
+                      "locale": "en",
+                      "tags": [],
+                      "url": "https://<host>/admin/help/data_export"
+                    }
+                  ]
+                }
+              }
+            },
+            "headers": {
+              "API-Total": {
+                "$ref": "#/components/headers/API-Total"
+              },
+              "API-Count": {
+                "$ref": "#/components/headers/API-Count"
+              },
+              "API-Offset": {
+                "$ref": "#/components/headers/API-Offset"
+              },
+              "API-Page": {
+                "$ref": "#/components/headers/API-Page"
+              },
+              "API-Per-Page": {
+                "$ref": "#/components/headers/API-Per-Page"
+              },
+              "Link": {
+                "$ref": "#/components/headers/Link"
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/help/{key}": {
+      "get": {
+        "tags": [
+          "Help"
+        ],
+        "summary": "Read a help article",
+        "description": "One article whole, as Markdown a reader can quote, with the articles next to it named. An article with no copy in the language asked for answers its English one and says so in `locale`.",
+        "operationId": "get_help_article",
+        "x-permission": [],
+        "security": [
+          {
+            "userToken": []
+          },
+          {
+            "oauth2": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The key a search answered, such as `data_export`"
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "The reader's language as a language code. The workspace's default language when absent."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The article",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HelpArticle"
+                },
+                "example": {
+                  "type": "HelpArticle",
+                  "key": "data_export",
+                  "title": "Exporting your catalogue",
+                  "summary": "How an export is started, what each format carries, and where the archive is downloaded.",
+                  "category": "data_import",
+                  "categoryTitle": "Import & export",
+                  "locale": "en",
+                  "tags": [],
+                  "url": "https://<host>/admin/help/data_export",
+                  "body": "## Starting an export\n\nOpen the export page and choose a format.\n",
+                  "bodyFormat": "markdown",
+                  "showToc": true,
+                  "related": [
+                    {
+                      "key": "products",
+                      "title": "Products"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
     "/imports": {
       "get": {
         "tags": [
@@ -9616,7 +9898,7 @@
           "Imports"
         ],
         "summary": "Execute an import",
-        "description": "Writes the rows in the background, after a backup a revert can restore from. Send `options.backup` as `false` to run without one. Poll the `statusUrl` until `status` is `completed` or `failed`.\n\nBesides `import_access` this needs the write permission of the data type: `component_write` for components, `product_access` for products, `dpp_bulk_write` for passports. The rows count against the consumer's bulk item cap for the minute.",
+        "description": "Writes the rows in the background, after a backup a revert can restore from. Send `options.backup` as `false` to run without one. A passport import takes no backup and cannot be reverted, since a passport's versions are signed and its way out is a void. Poll the `statusUrl` until `status` is `completed` or `failed`.\n\nBesides `import_access` this needs the write permission of the data type: `component_write` for components, `product_access` for products, `dpp_bulk_write` for passports. The rows count against the consumer's bulk item cap for the minute.",
         "operationId": "execute_import",
         "x-permission": "import_access",
         "security": [

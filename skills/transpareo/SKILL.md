@@ -125,6 +125,8 @@ any of them shows an example and the permission it needs;
 
 <!-- reference:start -->
 - `transpareo api <METHOD> <path>`: Send an authenticated request to any endpoint
+- `transpareo articles get <key>`: Read a help article
+- `transpareo articles list`: Search the help articles
 - `transpareo auth grant --code <passport code>`: Issue a child credential scoped to one passport (POST /grant) (dpp_events or dpp_history or dpp_dynamic)
 - `transpareo auth login --host <workspace host> --client-id <key>`: Store a credential after checking it at the token endpoint
 - `transpareo auth logout`: Remove the stored profile and its secret
