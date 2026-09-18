@@ -2945,7 +2945,7 @@ type ImportPreview struct {
 		// Header The column header as the file spells it
 		Header *string `json:"header,omitempty"`
 
-		// MatchType How the header was recognised. `exact` and `attribute` resolve on their own; `fuzzy` is a guess by similarity; `none` found nothing.
+		// MatchType How the header was recognised. `exact` and `attribute` resolve on their own; `fuzzy` is a match by similarity, the one the mapping page prefills, so take its suggestion; `none` found nothing, and that is the one column a person has to decide.
 		MatchType *ImportPreviewColumnsMatchType `json:"matchType,omitempty"`
 
 		// SampleValues Up to three values from the column
@@ -2978,7 +2978,7 @@ type ImportPreview struct {
 	RequiredAttributes *[]string `json:"requiredAttributes,omitempty"`
 }
 
-// ImportPreviewColumnsMatchType How the header was recognised. `exact` and `attribute` resolve on their own; `fuzzy` is a guess by similarity; `none` found nothing.
+// ImportPreviewColumnsMatchType How the header was recognised. `exact` and `attribute` resolve on their own; `fuzzy` is a match by similarity, the one the mapping page prefills, so take its suggestion; `none` found nothing, and that is the one column a person has to decide.
 type ImportPreviewColumnsMatchType string
 
 // ImportPreviewColumnsSuggestedAction defines model for ImportPreview.Columns.SuggestedAction.
