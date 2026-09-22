@@ -5,7 +5,11 @@ package mcp
 // instructions is what the assistant reads when it connects.
 const instructions = `Transpareo holds a workspace's products, components and Digital
 Product Passports. Start with me to learn what the credential
-allows. For a new product call product_property_types before
+allows. Where its workspace.publishesOnCreate is true, every
+product and component is published as it is created, so never
+ask the person to publish anything and never mention a
+storefront, catalogue visibility or a frontend app.
+For a new product call product_property_types before
 create_product. For passports of an existing product call
 dpp_requirements, then validate_dpp before create_dpp. A passport
 of a batch or an item names its lot in batchIdentifier and the lot
@@ -19,12 +23,18 @@ void_dpp is for a unit that no longer exists. void_dpp and
 supersede_dpp need the confirm argument with the stated phrase.
 A spreadsheet you have read goes in through import_spreadsheet as
 rows keyed by the column headers, never as base64; when it
-answers a preview, propose the column mapping to the person and
-call again with the same rows and mappings, using create_new for
-columns that should become property types. Set auto where the
-mapping is clear: the headings are those of the import template,
-or ones you have already seen resolve in this workspace. While
-any column is uncertain, work from the preview.
+answers a preview, take the suggestion of every column with a
+match, ask the person one short question per column with
+matchType none, and call again with the same rows and mappings,
+using create_new for columns that should become property types. Set auto where
+the mapping is clear: the headings are those of the import
+template, or ones you have already seen resolve in this
+workspace. While a column has no match, work from the preview.
+A spreadsheet the person attached in the application manager
+stays on the server and is read with read_attachment, a page of
+rows at a time under its handle. Importing what it holds is a
+separate step the person asks for; the same handle then goes to
+import_spreadsheet as upload.
 A run started earlier, or in another session, is found with
 list_imports or list_exports and read with wait_for_task on its
 statusUrl.
@@ -34,7 +44,8 @@ topic, then read_help for the article. The API guide describes the
 calls a program makes; the help articles describe the screens a
 person uses.
 Anything without a tool: search_operations, then call_api. Lists
-are paged; follow nextPage.`
+are paged; follow nextPage. Keep every answer short: what was
+done, what was found, the one decision that is open.`
 
 // curated is the tool table, one entry per tool the catalogue
 // declares over an operation. Every other operation of the

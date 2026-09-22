@@ -1972,7 +1972,7 @@ type Config struct {
 
 // ConsumerIdentity The API consumer behind a bearer token and what that token allows
 //
-// Example: {"authority":false,"bulkItemsPerMinute":5000,"expiresAt":null,"key":"3f6a9c2e-8d1b-4f7e-9a3c-5b2d8e1f4a7c","name":"ERP integration","permissions":["product_access","dpp_read","dpp_write"],"rateLimit":{"limit":1000,"used":12,"windowStartedAt":"2026-09-08T14:10:00Z"},"resourceScope":{},"scope":["dpp_read","dpp_write"],"status":"active","tokenExpiresAt":"2026-09-08T15:04:05Z"}
+// Example: {"authority":false,"bulkItemsPerMinute":5000,"expiresAt":null,"key":"3f6a9c2e-8d1b-4f7e-9a3c-5b2d8e1f4a7c","name":"ERP integration","permissions":["product_access","dpp_read","dpp_write"],"rateLimit":{"limit":1000,"used":12,"windowStartedAt":"2026-09-08T14:10:00Z"},"resourceScope":{},"scope":["dpp_read","dpp_write"],"status":"active","tokenExpiresAt":"2026-09-08T15:04:05Z","workspace":{"publishesOnCreate":true}}
 type ConsumerIdentity struct {
 	// Authority True for a regulator consumer issued by the platform
 	Authority          *bool `json:"authority,omitempty"`
@@ -2003,6 +2003,12 @@ type ConsumerIdentity struct {
 	Scope          *[]string               `json:"scope,omitempty"`
 	Status         *ConsumerIdentityStatus `json:"status,omitempty"`
 	TokenExpiresAt *time.Time              `json:"tokenExpiresAt,omitempty"`
+
+	// Workspace What the workspace itself does with what a caller writes
+	Workspace *struct {
+		// PublishesOnCreate True where the workspace has no storefront. Every product and every component is published as it is created, the publish and unpublish operations answer 403, and the person using the workspace never sees publishing as a step, so asking them to publish something asks for a control their screens do not show. False where a storefront decides what the catalogue shows, and a record is published on demand.
+		PublishesOnCreate *bool `json:"publishesOnCreate,omitempty"`
+	} `json:"workspace,omitempty"`
 }
 
 // ConsumerIdentityStatus defines model for ConsumerIdentity.Status.
@@ -2945,7 +2951,7 @@ type ImportPreview struct {
 		// Header The column header as the file spells it
 		Header *string `json:"header,omitempty"`
 
-		// MatchType How the header was recognised. `exact` and `attribute` resolve on their own; `fuzzy` is a guess by similarity; `none` found nothing.
+		// MatchType How the header was recognised. `exact` and `attribute` resolve on their own; `fuzzy` is a match by similarity, the one the mapping page prefills, so take its suggestion; `none` found nothing, and that is the one column a person has to decide.
 		MatchType *ImportPreviewColumnsMatchType `json:"matchType,omitempty"`
 
 		// SampleValues Up to three values from the column
@@ -2978,7 +2984,7 @@ type ImportPreview struct {
 	RequiredAttributes *[]string `json:"requiredAttributes,omitempty"`
 }
 
-// ImportPreviewColumnsMatchType How the header was recognised. `exact` and `attribute` resolve on their own; `fuzzy` is a guess by similarity; `none` found nothing.
+// ImportPreviewColumnsMatchType How the header was recognised. `exact` and `attribute` resolve on their own; `fuzzy` is a match by similarity, the one the mapping page prefills, so take its suggestion; `none` found nothing, and that is the one column a person has to decide.
 type ImportPreviewColumnsMatchType string
 
 // ImportPreviewColumnsSuggestedAction defines model for ImportPreview.Columns.SuggestedAction.
@@ -5385,7 +5391,7 @@ type ClientInterface interface {
 
 	// ValidateDppWithBody Validate a DPP payload
 	//
-	// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot.
+	// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.
 	//
 	// A payload the platform would refuse is a plain `200` with `valid: false` - the request succeeded, the passport would not. Only a missing permission, a missing `dpp` object or an unreadable body answer with an error status.
 	//
@@ -5396,7 +5402,7 @@ type ClientInterface interface {
 
 	// ValidateDpp Validate a DPP payload
 	//
-	// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot.
+	// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.
 	//
 	// A payload the platform would refuse is a plain `200` with `valid: false` - the request succeeded, the passport would not. Only a missing permission, a missing `dpp` object or an unreadable body answer with an error status.
 	//
@@ -5421,7 +5427,7 @@ type ClientInterface interface {
 
 	// PublishDppWithBody Publish a DPP
 	//
-	// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
+	// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -5430,7 +5436,7 @@ type ClientInterface interface {
 
 	// PublishDpp Publish a DPP
 	//
-	// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
+	// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -5984,7 +5990,7 @@ type ClientInterface interface {
 
 	// GetMe What the presented token allows
 	//
-	// The consumer behind the bearer token, its permissions, the token's scope and expiry, the consumer's resource scope and rate limit. The cheapest way to check that a credential works. Never returns the secret. A user token gets the consumer error; users read themselves at `GET /users/me`.
+	// The consumer behind the bearer token, its permissions, the token's scope and expiry, the consumer's resource scope and rate limit, and under `workspace` what the workspace does with a record as it is written. The cheapest way to check that a credential works. Never returns the secret. A user token gets the consumer error; users read themselves at `GET /users/me`.
 	//
 	// Corresponds with GET /me (the `GetMe` operationId).
 	GetMe(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -7190,7 +7196,7 @@ func (c *Client) GetDppRequirements(ctx context.Context, params *GetDppRequireme
 
 // ValidateDppWithBody Validate a DPP payload
 //
-// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot.
+// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.
 //
 // A payload the platform would refuse is a plain `200` with `valid: false` - the request succeeded, the passport would not. Only a missing permission, a missing `dpp` object or an unreadable body answer with an error status.
 //
@@ -7211,7 +7217,7 @@ func (c *Client) ValidateDppWithBody(ctx context.Context, contentType string, bo
 
 // ValidateDpp Validate a DPP payload
 //
-// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot.
+// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.
 //
 // A payload the platform would refuse is a plain `200` with `valid: false` - the request succeeded, the passport would not. Only a missing permission, a missing `dpp` object or an unreadable body answer with an error status.
 //
@@ -7266,7 +7272,7 @@ func (c *Client) GetDppVersionPrivateProperties(ctx context.Context, code string
 
 // PublishDppWithBody Publish a DPP
 //
-// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
+// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
 //
 // Takes any type of body and a specified content type.
 //
@@ -7285,7 +7291,7 @@ func (c *Client) PublishDppWithBody(ctx context.Context, code string, params *Pu
 
 // PublishDpp Publish a DPP
 //
-// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
+// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -8459,7 +8465,7 @@ func (c *Client) GetLot(ctx context.Context, id int, reqEditors ...RequestEditor
 
 // GetMe What the presented token allows
 //
-// The consumer behind the bearer token, its permissions, the token's scope and expiry, the consumer's resource scope and rate limit. The cheapest way to check that a credential works. Never returns the secret. A user token gets the consumer error; users read themselves at `GET /users/me`.
+// The consumer behind the bearer token, its permissions, the token's scope and expiry, the consumer's resource scope and rate limit, and under `workspace` what the workspace does with a record as it is written. The cheapest way to check that a credential works. Never returns the secret. A user token gets the consumer error; users read themselves at `GET /users/me`.
 //
 // Corresponds with GET /me (the `GetMe` operationId).
 func (c *Client) GetMe(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -16229,7 +16235,7 @@ type ClientWithResponsesInterface interface {
 
 	// ValidateDppWithBodyWithResponse Validate a DPP payload
 	//
-	// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot.
+	// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.
 	//
 	// A payload the platform would refuse is a plain `200` with `valid: false` - the request succeeded, the passport would not. Only a missing permission, a missing `dpp` object or an unreadable body answer with an error status.
 	//
@@ -16240,7 +16246,7 @@ type ClientWithResponsesInterface interface {
 
 	// ValidateDppWithResponse Validate a DPP payload
 	//
-	// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot.
+	// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.
 	//
 	// A payload the platform would refuse is a plain `200` with `valid: false` - the request succeeded, the passport would not. Only a missing permission, a missing `dpp` object or an unreadable body answer with an error status.
 	//
@@ -16269,7 +16275,7 @@ type ClientWithResponsesInterface interface {
 
 	// PublishDppWithBodyWithResponse Publish a DPP
 	//
-	// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
+	// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -16278,7 +16284,7 @@ type ClientWithResponsesInterface interface {
 
 	// PublishDppWithResponse Publish a DPP
 	//
-	// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
+	// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -16884,7 +16890,7 @@ type ClientWithResponsesInterface interface {
 
 	// GetMeWithResponse What the presented token allows
 	//
-	// The consumer behind the bearer token, its permissions, the token's scope and expiry, the consumer's resource scope and rate limit. The cheapest way to check that a credential works. Never returns the secret. A user token gets the consumer error; users read themselves at `GET /users/me`.
+	// The consumer behind the bearer token, its permissions, the token's scope and expiry, the consumer's resource scope and rate limit, and under `workspace` what the workspace does with a record as it is written. The cheapest way to check that a credential works. Never returns the secret. A user token gets the consumer error; users read themselves at `GET /users/me`.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
@@ -26181,7 +26187,7 @@ func (c *ClientWithResponses) GetDppRequirementsWithResponse(ctx context.Context
 
 // ValidateDppWithBodyWithResponse Validate a DPP payload
 //
-// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot.
+// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.
 //
 // A payload the platform would refuse is a plain `200` with `valid: false` - the request succeeded, the passport would not. Only a missing permission, a missing `dpp` object or an unreadable body answer with an error status.
 //
@@ -26198,7 +26204,7 @@ func (c *ClientWithResponses) ValidateDppWithBodyWithResponse(ctx context.Contex
 
 // ValidateDppWithResponse Validate a DPP payload
 //
-// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot.
+// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.
 //
 // A payload the platform would refuse is a plain `200` with `valid: false` - the request succeeded, the passport would not. Only a missing permission, a missing `dpp` object or an unreadable body answer with an error status.
 //
@@ -26245,7 +26251,7 @@ func (c *ClientWithResponses) GetDppVersionPrivatePropertiesWithResponse(ctx con
 
 // PublishDppWithBodyWithResponse Publish a DPP
 //
-// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
+// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -26260,7 +26266,7 @@ func (c *ClientWithResponses) PublishDppWithBodyWithResponse(ctx context.Context
 
 // PublishDppWithResponse Publish a DPP
 //
-// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
+// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
@@ -27238,7 +27244,7 @@ func (c *ClientWithResponses) GetLotWithResponse(ctx context.Context, id int, re
 
 // GetMeWithResponse What the presented token allows
 //
-// The consumer behind the bearer token, its permissions, the token's scope and expiry, the consumer's resource scope and rate limit. The cheapest way to check that a credential works. Never returns the secret. A user token gets the consumer error; users read themselves at `GET /users/me`.
+// The consumer behind the bearer token, its permissions, the token's scope and expiry, the consumer's resource scope and rate limit, and under `workspace` what the workspace does with a record as it is written. The cheapest way to check that a credential works. Never returns the secret. A user token gets the consumer error; users read themselves at `GET /users/me`.
 //
 // Returns a wrapper object for the known response body format(s).
 //
