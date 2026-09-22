@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Transpareo API",
-    "version": "2.4.1",
+    "version": "2.6.0",
     "description": "This site runs on the [Transpareo](https://transpareo.com) product information platform. The REST API gives programs access to products, product components, brands, Digital Product Passports, categories and configuration. The version is selected with the `Accept` header, not a path segment.\n\nThe guide at [/apidocs/guide](/apidocs/guide) is the narrative companion to this reference: credentials, permissions, pagination, idempotency, the passport flows, the event feed, webhooks, rate limits and the error format. It is also served as Markdown at [/apidocs/guide.md](/apidocs/guide.md).\n\nPrograms authenticate with the OAuth 2.0 client credentials grant. Exchange the client id and secret once, then send the token on every request:\n\n```\ncurl -X POST https://<host>/api/oauth/token -d grant_type=client_credentials -d client_id=<key> -d client_secret=<secret>\n\ncurl https://<host>/api/me -H \"Authorization: Bearer <access_token>\"\n```\n\nAn assistant that speaks the Model Context Protocol connects to `/mcp` on this host and calls these operations as tools, named in the catalogue at [/apidocs/mcp-tools.json](/apidocs/mcp-tools.json) and explained by the guide's Assistants section.",
     "contact": {
       "name": "Transpareo Support",
@@ -1312,6 +1312,16 @@
           },
           "bulkItemsPerMinute": {
             "type": "integer"
+          },
+          "workspace": {
+            "type": "object",
+            "description": "What the workspace itself does with what a caller writes",
+            "properties": {
+              "publishesOnCreate": {
+                "type": "boolean",
+                "description": "True where the workspace has no storefront. Every product and every component is published as it is created, the publish and unpublish operations answer 403, and the person using the workspace never sees publishing as a step, so asking them to publish something asks for a control their screens do not show. False where a storefront decides what the catalogue shows, and a record is published on demand."
+              }
+            }
           }
         },
         "example": {
@@ -1336,7 +1346,10 @@
             "used": 12,
             "windowStartedAt": "2026-09-08T14:10:00Z"
           },
-          "bulkItemsPerMinute": 5000
+          "bulkItemsPerMinute": 5000,
+          "workspace": {
+            "publishesOnCreate": true
+          }
         }
       },
       "Country": {
@@ -3293,7 +3306,7 @@
                     "fuzzy",
                     "none"
                   ],
-                  "description": "How the header was recognised. `exact` and `attribute` resolve on their own; `fuzzy` is a guess by similarity; `none` found nothing."
+                  "description": "How the header was recognised. `exact` and `attribute` resolve on their own; `fuzzy` is a match by similarity, the one the mapping page prefills, so take its suggestion; `none` found nothing, and that is the one column a person has to decide."
                 },
                 "similarity": {
                   "type": "number",
@@ -6487,7 +6500,7 @@
           "DPPs"
         ],
         "summary": "Validate a DPP payload",
-        "description": "The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot.\n\nA payload the platform would refuse is a plain `200` with `valid: false` - the request succeeded, the passport would not. Only a missing permission, a missing `dpp` object or an unreadable body answer with an error status.",
+        "description": "The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.\n\nA payload the platform would refuse is a plain `200` with `valid: false` - the request succeeded, the passport would not. Only a missing permission, a missing `dpp` object or an unreadable body answer with an error status.",
         "operationId": "validate_dpp",
         "x-permission": "dpp_write",
         "x-safe": true,
@@ -8085,7 +8098,7 @@
           "DPPs"
         ],
         "summary": "Publish a DPP",
-        "description": "Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.",
+        "description": "Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.",
         "operationId": "publish_dpp",
         "x-permission": "dpp_write",
         "security": [
@@ -11269,7 +11282,7 @@
           "Authentication"
         ],
         "summary": "What the presented token allows",
-        "description": "The consumer behind the bearer token, its permissions, the token's scope and expiry, the consumer's resource scope and rate limit. The cheapest way to check that a credential works. Never returns the secret. A user token gets the consumer error; users read themselves at `GET /users/me`.",
+        "description": "The consumer behind the bearer token, its permissions, the token's scope and expiry, the consumer's resource scope and rate limit, and under `workspace` what the workspace does with a record as it is written. The cheapest way to check that a credential works. Never returns the secret. A user token gets the consumer error; users read themselves at `GET /users/me`.",
         "operationId": "get_me",
         "x-permission": [],
         "security": [
