@@ -1,6 +1,6 @@
 # Command reference
 
-Every command of `transpareo`, generated from API specification 2.11.0. `--help` on any command prints the same example and permission key.
+Every command of `transpareo`, generated from API specification 2.12.0. `--help` on any command prints the same example and permission key.
 
 | Option on every command | What it does |
 |---|---|

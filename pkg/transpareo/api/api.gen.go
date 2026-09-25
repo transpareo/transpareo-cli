@@ -5787,7 +5787,7 @@ type ClientInterface interface {
 
 	// DeleteComponent Delete a component
 	//
-	// Removes the component from the catalogue. A component that products still list answers 409 `COMPONENT_IN_USE` and names those products; unpublish it instead, or remove it from the products first. The caller must own the component, or hold `component_write`.
+	// Removes the component from the catalogue. A component that products still list answers 409 `COMPONENT_IN_USE` and names those products; unpublish it instead, or remove it from the products first. A component that a published passport refers to stays as well and answers 409 `COMPONENT_DELETE_REFUSED`, with the reason in the message and the next step in the hint. The caller must own the component, or hold `component_write`.
 	//
 	// Corresponds with DELETE /components/{id} (the `DeleteComponent` operationId).
 	DeleteComponent(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -6851,7 +6851,7 @@ type ClientInterface interface {
 
 	// DeleteProduct Delete a product
 	//
-	// Deletes a product you own.
+	// Deletes a product you own. A product that variants still refer to, or that a published passport was made from, stays and answers 409 `PRODUCT_DELETE_REFUSED`; the message names the reason and the hint the next step.
 	//
 	// Corresponds with DELETE /products/{id} (the `DeleteProduct` operationId).
 	DeleteProduct(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -7572,7 +7572,7 @@ func (c *Client) CreateComponent(ctx context.Context, params *CreateComponentPar
 
 // DeleteComponent Delete a component
 //
-// Removes the component from the catalogue. A component that products still list answers 409 `COMPONENT_IN_USE` and names those products; unpublish it instead, or remove it from the products first. The caller must own the component, or hold `component_write`.
+// Removes the component from the catalogue. A component that products still list answers 409 `COMPONENT_IN_USE` and names those products; unpublish it instead, or remove it from the products first. A component that a published passport refers to stays as well and answers 409 `COMPONENT_DELETE_REFUSED`, with the reason in the message and the next step in the hint. The caller must own the component, or hold `component_write`.
 //
 // Corresponds with DELETE /components/{id} (the `DeleteComponent` operationId).
 func (c *Client) DeleteComponent(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -9796,7 +9796,7 @@ func (c *Client) GetNewProduct(ctx context.Context, reqEditors ...RequestEditorF
 
 // DeleteProduct Delete a product
 //
-// Deletes a product you own.
+// Deletes a product you own. A product that variants still refer to, or that a published passport was made from, stays and answers 409 `PRODUCT_DELETE_REFUSED`; the message names the reason and the hint the next step.
 //
 // Corresponds with DELETE /products/{id} (the `DeleteProduct` operationId).
 func (c *Client) DeleteProduct(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -17643,7 +17643,7 @@ type ClientWithResponsesInterface interface {
 
 	// DeleteComponentWithResponse Delete a component
 	//
-	// Removes the component from the catalogue. A component that products still list answers 409 `COMPONENT_IN_USE` and names those products; unpublish it instead, or remove it from the products first. The caller must own the component, or hold `component_write`.
+	// Removes the component from the catalogue. A component that products still list answers 409 `COMPONENT_IN_USE` and names those products; unpublish it instead, or remove it from the products first. A component that a published passport refers to stays as well and answers 409 `COMPONENT_DELETE_REFUSED`, with the reason in the message and the next step in the hint. The caller must own the component, or hold `component_write`.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
@@ -18817,7 +18817,7 @@ type ClientWithResponsesInterface interface {
 
 	// DeleteProductWithResponse Delete a product
 	//
-	// Deletes a product you own.
+	// Deletes a product you own. A product that variants still refer to, or that a published passport was made from, stays and answers 409 `PRODUCT_DELETE_REFUSED`; the message names the reason and the hint the next step.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
@@ -25765,6 +25765,8 @@ type DeleteProductResponse struct {
 	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
+	// JSON409 the response for an HTTP 409 `application/json` response
+	JSON409 *Error
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -25793,6 +25795,11 @@ func (r DeleteProductResponse) GetJSON403() *Forbidden {
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
 func (r DeleteProductResponse) GetJSON404() *NotFound {
 	return r.JSON404
+}
+
+// GetJSON409 returns the response for an HTTP 409 `application/json` response
+func (r DeleteProductResponse) GetJSON409() *Error {
+	return r.JSON409
 }
 
 // GetBody returns the raw response body bytes
@@ -28494,7 +28501,7 @@ func (c *ClientWithResponses) CreateComponentWithResponse(ctx context.Context, p
 
 // DeleteComponentWithResponse Delete a component
 //
-// Removes the component from the catalogue. A component that products still list answers 409 `COMPONENT_IN_USE` and names those products; unpublish it instead, or remove it from the products first. The caller must own the component, or hold `component_write`.
+// Removes the component from the catalogue. A component that products still list answers 409 `COMPONENT_IN_USE` and names those products; unpublish it instead, or remove it from the products first. A component that a published passport refers to stays as well and answers 409 `COMPONENT_DELETE_REFUSED`, with the reason in the message and the next step in the hint. The caller must own the component, or hold `component_write`.
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -30364,7 +30371,7 @@ func (c *ClientWithResponses) GetNewProductWithResponse(ctx context.Context, req
 
 // DeleteProductWithResponse Delete a product
 //
-// Deletes a product you own.
+// Deletes a product you own. A product that variants still refer to, or that a published passport was made from, stays and answers 409 `PRODUCT_DELETE_REFUSED`; the message names the reason and the hint the next step.
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -36726,6 +36733,13 @@ func ParseDeleteProductResponse(rsp *http.Response) (*DeleteProductResponse, err
 			return nil, err
 		}
 		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
 
 	}
 

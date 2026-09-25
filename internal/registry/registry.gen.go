@@ -4,7 +4,7 @@ package registry
 
 import "encoding/json"
 
-const generatedVersion = "2.11.0"
+const generatedVersion = "2.12.0"
 
 var generatedOperations = []Operation{
 	{
@@ -270,7 +270,7 @@ var generatedOperations = []Operation{
 		Method:      "DELETE",
 		Path:        "/components/{id}",
 		Summary:     "Delete a component",
-		Description: "Removes the component from the catalogue. A component that products still list answers 409 `COMPONENT_IN_USE` and names those products; unpublish it instead, or remove it from the products first. The caller must own the component, or hold `component_write`.",
+		Description: "Removes the component from the catalogue. A component that products still list answers 409 `COMPONENT_IN_USE` and names those products; unpublish it instead, or remove it from the products first. A component that a published passport refers to stays as well and answers 409 `COMPONENT_DELETE_REFUSED`, with the reason in the message and the next step in the hint. The caller must own the component, or hold `component_write`.",
 		PathParams: []Param{
 			{Name: "id", In: "path", Description: "Record ID", Required: true, Schema: json.RawMessage(`{"type":"integer"}`)},
 		},
@@ -2002,7 +2002,7 @@ var generatedOperations = []Operation{
 		Method:      "DELETE",
 		Path:        "/products/{id}",
 		Summary:     "Delete a product",
-		Description: "Deletes a product you own.",
+		Description: "Deletes a product you own. A product that variants still refer to, or that a published passport was made from, stays and answers 409 `PRODUCT_DELETE_REFUSED`; the message names the reason and the hint the next step.",
 		PathParams: []Param{
 			{Name: "id", In: "path", Description: "Record ID", Required: true, Schema: json.RawMessage(`{"type":"integer"}`)},
 		},
