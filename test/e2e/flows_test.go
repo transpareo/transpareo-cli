@@ -15,6 +15,7 @@ import (
 	"path/filepath"
 	"slices"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 
@@ -185,13 +186,25 @@ func throwawayProduct(t *testing.T, c *transpareo.Client) json.Number {
 		t.Fatalf("create product: %v", err)
 	}
 	t.Cleanup(func() {
-		if _, err := c.Delete(ctx, "/products/"+created.ID.String(),
-			nil); err != nil {
-			t.Errorf("delete product %s: %v", created.ID, err)
+		_, err := c.Delete(ctx, "/products/"+created.ID.String(), nil)
+		if err == nil {
+			return
 		}
+		_, passported := published.Load(created.ID.String())
+		if passported && errorCode(err) == "PRODUCT_DELETE_REFUSED" {
+			t.Logf("product %s stays with its published passport: %v",
+				created.ID, err)
+			return
+		}
+		t.Errorf("delete product %s: %v", created.ID, err)
 	})
 	return created.ID
 }
+
+// published holds the ids of the products this run published a
+// passport against. The platform keeps such a product, so its
+// cleanup takes the refused delete as the expected answer.
+var published sync.Map
 
 // lotIdentifier is the lot every passport of this suite names.
 // The platform creates the lot with the first passport that names
@@ -288,6 +301,7 @@ func TestPassportFlowOnAThrowawayProduct(t *testing.T) {
 		map[string]any{"reason": "edit"}, nil)
 	switch {
 	case err == nil:
+		published.Store(productID.String(), true)
 	case created.PublishBlocked &&
 		strings.HasPrefix(errorCode(err), "DPP_PUBLISH_"):
 		t.Logf("publish blocked by the workspace's templates: %v", err)
