@@ -25,11 +25,12 @@ const (
 	GroupData      = "data"
 	GroupWebhooks  = "webhooks"
 	GroupHelp      = "help"
+	GroupTasks     = "tasks"
 )
 
 // Groups lists the groups --tools accepts.
 var Groups = []string{GroupProducts, GroupDpps, GroupData, GroupWebhooks,
-	GroupHelp}
+	GroupHelp, GroupTasks}
 
 type kind int
 
@@ -106,6 +107,8 @@ var viaCallAPIOnly = map[string]string{
 	"revert_import":            "import_spreadsheet runs the flow",
 	"get_webhook":              "list_webhooks shows every field",
 	"update_webhook":           "rare; delete and create is clearer",
+	"update_task": "rewording a request is rare; the person who asked " +
+		"usually does it in the application manager",
 	"delete_product": "unpublishing is the safe way; deletion stays a " +
 		"deliberate call",
 	"delete_component": "unpublishing is the safe way; deletion stays a " +
@@ -151,6 +154,9 @@ var hostedOnly = map[string]string{
 		"a client that finds anything else falls back to no research",
 	"fetch": "deep research prescribes both this name and its shape; " +
 		"a client that finds anything else falls back to no research",
+	"read_attachment": "reads a sheet the person attached in the " +
+		"application manager's assistant window; a program on the " +
+		"command line reads its own files",
 }
 
 // Tools returns the curated tools, filtered to the groups asked
@@ -217,11 +223,8 @@ func (t Tool) describe(op *registry.Operation) string {
 	}
 	b.WriteString("\n")
 	switch {
-	case len(op.Permission) == 1:
-		fmt.Fprintf(&b, "Permission: %s.", op.Permission[0])
-	case len(op.Permission) > 1:
-		fmt.Fprintf(&b, "Permission: one of %s.", strings.Join(op.Permission,
-			", "))
+	case len(op.Permission) > 0:
+		fmt.Fprintf(&b, "Permission: %s.", op.PermissionText())
 	case op.Public:
 		b.WriteString("Permission: none, the endpoint is public.")
 	default:

@@ -28,7 +28,10 @@ import (
 const annotationOperation = "operationId"
 
 // addGeneratedCommands builds one command per exposed operation
-// of the registry under its group: transpareo <group> <verb>.
+// of the registry under its group: transpareo <group> <verb>. A
+// group whose word a hand-written command already carries joins
+// it, as the work tasks join `tasks wait`; a second command of the
+// same word would never be reached.
 func (a *App) addGeneratedCommands(root *cobra.Command) {
 	reg := a.operations()
 	groups := map[string]*cobra.Command{}
@@ -36,13 +39,16 @@ func (a *App) addGeneratedCommands(root *cobra.Command) {
 		words := CommandWords(op)
 		parent := groups[words[0]]
 		if parent == nil {
+			parent = existingCommand(root, words[0])
+		}
+		if parent == nil {
 			parent = &cobra.Command{
 				Use:   words[0],
 				Short: groupSummary(reg, op.Group),
 			}
-			groups[words[0]] = parent
 			root.AddCommand(parent)
 		}
+		groups[words[0]] = parent
 		for _, word := range words[1 : len(words)-1] {
 			parent = childCommand(parent, word)
 		}
@@ -57,6 +63,17 @@ func groupSummary(reg *registry.Registry, group string) string {
 		}
 	}
 	return group
+}
+
+// existingCommand is the command of that word already on the
+// root, or nil.
+func existingCommand(root *cobra.Command, word string) *cobra.Command {
+	for _, child := range root.Commands() {
+		if child.Name() == word {
+			return child
+		}
+	}
+	return nil
 }
 
 // childCommand finds or creates the intermediate command for a
@@ -175,11 +192,8 @@ func longHelp(op *registry.Operation) string {
 	b.WriteString("\n\nOperation: " + op.ID + " (" + op.Method + " " +
 		op.Path + ")")
 	switch {
-	case len(op.Permission) == 1:
-		b.WriteString("\nPermission: " + op.Permission[0])
-	case len(op.Permission) > 1:
-		b.WriteString("\nPermission: one of " + strings.Join(op.Permission,
-			", "))
+	case len(op.Permission) > 0:
+		b.WriteString("\nPermission: " + op.PermissionText())
 	case op.Public:
 		b.WriteString("\nPermission: none, the endpoint is public")
 	}

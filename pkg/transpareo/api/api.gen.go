@@ -264,15 +264,36 @@ func (e DppGranularity) Valid() bool {
 	}
 }
 
+// Defines values for DppPassportLevel.
+const (
+	DppPassportLevelItem  DppPassportLevel = "item"
+	DppPassportLevelLot   DppPassportLevel = "lot"
+	DppPassportLevelModel DppPassportLevel = "model"
+)
+
+// Valid indicates whether the value is a known member of the DppPassportLevel enum.
+func (e DppPassportLevel) Valid() bool {
+	switch e {
+	case DppPassportLevelItem:
+		return true
+	case DppPassportLevelLot:
+		return true
+	case DppPassportLevelModel:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for DppPassportStatus.
 const (
-	Withdrawn DppPassportStatus = "Withdrawn"
+	DppPassportStatusWithdrawn DppPassportStatus = "Withdrawn"
 )
 
 // Valid indicates whether the value is a known member of the DppPassportStatus enum.
 func (e DppPassportStatus) Valid() bool {
 	switch e {
-	case Withdrawn:
+	case DppPassportStatusWithdrawn:
 		return true
 	default:
 		return false
@@ -969,6 +990,7 @@ func (e ImportMappingsInputMappingsAction) Valid() bool {
 // Defines values for ImportPreviewColumnsMatchType.
 const (
 	ImportPreviewColumnsMatchTypeAttribute ImportPreviewColumnsMatchType = "attribute"
+	ImportPreviewColumnsMatchTypeConflict  ImportPreviewColumnsMatchType = "conflict"
 	ImportPreviewColumnsMatchTypeExact     ImportPreviewColumnsMatchType = "exact"
 	ImportPreviewColumnsMatchTypeFuzzy     ImportPreviewColumnsMatchType = "fuzzy"
 	ImportPreviewColumnsMatchTypeNone      ImportPreviewColumnsMatchType = "none"
@@ -978,6 +1000,8 @@ const (
 func (e ImportPreviewColumnsMatchType) Valid() bool {
 	switch e {
 	case ImportPreviewColumnsMatchTypeAttribute:
+		return true
+	case ImportPreviewColumnsMatchTypeConflict:
 		return true
 	case ImportPreviewColumnsMatchTypeExact:
 		return true
@@ -992,6 +1016,7 @@ func (e ImportPreviewColumnsMatchType) Valid() bool {
 
 // Defines values for ImportPreviewColumnsSuggestedAction.
 const (
+	ImportPreviewColumnsSuggestedActionChoose         ImportPreviewColumnsSuggestedAction = "choose"
 	ImportPreviewColumnsSuggestedActionCreateNew      ImportPreviewColumnsSuggestedAction = "create_new"
 	ImportPreviewColumnsSuggestedActionMapToAttribute ImportPreviewColumnsSuggestedAction = "map_to_attribute"
 	ImportPreviewColumnsSuggestedActionSkip           ImportPreviewColumnsSuggestedAction = "skip"
@@ -1001,6 +1026,8 @@ const (
 // Valid indicates whether the value is a known member of the ImportPreviewColumnsSuggestedAction enum.
 func (e ImportPreviewColumnsSuggestedAction) Valid() bool {
 	switch e {
+	case ImportPreviewColumnsSuggestedActionChoose:
+		return true
 	case ImportPreviewColumnsSuggestedActionCreateNew:
 		return true
 	case ImportPreviewColumnsSuggestedActionMapToAttribute:
@@ -1149,6 +1176,243 @@ func (e RegisteredClientTokenEndpointAuthMethod) Valid() bool {
 	case RegisteredClientTokenEndpointAuthMethodClientSecretPost:
 		return true
 	case RegisteredClientTokenEndpointAuthMethodNone:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for TaskClosingReason.
+const (
+	TaskClosingReasonEventGone      TaskClosingReason = "event_gone"
+	TaskClosingReasonSettled        TaskClosingReason = "settled"
+	TaskClosingReasonSubjectMissing TaskClosingReason = "subject_missing"
+	TaskClosingReasonWithdrawn      TaskClosingReason = "withdrawn"
+)
+
+// Valid indicates whether the value is a known member of the TaskClosingReason enum.
+func (e TaskClosingReason) Valid() bool {
+	switch e {
+	case TaskClosingReasonEventGone:
+		return true
+	case TaskClosingReasonSettled:
+		return true
+	case TaskClosingReasonSubjectMissing:
+		return true
+	case TaskClosingReasonWithdrawn:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for TaskKind.
+const (
+	TaskKindCustom        TaskKind = "custom"
+	TaskKindPublishReview TaskKind = "publish_review"
+	TaskKindReview        TaskKind = "review"
+)
+
+// Valid indicates whether the value is a known member of the TaskKind enum.
+func (e TaskKind) Valid() bool {
+	switch e {
+	case TaskKindCustom:
+		return true
+	case TaskKindPublishReview:
+		return true
+	case TaskKindReview:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for TaskMoves.
+const (
+	Approve  TaskMoves = "approve"
+	Cancel   TaskMoves = "cancel"
+	Claim    TaskMoves = "claim"
+	Complete TaskMoves = "complete"
+	Reject   TaskMoves = "reject"
+	Release  TaskMoves = "release"
+	Reopen   TaskMoves = "reopen"
+)
+
+// Valid indicates whether the value is a known member of the TaskMoves enum.
+func (e TaskMoves) Valid() bool {
+	switch e {
+	case Approve:
+		return true
+	case Cancel:
+		return true
+	case Claim:
+		return true
+	case Complete:
+		return true
+	case Reject:
+		return true
+	case Release:
+		return true
+	case Reopen:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for TaskOutcome.
+const (
+	TaskOutcomeApproved TaskOutcome = "approved"
+	TaskOutcomeRejected TaskOutcome = "rejected"
+)
+
+// Valid indicates whether the value is a known member of the TaskOutcome enum.
+func (e TaskOutcome) Valid() bool {
+	switch e {
+	case TaskOutcomeApproved:
+		return true
+	case TaskOutcomeRejected:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for TaskReviewAction.
+const (
+	Correct    TaskReviewAction = "correct"
+	CorrectLot TaskReviewAction = "correct_lot"
+	Publish    TaskReviewAction = "publish"
+	SealEvent  TaskReviewAction = "seal_event"
+)
+
+// Valid indicates whether the value is a known member of the TaskReviewAction enum.
+func (e TaskReviewAction) Valid() bool {
+	switch e {
+	case Correct:
+		return true
+	case CorrectLot:
+		return true
+	case Publish:
+		return true
+	case SealEvent:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for TaskSource.
+const (
+	TaskSourceAdmin     TaskSource = "admin"
+	TaskSourceImport    TaskSource = "import"
+	TaskSourceVendorApi TaskSource = "vendor_api"
+)
+
+// Valid indicates whether the value is a known member of the TaskSource enum.
+func (e TaskSource) Valid() bool {
+	switch e {
+	case TaskSourceAdmin:
+		return true
+	case TaskSourceImport:
+		return true
+	case TaskSourceVendorApi:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for TaskStatus.
+const (
+	TaskStatusCancelled TaskStatus = "cancelled"
+	TaskStatusDone      TaskStatus = "done"
+	TaskStatusOpen      TaskStatus = "open"
+)
+
+// Valid indicates whether the value is a known member of the TaskStatus enum.
+func (e TaskStatus) Valid() bool {
+	switch e {
+	case TaskStatusCancelled:
+		return true
+	case TaskStatusDone:
+		return true
+	case TaskStatusOpen:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for TaskStepType.
+const (
+	TaskStepTypeReview TaskStepType = "review"
+)
+
+// Valid indicates whether the value is a known member of the TaskStepType enum.
+func (e TaskStepType) Valid() bool {
+	switch e {
+	case TaskStepTypeReview:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for TaskStepsState.
+const (
+	TaskStepsStateApproved   TaskStepsState = "approved"
+	TaskStepsStateCurrent    TaskStepsState = "current"
+	TaskStepsStateNotReached TaskStepsState = "not_reached"
+	TaskStepsStateRejected   TaskStepsState = "rejected"
+	TaskStepsStateSkipped    TaskStepsState = "skipped"
+	TaskStepsStateWaiting    TaskStepsState = "waiting"
+)
+
+// Valid indicates whether the value is a known member of the TaskStepsState enum.
+func (e TaskStepsState) Valid() bool {
+	switch e {
+	case TaskStepsStateApproved:
+		return true
+	case TaskStepsStateCurrent:
+		return true
+	case TaskStepsStateNotReached:
+		return true
+	case TaskStepsStateRejected:
+		return true
+	case TaskStepsStateSkipped:
+		return true
+	case TaskStepsStateWaiting:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for TaskStepsType.
+const (
+	TaskStepsTypeReview TaskStepsType = "review"
+)
+
+// Valid indicates whether the value is a known member of the TaskStepsType enum.
+func (e TaskStepsType) Valid() bool {
+	switch e {
+	case TaskStepsTypeReview:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for TaskType.
+const (
+	TaskTypeTask TaskType = "Task"
+)
+
+// Valid indicates whether the value is a known member of the TaskType enum.
+func (e TaskType) Valid() bool {
+	switch e {
+	case TaskTypeTask:
 		return true
 	default:
 		return false
@@ -1551,6 +1815,33 @@ func (e StartPasswordResetJSONBodyForce) Valid() bool {
 	}
 }
 
+// Defines values for ListTasksParamsList.
+const (
+	ListTasksParamsListAll       ListTasksParamsList = "all"
+	ListTasksParamsListDone      ListTasksParamsList = "done"
+	ListTasksParamsListGroups    ListTasksParamsList = "groups"
+	ListTasksParamsListMine      ListTasksParamsList = "mine"
+	ListTasksParamsListRequested ListTasksParamsList = "requested"
+)
+
+// Valid indicates whether the value is a known member of the ListTasksParamsList enum.
+func (e ListTasksParamsList) Valid() bool {
+	switch e {
+	case ListTasksParamsListAll:
+		return true
+	case ListTasksParamsListDone:
+		return true
+	case ListTasksParamsListGroups:
+		return true
+	case ListTasksParamsListMine:
+		return true
+	case ListTasksParamsListRequested:
+		return true
+	default:
+		return false
+	}
+}
+
 // AsyncTask The polling payload of an asynchronous bulk create. While the task runs, only `taskId`, `status` and `progress` are present; the counts and the error detail appear once it completes. Successful rows are counted, not listed - only rejected rows carry detail, so an integrator can patch and resubmit that subset.
 //
 // Example: {"createdCount":1180,"duplicateCount":14,"errorCount":6,"errors":[{"error":"DPP_INVALID","fields":{"unlockableId":{"error":"blank","fullMessage":"Product is required","message":"is required"}},"modelIdentifier":"FC-50ML","row":42,"status":"error"}],"progress":100,"status":"completed","taskId":"507f1f77bcf86cd799439099"}
@@ -1572,7 +1863,7 @@ type AsyncTask struct {
 		// Error On `error` only: `DPP_INVALID_LINE` (the line is not a JSON object), `DPP_INVALID` (the passport failed validation, see `fields`) or `DPP_PUBLISH_FAILED` (the passport row was kept unpublished; resubmit the same row to resume it).
 		Error *AsyncTaskErrorsError `json:"error,omitempty"`
 
-		// Fields On `DPP_INVALID`: the failing attribute names mapped to their error.
+		// Fields On `DPP_INVALID`: the failing attribute names mapped to their error. A row naming a new lot of a product that fails another required readiness check answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, and the rest of the run goes on.
 		Fields *map[string]struct {
 			Error       *string `json:"error,omitempty"`
 			FullMessage *string `json:"fullMessage,omitempty"`
@@ -1650,7 +1941,7 @@ type BulkRow struct {
 	// Error On `error` only: `DPP_INVALID_LINE` (the line is not a JSON object), `DPP_INVALID` (the passport failed validation, see `fields`) or `DPP_PUBLISH_FAILED` (the passport row was kept unpublished; resubmit the same row to resume it).
 	Error *BulkRowError `json:"error,omitempty"`
 
-	// Fields On `DPP_INVALID`: the failing attribute names mapped to their error.
+	// Fields On `DPP_INVALID`: the failing attribute names mapped to their error. A row naming a new lot of a product that fails another required readiness check answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, and the rest of the run goes on.
 	Fields *map[string]struct {
 		Error       *string `json:"error,omitempty"`
 		FullMessage *string `json:"fullMessage,omitempty"`
@@ -1972,7 +2263,7 @@ type Config struct {
 
 // ConsumerIdentity The API consumer behind a bearer token and what that token allows
 //
-// Example: {"authority":false,"bulkItemsPerMinute":5000,"expiresAt":null,"key":"3f6a9c2e-8d1b-4f7e-9a3c-5b2d8e1f4a7c","name":"ERP integration","permissions":["product_access","dpp_read","dpp_write"],"rateLimit":{"limit":1000,"used":12,"windowStartedAt":"2026-09-08T14:10:00Z"},"resourceScope":{},"scope":["dpp_read","dpp_write"],"status":"active","tokenExpiresAt":"2026-09-08T15:04:05Z"}
+// Example: {"authority":false,"bulkItemsPerMinute":5000,"expiresAt":null,"key":"3f6a9c2e-8d1b-4f7e-9a3c-5b2d8e1f4a7c","name":"ERP integration","permissions":["product_access","dpp_read","dpp_write"],"rateLimit":{"limit":1000,"used":12,"windowStartedAt":"2026-09-08T14:10:00Z"},"resourceScope":{},"scope":["dpp_read","dpp_write"],"status":"active","tokenExpiresAt":"2026-09-08T15:04:05Z","workspace":{"publishesOnCreate":true}}
 type ConsumerIdentity struct {
 	// Authority True for a regulator consumer issued by the platform
 	Authority          *bool `json:"authority,omitempty"`
@@ -2003,6 +2294,12 @@ type ConsumerIdentity struct {
 	Scope          *[]string               `json:"scope,omitempty"`
 	Status         *ConsumerIdentityStatus `json:"status,omitempty"`
 	TokenExpiresAt *time.Time              `json:"tokenExpiresAt,omitempty"`
+
+	// Workspace What the workspace itself does with what a caller writes
+	Workspace *struct {
+		// PublishesOnCreate True where the workspace has no storefront. Every product and every component is published as it is created, the publish and unpublish operations answer 403, and the person using the workspace never sees publishing as a step, so asking them to publish something asks for a control their screens do not show. False where a storefront decides what the catalogue shows, and a record is published on demand.
+		PublishesOnCreate *bool `json:"publishesOnCreate,omitempty"`
+	} `json:"workspace,omitempty"`
 }
 
 // ConsumerIdentityStatus defines model for ConsumerIdentity.Status.
@@ -2046,6 +2343,9 @@ type Currency struct {
 //
 // Example: {"code":"A1B2C3D4E","counter":142,"createdAt":"2026-02-01T12:00:00Z","description":"Hydrating Face Cream 50ml","id":14,"locale":"de","type":"Dpp","unlockable":{"id":11,"name":"Hydrating Face Cream","type":"Product"},"url":"https://example.com/A1B2C3D4E"}
 type Dpp struct {
+	// AutoIssued Whether the workspace issued the passport by itself above its unit passports, a model passport answering the GTIN or a lot passport of an item workspace. Such a passport is included in the plan, is never submitted to the EU registry, and is left out of the passport list's default view. Always present.
+	AutoIssued *bool `json:"autoIssued,omitempty"`
+
 	// BatchIdentifier Only present when set. Carried at batch and item granularity.
 	BatchIdentifier *string `json:"batchIdentifier,omitempty"`
 
@@ -2074,6 +2374,9 @@ type Dpp struct {
 
 	// ModelIdentifier Only present when set. Inherited from the product when the create named none.
 	ModelIdentifier *string `json:"modelIdentifier,omitempty"`
+
+	// PassportLevel The level of the product the passport describes, as the published passport names it (`passportLevel`). Always present.
+	PassportLevel *DppPassportLevel `json:"passportLevel,omitempty"`
 
 	// PassportStatus The EN 18223 status of a carrier taken out of circulation. Only present once the passport is voided or superseded.
 	PassportStatus *DppPassportStatus `json:"passportStatus,omitempty"`
@@ -2107,6 +2410,9 @@ type Dpp struct {
 	// Supersedes The code of the passport this one was issued to replace. Only present on a passport that replaced another, and no statement about its own status - a replacement is the live passport for its unit.
 	Supersedes *string `json:"supersedes,omitempty"`
 
+	// SvgUrl URL to download QR code as SVG, a self-contained vector of the code alone on a white ground with its four-module quiet zone. The frame and the rating stamp the PDF and PNG may carry are left out.
+	SvgUrl *string `json:"svgUrl,omitempty"`
+
 	// Type Example: Dpp
 	Type *string `json:"type,omitempty"`
 
@@ -2132,6 +2438,9 @@ type Dpp struct {
 
 // DppGranularity Which unit the passport stands for
 type DppGranularity string
+
+// DppPassportLevel The level of the product the passport describes, as the published passport names it (`passportLevel`). Always present.
+type DppPassportLevel string
 
 // DppPassportStatus The EN 18223 status of a carrier taken out of circulation. Only present once the passport is voided or superseded.
 type DppPassportStatus string
@@ -2229,11 +2538,11 @@ type DppEventInputStatus string
 
 // DppInput The passport to write. It always stands for a product, which `unlockableId` names.
 type DppInput struct {
-	// BatchIdentifier Required at batch and item granularity. The lot is created from the product as it stands the first time its identifier is used, and reused by every later passport of the same lot.
+	// BatchIdentifier Required at batch and item granularity. The lot is created from the product as it stands the first time its identifier is used, and reused by every later passport of the same lot. A new lot is taken only of a product that passes every other required readiness check; until then the create answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`.
 	BatchIdentifier *string `json:"batchIdentifier,omitempty"`
 	Description     *string `json:"description,omitempty"`
 
-	// DynamicData Values that change over the unit's life, keyed by the vocabulary term of their property type. They ride on the separately signed dynamic surface and never enter a signed per-version snapshot; `PATCH /dpps/{id}/dynamic_data` writes them afterwards.
+	// DynamicData Values that change over the unit's life, keyed by the vocabulary term of their property type. They ride on the separately signed dynamic surface; a version seals only the reading held when the passport's copy is frozen, as a row whose `dynamic` flag is true. That surface is public and carries only the keys naming a published property type in the public tier. `PATCH /dpps/{id}/dynamic_data` writes them afterwards.
 	DynamicData *map[string]interface{} `json:"dynamicData,omitempty"`
 
 	// Granularity Which unit the passport stands for, and therefore which identifiers it needs. Left out, the passport takes the workspace's default granularity, so name it when the passport is for a batch or an item.
@@ -2261,7 +2570,7 @@ type DppInputGranularity string
 
 // DppRequirements What a passport of one product needs at one granularity, and what the product still lacks, before anything is written. Field names throughout are the wire names, so a program copies them into a create or a bulk row as they are.
 //
-// Example: {"batch":{"description":"A lot is created from the product as it stands the first time its identifier is used; later passports of the same lot reuse it.","fields":["identifier","manufacturedOn"]},"defaultGranularity":"model","dynamicPropertyTypes":[{"id":812,"inputType":"list","name":"State of charge","namespace":"bpass:stateOfCharge","unit":"%"}],"granularities":{"batch":{"identifiers":["modelIdentifier","batchIdentifier"]},"item":{"identifiers":["modelIdentifier","batchIdentifier","serialIdentifier"]},"model":{"identifiers":["modelIdentifier"]}},"granularity":"item","identifiers":{"batchIdentifier":{"required":true},"modelIdentifier":{"required":true,"source":"product","value":"4006381333931"},"serialIdentifier":{"required":true}},"inheritedProperties":[{"mandatory":true,"name":"Chemistry","namespace":"bpass:batteryChemistry","propertyTypeId":804,"values":["LFP"]}],"outlook":{"must":[],"publishBlocked":false,"should":[]},"product":{"gtin":"4006381333931","id":4711,"modelIdentifier":"4006381333931","name":"Hydrating Face Cream"},"templates":{"bulkRow":{"batchIdentifier":"","granularity":"item","modelIdentifier":"4006381333931","serialIdentifier":"","unlockableId":4711},"create":{"dpp":{"batchIdentifier":"","dynamicData":{"bpass:stateOfCharge":""},"granularity":"item","locale":"de","serialIdentifier":"","unlockableId":4711,"unlockableType":"Product"}}}}
+// Example: {"batch":{"description":"Created from the product the first time its identifier is used, reused afterwards. A new lot is taken only of a product that passes every other required readiness check; until then a passport naming one is refused with DPP_BATCH_PRODUCT_NOT_READY on batch.","fields":["identifier","manufacturedOn"]},"defaultGranularity":"model","dynamicPropertyTypes":[{"id":812,"inputType":"list","name":"State of charge","namespace":"bpass:stateOfCharge","unit":"%"}],"granularities":{"batch":{"identifiers":["modelIdentifier","batchIdentifier"]},"item":{"identifiers":["modelIdentifier","batchIdentifier","serialIdentifier"]},"model":{"identifiers":["modelIdentifier"]}},"granularity":"item","identifiers":{"batchIdentifier":{"required":true},"modelIdentifier":{"required":true,"source":"product","value":"4006381333931"},"serialIdentifier":{"required":true}},"inheritedProperties":[{"mandatory":true,"name":"Chemistry","namespace":"bpass:batteryChemistry","propertyTypeId":804,"values":["LFP"]}],"outlook":{"must":[],"publishBlocked":false,"should":[]},"product":{"gtin":"4006381333931","id":4711,"modelIdentifier":"4006381333931","name":"Hydrating Face Cream"},"templates":{"bulkRow":{"batchIdentifier":"","granularity":"item","modelIdentifier":"4006381333931","serialIdentifier":"","unlockableId":4711},"create":{"dpp":{"batchIdentifier":"","dynamicData":{"bpass:stateOfCharge":""},"granularity":"item","locale":"de","serialIdentifier":"","unlockableId":4711,"unlockableType":"Product"}}}}
 type DppRequirements struct {
 	// Batch The lot a batch or item passport freezes from. Null at model granularity, which has no lot.
 	Batch *struct {
@@ -2272,7 +2581,7 @@ type DppRequirements struct {
 	// DefaultGranularity The granularity a create gets when its body names none
 	DefaultGranularity *DppRequirementsDefaultGranularity `json:"defaultGranularity,omitempty"`
 
-	// DynamicPropertyTypes Property types whose value changes over a unit's life. Their values ride on the separately signed dynamic surface, keyed by the vocabulary term in `namespace`, and never enter a signed per-version snapshot.
+	// DynamicPropertyTypes Property types whose value changes over a unit's life. Their live values ride on the separately signed dynamic surface, keyed by the vocabulary term in `namespace`; a version seals the reading held when the passport's copy is frozen, as a row whose `dynamic` flag is true.
 	DynamicPropertyTypes *[]struct {
 		Id        *int    `json:"id,omitempty"`
 		InputType *string `json:"inputType,omitempty"`
@@ -2464,7 +2773,7 @@ type DppVersionSnapshot struct {
 	Version *int `json:"version,omitempty"`
 }
 
-// DynamicDataInput The keys to write onto the passport's dynamic-data surface. Sent keys are merged into the stored set; a key sent as an explicit null is removed. Field names are yours - no schema is imposed until the EU Battery Regulation's implementing acts pin the list.
+// DynamicDataInput The keys to write onto the passport's dynamic-data surface. Sent keys are merged into the stored set; a key sent as an explicit null is removed. Every key is stored. The public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none).
 //
 // Example: {"cycleCount":412,"retiredReason":null,"stateOfHealth":87.3}
 type DynamicDataInput map[string]interface{}
@@ -2596,7 +2905,7 @@ type ExportFormat string
 // ExportStatus defines model for Export.Status.
 type ExportStatus string
 
-// ExportInput What to export and how. Every field is optional; the default is the whole passport catalogue as JSON-LD.
+// ExportInput What to export and how. Every field is optional; the default is a JSON-LD archive of the passports and catalogue the consumer's lists answer it with.
 //
 // Example: {"format":"csv","normalize":true}
 type ExportInput struct {
@@ -2827,7 +3136,9 @@ type Import struct {
 
 	// ErrorGroups The problems the validation or the run found, grouped by cause, each with the count and up to five sample rows
 	ErrorGroups *[]struct {
-		Count   *int    `json:"count,omitempty"`
+		Count *int `json:"count,omitempty"`
+
+		// Key The cause. `column_conflict` and `ambiguous_type` refuse the whole run before any row is written; their samples name the columns and the property type instead of rows. `column_conflict` is two or more columns going to one property type, `ambiguous_type` a column whose name several property types carry.
 		Key     *string `json:"key,omitempty"`
 		Message *string `json:"message,omitempty"`
 		Samples *[]struct {
@@ -2939,13 +3250,19 @@ type ImportPreview struct {
 		// Column The key the mapping is written under
 		Column *string `json:"column,omitempty"`
 
+		// ConflictColumns The other columns that go to the same property type as this one
+		ConflictColumns *[]string `json:"conflictColumns,omitempty"`
+
+		// ConflictTypes The names of the property types that all carry this column's header
+		ConflictTypes *[]string `json:"conflictTypes,omitempty"`
+
 		// CoreAttribute The core attribute the suggestion feeds
 		CoreAttribute *string `json:"coreAttribute,omitempty"`
 
 		// Header The column header as the file spells it
 		Header *string `json:"header,omitempty"`
 
-		// MatchType How the header was recognised. `exact` and `attribute` resolve on their own; `fuzzy` is a guess by similarity; `none` found nothing.
+		// MatchType How the header was recognised. `exact` and `attribute` resolve on their own; `fuzzy` is a match by similarity, the one the mapping page prefills, so take its suggestion; `none` found nothing, and that is the one column a person has to decide. `conflict` marks a column that goes to the same property type as another column (`conflictColumns`), or whose header several property types carry (`conflictTypes`); its suggested action is `choose`, and a run whose mapping leaves two columns on one type is refused before any row.
 		MatchType *ImportPreviewColumnsMatchType `json:"matchType,omitempty"`
 
 		// SampleValues Up to three values from the column
@@ -2978,7 +3295,7 @@ type ImportPreview struct {
 	RequiredAttributes *[]string `json:"requiredAttributes,omitempty"`
 }
 
-// ImportPreviewColumnsMatchType How the header was recognised. `exact` and `attribute` resolve on their own; `fuzzy` is a guess by similarity; `none` found nothing.
+// ImportPreviewColumnsMatchType How the header was recognised. `exact` and `attribute` resolve on their own; `fuzzy` is a match by similarity, the one the mapping page prefills, so take its suggestion; `none` found nothing, and that is the one column a person has to decide. `conflict` marks a column that goes to the same property type as another column (`conflictColumns`), or whose header several property types carry (`conflictTypes`); its suggested action is `choose`, and a run whose mapping leaves two columns on one type is refused before any row.
 type ImportPreviewColumnsMatchType string
 
 // ImportPreviewColumnsSuggestedAction defines model for ImportPreview.Columns.SuggestedAction.
@@ -3131,7 +3448,7 @@ type Lot struct {
 	// Example: L2026-09
 	Identifier *string `json:"identifier,omitempty"`
 
-	// ManufacturedOn Only present when set
+	// ManufacturedOn Only present when set. Every passport frozen from the lot signs it as `lotManufacturedOn`, so it can no longer change once a passport of the lot is published, like the lot number.
 	ManufacturedOn *openapi_types.Date `json:"manufacturedOn,omitempty"`
 
 	// ProductId The product the lot was made of
@@ -3448,7 +3765,7 @@ type ProductDetail struct {
 			Primary *bool `json:"primary,omitempty"`
 		} `json:"columns,omitempty"`
 
-		// Dynamic Whether the value changes over a unit's life. A dynamic value rides on the passport's separately signed dynamic surface and never enters a signed per-version snapshot. Only present when true.
+		// Dynamic Whether the value changes over a unit's life. A dynamic value's live reading rides on the passport's separately signed dynamic surface; a version seals the reading held when the passport's copy is frozen, as a row whose `dynamic` flag is true. Only present when true.
 		Dynamic *bool `json:"dynamic,omitempty"`
 
 		// HideName Whether to hide the property type name in display
@@ -3622,6 +3939,190 @@ type Subscription struct {
 	Trial        *bool      `json:"trial,omitempty"`
 	Type         *string    `json:"type,omitempty"`
 	Upgradable   *bool      `json:"upgradable,omitempty"`
+}
+
+// Task A piece of work one person asks of another, assigned to one person or to one user group. A member claims a group task before working on it. A task ends done or cancelled and stays on record.
+//
+// A review walks the steps of the workspace's review flow, one after the other: `step` is where it stands, `steps` what became of each, and `review` what it asks for. Its assignee is the group of the current step, or a `Permission` when the step waits on everyone holding it.
+//
+// Everyone a task names is written as `type`, `id` and `name`; one that is gone keeps its type and id. A value the task does not carry is left out, and a task without `requester` was made by the system.
+//
+// Example: {"assignee":{"id":3,"name":"Quality","type":"UserGroup"},"assigneeKey":"UserGroup:3","claimedAt":"2026-09-24T10:02:00Z","claimedBy":{"id":15,"name":"Maria Muster","type":"User"},"createdAt":"2026-09-24T09:40:00Z","dueOn":"2026-10-01","editable":false,"id":42,"kind":"custom","moves":["release","complete"],"note":"The one for the spring range","overdue":false,"requester":{"id":12,"name":"Hans Tester","type":"User"},"status":"open","title":"Check the supplier declaration","type":"Task","updatedAt":"2026-09-24T10:02:00Z"}
+type Task struct {
+	// Assignee A person, group, credential, permission or record a task names. `name` is left out once the record is gone.
+	//
+	// Example: {"id":3,"name":"Quality","type":"UserGroup"}
+	Assignee *TaskParty `json:"assignee,omitempty"`
+
+	// AssigneeKey The assignee as `User:<id>` or `UserGroup:<id>`, the value `POST /tasks` takes
+	AssigneeKey *string    `json:"assigneeKey,omitempty"`
+	ClaimedAt   *time.Time `json:"claimedAt,omitempty"`
+
+	// ClaimedBy A person, group, credential, permission or record a task names. `name` is left out once the record is gone.
+	//
+	// Example: {"id":3,"name":"Quality","type":"UserGroup"}
+	ClaimedBy *TaskParty `json:"claimedBy,omitempty"`
+	ClosedAt  *time.Time `json:"closedAt,omitempty"`
+
+	// ClosedBy A person, group, credential, permission or record a task names. `name` is left out once the record is gone.
+	//
+	// Example: {"id":3,"name":"Quality","type":"UserGroup"}
+	ClosedBy *TaskParty `json:"closedBy,omitempty"`
+
+	// ClosingNote Why the review was rejected, in the decider's words
+	ClosingNote *string `json:"closingNote,omitempty"`
+
+	// ClosingReason Why a review closed without a decision
+	ClosingReason *TaskClosingReason  `json:"closingReason,omitempty"`
+	CreatedAt     *time.Time          `json:"createdAt,omitempty"`
+	DueOn         *openapi_types.Date `json:"dueOn,omitempty"`
+
+	// Editable Whether this credential may change the task with `PUT /tasks/{id}`
+	Editable *bool `json:"editable,omitempty"`
+	Id       int   `json:"id"`
+
+	// Kind `custom` for what a person asks; the review kinds come from a review flow and end in an `outcome`
+	Kind TaskKind `json:"kind"`
+
+	// Moves The moves this credential may take on the task now, each a `POST /tasks/{id}/<move>`
+	Moves *[]TaskMoves `json:"moves,omitempty"`
+	Note  *string      `json:"note,omitempty"`
+
+	// Outcome The decision of a finished review
+	Outcome *TaskOutcome `json:"outcome,omitempty"`
+
+	// Overdue Open with a due date before today
+	Overdue *bool `json:"overdue,omitempty"`
+
+	// Requester A person, group, credential, permission or record a task names. `name` is left out once the record is gone.
+	//
+	// Example: {"id":3,"name":"Quality","type":"UserGroup"}
+	Requester *TaskParty `json:"requester,omitempty"`
+
+	// Review What a review asks for, and while it is open what approving does
+	Review *struct {
+		Action *TaskReviewAction `json:"action,omitempty"`
+
+		// Summary In the language of the request
+		Summary *string `json:"summary,omitempty"`
+	} `json:"review,omitempty"`
+
+	// Source The door a review's request came through
+	Source *TaskSource `json:"source,omitempty"`
+	Status TaskStatus  `json:"status"`
+
+	// Step The step a review stands at
+	Step *struct {
+		Count *int `json:"count,omitempty"`
+
+		// Index From 0; the `step` a decision sends
+		Index *int `json:"index,omitempty"`
+
+		// Name Whom the step is with
+		Name *string       `json:"name,omitempty"`
+		Type *TaskStepType `json:"type,omitempty"`
+	} `json:"step,omitempty"`
+
+	// Steps Every step of a review, in order, with what became of it
+	Steps *[]struct {
+		DecidedAt *time.Time `json:"decidedAt,omitempty"`
+
+		// DecidedBy A person, group, credential, permission or record a task names. `name` is left out once the record is gone.
+		//
+		// Example: {"id":3,"name":"Quality","type":"UserGroup"}
+		DecidedBy *TaskParty `json:"decidedBy,omitempty"`
+		Name      *string    `json:"name,omitempty"`
+
+		// Required An optional step nobody can decide is passed over
+		Required *bool           `json:"required,omitempty"`
+		State    *TaskStepsState `json:"state,omitempty"`
+		Type     *TaskStepsType  `json:"type,omitempty"`
+	} `json:"steps,omitempty"`
+
+	// Subject A person, group, credential, permission or record a task names. `name` is left out once the record is gone.
+	//
+	// Example: {"id":3,"name":"Quality","type":"UserGroup"}
+	Subject   *TaskParty `json:"subject,omitempty"`
+	Title     string     `json:"title"`
+	Type      *TaskType  `json:"type,omitempty"`
+	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
+}
+
+// TaskClosingReason Why a review closed without a decision
+type TaskClosingReason string
+
+// TaskKind `custom` for what a person asks; the review kinds come from a review flow and end in an `outcome`
+type TaskKind string
+
+// TaskMoves defines model for Task.Moves.
+type TaskMoves string
+
+// TaskOutcome The decision of a finished review
+type TaskOutcome string
+
+// TaskReviewAction defines model for Task.Review.Action.
+type TaskReviewAction string
+
+// TaskSource The door a review's request came through
+type TaskSource string
+
+// TaskStatus defines model for Task.Status.
+type TaskStatus string
+
+// TaskStepType defines model for Task.Step.Type.
+type TaskStepType string
+
+// TaskStepsState defines model for Task.Steps.State.
+type TaskStepsState string
+
+// TaskStepsType defines model for Task.Steps.Type.
+type TaskStepsType string
+
+// TaskType defines model for Task.Type.
+type TaskType string
+
+// TaskDecision A decision on the step a review stands at.
+//
+// Example: {"note":"The care instructions are missing","step":1}
+type TaskDecision struct {
+	// Note Why the review is rejected, which the person who asked reads. Required to reject; an approval takes none.
+	Note *string `json:"note,omitempty"`
+
+	// Step The `step.index` the caller read. A review that moved on since is refused with `TASK_STEP_MOVED`; left out, the decision takes the step the review stands at.
+	Step *int `json:"step,omitempty"`
+}
+
+// TaskInput Example: {"task":{"assigneeKey":"UserGroup:3","dueOn":"2026-10-01","note":"The one for the spring range","title":"Check the supplier declaration"}}
+type TaskInput struct {
+	// Task On create, `title` and `assigneeKey` are needed; on update, send only what changes.
+	Task struct {
+		// AssigneeKey `User:<id>` or `UserGroup:<id>`, as `GET /tasks/assignees` names them. A person who can open the application manager, or a group with access to it and at least one member. A new assignee clears the claim and is told.
+		AssigneeKey *string `json:"assigneeKey,omitempty"`
+
+		// DueOn Optional; not in the past. From the day after, the task counts as overdue.
+		DueOn *openapi_types.Date `json:"dueOn,omitempty"`
+
+		// Note Anything the person needs to get it done
+		Note *string `json:"note,omitempty"`
+
+		// Title What needs doing, in one line
+		Title *string `json:"title,omitempty"`
+	} `json:"task"`
+}
+
+// TaskParty A person, group, credential, permission or record a task names. `name` is left out once the record is gone.
+//
+// Example: {"id":3,"name":"Quality","type":"UserGroup"}
+type TaskParty struct {
+	// Id The record's id; a `Permission` carries `key` instead
+	Id *int `json:"id,omitempty"`
+
+	// Key The permission a `Permission` party names, such as `dpp_publish`
+	Key  *string `json:"key,omitempty"`
+	Name *string `json:"name,omitempty"`
+
+	// Type `User`, `UserGroup`, `ApiConsumer`, `Permission` for a review that waits on everyone holding it, or `Superadmin` for platform support that acted in the workspace; a subject names its own record type
+	Type string `json:"type"`
 }
 
 // TokenResponse The token response of RFC 6749, section 5.1. Field names stay in snake_case as the RFC defines them.
@@ -4014,7 +4515,7 @@ type CorrectDppParams struct {
 
 // UpdateDppDynamicDataJSONBody defines parameters for UpdateDppDynamicData.
 type UpdateDppDynamicDataJSONBody struct {
-	// DynamicData The keys to write onto the passport's dynamic-data surface. Sent keys are merged into the stored set; a key sent as an explicit null is removed. Field names are yours - no schema is imposed until the EU Battery Regulation's implementing acts pin the list.
+	// DynamicData The keys to write onto the passport's dynamic-data surface. Sent keys are merged into the stored set; a key sent as an explicit null is removed. Every key is stored. The public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none).
 	//
 	// Example: {"cycleCount":412,"retiredReason":null,"stateOfHealth":87.3}
 	DynamicData DynamicDataInput `json:"dynamicData"`
@@ -4120,7 +4621,7 @@ type ListExportsParams struct {
 
 // CreateExportJSONBody defines parameters for CreateExport.
 type CreateExportJSONBody struct {
-	// Export What to export and how. Every field is optional; the default is the whole passport catalogue as JSON-LD.
+	// Export What to export and how. Every field is optional; the default is a JSON-LD archive of the passports and catalogue the consumer's lists answer it with.
 	//
 	// Example: {"format":"csv","normalize":true}
 	Export *ExportInput `json:"export,omitempty"`
@@ -4609,6 +5110,48 @@ type LoginSessionJSONBody struct {
 	ProductTokens *[]string `json:"productTokens,omitempty"`
 }
 
+// ListTasksParams defines parameters for ListTasks.
+type ListTasksParams struct {
+	// List Which list to read
+	List *ListTasksParamsList `form:"list,omitempty" json:"list,omitempty"`
+
+	// Term Keep only the tasks with these words in the title
+	Term *string `form:"term,omitempty" json:"term,omitempty"`
+
+	// Page Page number
+	Page *Page `form:"page,omitempty" json:"page,omitempty"`
+
+	// PerPage Records per page (default: 100, max: 500)
+	PerPage *PerPage `form:"per_page,omitempty" json:"per_page,omitempty"`
+}
+
+// ListTasksParamsList defines parameters for ListTasks.
+type ListTasksParamsList string
+
+// CreateTaskParams defines parameters for CreateTask.
+type CreateTaskParams struct {
+	// IdempotencyKey Makes the request safe to repeat. The same key and body within 24 hours replays the stored response with `Idempotent-Replayed: true`; the same key with another body answers 422 `IDEMPOTENCY_KEY_REUSED`; a key whose first request is still running answers 409 `IDEMPOTENCY_IN_PROGRESS`.
+	IdempotencyKey *IdempotencyKey `json:"Idempotency-Key,omitempty"`
+}
+
+// ListTaskAssigneesParams defines parameters for ListTaskAssignees.
+type ListTaskAssigneesParams struct {
+	// Term Words in the name of the person or group
+	Term *string `form:"term,omitempty" json:"term,omitempty"`
+}
+
+// ApproveTaskParams defines parameters for ApproveTask.
+type ApproveTaskParams struct {
+	// IdempotencyKey Makes the request safe to repeat. The same key and body within 24 hours replays the stored response with `Idempotent-Replayed: true`; the same key with another body answers 422 `IDEMPOTENCY_KEY_REUSED`; a key whose first request is still running answers 409 `IDEMPOTENCY_IN_PROGRESS`.
+	IdempotencyKey *IdempotencyKey `json:"Idempotency-Key,omitempty"`
+}
+
+// RejectTaskParams defines parameters for RejectTask.
+type RejectTaskParams struct {
+	// IdempotencyKey Makes the request safe to repeat. The same key and body within 24 hours replays the stored response with `Idempotent-Replayed: true`; the same key with another body answers 422 `IDEMPOTENCY_KEY_REUSED`; a key whose first request is still running answers 409 `IDEMPOTENCY_IN_PROGRESS`.
+	IdempotencyKey *IdempotencyKey `json:"Idempotency-Key,omitempty"`
+}
+
 // RegisterUserJSONBody defines parameters for RegisterUser.
 type RegisterUserJSONBody struct {
 	// PriceIdent Plan price identifier (required when memberships are enabled)
@@ -4769,6 +5312,18 @@ type StartPasswordResetJSONRequestBody StartPasswordResetJSONBody
 
 // LoginSessionJSONRequestBody defines body for LoginSession for application/json ContentType.
 type LoginSessionJSONRequestBody LoginSessionJSONBody
+
+// CreateTaskJSONRequestBody defines body for CreateTask for application/json ContentType.
+type CreateTaskJSONRequestBody = TaskInput
+
+// UpdateTaskJSONRequestBody defines body for UpdateTask for application/json ContentType.
+type UpdateTaskJSONRequestBody = TaskInput
+
+// ApproveTaskJSONRequestBody defines body for ApproveTask for application/json ContentType.
+type ApproveTaskJSONRequestBody = TaskDecision
+
+// RejectTaskJSONRequestBody defines body for RejectTask for application/json ContentType.
+type RejectTaskJSONRequestBody = TaskDecision
 
 // RegisterUserJSONRequestBody defines body for RegisterUser for application/json ContentType.
 type RegisterUserJSONRequestBody RegisterUserJSONBody
@@ -5315,7 +5870,7 @@ type ClientInterface interface {
 	//
 	// Creates a new Digital Product Passport linked to a product. Generates a unique short code and QR code.
 	//
-	// `granularity` says which unit the passport stands for and therefore which identifiers it needs: `model` needs none of its own, `batch` needs a `batchIdentifier`, `item` needs a `serialIdentifier` as well. The lot is created from the product as it stands the first time its identifier is used and reused by every later passport of the same lot.
+	// `granularity` says which unit the passport stands for and therefore which identifiers it needs: `model` needs none of its own, `batch` needs a `batchIdentifier`, `item` needs a `serialIdentifier` as well. The lot is created from the product as it stands the first time its identifier is used and reused by every later passport of the same lot. A new lot is taken only of a product that passes every other required readiness check; until then the create answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`.
 	//
 	// The answer carries `validation` and `publishBlocked` alongside the passport: the same report `POST /dpps/validate` produces, over the record that was just written, so a caller that skipped the dry run still sees what a publish would refuse or warn about.
 	//
@@ -5328,7 +5883,7 @@ type ClientInterface interface {
 	//
 	// Creates a new Digital Product Passport linked to a product. Generates a unique short code and QR code.
 	//
-	// `granularity` says which unit the passport stands for and therefore which identifiers it needs: `model` needs none of its own, `batch` needs a `batchIdentifier`, `item` needs a `serialIdentifier` as well. The lot is created from the product as it stands the first time its identifier is used and reused by every later passport of the same lot.
+	// `granularity` says which unit the passport stands for and therefore which identifiers it needs: `model` needs none of its own, `batch` needs a `batchIdentifier`, `item` needs a `serialIdentifier` as well. The lot is created from the product as it stands the first time its identifier is used and reused by every later passport of the same lot. A new lot is taken only of a product that passes every other required readiness check; until then the create answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`.
 	//
 	// The answer carries `validation` and `publishBlocked` alongside the passport: the same report `POST /dpps/validate` produces, over the record that was just written, so a caller that skipped the dry run still sees what a publish would refuse or warn about.
 	//
@@ -5348,6 +5903,8 @@ type ClientInterface interface {
 	// Resubmission is safe. Rows are deduplicated by natural key rather than by `Idempotency-Key`: at `model` granularity that is `modelIdentifier`, at `batch` it adds `batchIdentifier`, at `item` it adds `serialIdentifier`. A key that already maps to a published passport comes back as `duplicate`; one that maps to a passport that never published is resumed and published, so a retry after a partial failure finishes the job instead of duplicating it.
 	//
 	// Synchronous by default, capped at 500 rows and 5 MB. Send `Prefer: respond-async` to have the body persisted and processed by a background task instead: the response is `202` with a polling URL, and the caps rise to 50000 rows and 25 MB. Beyond that, batch across requests.
+	//
+	// Every row it creates is signed, so the call needs `dpp_publish` as well; without it the answer is 403 and nothing is created. Where the workspace reviews every publish through a review flow, the answer is 409 `DPP_REVIEW_REQUIRED` and nothing is created.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -5385,7 +5942,7 @@ type ClientInterface interface {
 
 	// ValidateDppWithBody Validate a DPP payload
 	//
-	// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot.
+	// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot; a new lot its product may not have yet shows as `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, beside the report that names the checks the product still fails. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.
 	//
 	// A payload the platform would refuse is a plain `200` with `valid: false` - the request succeeded, the passport would not. Only a missing permission, a missing `dpp` object or an unreadable body answer with an error status.
 	//
@@ -5396,7 +5953,7 @@ type ClientInterface interface {
 
 	// ValidateDpp Validate a DPP payload
 	//
-	// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot.
+	// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot; a new lot its product may not have yet shows as `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, beside the report that names the checks the product still fails. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.
 	//
 	// A payload the platform would refuse is a plain `200` with `valid: false` - the request succeeded, the passport would not. Only a missing permission, a missing `dpp` object or an unreadable body answer with an error status.
 	//
@@ -5421,7 +5978,7 @@ type ClientInterface interface {
 
 	// PublishDppWithBody Publish a DPP
 	//
-	// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
+	// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. Publishing needs `dpp_publish` beside `dpp_write`; without it the answer is 403. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -5430,7 +5987,7 @@ type ClientInterface interface {
 
 	// PublishDpp Publish a DPP
 	//
-	// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
+	// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. Publishing needs `dpp_publish` beside `dpp_write`; without it the answer is 403. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -5446,7 +6003,7 @@ type ClientInterface interface {
 
 	// GetDpp Read a DPP
 	//
-	// Returns the passport itself as JSON, in the shape the list carries. Ask for the QR carrier instead with the .png or .pdf extension on the path, the ones pngUrl and pdfUrl name, and for the historical signed snapshot of a version with ?version=N.
+	// Returns the passport itself as JSON, in the shape the list carries. Ask for the QR carrier instead with the .png, .svg or .pdf extension on the path, the ones pngUrl, svgUrl and pdfUrl name, and for the historical signed snapshot of a version with ?version=N. The SVG is the code alone as a vector, for label artwork.
 	//
 	// Corresponds with GET /dpps/{id} (the `GetDpp` operationId).
 	GetDpp(ctx context.Context, id Id, params *GetDppParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -5475,7 +6032,7 @@ type ClientInterface interface {
 
 	// CorrectDppWithBody Correct a DPP from its source
 	//
-	// Carries a correction made to the product onto a passport already written. A passport freezes the product identity, the components and the properties when it is created, so a product edited afterwards never reaches it on its own. Fix the product first and then call this, rather than issuing a second passport for a unit that already has one. The re-freeze reads what the create-time freeze read - the live product at model granularity, the lot's frozen values at batch and item - and mints a signed version anchored to a `corrected` event. A correction with nothing to correct mints nothing and answers `corrected` false, naming the version that still stands.
+	// Carries a correction made to the product onto a passport already written. A passport freezes the product identity, the components and the properties when it is created, so a product edited afterwards never reaches it on its own. Fix the product first and then call this, rather than issuing a second passport for a unit that already has one. The re-freeze reads what the create-time freeze read - the live product at model granularity, the lot's frozen values at batch and item - and mints a signed version anchored to a `corrected` event. A correction with nothing to correct mints nothing and answers `corrected` false, naming the version that still stands. Signing needs `dpp_publish` beside `dpp_write`; without it the answer is 403 and the passport stays as it was.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -5484,7 +6041,7 @@ type ClientInterface interface {
 
 	// CorrectDpp Correct a DPP from its source
 	//
-	// Carries a correction made to the product onto a passport already written. A passport freezes the product identity, the components and the properties when it is created, so a product edited afterwards never reaches it on its own. Fix the product first and then call this, rather than issuing a second passport for a unit that already has one. The re-freeze reads what the create-time freeze read - the live product at model granularity, the lot's frozen values at batch and item - and mints a signed version anchored to a `corrected` event. A correction with nothing to correct mints nothing and answers `corrected` false, naming the version that still stands.
+	// Carries a correction made to the product onto a passport already written. A passport freezes the product identity, the components and the properties when it is created, so a product edited afterwards never reaches it on its own. Fix the product first and then call this, rather than issuing a second passport for a unit that already has one. The re-freeze reads what the create-time freeze read - the live product at model granularity, the lot's frozen values at batch and item - and mints a signed version anchored to a `corrected` event. A correction with nothing to correct mints nothing and answers `corrected` false, naming the version that still stands. Signing needs `dpp_publish` beside `dpp_write`; without it the answer is 403 and the passport stays as it was.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -5493,7 +6050,7 @@ type ClientInterface interface {
 
 	// UpdateDppDynamicDataWithBody Update dynamic data
 	//
-	// Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface and never enters a signed per-version snapshot, so a write mints no version and records no lifecycle event. Keys you send are merged into the stored set; a key sent as an explicit null is removed. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.
+	// Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none); every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -5502,7 +6059,7 @@ type ClientInterface interface {
 
 	// UpdateDppDynamicData Update dynamic data
 	//
-	// Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface and never enters a signed per-version snapshot, so a write mints no version and records no lifecycle event. Keys you send are merged into the stored set; a key sent as an explicit null is removed. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.
+	// Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none); every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -5522,7 +6079,7 @@ type ClientInterface interface {
 	//
 	// Recalling a unit is a status change to `suspended`. The passport stays readable and keeps answering a scan, which is the point: whoever holds the unit learns of the recall when they scan its code. Voiding is a different operation, for a unit that no longer exists.
 	//
-	// An event is a pending draft until it is sealed. Send `publish: true` to seal it into the Vault at once (a status change is sealed into a new registered version); leave it out to keep the draft open. At most one pending event exists per passport, so a second call while one is open answers 409 until it is sealed or discarded.
+	// An event is a pending draft until it is sealed. Send `publish: true` to seal it into the Vault at once (a status change is sealed into a new registered version, which needs `dpp_publish` as well); leave it out to keep the draft open. At most one pending event exists per passport, so a second call while one is open answers 409 until it is sealed or discarded.
 	//
 	// Versioned event types are rejected here: they stand for operations that mint a version, and those have their own endpoints (void, supersede, reissue, publish).
 	//
@@ -5537,7 +6094,7 @@ type ClientInterface interface {
 	//
 	// Recalling a unit is a status change to `suspended`. The passport stays readable and keeps answering a scan, which is the point: whoever holds the unit learns of the recall when they scan its code. Voiding is a different operation, for a unit that no longer exists.
 	//
-	// An event is a pending draft until it is sealed. Send `publish: true` to seal it into the Vault at once (a status change is sealed into a new registered version); leave it out to keep the draft open. At most one pending event exists per passport, so a second call while one is open answers 409 until it is sealed or discarded.
+	// An event is a pending draft until it is sealed. Send `publish: true` to seal it into the Vault at once (a status change is sealed into a new registered version, which needs `dpp_publish` as well); leave it out to keep the draft open. At most one pending event exists per passport, so a second call while one is open answers 409 until it is sealed or discarded.
 	//
 	// Versioned event types are rejected here: they stand for operations that mint a version, and those have their own endpoints (void, supersede, reissue, publish).
 	//
@@ -5638,9 +6195,11 @@ type ClientInterface interface {
 
 	// CreateExportWithBody Start a passport export
 	//
-	// Packs the whole passport catalogue into an archive in the background and answers at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.
+	// Packs what this consumer's own lists answer it with into an archive: the passports of `GET /dpps`, the products of `GET /products` and the components of `GET /components`, with the brands, categories and property types they use. The work runs in the background under the scope of the token that started it, and the answer comes at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.
 	//
 	// The consumer that starts an export is the only one that can read or download it. One export runs at a time per consumer: while one is pending or running, another request answers 409 `EXPORT_IN_PROGRESS` with a hint naming the URL to poll.
+	//
+	// The archive carries the passports, so starting an export needs `dpp_read` as well as `export_access`. A consumer without it gets 403 `DPP_FORBIDDEN`.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -5649,9 +6208,11 @@ type ClientInterface interface {
 
 	// CreateExport Start a passport export
 	//
-	// Packs the whole passport catalogue into an archive in the background and answers at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.
+	// Packs what this consumer's own lists answer it with into an archive: the passports of `GET /dpps`, the products of `GET /products` and the components of `GET /components`, with the brands, categories and property types they use. The work runs in the background under the scope of the token that started it, and the answer comes at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.
 	//
 	// The consumer that starts an export is the only one that can read or download it. One export runs at a time per consumer: while one is pending or running, another request answers 409 `EXPORT_IN_PROGRESS` with a hint naming the URL to poll.
+	//
+	// The archive carries the passports, so starting an export needs `dpp_read` as well as `export_access`. A consumer without it gets 403 `DPP_FORBIDDEN`.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -5667,7 +6228,7 @@ type ClientInterface interface {
 
 	// DownloadExport Download an export archive
 	//
-	// The archive of a completed export as `application/gzip`. Before completion the answer is 409 `EXPORT_NOT_READY`; a failed export answers 409 `EXPORT_FAILED`; once the archive has been deleted, seven days after completion, the answer is 410 `EXPORT_EXPIRED`.
+	// The archive of a completed export as `application/gzip`. Before completion the answer is 409 `EXPORT_NOT_READY`; a failed export answers 409 `EXPORT_FAILED`; once the archive has been deleted, seven days after completion, the answer is 410 `EXPORT_EXPIRED`. The archive carries the passports, so the download needs `dpp_read` as well; a consumer without it gets 403 `DPP_FORBIDDEN`.
 	//
 	// Corresponds with GET /exports/{id}/download (the `DownloadExport` operationId).
 	DownloadExport(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -5968,7 +6529,7 @@ type ClientInterface interface {
 
 	// ListLots List lots
 	//
-	// The lots batch and item passports freeze from, newest first. A lot is created with the first passport that names its identifier and reused by every later passport of the same lot, so there is nothing to create here: to issue a passport of a new lot, name the lot in `batchIdentifier` on `POST /dpps` or in the shared line of a bulk create.
+	// The lots batch and item passports freeze from, newest first. A lot is created with the first passport that names its identifier and reused by every later passport of the same lot, so there is nothing to create here: to issue a passport of a new lot, name the lot in `batchIdentifier` on `POST /dpps` or in the shared line of a bulk create. A new lot is taken only of a product that passes every other required readiness check; until then that create answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, and `GET /dpps/requirements` shows what the product still lacks.
 	//
 	// Narrow the list with `product_id` to see which lots a product already has, or with `identifier` to find the lot a passport names.
 	//
@@ -5984,7 +6545,7 @@ type ClientInterface interface {
 
 	// GetMe What the presented token allows
 	//
-	// The consumer behind the bearer token, its permissions, the token's scope and expiry, the consumer's resource scope and rate limit. The cheapest way to check that a credential works. Never returns the secret. A user token gets the consumer error; users read themselves at `GET /users/me`.
+	// The consumer behind the bearer token, its permissions, the token's scope and expiry, the consumer's resource scope and rate limit, and under `workspace` what the workspace does with a record as it is written. The cheapest way to check that a credential works. Never returns the secret. A user token gets the consumer error; users read themselves at `GET /users/me`.
 	//
 	// Corresponds with GET /me (the `GetMe` operationId).
 	GetMe(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -6426,6 +6987,150 @@ type ClientInterface interface {
 	//
 	// Corresponds with PUT /session (the `RefreshSession` operationId).
 	RefreshSession(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListTasks List tasks
+	//
+	// The tasks of one list, newest first. A credential that acts for a person (a grant the person approved, or their assistant) reads the lists as that person. Any other credential reads them as itself: it finds the tasks it asked for under `requested` and `done`, and nothing waits on it.
+	//
+	// - `mine` (the default): the tasks given to the person, the ones they claimed, and the group tasks nobody has claimed yet. The number beside the bell in the application manager counts these.
+	// - `groups`: every open task of the person's groups, with who holds it.
+	// - `requested`: the open tasks the caller asked of others.
+	// - `done`: the finished and cancelled tasks the caller took part in.
+	// - `all`: every task, for an admin only.
+	//
+	// A list the caller may not read answers 422 `TASK_LIST_INVALID`, naming the ones it may.
+	//
+	// Corresponds with GET /tasks (the `ListTasks` operationId).
+	ListTasks(ctx context.Context, params *ListTasksParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateTaskWithBody Create a task
+	//
+	// Asks a person or a user group for something. The task is a request (`kind` custom) whatever the body says, and names the caller as the one who asked: the person a grant or an assistant acts for, or the credential itself. Every person the task reaches sees it at once in the application manager and hears of it in the bell; the morning mail carries it too.
+	//
+	// Find the `assigneeKey` with `GET /tasks/assignees`.
+	//
+	// Takes any type of body and a specified content type.
+	//
+	// Corresponds with POST /tasks (the `CreateTask` operationId).
+	CreateTaskWithBody(ctx context.Context, params *CreateTaskParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateTask Create a task
+	//
+	// Asks a person or a user group for something. The task is a request (`kind` custom) whatever the body says, and names the caller as the one who asked: the person a grant or an assistant acts for, or the credential itself. Every person the task reaches sees it at once in the application manager and hears of it in the bell; the morning mail carries it too.
+	//
+	// Find the `assigneeKey` with `GET /tasks/assignees`.
+	//
+	// Takes a body of the `application/json` content type.
+	//
+	// Corresponds with POST /tasks (the `CreateTask` operationId).
+	CreateTask(ctx context.Context, params *CreateTaskParams, body CreateTaskJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListTaskAssignees List task assignees
+	//
+	// Whom a task may go to, matching `term`, as the `key` `POST /tasks` takes and the name the application manager shows. Groups with access to the application manager come first, then the people who can open it; 25 at most.
+	//
+	// Corresponds with GET /tasks/assignees (the `ListTaskAssignees` operationId).
+	ListTaskAssignees(ctx context.Context, params *ListTaskAssigneesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetTask Get a task
+	//
+	// One task the caller takes part in. A task it has no part in answers 404, as one that does not exist.
+	//
+	// Corresponds with GET /tasks/{id} (the `GetTask` operationId).
+	GetTask(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpdateTaskWithBody Update a task
+	//
+	// Changes the title, the note, the due date or the assignee of an open task. The one who asked for it may, or an admin; anyone else is refused with `TASK_NOT_PERMITTED`, and a closed task with `TASK_NOT_OPEN`. A new assignee clears the claim and is told.
+	//
+	// Takes any type of body and a specified content type.
+	//
+	// Corresponds with PUT /tasks/{id} (the `UpdateTask` operationId).
+	UpdateTaskWithBody(ctx context.Context, id Id, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpdateTask Update a task
+	//
+	// Changes the title, the note, the due date or the assignee of an open task. The one who asked for it may, or an admin; anyone else is refused with `TASK_NOT_PERMITTED`, and a closed task with `TASK_NOT_OPEN`. A new assignee clears the claim and is told.
+	//
+	// Takes a body of the `application/json` content type.
+	//
+	// Corresponds with PUT /tasks/{id} (the `UpdateTask` operationId).
+	UpdateTask(ctx context.Context, id Id, body UpdateTaskJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ApproveTaskWithBody Approve a review
+	//
+	// Approves the step a review stands at, as the person the credential acts for. A review walks the steps of the workspace's review flow, or the one step of everyone who may sign passports where no flow fits. Approving a middle step passes the request on to the next step and signs nothing. Approving the last step carries the request out in the person's name: a publish review signs the passport, which needs `dpp_publish` in the credential's scope beside `task_access`; without it the answer is 403 and nothing is signed.
+	//
+	// Send the `step` the caller read, so a press on a review that moved on in between decides nothing (`TASK_STEP_MOVED`). The person who asked for a review decides no step of it (`TASK_OWN_REQUEST`). A publish the validator or the workspace refuses answers as `POST /dpps/{code}/publish` does, and the review stays open.
+	//
+	// Takes any type of body and a specified content type.
+	//
+	// Corresponds with POST /tasks/{id}/approve (the `ApproveTask` operationId).
+	ApproveTaskWithBody(ctx context.Context, id Id, params *ApproveTaskParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ApproveTask Approve a review
+	//
+	// Approves the step a review stands at, as the person the credential acts for. A review walks the steps of the workspace's review flow, or the one step of everyone who may sign passports where no flow fits. Approving a middle step passes the request on to the next step and signs nothing. Approving the last step carries the request out in the person's name: a publish review signs the passport, which needs `dpp_publish` in the credential's scope beside `task_access`; without it the answer is 403 and nothing is signed.
+	//
+	// Send the `step` the caller read, so a press on a review that moved on in between decides nothing (`TASK_STEP_MOVED`). The person who asked for a review decides no step of it (`TASK_OWN_REQUEST`). A publish the validator or the workspace refuses answers as `POST /dpps/{code}/publish` does, and the review stays open.
+	//
+	// Takes a body of the `application/json` content type.
+	//
+	// Corresponds with POST /tasks/{id}/approve (the `ApproveTask` operationId).
+	ApproveTask(ctx context.Context, id Id, params *ApproveTaskParams, body ApproveTaskJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CancelTask Cancel a task
+	//
+	// Ends an open task as cancelled. The one who asked for it may, or an admin. The task stays on record and can be reopened.
+	//
+	// Corresponds with POST /tasks/{id}/cancel (the `CancelTask` operationId).
+	CancelTask(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ClaimTask Claim a task
+	//
+	// Takes an open group task for the person the credential acts for. Only a current member of the group claims it, and only while nobody holds it; of two members claiming at once, one wins and the other is refused with `TASK_ALREADY_CLAIMED`.
+	//
+	// Corresponds with POST /tasks/{id}/claim (the `ClaimTask` operationId).
+	ClaimTask(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CompleteTask Complete a task
+	//
+	// Marks an open request as done. The person it is for may, or a current member of its group, who claims it in the same move; a task someone else holds stays theirs. Only a person works on a task, so a credential acting as itself is refused with `TASK_NOT_PERMITTED`, and a review ends in a decision in the application manager (`TASK_NOT_CUSTOM`). The one who asked hears of it in the bell.
+	//
+	// Corresponds with POST /tasks/{id}/complete (the `CompleteTask` operationId).
+	CompleteTask(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// RejectTaskWithBody Reject a review
+	//
+	// Ends a review at the step it stands at, as the person the credential acts for. The subject stays as it was, and the person who asked reads the note in their bell, so a rejection needs one (`TASK_NOTE_REQUIRED`, at most 2000 characters, `TASK_NOTE_TOO_LONG`). Send the `step` the caller read, so a review that moved on in between is not rejected unseen (`TASK_STEP_MOVED`).
+	//
+	// Takes any type of body and a specified content type.
+	//
+	// Corresponds with POST /tasks/{id}/reject (the `RejectTask` operationId).
+	RejectTaskWithBody(ctx context.Context, id Id, params *RejectTaskParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// RejectTask Reject a review
+	//
+	// Ends a review at the step it stands at, as the person the credential acts for. The subject stays as it was, and the person who asked reads the note in their bell, so a rejection needs one (`TASK_NOTE_REQUIRED`, at most 2000 characters, `TASK_NOTE_TOO_LONG`). Send the `step` the caller read, so a review that moved on in between is not rejected unseen (`TASK_STEP_MOVED`).
+	//
+	// Takes a body of the `application/json` content type.
+	//
+	// Corresponds with POST /tasks/{id}/reject (the `RejectTask` operationId).
+	RejectTask(ctx context.Context, id Id, params *RejectTaskParams, body RejectTaskJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ReleaseTask Release a task
+	//
+	// Hands a claimed task back to its group. The one holding it may, the one who asked for it, or an admin.
+	//
+	// Corresponds with POST /tasks/{id}/release (the `ReleaseTask` operationId).
+	ReleaseTask(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ReopenTask Reopen a task
+	//
+	// Opens a finished or cancelled request again. The one who asked for it may, or an admin; whoever works on it hears of it in the bell.
+	//
+	// Corresponds with POST /tasks/{id}/reopen (the `ReopenTask` operationId).
+	ReopenTask(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// RegisterUserWithBody Register a new user
 	//
@@ -7060,7 +7765,7 @@ func (c *Client) ListDpps(ctx context.Context, params *ListDppsParams, reqEditor
 //
 // Creates a new Digital Product Passport linked to a product. Generates a unique short code and QR code.
 //
-// `granularity` says which unit the passport stands for and therefore which identifiers it needs: `model` needs none of its own, `batch` needs a `batchIdentifier`, `item` needs a `serialIdentifier` as well. The lot is created from the product as it stands the first time its identifier is used and reused by every later passport of the same lot.
+// `granularity` says which unit the passport stands for and therefore which identifiers it needs: `model` needs none of its own, `batch` needs a `batchIdentifier`, `item` needs a `serialIdentifier` as well. The lot is created from the product as it stands the first time its identifier is used and reused by every later passport of the same lot. A new lot is taken only of a product that passes every other required readiness check; until then the create answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`.
 //
 // The answer carries `validation` and `publishBlocked` alongside the passport: the same report `POST /dpps/validate` produces, over the record that was just written, so a caller that skipped the dry run still sees what a publish would refuse or warn about.
 //
@@ -7083,7 +7788,7 @@ func (c *Client) CreateDppWithBody(ctx context.Context, params *CreateDppParams,
 //
 // Creates a new Digital Product Passport linked to a product. Generates a unique short code and QR code.
 //
-// `granularity` says which unit the passport stands for and therefore which identifiers it needs: `model` needs none of its own, `batch` needs a `batchIdentifier`, `item` needs a `serialIdentifier` as well. The lot is created from the product as it stands the first time its identifier is used and reused by every later passport of the same lot.
+// `granularity` says which unit the passport stands for and therefore which identifiers it needs: `model` needs none of its own, `batch` needs a `batchIdentifier`, `item` needs a `serialIdentifier` as well. The lot is created from the product as it stands the first time its identifier is used and reused by every later passport of the same lot. A new lot is taken only of a product that passes every other required readiness check; until then the create answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`.
 //
 // The answer carries `validation` and `publishBlocked` alongside the passport: the same report `POST /dpps/validate` produces, over the record that was just written, so a caller that skipped the dry run still sees what a publish would refuse or warn about.
 //
@@ -7113,6 +7818,8 @@ func (c *Client) CreateDpp(ctx context.Context, params *CreateDppParams, body Cr
 // Resubmission is safe. Rows are deduplicated by natural key rather than by `Idempotency-Key`: at `model` granularity that is `modelIdentifier`, at `batch` it adds `batchIdentifier`, at `item` it adds `serialIdentifier`. A key that already maps to a published passport comes back as `duplicate`; one that maps to a passport that never published is resumed and published, so a retry after a partial failure finishes the job instead of duplicating it.
 //
 // Synchronous by default, capped at 500 rows and 5 MB. Send `Prefer: respond-async` to have the body persisted and processed by a background task instead: the response is `202` with a polling URL, and the caps rise to 50000 rows and 25 MB. Beyond that, batch across requests.
+//
+// Every row it creates is signed, so the call needs `dpp_publish` as well; without it the answer is 403 and nothing is created. Where the workspace reviews every publish through a review flow, the answer is 409 `DPP_REVIEW_REQUIRED` and nothing is created.
 //
 // Takes any type of body and a specified content type.
 //
@@ -7190,7 +7897,7 @@ func (c *Client) GetDppRequirements(ctx context.Context, params *GetDppRequireme
 
 // ValidateDppWithBody Validate a DPP payload
 //
-// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot.
+// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot; a new lot its product may not have yet shows as `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, beside the report that names the checks the product still fails. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.
 //
 // A payload the platform would refuse is a plain `200` with `valid: false` - the request succeeded, the passport would not. Only a missing permission, a missing `dpp` object or an unreadable body answer with an error status.
 //
@@ -7211,7 +7918,7 @@ func (c *Client) ValidateDppWithBody(ctx context.Context, contentType string, bo
 
 // ValidateDpp Validate a DPP payload
 //
-// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot.
+// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot; a new lot its product may not have yet shows as `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, beside the report that names the checks the product still fails. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.
 //
 // A payload the platform would refuse is a plain `200` with `valid: false` - the request succeeded, the passport would not. Only a missing permission, a missing `dpp` object or an unreadable body answer with an error status.
 //
@@ -7266,7 +7973,7 @@ func (c *Client) GetDppVersionPrivateProperties(ctx context.Context, code string
 
 // PublishDppWithBody Publish a DPP
 //
-// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
+// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. Publishing needs `dpp_publish` beside `dpp_write`; without it the answer is 403. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
 //
 // Takes any type of body and a specified content type.
 //
@@ -7285,7 +7992,7 @@ func (c *Client) PublishDppWithBody(ctx context.Context, code string, params *Pu
 
 // PublishDpp Publish a DPP
 //
-// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
+// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. Publishing needs `dpp_publish` beside `dpp_write`; without it the answer is 403. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -7321,7 +8028,7 @@ func (c *Client) DeleteDpp(ctx context.Context, id Id, reqEditors ...RequestEdit
 
 // GetDpp Read a DPP
 //
-// Returns the passport itself as JSON, in the shape the list carries. Ask for the QR carrier instead with the .png or .pdf extension on the path, the ones pngUrl and pdfUrl name, and for the historical signed snapshot of a version with ?version=N.
+// Returns the passport itself as JSON, in the shape the list carries. Ask for the QR carrier instead with the .png, .svg or .pdf extension on the path, the ones pngUrl, svgUrl and pdfUrl name, and for the historical signed snapshot of a version with ?version=N. The SVG is the code alone as a vector, for label artwork.
 //
 // Corresponds with GET /dpps/{id} (the `GetDpp` operationId).
 func (c *Client) GetDpp(ctx context.Context, id Id, params *GetDppParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -7380,7 +8087,7 @@ func (c *Client) UpdateDpp(ctx context.Context, id Id, body UpdateDppJSONRequest
 
 // CorrectDppWithBody Correct a DPP from its source
 //
-// Carries a correction made to the product onto a passport already written. A passport freezes the product identity, the components and the properties when it is created, so a product edited afterwards never reaches it on its own. Fix the product first and then call this, rather than issuing a second passport for a unit that already has one. The re-freeze reads what the create-time freeze read - the live product at model granularity, the lot's frozen values at batch and item - and mints a signed version anchored to a `corrected` event. A correction with nothing to correct mints nothing and answers `corrected` false, naming the version that still stands.
+// Carries a correction made to the product onto a passport already written. A passport freezes the product identity, the components and the properties when it is created, so a product edited afterwards never reaches it on its own. Fix the product first and then call this, rather than issuing a second passport for a unit that already has one. The re-freeze reads what the create-time freeze read - the live product at model granularity, the lot's frozen values at batch and item - and mints a signed version anchored to a `corrected` event. A correction with nothing to correct mints nothing and answers `corrected` false, naming the version that still stands. Signing needs `dpp_publish` beside `dpp_write`; without it the answer is 403 and the passport stays as it was.
 //
 // Takes any type of body and a specified content type.
 //
@@ -7399,7 +8106,7 @@ func (c *Client) CorrectDppWithBody(ctx context.Context, id Id, params *CorrectD
 
 // CorrectDpp Correct a DPP from its source
 //
-// Carries a correction made to the product onto a passport already written. A passport freezes the product identity, the components and the properties when it is created, so a product edited afterwards never reaches it on its own. Fix the product first and then call this, rather than issuing a second passport for a unit that already has one. The re-freeze reads what the create-time freeze read - the live product at model granularity, the lot's frozen values at batch and item - and mints a signed version anchored to a `corrected` event. A correction with nothing to correct mints nothing and answers `corrected` false, naming the version that still stands.
+// Carries a correction made to the product onto a passport already written. A passport freezes the product identity, the components and the properties when it is created, so a product edited afterwards never reaches it on its own. Fix the product first and then call this, rather than issuing a second passport for a unit that already has one. The re-freeze reads what the create-time freeze read - the live product at model granularity, the lot's frozen values at batch and item - and mints a signed version anchored to a `corrected` event. A correction with nothing to correct mints nothing and answers `corrected` false, naming the version that still stands. Signing needs `dpp_publish` beside `dpp_write`; without it the answer is 403 and the passport stays as it was.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -7418,7 +8125,7 @@ func (c *Client) CorrectDpp(ctx context.Context, id Id, params *CorrectDppParams
 
 // UpdateDppDynamicDataWithBody Update dynamic data
 //
-// Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface and never enters a signed per-version snapshot, so a write mints no version and records no lifecycle event. Keys you send are merged into the stored set; a key sent as an explicit null is removed. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.
+// Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none); every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.
 //
 // Takes any type of body and a specified content type.
 //
@@ -7437,7 +8144,7 @@ func (c *Client) UpdateDppDynamicDataWithBody(ctx context.Context, id Id, conten
 
 // UpdateDppDynamicData Update dynamic data
 //
-// Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface and never enters a signed per-version snapshot, so a write mints no version and records no lifecycle event. Keys you send are merged into the stored set; a key sent as an explicit null is removed. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.
+// Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none); every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -7477,7 +8184,7 @@ func (c *Client) ListDppEvents(ctx context.Context, id Id, params *ListDppEvents
 //
 // Recalling a unit is a status change to `suspended`. The passport stays readable and keeps answering a scan, which is the point: whoever holds the unit learns of the recall when they scan its code. Voiding is a different operation, for a unit that no longer exists.
 //
-// An event is a pending draft until it is sealed. Send `publish: true` to seal it into the Vault at once (a status change is sealed into a new registered version); leave it out to keep the draft open. At most one pending event exists per passport, so a second call while one is open answers 409 until it is sealed or discarded.
+// An event is a pending draft until it is sealed. Send `publish: true` to seal it into the Vault at once (a status change is sealed into a new registered version, which needs `dpp_publish` as well); leave it out to keep the draft open. At most one pending event exists per passport, so a second call while one is open answers 409 until it is sealed or discarded.
 //
 // Versioned event types are rejected here: they stand for operations that mint a version, and those have their own endpoints (void, supersede, reissue, publish).
 //
@@ -7502,7 +8209,7 @@ func (c *Client) AppendDppEventWithBody(ctx context.Context, id Id, contentType 
 //
 // Recalling a unit is a status change to `suspended`. The passport stays readable and keeps answering a scan, which is the point: whoever holds the unit learns of the recall when they scan its code. Voiding is a different operation, for a unit that no longer exists.
 //
-// An event is a pending draft until it is sealed. Send `publish: true` to seal it into the Vault at once (a status change is sealed into a new registered version); leave it out to keep the draft open. At most one pending event exists per passport, so a second call while one is open answers 409 until it is sealed or discarded.
+// An event is a pending draft until it is sealed. Send `publish: true` to seal it into the Vault at once (a status change is sealed into a new registered version, which needs `dpp_publish` as well); leave it out to keep the draft open. At most one pending event exists per passport, so a second call while one is open answers 409 until it is sealed or discarded.
 //
 // Versioned event types are rejected here: they stand for operations that mint a version, and those have their own endpoints (void, supersede, reissue, publish).
 //
@@ -7713,9 +8420,11 @@ func (c *Client) ListExports(ctx context.Context, params *ListExportsParams, req
 
 // CreateExportWithBody Start a passport export
 //
-// Packs the whole passport catalogue into an archive in the background and answers at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.
+// Packs what this consumer's own lists answer it with into an archive: the passports of `GET /dpps`, the products of `GET /products` and the components of `GET /components`, with the brands, categories and property types they use. The work runs in the background under the scope of the token that started it, and the answer comes at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.
 //
 // The consumer that starts an export is the only one that can read or download it. One export runs at a time per consumer: while one is pending or running, another request answers 409 `EXPORT_IN_PROGRESS` with a hint naming the URL to poll.
+//
+// The archive carries the passports, so starting an export needs `dpp_read` as well as `export_access`. A consumer without it gets 403 `DPP_FORBIDDEN`.
 //
 // Takes any type of body and a specified content type.
 //
@@ -7734,9 +8443,11 @@ func (c *Client) CreateExportWithBody(ctx context.Context, params *CreateExportP
 
 // CreateExport Start a passport export
 //
-// Packs the whole passport catalogue into an archive in the background and answers at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.
+// Packs what this consumer's own lists answer it with into an archive: the passports of `GET /dpps`, the products of `GET /products` and the components of `GET /components`, with the brands, categories and property types they use. The work runs in the background under the scope of the token that started it, and the answer comes at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.
 //
 // The consumer that starts an export is the only one that can read or download it. One export runs at a time per consumer: while one is pending or running, another request answers 409 `EXPORT_IN_PROGRESS` with a hint naming the URL to poll.
+//
+// The archive carries the passports, so starting an export needs `dpp_read` as well as `export_access`. A consumer without it gets 403 `DPP_FORBIDDEN`.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -7772,7 +8483,7 @@ func (c *Client) GetExport(ctx context.Context, id Id, reqEditors ...RequestEdit
 
 // DownloadExport Download an export archive
 //
-// The archive of a completed export as `application/gzip`. Before completion the answer is 409 `EXPORT_NOT_READY`; a failed export answers 409 `EXPORT_FAILED`; once the archive has been deleted, seven days after completion, the answer is 410 `EXPORT_EXPIRED`.
+// The archive of a completed export as `application/gzip`. Before completion the answer is 409 `EXPORT_NOT_READY`; a failed export answers 409 `EXPORT_FAILED`; once the archive has been deleted, seven days after completion, the answer is 410 `EXPORT_EXPIRED`. The archive carries the passports, so the download needs `dpp_read` as well; a consumer without it gets 403 `DPP_FORBIDDEN`.
 //
 // Corresponds with GET /exports/{id}/download (the `DownloadExport` operationId).
 func (c *Client) DownloadExport(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -8423,7 +9134,7 @@ func (c *Client) GetLocalization(ctx context.Context, reqEditors ...RequestEdito
 
 // ListLots List lots
 //
-// The lots batch and item passports freeze from, newest first. A lot is created with the first passport that names its identifier and reused by every later passport of the same lot, so there is nothing to create here: to issue a passport of a new lot, name the lot in `batchIdentifier` on `POST /dpps` or in the shared line of a bulk create.
+// The lots batch and item passports freeze from, newest first. A lot is created with the first passport that names its identifier and reused by every later passport of the same lot, so there is nothing to create here: to issue a passport of a new lot, name the lot in `batchIdentifier` on `POST /dpps` or in the shared line of a bulk create. A new lot is taken only of a product that passes every other required readiness check; until then that create answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, and `GET /dpps/requirements` shows what the product still lacks.
 //
 // Narrow the list with `product_id` to see which lots a product already has, or with `identifier` to find the lot a passport names.
 //
@@ -8459,7 +9170,7 @@ func (c *Client) GetLot(ctx context.Context, id int, reqEditors ...RequestEditor
 
 // GetMe What the presented token allows
 //
-// The consumer behind the bearer token, its permissions, the token's scope and expiry, the consumer's resource scope and rate limit. The cheapest way to check that a credential works. Never returns the secret. A user token gets the consumer error; users read themselves at `GET /users/me`.
+// The consumer behind the bearer token, its permissions, the token's scope and expiry, the consumer's resource scope and rate limit, and under `workspace` what the workspace does with a record as it is written. The cheapest way to check that a credential works. Never returns the secret. A user token gets the consumer error; users read themselves at `GET /users/me`.
 //
 // Corresponds with GET /me (the `GetMe` operationId).
 func (c *Client) GetMe(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -9382,6 +10093,310 @@ func (c *Client) LoginSession(ctx context.Context, body LoginSessionJSONRequestB
 // Corresponds with PUT /session (the `RefreshSession` operationId).
 func (c *Client) RefreshSession(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewRefreshSessionRequest(c.Server)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// ListTasks List tasks
+//
+// The tasks of one list, newest first. A credential that acts for a person (a grant the person approved, or their assistant) reads the lists as that person. Any other credential reads them as itself: it finds the tasks it asked for under `requested` and `done`, and nothing waits on it.
+//
+// - `mine` (the default): the tasks given to the person, the ones they claimed, and the group tasks nobody has claimed yet. The number beside the bell in the application manager counts these.
+// - `groups`: every open task of the person's groups, with who holds it.
+// - `requested`: the open tasks the caller asked of others.
+// - `done`: the finished and cancelled tasks the caller took part in.
+// - `all`: every task, for an admin only.
+//
+// A list the caller may not read answers 422 `TASK_LIST_INVALID`, naming the ones it may.
+//
+// Corresponds with GET /tasks (the `ListTasks` operationId).
+func (c *Client) ListTasks(ctx context.Context, params *ListTasksParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListTasksRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CreateTaskWithBody Create a task
+//
+// Asks a person or a user group for something. The task is a request (`kind` custom) whatever the body says, and names the caller as the one who asked: the person a grant or an assistant acts for, or the credential itself. Every person the task reaches sees it at once in the application manager and hears of it in the bell; the morning mail carries it too.
+//
+// Find the `assigneeKey` with `GET /tasks/assignees`.
+//
+// Takes any type of body and a specified content type.
+//
+// Corresponds with POST /tasks (the `CreateTask` operationId).
+func (c *Client) CreateTaskWithBody(ctx context.Context, params *CreateTaskParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateTaskRequestWithBody(c.Server, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CreateTask Create a task
+//
+// Asks a person or a user group for something. The task is a request (`kind` custom) whatever the body says, and names the caller as the one who asked: the person a grant or an assistant acts for, or the credential itself. Every person the task reaches sees it at once in the application manager and hears of it in the bell; the morning mail carries it too.
+//
+// Find the `assigneeKey` with `GET /tasks/assignees`.
+//
+// Takes a body of the `application/json` content type.
+//
+// Corresponds with POST /tasks (the `CreateTask` operationId).
+func (c *Client) CreateTask(ctx context.Context, params *CreateTaskParams, body CreateTaskJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateTaskRequest(c.Server, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// ListTaskAssignees List task assignees
+//
+// Whom a task may go to, matching `term`, as the `key` `POST /tasks` takes and the name the application manager shows. Groups with access to the application manager come first, then the people who can open it; 25 at most.
+//
+// Corresponds with GET /tasks/assignees (the `ListTaskAssignees` operationId).
+func (c *Client) ListTaskAssignees(ctx context.Context, params *ListTaskAssigneesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListTaskAssigneesRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// GetTask Get a task
+//
+// One task the caller takes part in. A task it has no part in answers 404, as one that does not exist.
+//
+// Corresponds with GET /tasks/{id} (the `GetTask` operationId).
+func (c *Client) GetTask(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetTaskRequest(c.Server, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// UpdateTaskWithBody Update a task
+//
+// Changes the title, the note, the due date or the assignee of an open task. The one who asked for it may, or an admin; anyone else is refused with `TASK_NOT_PERMITTED`, and a closed task with `TASK_NOT_OPEN`. A new assignee clears the claim and is told.
+//
+// Takes any type of body and a specified content type.
+//
+// Corresponds with PUT /tasks/{id} (the `UpdateTask` operationId).
+func (c *Client) UpdateTaskWithBody(ctx context.Context, id Id, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateTaskRequestWithBody(c.Server, id, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// UpdateTask Update a task
+//
+// Changes the title, the note, the due date or the assignee of an open task. The one who asked for it may, or an admin; anyone else is refused with `TASK_NOT_PERMITTED`, and a closed task with `TASK_NOT_OPEN`. A new assignee clears the claim and is told.
+//
+// Takes a body of the `application/json` content type.
+//
+// Corresponds with PUT /tasks/{id} (the `UpdateTask` operationId).
+func (c *Client) UpdateTask(ctx context.Context, id Id, body UpdateTaskJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateTaskRequest(c.Server, id, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// ApproveTaskWithBody Approve a review
+//
+// Approves the step a review stands at, as the person the credential acts for. A review walks the steps of the workspace's review flow, or the one step of everyone who may sign passports where no flow fits. Approving a middle step passes the request on to the next step and signs nothing. Approving the last step carries the request out in the person's name: a publish review signs the passport, which needs `dpp_publish` in the credential's scope beside `task_access`; without it the answer is 403 and nothing is signed.
+//
+// Send the `step` the caller read, so a press on a review that moved on in between decides nothing (`TASK_STEP_MOVED`). The person who asked for a review decides no step of it (`TASK_OWN_REQUEST`). A publish the validator or the workspace refuses answers as `POST /dpps/{code}/publish` does, and the review stays open.
+//
+// Takes any type of body and a specified content type.
+//
+// Corresponds with POST /tasks/{id}/approve (the `ApproveTask` operationId).
+func (c *Client) ApproveTaskWithBody(ctx context.Context, id Id, params *ApproveTaskParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewApproveTaskRequestWithBody(c.Server, id, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// ApproveTask Approve a review
+//
+// Approves the step a review stands at, as the person the credential acts for. A review walks the steps of the workspace's review flow, or the one step of everyone who may sign passports where no flow fits. Approving a middle step passes the request on to the next step and signs nothing. Approving the last step carries the request out in the person's name: a publish review signs the passport, which needs `dpp_publish` in the credential's scope beside `task_access`; without it the answer is 403 and nothing is signed.
+//
+// Send the `step` the caller read, so a press on a review that moved on in between decides nothing (`TASK_STEP_MOVED`). The person who asked for a review decides no step of it (`TASK_OWN_REQUEST`). A publish the validator or the workspace refuses answers as `POST /dpps/{code}/publish` does, and the review stays open.
+//
+// Takes a body of the `application/json` content type.
+//
+// Corresponds with POST /tasks/{id}/approve (the `ApproveTask` operationId).
+func (c *Client) ApproveTask(ctx context.Context, id Id, params *ApproveTaskParams, body ApproveTaskJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewApproveTaskRequest(c.Server, id, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CancelTask Cancel a task
+//
+// Ends an open task as cancelled. The one who asked for it may, or an admin. The task stays on record and can be reopened.
+//
+// Corresponds with POST /tasks/{id}/cancel (the `CancelTask` operationId).
+func (c *Client) CancelTask(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCancelTaskRequest(c.Server, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// ClaimTask Claim a task
+//
+// Takes an open group task for the person the credential acts for. Only a current member of the group claims it, and only while nobody holds it; of two members claiming at once, one wins and the other is refused with `TASK_ALREADY_CLAIMED`.
+//
+// Corresponds with POST /tasks/{id}/claim (the `ClaimTask` operationId).
+func (c *Client) ClaimTask(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewClaimTaskRequest(c.Server, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CompleteTask Complete a task
+//
+// Marks an open request as done. The person it is for may, or a current member of its group, who claims it in the same move; a task someone else holds stays theirs. Only a person works on a task, so a credential acting as itself is refused with `TASK_NOT_PERMITTED`, and a review ends in a decision in the application manager (`TASK_NOT_CUSTOM`). The one who asked hears of it in the bell.
+//
+// Corresponds with POST /tasks/{id}/complete (the `CompleteTask` operationId).
+func (c *Client) CompleteTask(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCompleteTaskRequest(c.Server, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// RejectTaskWithBody Reject a review
+//
+// Ends a review at the step it stands at, as the person the credential acts for. The subject stays as it was, and the person who asked reads the note in their bell, so a rejection needs one (`TASK_NOTE_REQUIRED`, at most 2000 characters, `TASK_NOTE_TOO_LONG`). Send the `step` the caller read, so a review that moved on in between is not rejected unseen (`TASK_STEP_MOVED`).
+//
+// Takes any type of body and a specified content type.
+//
+// Corresponds with POST /tasks/{id}/reject (the `RejectTask` operationId).
+func (c *Client) RejectTaskWithBody(ctx context.Context, id Id, params *RejectTaskParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewRejectTaskRequestWithBody(c.Server, id, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// RejectTask Reject a review
+//
+// Ends a review at the step it stands at, as the person the credential acts for. The subject stays as it was, and the person who asked reads the note in their bell, so a rejection needs one (`TASK_NOTE_REQUIRED`, at most 2000 characters, `TASK_NOTE_TOO_LONG`). Send the `step` the caller read, so a review that moved on in between is not rejected unseen (`TASK_STEP_MOVED`).
+//
+// Takes a body of the `application/json` content type.
+//
+// Corresponds with POST /tasks/{id}/reject (the `RejectTask` operationId).
+func (c *Client) RejectTask(ctx context.Context, id Id, params *RejectTaskParams, body RejectTaskJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewRejectTaskRequest(c.Server, id, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// ReleaseTask Release a task
+//
+// Hands a claimed task back to its group. The one holding it may, the one who asked for it, or an admin.
+//
+// Corresponds with POST /tasks/{id}/release (the `ReleaseTask` operationId).
+func (c *Client) ReleaseTask(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewReleaseTaskRequest(c.Server, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// ReopenTask Reopen a task
+//
+// Opens a finished or cancelled request again. The one who asked for it may, or an admin; whoever works on it hears of it in the bell.
+//
+// Corresponds with POST /tasks/{id}/reopen (the `ReopenTask` operationId).
+func (c *Client) ReopenTask(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewReopenTaskRequest(c.Server, id)
 	if err != nil {
 		return nil, err
 	}
@@ -15235,6 +16250,580 @@ func NewRefreshSessionRequest(server string) (*http.Request, error) {
 	return req, nil
 }
 
+// NewListTasksRequest constructs an http.Request for the ListTasks method
+func NewListTasksRequest(server string, params *ListTasksParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/tasks")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.List != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "list", *params.List, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Term != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "term", *params.Term, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Page != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "page", *params.Page, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.PerPage != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "per_page", *params.PerPage, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewCreateTaskRequest calls the generic CreateTask builder with application/json body
+func NewCreateTaskRequest(server string, params *CreateTaskParams, body CreateTaskJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateTaskRequestWithBody(server, params, "application/json", bodyReader)
+}
+
+// NewCreateTaskRequestWithBody constructs an http.Request for the CreateTask method, with any body, and a specified content type
+func NewCreateTaskRequestWithBody(server string, params *CreateTaskParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/tasks")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		if params.IdempotencyKey != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Idempotency-Key", *params.IdempotencyKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Idempotency-Key", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewListTaskAssigneesRequest constructs an http.Request for the ListTaskAssignees method
+func NewListTaskAssigneesRequest(server string, params *ListTaskAssigneesParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/tasks/assignees")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.Term != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "term", *params.Term, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetTaskRequest constructs an http.Request for the GetTask method
+func NewGetTaskRequest(server string, id Id) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/tasks/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewUpdateTaskRequest calls the generic UpdateTask builder with application/json body
+func NewUpdateTaskRequest(server string, id Id, body UpdateTaskJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateTaskRequestWithBody(server, id, "application/json", bodyReader)
+}
+
+// NewUpdateTaskRequestWithBody constructs an http.Request for the UpdateTask method, with any body, and a specified content type
+func NewUpdateTaskRequestWithBody(server string, id Id, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/tasks/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPut, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewApproveTaskRequest calls the generic ApproveTask builder with application/json body
+func NewApproveTaskRequest(server string, id Id, params *ApproveTaskParams, body ApproveTaskJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewApproveTaskRequestWithBody(server, id, params, "application/json", bodyReader)
+}
+
+// NewApproveTaskRequestWithBody constructs an http.Request for the ApproveTask method, with any body, and a specified content type
+func NewApproveTaskRequestWithBody(server string, id Id, params *ApproveTaskParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/tasks/%s/approve", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		if params.IdempotencyKey != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Idempotency-Key", *params.IdempotencyKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Idempotency-Key", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewCancelTaskRequest constructs an http.Request for the CancelTask method
+func NewCancelTaskRequest(server string, id Id) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/tasks/%s/cancel", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewClaimTaskRequest constructs an http.Request for the ClaimTask method
+func NewClaimTaskRequest(server string, id Id) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/tasks/%s/claim", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewCompleteTaskRequest constructs an http.Request for the CompleteTask method
+func NewCompleteTaskRequest(server string, id Id) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/tasks/%s/complete", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewRejectTaskRequest calls the generic RejectTask builder with application/json body
+func NewRejectTaskRequest(server string, id Id, params *RejectTaskParams, body RejectTaskJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewRejectTaskRequestWithBody(server, id, params, "application/json", bodyReader)
+}
+
+// NewRejectTaskRequestWithBody constructs an http.Request for the RejectTask method, with any body, and a specified content type
+func NewRejectTaskRequestWithBody(server string, id Id, params *RejectTaskParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/tasks/%s/reject", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		if params.IdempotencyKey != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Idempotency-Key", *params.IdempotencyKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Idempotency-Key", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewReleaseTaskRequest constructs an http.Request for the ReleaseTask method
+func NewReleaseTaskRequest(server string, id Id) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/tasks/%s/release", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewReopenTaskRequest constructs an http.Request for the ReopenTask method
+func NewReopenTaskRequest(server string, id Id) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/tasks/%s/reopen", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewRegisterUserRequest calls the generic RegisterUser builder with application/json body
 func NewRegisterUserRequest(server string, body RegisterUserJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
@@ -16155,7 +17744,7 @@ type ClientWithResponsesInterface interface {
 	//
 	// Creates a new Digital Product Passport linked to a product. Generates a unique short code and QR code.
 	//
-	// `granularity` says which unit the passport stands for and therefore which identifiers it needs: `model` needs none of its own, `batch` needs a `batchIdentifier`, `item` needs a `serialIdentifier` as well. The lot is created from the product as it stands the first time its identifier is used and reused by every later passport of the same lot.
+	// `granularity` says which unit the passport stands for and therefore which identifiers it needs: `model` needs none of its own, `batch` needs a `batchIdentifier`, `item` needs a `serialIdentifier` as well. The lot is created from the product as it stands the first time its identifier is used and reused by every later passport of the same lot. A new lot is taken only of a product that passes every other required readiness check; until then the create answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`.
 	//
 	// The answer carries `validation` and `publishBlocked` alongside the passport: the same report `POST /dpps/validate` produces, over the record that was just written, so a caller that skipped the dry run still sees what a publish would refuse or warn about.
 	//
@@ -16168,7 +17757,7 @@ type ClientWithResponsesInterface interface {
 	//
 	// Creates a new Digital Product Passport linked to a product. Generates a unique short code and QR code.
 	//
-	// `granularity` says which unit the passport stands for and therefore which identifiers it needs: `model` needs none of its own, `batch` needs a `batchIdentifier`, `item` needs a `serialIdentifier` as well. The lot is created from the product as it stands the first time its identifier is used and reused by every later passport of the same lot.
+	// `granularity` says which unit the passport stands for and therefore which identifiers it needs: `model` needs none of its own, `batch` needs a `batchIdentifier`, `item` needs a `serialIdentifier` as well. The lot is created from the product as it stands the first time its identifier is used and reused by every later passport of the same lot. A new lot is taken only of a product that passes every other required readiness check; until then the create answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`.
 	//
 	// The answer carries `validation` and `publishBlocked` alongside the passport: the same report `POST /dpps/validate` produces, over the record that was just written, so a caller that skipped the dry run still sees what a publish would refuse or warn about.
 	//
@@ -16188,6 +17777,8 @@ type ClientWithResponsesInterface interface {
 	// Resubmission is safe. Rows are deduplicated by natural key rather than by `Idempotency-Key`: at `model` granularity that is `modelIdentifier`, at `batch` it adds `batchIdentifier`, at `item` it adds `serialIdentifier`. A key that already maps to a published passport comes back as `duplicate`; one that maps to a passport that never published is resumed and published, so a retry after a partial failure finishes the job instead of duplicating it.
 	//
 	// Synchronous by default, capped at 500 rows and 5 MB. Send `Prefer: respond-async` to have the body persisted and processed by a background task instead: the response is `202` with a polling URL, and the caps rise to 50000 rows and 25 MB. Beyond that, batch across requests.
+	//
+	// Every row it creates is signed, so the call needs `dpp_publish` as well; without it the answer is 403 and nothing is created. Where the workspace reviews every publish through a review flow, the answer is 409 `DPP_REVIEW_REQUIRED` and nothing is created.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -16229,7 +17820,7 @@ type ClientWithResponsesInterface interface {
 
 	// ValidateDppWithBodyWithResponse Validate a DPP payload
 	//
-	// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot.
+	// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot; a new lot its product may not have yet shows as `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, beside the report that names the checks the product still fails. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.
 	//
 	// A payload the platform would refuse is a plain `200` with `valid: false` - the request succeeded, the passport would not. Only a missing permission, a missing `dpp` object or an unreadable body answer with an error status.
 	//
@@ -16240,7 +17831,7 @@ type ClientWithResponsesInterface interface {
 
 	// ValidateDppWithResponse Validate a DPP payload
 	//
-	// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot.
+	// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot; a new lot its product may not have yet shows as `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, beside the report that names the checks the product still fails. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.
 	//
 	// A payload the platform would refuse is a plain `200` with `valid: false` - the request succeeded, the passport would not. Only a missing permission, a missing `dpp` object or an unreadable body answer with an error status.
 	//
@@ -16269,7 +17860,7 @@ type ClientWithResponsesInterface interface {
 
 	// PublishDppWithBodyWithResponse Publish a DPP
 	//
-	// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
+	// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. Publishing needs `dpp_publish` beside `dpp_write`; without it the answer is 403. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -16278,7 +17869,7 @@ type ClientWithResponsesInterface interface {
 
 	// PublishDppWithResponse Publish a DPP
 	//
-	// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
+	// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. Publishing needs `dpp_publish` beside `dpp_write`; without it the answer is 403. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -16296,7 +17887,7 @@ type ClientWithResponsesInterface interface {
 
 	// GetDppWithResponse Read a DPP
 	//
-	// Returns the passport itself as JSON, in the shape the list carries. Ask for the QR carrier instead with the .png or .pdf extension on the path, the ones pngUrl and pdfUrl name, and for the historical signed snapshot of a version with ?version=N.
+	// Returns the passport itself as JSON, in the shape the list carries. Ask for the QR carrier instead with the .png, .svg or .pdf extension on the path, the ones pngUrl, svgUrl and pdfUrl name, and for the historical signed snapshot of a version with ?version=N. The SVG is the code alone as a vector, for label artwork.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
@@ -16327,7 +17918,7 @@ type ClientWithResponsesInterface interface {
 
 	// CorrectDppWithBodyWithResponse Correct a DPP from its source
 	//
-	// Carries a correction made to the product onto a passport already written. A passport freezes the product identity, the components and the properties when it is created, so a product edited afterwards never reaches it on its own. Fix the product first and then call this, rather than issuing a second passport for a unit that already has one. The re-freeze reads what the create-time freeze read - the live product at model granularity, the lot's frozen values at batch and item - and mints a signed version anchored to a `corrected` event. A correction with nothing to correct mints nothing and answers `corrected` false, naming the version that still stands.
+	// Carries a correction made to the product onto a passport already written. A passport freezes the product identity, the components and the properties when it is created, so a product edited afterwards never reaches it on its own. Fix the product first and then call this, rather than issuing a second passport for a unit that already has one. The re-freeze reads what the create-time freeze read - the live product at model granularity, the lot's frozen values at batch and item - and mints a signed version anchored to a `corrected` event. A correction with nothing to correct mints nothing and answers `corrected` false, naming the version that still stands. Signing needs `dpp_publish` beside `dpp_write`; without it the answer is 403 and the passport stays as it was.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -16336,7 +17927,7 @@ type ClientWithResponsesInterface interface {
 
 	// CorrectDppWithResponse Correct a DPP from its source
 	//
-	// Carries a correction made to the product onto a passport already written. A passport freezes the product identity, the components and the properties when it is created, so a product edited afterwards never reaches it on its own. Fix the product first and then call this, rather than issuing a second passport for a unit that already has one. The re-freeze reads what the create-time freeze read - the live product at model granularity, the lot's frozen values at batch and item - and mints a signed version anchored to a `corrected` event. A correction with nothing to correct mints nothing and answers `corrected` false, naming the version that still stands.
+	// Carries a correction made to the product onto a passport already written. A passport freezes the product identity, the components and the properties when it is created, so a product edited afterwards never reaches it on its own. Fix the product first and then call this, rather than issuing a second passport for a unit that already has one. The re-freeze reads what the create-time freeze read - the live product at model granularity, the lot's frozen values at batch and item - and mints a signed version anchored to a `corrected` event. A correction with nothing to correct mints nothing and answers `corrected` false, naming the version that still stands. Signing needs `dpp_publish` beside `dpp_write`; without it the answer is 403 and the passport stays as it was.
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -16345,7 +17936,7 @@ type ClientWithResponsesInterface interface {
 
 	// UpdateDppDynamicDataWithBodyWithResponse Update dynamic data
 	//
-	// Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface and never enters a signed per-version snapshot, so a write mints no version and records no lifecycle event. Keys you send are merged into the stored set; a key sent as an explicit null is removed. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.
+	// Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none); every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -16354,7 +17945,7 @@ type ClientWithResponsesInterface interface {
 
 	// UpdateDppDynamicDataWithResponse Update dynamic data
 	//
-	// Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface and never enters a signed per-version snapshot, so a write mints no version and records no lifecycle event. Keys you send are merged into the stored set; a key sent as an explicit null is removed. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.
+	// Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none); every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -16376,7 +17967,7 @@ type ClientWithResponsesInterface interface {
 	//
 	// Recalling a unit is a status change to `suspended`. The passport stays readable and keeps answering a scan, which is the point: whoever holds the unit learns of the recall when they scan its code. Voiding is a different operation, for a unit that no longer exists.
 	//
-	// An event is a pending draft until it is sealed. Send `publish: true` to seal it into the Vault at once (a status change is sealed into a new registered version); leave it out to keep the draft open. At most one pending event exists per passport, so a second call while one is open answers 409 until it is sealed or discarded.
+	// An event is a pending draft until it is sealed. Send `publish: true` to seal it into the Vault at once (a status change is sealed into a new registered version, which needs `dpp_publish` as well); leave it out to keep the draft open. At most one pending event exists per passport, so a second call while one is open answers 409 until it is sealed or discarded.
 	//
 	// Versioned event types are rejected here: they stand for operations that mint a version, and those have their own endpoints (void, supersede, reissue, publish).
 	//
@@ -16391,7 +17982,7 @@ type ClientWithResponsesInterface interface {
 	//
 	// Recalling a unit is a status change to `suspended`. The passport stays readable and keeps answering a scan, which is the point: whoever holds the unit learns of the recall when they scan its code. Voiding is a different operation, for a unit that no longer exists.
 	//
-	// An event is a pending draft until it is sealed. Send `publish: true` to seal it into the Vault at once (a status change is sealed into a new registered version); leave it out to keep the draft open. At most one pending event exists per passport, so a second call while one is open answers 409 until it is sealed or discarded.
+	// An event is a pending draft until it is sealed. Send `publish: true` to seal it into the Vault at once (a status change is sealed into a new registered version, which needs `dpp_publish` as well); leave it out to keep the draft open. At most one pending event exists per passport, so a second call while one is open answers 409 until it is sealed or discarded.
 	//
 	// Versioned event types are rejected here: they stand for operations that mint a version, and those have their own endpoints (void, supersede, reissue, publish).
 	//
@@ -16500,9 +18091,11 @@ type ClientWithResponsesInterface interface {
 
 	// CreateExportWithBodyWithResponse Start a passport export
 	//
-	// Packs the whole passport catalogue into an archive in the background and answers at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.
+	// Packs what this consumer's own lists answer it with into an archive: the passports of `GET /dpps`, the products of `GET /products` and the components of `GET /components`, with the brands, categories and property types they use. The work runs in the background under the scope of the token that started it, and the answer comes at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.
 	//
 	// The consumer that starts an export is the only one that can read or download it. One export runs at a time per consumer: while one is pending or running, another request answers 409 `EXPORT_IN_PROGRESS` with a hint naming the URL to poll.
+	//
+	// The archive carries the passports, so starting an export needs `dpp_read` as well as `export_access`. A consumer without it gets 403 `DPP_FORBIDDEN`.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -16511,9 +18104,11 @@ type ClientWithResponsesInterface interface {
 
 	// CreateExportWithResponse Start a passport export
 	//
-	// Packs the whole passport catalogue into an archive in the background and answers at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.
+	// Packs what this consumer's own lists answer it with into an archive: the passports of `GET /dpps`, the products of `GET /products` and the components of `GET /components`, with the brands, categories and property types they use. The work runs in the background under the scope of the token that started it, and the answer comes at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.
 	//
 	// The consumer that starts an export is the only one that can read or download it. One export runs at a time per consumer: while one is pending or running, another request answers 409 `EXPORT_IN_PROGRESS` with a hint naming the URL to poll.
+	//
+	// The archive carries the passports, so starting an export needs `dpp_read` as well as `export_access`. A consumer without it gets 403 `DPP_FORBIDDEN`.
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -16531,7 +18126,7 @@ type ClientWithResponsesInterface interface {
 
 	// DownloadExportWithResponse Download an export archive
 	//
-	// The archive of a completed export as `application/gzip`. Before completion the answer is 409 `EXPORT_NOT_READY`; a failed export answers 409 `EXPORT_FAILED`; once the archive has been deleted, seven days after completion, the answer is 410 `EXPORT_EXPIRED`.
+	// The archive of a completed export as `application/gzip`. Before completion the answer is 409 `EXPORT_NOT_READY`; a failed export answers 409 `EXPORT_FAILED`; once the archive has been deleted, seven days after completion, the answer is 410 `EXPORT_EXPIRED`. The archive carries the passports, so the download needs `dpp_read` as well; a consumer without it gets 403 `DPP_FORBIDDEN`.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
@@ -16864,7 +18459,7 @@ type ClientWithResponsesInterface interface {
 
 	// ListLotsWithResponse List lots
 	//
-	// The lots batch and item passports freeze from, newest first. A lot is created with the first passport that names its identifier and reused by every later passport of the same lot, so there is nothing to create here: to issue a passport of a new lot, name the lot in `batchIdentifier` on `POST /dpps` or in the shared line of a bulk create.
+	// The lots batch and item passports freeze from, newest first. A lot is created with the first passport that names its identifier and reused by every later passport of the same lot, so there is nothing to create here: to issue a passport of a new lot, name the lot in `batchIdentifier` on `POST /dpps` or in the shared line of a bulk create. A new lot is taken only of a product that passes every other required readiness check; until then that create answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, and `GET /dpps/requirements` shows what the product still lacks.
 	//
 	// Narrow the list with `product_id` to see which lots a product already has, or with `identifier` to find the lot a passport names.
 	//
@@ -16884,7 +18479,7 @@ type ClientWithResponsesInterface interface {
 
 	// GetMeWithResponse What the presented token allows
 	//
-	// The consumer behind the bearer token, its permissions, the token's scope and expiry, the consumer's resource scope and rate limit. The cheapest way to check that a credential works. Never returns the secret. A user token gets the consumer error; users read themselves at `GET /users/me`.
+	// The consumer behind the bearer token, its permissions, the token's scope and expiry, the consumer's resource scope and rate limit, and under `workspace` what the workspace does with a record as it is written. The cheapest way to check that a credential works. Never returns the secret. A user token gets the consumer error; users read themselves at `GET /users/me`.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
@@ -17372,6 +18967,166 @@ type ClientWithResponsesInterface interface {
 	//
 	// Corresponds with PUT /session (the `RefreshSession` operationId).
 	RefreshSessionWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*RefreshSessionResponse, error)
+
+	// ListTasksWithResponse List tasks
+	//
+	// The tasks of one list, newest first. A credential that acts for a person (a grant the person approved, or their assistant) reads the lists as that person. Any other credential reads them as itself: it finds the tasks it asked for under `requested` and `done`, and nothing waits on it.
+	//
+	// - `mine` (the default): the tasks given to the person, the ones they claimed, and the group tasks nobody has claimed yet. The number beside the bell in the application manager counts these.
+	// - `groups`: every open task of the person's groups, with who holds it.
+	// - `requested`: the open tasks the caller asked of others.
+	// - `done`: the finished and cancelled tasks the caller took part in.
+	// - `all`: every task, for an admin only.
+	//
+	// A list the caller may not read answers 422 `TASK_LIST_INVALID`, naming the ones it may.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /tasks (the `ListTasks` operationId).
+	ListTasksWithResponse(ctx context.Context, params *ListTasksParams, reqEditors ...RequestEditorFn) (*ListTasksResponse, error)
+
+	// CreateTaskWithBodyWithResponse Create a task
+	//
+	// Asks a person or a user group for something. The task is a request (`kind` custom) whatever the body says, and names the caller as the one who asked: the person a grant or an assistant acts for, or the credential itself. Every person the task reaches sees it at once in the application manager and hears of it in the bell; the morning mail carries it too.
+	//
+	// Find the `assigneeKey` with `GET /tasks/assignees`.
+	//
+	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /tasks (the `CreateTask` operationId).
+	CreateTaskWithBodyWithResponse(ctx context.Context, params *CreateTaskParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateTaskResponse, error)
+
+	// CreateTaskWithResponse Create a task
+	//
+	// Asks a person or a user group for something. The task is a request (`kind` custom) whatever the body says, and names the caller as the one who asked: the person a grant or an assistant acts for, or the credential itself. Every person the task reaches sees it at once in the application manager and hears of it in the bell; the morning mail carries it too.
+	//
+	// Find the `assigneeKey` with `GET /tasks/assignees`.
+	//
+	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /tasks (the `CreateTask` operationId).
+	CreateTaskWithResponse(ctx context.Context, params *CreateTaskParams, body CreateTaskJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateTaskResponse, error)
+
+	// ListTaskAssigneesWithResponse List task assignees
+	//
+	// Whom a task may go to, matching `term`, as the `key` `POST /tasks` takes and the name the application manager shows. Groups with access to the application manager come first, then the people who can open it; 25 at most.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /tasks/assignees (the `ListTaskAssignees` operationId).
+	ListTaskAssigneesWithResponse(ctx context.Context, params *ListTaskAssigneesParams, reqEditors ...RequestEditorFn) (*ListTaskAssigneesResponse, error)
+
+	// GetTaskWithResponse Get a task
+	//
+	// One task the caller takes part in. A task it has no part in answers 404, as one that does not exist.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /tasks/{id} (the `GetTask` operationId).
+	GetTaskWithResponse(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*GetTaskResponse, error)
+
+	// UpdateTaskWithBodyWithResponse Update a task
+	//
+	// Changes the title, the note, the due date or the assignee of an open task. The one who asked for it may, or an admin; anyone else is refused with `TASK_NOT_PERMITTED`, and a closed task with `TASK_NOT_OPEN`. A new assignee clears the claim and is told.
+	//
+	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with PUT /tasks/{id} (the `UpdateTask` operationId).
+	UpdateTaskWithBodyWithResponse(ctx context.Context, id Id, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateTaskResponse, error)
+
+	// UpdateTaskWithResponse Update a task
+	//
+	// Changes the title, the note, the due date or the assignee of an open task. The one who asked for it may, or an admin; anyone else is refused with `TASK_NOT_PERMITTED`, and a closed task with `TASK_NOT_OPEN`. A new assignee clears the claim and is told.
+	//
+	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with PUT /tasks/{id} (the `UpdateTask` operationId).
+	UpdateTaskWithResponse(ctx context.Context, id Id, body UpdateTaskJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateTaskResponse, error)
+
+	// ApproveTaskWithBodyWithResponse Approve a review
+	//
+	// Approves the step a review stands at, as the person the credential acts for. A review walks the steps of the workspace's review flow, or the one step of everyone who may sign passports where no flow fits. Approving a middle step passes the request on to the next step and signs nothing. Approving the last step carries the request out in the person's name: a publish review signs the passport, which needs `dpp_publish` in the credential's scope beside `task_access`; without it the answer is 403 and nothing is signed.
+	//
+	// Send the `step` the caller read, so a press on a review that moved on in between decides nothing (`TASK_STEP_MOVED`). The person who asked for a review decides no step of it (`TASK_OWN_REQUEST`). A publish the validator or the workspace refuses answers as `POST /dpps/{code}/publish` does, and the review stays open.
+	//
+	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /tasks/{id}/approve (the `ApproveTask` operationId).
+	ApproveTaskWithBodyWithResponse(ctx context.Context, id Id, params *ApproveTaskParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ApproveTaskResponse, error)
+
+	// ApproveTaskWithResponse Approve a review
+	//
+	// Approves the step a review stands at, as the person the credential acts for. A review walks the steps of the workspace's review flow, or the one step of everyone who may sign passports where no flow fits. Approving a middle step passes the request on to the next step and signs nothing. Approving the last step carries the request out in the person's name: a publish review signs the passport, which needs `dpp_publish` in the credential's scope beside `task_access`; without it the answer is 403 and nothing is signed.
+	//
+	// Send the `step` the caller read, so a press on a review that moved on in between decides nothing (`TASK_STEP_MOVED`). The person who asked for a review decides no step of it (`TASK_OWN_REQUEST`). A publish the validator or the workspace refuses answers as `POST /dpps/{code}/publish` does, and the review stays open.
+	//
+	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /tasks/{id}/approve (the `ApproveTask` operationId).
+	ApproveTaskWithResponse(ctx context.Context, id Id, params *ApproveTaskParams, body ApproveTaskJSONRequestBody, reqEditors ...RequestEditorFn) (*ApproveTaskResponse, error)
+
+	// CancelTaskWithResponse Cancel a task
+	//
+	// Ends an open task as cancelled. The one who asked for it may, or an admin. The task stays on record and can be reopened.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /tasks/{id}/cancel (the `CancelTask` operationId).
+	CancelTaskWithResponse(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*CancelTaskResponse, error)
+
+	// ClaimTaskWithResponse Claim a task
+	//
+	// Takes an open group task for the person the credential acts for. Only a current member of the group claims it, and only while nobody holds it; of two members claiming at once, one wins and the other is refused with `TASK_ALREADY_CLAIMED`.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /tasks/{id}/claim (the `ClaimTask` operationId).
+	ClaimTaskWithResponse(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*ClaimTaskResponse, error)
+
+	// CompleteTaskWithResponse Complete a task
+	//
+	// Marks an open request as done. The person it is for may, or a current member of its group, who claims it in the same move; a task someone else holds stays theirs. Only a person works on a task, so a credential acting as itself is refused with `TASK_NOT_PERMITTED`, and a review ends in a decision in the application manager (`TASK_NOT_CUSTOM`). The one who asked hears of it in the bell.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /tasks/{id}/complete (the `CompleteTask` operationId).
+	CompleteTaskWithResponse(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*CompleteTaskResponse, error)
+
+	// RejectTaskWithBodyWithResponse Reject a review
+	//
+	// Ends a review at the step it stands at, as the person the credential acts for. The subject stays as it was, and the person who asked reads the note in their bell, so a rejection needs one (`TASK_NOTE_REQUIRED`, at most 2000 characters, `TASK_NOTE_TOO_LONG`). Send the `step` the caller read, so a review that moved on in between is not rejected unseen (`TASK_STEP_MOVED`).
+	//
+	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /tasks/{id}/reject (the `RejectTask` operationId).
+	RejectTaskWithBodyWithResponse(ctx context.Context, id Id, params *RejectTaskParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*RejectTaskResponse, error)
+
+	// RejectTaskWithResponse Reject a review
+	//
+	// Ends a review at the step it stands at, as the person the credential acts for. The subject stays as it was, and the person who asked reads the note in their bell, so a rejection needs one (`TASK_NOTE_REQUIRED`, at most 2000 characters, `TASK_NOTE_TOO_LONG`). Send the `step` the caller read, so a review that moved on in between is not rejected unseen (`TASK_STEP_MOVED`).
+	//
+	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /tasks/{id}/reject (the `RejectTask` operationId).
+	RejectTaskWithResponse(ctx context.Context, id Id, params *RejectTaskParams, body RejectTaskJSONRequestBody, reqEditors ...RequestEditorFn) (*RejectTaskResponse, error)
+
+	// ReleaseTaskWithResponse Release a task
+	//
+	// Hands a claimed task back to its group. The one holding it may, the one who asked for it, or an admin.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /tasks/{id}/release (the `ReleaseTask` operationId).
+	ReleaseTaskWithResponse(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*ReleaseTaskResponse, error)
+
+	// ReopenTaskWithResponse Reopen a task
+	//
+	// Opens a finished or cancelled request again. The one who asked for it may, or an admin; whoever works on it hears of it in the bell.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /tasks/{id}/reopen (the `ReopenTask` operationId).
+	ReopenTaskWithResponse(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*ReopenTaskResponse, error)
 
 	// RegisterUserWithBodyWithResponse Register a new user
 	//
@@ -18911,6 +20666,8 @@ type BulkCreateDppsResponse struct {
 	JSON402 *MembershipExpired
 	// JSON403 the response for an HTTP 403 `application/json` response
 	JSON403 *Forbidden
+	// JSON409 the response for an HTTP 409 `application/json` response
+	JSON409 *Error
 	// JSON413 the response for an HTTP 413 `application/json` response
 	JSON413 *Error
 	// JSON429 the response for an HTTP 429 `application/json` response
@@ -18946,6 +20703,11 @@ func (r BulkCreateDppsResponse) GetJSON402() *MembershipExpired {
 // GetJSON403 returns the response for an HTTP 403 `application/json` response
 func (r BulkCreateDppsResponse) GetJSON403() *Forbidden {
 	return r.JSON403
+}
+
+// GetJSON409 returns the response for an HTTP 409 `application/json` response
+func (r BulkCreateDppsResponse) GetJSON409() *Error {
+	return r.JSON409
 }
 
 // GetJSON413 returns the response for an HTTP 413 `application/json` response
@@ -24767,6 +26529,834 @@ func (r RefreshSessionResponse) ContentType() string {
 	return ""
 }
 
+// ListTasksResponse200Headers the declared response headers of an HTTP 200 response for ListTasks
+type ListTasksResponse200Headers struct {
+	APICount   *int
+	APIOffset  *int
+	APIPage    *int
+	APIPerPage *int
+	APITotal   *int
+	Link       *string
+}
+
+type ListTasksResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *struct {
+		Tasks *[]Task `json:"tasks,omitempty"`
+	}
+	// JSON401 the response for an HTTP 401 `application/json` response
+	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
+	// JSON422 the response for an HTTP 422 `application/json` response
+	JSON422 *Error
+	// Headers200 the parsed response headers for an HTTP 200 response
+	Headers200 *ListTasksResponse200Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r ListTasksResponse) GetJSON200() *struct {
+	Tasks *[]Task `json:"tasks,omitempty"`
+} {
+	return r.JSON200
+}
+
+// GetJSON401 returns the response for an HTTP 401 `application/json` response
+func (r ListTasksResponse) GetJSON401() *Unauthorized {
+	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r ListTasksResponse) GetJSON403() *Forbidden {
+	return r.JSON403
+}
+
+// GetJSON422 returns the response for an HTTP 422 `application/json` response
+func (r ListTasksResponse) GetJSON422() *Error {
+	return r.JSON422
+}
+
+// GetBody returns the raw response body bytes
+func (r ListTasksResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r ListTasksResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListTasksResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r ListTasksResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type CreateTaskResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON201 the response for an HTTP 201 `application/json` response
+	JSON201 *Task
+	// JSON401 the response for an HTTP 401 `application/json` response
+	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
+	// JSON422 the response for an HTTP 422 `application/json` response
+	JSON422 *Error
+}
+
+// GetJSON201 returns the response for an HTTP 201 `application/json` response
+func (r CreateTaskResponse) GetJSON201() *Task {
+	return r.JSON201
+}
+
+// GetJSON401 returns the response for an HTTP 401 `application/json` response
+func (r CreateTaskResponse) GetJSON401() *Unauthorized {
+	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r CreateTaskResponse) GetJSON403() *Forbidden {
+	return r.JSON403
+}
+
+// GetJSON422 returns the response for an HTTP 422 `application/json` response
+func (r CreateTaskResponse) GetJSON422() *Error {
+	return r.JSON422
+}
+
+// GetBody returns the raw response body bytes
+func (r CreateTaskResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateTaskResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateTaskResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r CreateTaskResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type ListTaskAssigneesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *struct {
+		Assignees *[]struct {
+			// Key `User:<id>` or `UserGroup:<id>`
+			Key  *string `json:"key,omitempty"`
+			Name *string `json:"name,omitempty"`
+		} `json:"assignees,omitempty"`
+	}
+	// JSON401 the response for an HTTP 401 `application/json` response
+	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r ListTaskAssigneesResponse) GetJSON200() *struct {
+	Assignees *[]struct {
+		// Key `User:<id>` or `UserGroup:<id>`
+		Key  *string `json:"key,omitempty"`
+		Name *string `json:"name,omitempty"`
+	} `json:"assignees,omitempty"`
+} {
+	return r.JSON200
+}
+
+// GetJSON401 returns the response for an HTTP 401 `application/json` response
+func (r ListTaskAssigneesResponse) GetJSON401() *Unauthorized {
+	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r ListTaskAssigneesResponse) GetJSON403() *Forbidden {
+	return r.JSON403
+}
+
+// GetBody returns the raw response body bytes
+func (r ListTaskAssigneesResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r ListTaskAssigneesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListTaskAssigneesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r ListTaskAssigneesResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type GetTaskResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *Task
+	// JSON401 the response for an HTTP 401 `application/json` response
+	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
+	// JSON404 the response for an HTTP 404 `application/json` response
+	JSON404 *NotFound
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r GetTaskResponse) GetJSON200() *Task {
+	return r.JSON200
+}
+
+// GetJSON401 returns the response for an HTTP 401 `application/json` response
+func (r GetTaskResponse) GetJSON401() *Unauthorized {
+	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r GetTaskResponse) GetJSON403() *Forbidden {
+	return r.JSON403
+}
+
+// GetJSON404 returns the response for an HTTP 404 `application/json` response
+func (r GetTaskResponse) GetJSON404() *NotFound {
+	return r.JSON404
+}
+
+// GetBody returns the raw response body bytes
+func (r GetTaskResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r GetTaskResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetTaskResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetTaskResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type UpdateTaskResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *Task
+	// JSON401 the response for an HTTP 401 `application/json` response
+	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
+	// JSON404 the response for an HTTP 404 `application/json` response
+	JSON404 *NotFound
+	// JSON422 the response for an HTTP 422 `application/json` response
+	JSON422 *Error
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r UpdateTaskResponse) GetJSON200() *Task {
+	return r.JSON200
+}
+
+// GetJSON401 returns the response for an HTTP 401 `application/json` response
+func (r UpdateTaskResponse) GetJSON401() *Unauthorized {
+	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r UpdateTaskResponse) GetJSON403() *Forbidden {
+	return r.JSON403
+}
+
+// GetJSON404 returns the response for an HTTP 404 `application/json` response
+func (r UpdateTaskResponse) GetJSON404() *NotFound {
+	return r.JSON404
+}
+
+// GetJSON422 returns the response for an HTTP 422 `application/json` response
+func (r UpdateTaskResponse) GetJSON422() *Error {
+	return r.JSON422
+}
+
+// GetBody returns the raw response body bytes
+func (r UpdateTaskResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateTaskResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateTaskResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r UpdateTaskResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type ApproveTaskResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *Task
+	// JSON401 the response for an HTTP 401 `application/json` response
+	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
+	// JSON404 the response for an HTTP 404 `application/json` response
+	JSON404 *NotFound
+	// JSON409 the response for an HTTP 409 `application/json` response
+	JSON409 *Error
+	// JSON422 the response for an HTTP 422 `application/json` response
+	JSON422 *Error
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r ApproveTaskResponse) GetJSON200() *Task {
+	return r.JSON200
+}
+
+// GetJSON401 returns the response for an HTTP 401 `application/json` response
+func (r ApproveTaskResponse) GetJSON401() *Unauthorized {
+	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r ApproveTaskResponse) GetJSON403() *Forbidden {
+	return r.JSON403
+}
+
+// GetJSON404 returns the response for an HTTP 404 `application/json` response
+func (r ApproveTaskResponse) GetJSON404() *NotFound {
+	return r.JSON404
+}
+
+// GetJSON409 returns the response for an HTTP 409 `application/json` response
+func (r ApproveTaskResponse) GetJSON409() *Error {
+	return r.JSON409
+}
+
+// GetJSON422 returns the response for an HTTP 422 `application/json` response
+func (r ApproveTaskResponse) GetJSON422() *Error {
+	return r.JSON422
+}
+
+// GetBody returns the raw response body bytes
+func (r ApproveTaskResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r ApproveTaskResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ApproveTaskResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r ApproveTaskResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type CancelTaskResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *Task
+	// JSON401 the response for an HTTP 401 `application/json` response
+	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
+	// JSON404 the response for an HTTP 404 `application/json` response
+	JSON404 *NotFound
+	// JSON422 the response for an HTTP 422 `application/json` response
+	JSON422 *Error
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r CancelTaskResponse) GetJSON200() *Task {
+	return r.JSON200
+}
+
+// GetJSON401 returns the response for an HTTP 401 `application/json` response
+func (r CancelTaskResponse) GetJSON401() *Unauthorized {
+	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r CancelTaskResponse) GetJSON403() *Forbidden {
+	return r.JSON403
+}
+
+// GetJSON404 returns the response for an HTTP 404 `application/json` response
+func (r CancelTaskResponse) GetJSON404() *NotFound {
+	return r.JSON404
+}
+
+// GetJSON422 returns the response for an HTTP 422 `application/json` response
+func (r CancelTaskResponse) GetJSON422() *Error {
+	return r.JSON422
+}
+
+// GetBody returns the raw response body bytes
+func (r CancelTaskResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r CancelTaskResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CancelTaskResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r CancelTaskResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type ClaimTaskResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *Task
+	// JSON401 the response for an HTTP 401 `application/json` response
+	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
+	// JSON404 the response for an HTTP 404 `application/json` response
+	JSON404 *NotFound
+	// JSON422 the response for an HTTP 422 `application/json` response
+	JSON422 *Error
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r ClaimTaskResponse) GetJSON200() *Task {
+	return r.JSON200
+}
+
+// GetJSON401 returns the response for an HTTP 401 `application/json` response
+func (r ClaimTaskResponse) GetJSON401() *Unauthorized {
+	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r ClaimTaskResponse) GetJSON403() *Forbidden {
+	return r.JSON403
+}
+
+// GetJSON404 returns the response for an HTTP 404 `application/json` response
+func (r ClaimTaskResponse) GetJSON404() *NotFound {
+	return r.JSON404
+}
+
+// GetJSON422 returns the response for an HTTP 422 `application/json` response
+func (r ClaimTaskResponse) GetJSON422() *Error {
+	return r.JSON422
+}
+
+// GetBody returns the raw response body bytes
+func (r ClaimTaskResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r ClaimTaskResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ClaimTaskResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r ClaimTaskResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type CompleteTaskResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *Task
+	// JSON401 the response for an HTTP 401 `application/json` response
+	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
+	// JSON404 the response for an HTTP 404 `application/json` response
+	JSON404 *NotFound
+	// JSON422 the response for an HTTP 422 `application/json` response
+	JSON422 *Error
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r CompleteTaskResponse) GetJSON200() *Task {
+	return r.JSON200
+}
+
+// GetJSON401 returns the response for an HTTP 401 `application/json` response
+func (r CompleteTaskResponse) GetJSON401() *Unauthorized {
+	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r CompleteTaskResponse) GetJSON403() *Forbidden {
+	return r.JSON403
+}
+
+// GetJSON404 returns the response for an HTTP 404 `application/json` response
+func (r CompleteTaskResponse) GetJSON404() *NotFound {
+	return r.JSON404
+}
+
+// GetJSON422 returns the response for an HTTP 422 `application/json` response
+func (r CompleteTaskResponse) GetJSON422() *Error {
+	return r.JSON422
+}
+
+// GetBody returns the raw response body bytes
+func (r CompleteTaskResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r CompleteTaskResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CompleteTaskResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r CompleteTaskResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type RejectTaskResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *Task
+	// JSON401 the response for an HTTP 401 `application/json` response
+	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
+	// JSON404 the response for an HTTP 404 `application/json` response
+	JSON404 *NotFound
+	// JSON422 the response for an HTTP 422 `application/json` response
+	JSON422 *Error
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r RejectTaskResponse) GetJSON200() *Task {
+	return r.JSON200
+}
+
+// GetJSON401 returns the response for an HTTP 401 `application/json` response
+func (r RejectTaskResponse) GetJSON401() *Unauthorized {
+	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r RejectTaskResponse) GetJSON403() *Forbidden {
+	return r.JSON403
+}
+
+// GetJSON404 returns the response for an HTTP 404 `application/json` response
+func (r RejectTaskResponse) GetJSON404() *NotFound {
+	return r.JSON404
+}
+
+// GetJSON422 returns the response for an HTTP 422 `application/json` response
+func (r RejectTaskResponse) GetJSON422() *Error {
+	return r.JSON422
+}
+
+// GetBody returns the raw response body bytes
+func (r RejectTaskResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r RejectTaskResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r RejectTaskResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r RejectTaskResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type ReleaseTaskResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *Task
+	// JSON401 the response for an HTTP 401 `application/json` response
+	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
+	// JSON404 the response for an HTTP 404 `application/json` response
+	JSON404 *NotFound
+	// JSON422 the response for an HTTP 422 `application/json` response
+	JSON422 *Error
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r ReleaseTaskResponse) GetJSON200() *Task {
+	return r.JSON200
+}
+
+// GetJSON401 returns the response for an HTTP 401 `application/json` response
+func (r ReleaseTaskResponse) GetJSON401() *Unauthorized {
+	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r ReleaseTaskResponse) GetJSON403() *Forbidden {
+	return r.JSON403
+}
+
+// GetJSON404 returns the response for an HTTP 404 `application/json` response
+func (r ReleaseTaskResponse) GetJSON404() *NotFound {
+	return r.JSON404
+}
+
+// GetJSON422 returns the response for an HTTP 422 `application/json` response
+func (r ReleaseTaskResponse) GetJSON422() *Error {
+	return r.JSON422
+}
+
+// GetBody returns the raw response body bytes
+func (r ReleaseTaskResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r ReleaseTaskResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ReleaseTaskResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r ReleaseTaskResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type ReopenTaskResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *Task
+	// JSON401 the response for an HTTP 401 `application/json` response
+	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
+	// JSON404 the response for an HTTP 404 `application/json` response
+	JSON404 *NotFound
+	// JSON422 the response for an HTTP 422 `application/json` response
+	JSON422 *Error
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r ReopenTaskResponse) GetJSON200() *Task {
+	return r.JSON200
+}
+
+// GetJSON401 returns the response for an HTTP 401 `application/json` response
+func (r ReopenTaskResponse) GetJSON401() *Unauthorized {
+	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r ReopenTaskResponse) GetJSON403() *Forbidden {
+	return r.JSON403
+}
+
+// GetJSON404 returns the response for an HTTP 404 `application/json` response
+func (r ReopenTaskResponse) GetJSON404() *NotFound {
+	return r.JSON404
+}
+
+// GetJSON422 returns the response for an HTTP 422 `application/json` response
+func (r ReopenTaskResponse) GetJSON422() *Error {
+	return r.JSON422
+}
+
+// GetBody returns the raw response body bytes
+func (r ReopenTaskResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r ReopenTaskResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ReopenTaskResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r ReopenTaskResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
 type RegisterUserResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -26071,7 +28661,7 @@ func (c *ClientWithResponses) ListDppsWithResponse(ctx context.Context, params *
 //
 // Creates a new Digital Product Passport linked to a product. Generates a unique short code and QR code.
 //
-// `granularity` says which unit the passport stands for and therefore which identifiers it needs: `model` needs none of its own, `batch` needs a `batchIdentifier`, `item` needs a `serialIdentifier` as well. The lot is created from the product as it stands the first time its identifier is used and reused by every later passport of the same lot.
+// `granularity` says which unit the passport stands for and therefore which identifiers it needs: `model` needs none of its own, `batch` needs a `batchIdentifier`, `item` needs a `serialIdentifier` as well. The lot is created from the product as it stands the first time its identifier is used and reused by every later passport of the same lot. A new lot is taken only of a product that passes every other required readiness check; until then the create answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`.
 //
 // The answer carries `validation` and `publishBlocked` alongside the passport: the same report `POST /dpps/validate` produces, over the record that was just written, so a caller that skipped the dry run still sees what a publish would refuse or warn about.
 //
@@ -26090,7 +28680,7 @@ func (c *ClientWithResponses) CreateDppWithBodyWithResponse(ctx context.Context,
 //
 // Creates a new Digital Product Passport linked to a product. Generates a unique short code and QR code.
 //
-// `granularity` says which unit the passport stands for and therefore which identifiers it needs: `model` needs none of its own, `batch` needs a `batchIdentifier`, `item` needs a `serialIdentifier` as well. The lot is created from the product as it stands the first time its identifier is used and reused by every later passport of the same lot.
+// `granularity` says which unit the passport stands for and therefore which identifiers it needs: `model` needs none of its own, `batch` needs a `batchIdentifier`, `item` needs a `serialIdentifier` as well. The lot is created from the product as it stands the first time its identifier is used and reused by every later passport of the same lot. A new lot is taken only of a product that passes every other required readiness check; until then the create answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`.
 //
 // The answer carries `validation` and `publishBlocked` alongside the passport: the same report `POST /dpps/validate` produces, over the record that was just written, so a caller that skipped the dry run still sees what a publish would refuse or warn about.
 //
@@ -26116,6 +28706,8 @@ func (c *ClientWithResponses) CreateDppWithResponse(ctx context.Context, params 
 // Resubmission is safe. Rows are deduplicated by natural key rather than by `Idempotency-Key`: at `model` granularity that is `modelIdentifier`, at `batch` it adds `batchIdentifier`, at `item` it adds `serialIdentifier`. A key that already maps to a published passport comes back as `duplicate`; one that maps to a passport that never published is resumed and published, so a retry after a partial failure finishes the job instead of duplicating it.
 //
 // Synchronous by default, capped at 500 rows and 5 MB. Send `Prefer: respond-async` to have the body persisted and processed by a background task instead: the response is `202` with a polling URL, and the caps rise to 50000 rows and 25 MB. Beyond that, batch across requests.
+//
+// Every row it creates is signed, so the call needs `dpp_publish` as well; without it the answer is 403 and nothing is created. Where the workspace reviews every publish through a review flow, the answer is 409 `DPP_REVIEW_REQUIRED` and nothing is created.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -26181,7 +28773,7 @@ func (c *ClientWithResponses) GetDppRequirementsWithResponse(ctx context.Context
 
 // ValidateDppWithBodyWithResponse Validate a DPP payload
 //
-// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot.
+// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot; a new lot its product may not have yet shows as `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, beside the report that names the checks the product still fails. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.
 //
 // A payload the platform would refuse is a plain `200` with `valid: false` - the request succeeded, the passport would not. Only a missing permission, a missing `dpp` object or an unreadable body answer with an error status.
 //
@@ -26198,7 +28790,7 @@ func (c *ClientWithResponses) ValidateDppWithBodyWithResponse(ctx context.Contex
 
 // ValidateDppWithResponse Validate a DPP payload
 //
-// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot.
+// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot; a new lot its product may not have yet shows as `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, beside the report that names the checks the product still fails. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.
 //
 // A payload the platform would refuse is a plain `200` with `valid: false` - the request succeeded, the passport would not. Only a missing permission, a missing `dpp` object or an unreadable body answer with an error status.
 //
@@ -26245,7 +28837,7 @@ func (c *ClientWithResponses) GetDppVersionPrivatePropertiesWithResponse(ctx con
 
 // PublishDppWithBodyWithResponse Publish a DPP
 //
-// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
+// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. Publishing needs `dpp_publish` beside `dpp_write`; without it the answer is 403. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -26260,7 +28852,7 @@ func (c *ClientWithResponses) PublishDppWithBodyWithResponse(ctx context.Context
 
 // PublishDppWithResponse Publish a DPP
 //
-// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
+// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. Publishing needs `dpp_publish` beside `dpp_write`; without it the answer is 403. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
@@ -26290,7 +28882,7 @@ func (c *ClientWithResponses) DeleteDppWithResponse(ctx context.Context, id Id, 
 
 // GetDppWithResponse Read a DPP
 //
-// Returns the passport itself as JSON, in the shape the list carries. Ask for the QR carrier instead with the .png or .pdf extension on the path, the ones pngUrl and pdfUrl name, and for the historical signed snapshot of a version with ?version=N.
+// Returns the passport itself as JSON, in the shape the list carries. Ask for the QR carrier instead with the .png, .svg or .pdf extension on the path, the ones pngUrl, svgUrl and pdfUrl name, and for the historical signed snapshot of a version with ?version=N. The SVG is the code alone as a vector, for label artwork.
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -26339,7 +28931,7 @@ func (c *ClientWithResponses) UpdateDppWithResponse(ctx context.Context, id Id, 
 
 // CorrectDppWithBodyWithResponse Correct a DPP from its source
 //
-// Carries a correction made to the product onto a passport already written. A passport freezes the product identity, the components and the properties when it is created, so a product edited afterwards never reaches it on its own. Fix the product first and then call this, rather than issuing a second passport for a unit that already has one. The re-freeze reads what the create-time freeze read - the live product at model granularity, the lot's frozen values at batch and item - and mints a signed version anchored to a `corrected` event. A correction with nothing to correct mints nothing and answers `corrected` false, naming the version that still stands.
+// Carries a correction made to the product onto a passport already written. A passport freezes the product identity, the components and the properties when it is created, so a product edited afterwards never reaches it on its own. Fix the product first and then call this, rather than issuing a second passport for a unit that already has one. The re-freeze reads what the create-time freeze read - the live product at model granularity, the lot's frozen values at batch and item - and mints a signed version anchored to a `corrected` event. A correction with nothing to correct mints nothing and answers `corrected` false, naming the version that still stands. Signing needs `dpp_publish` beside `dpp_write`; without it the answer is 403 and the passport stays as it was.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -26354,7 +28946,7 @@ func (c *ClientWithResponses) CorrectDppWithBodyWithResponse(ctx context.Context
 
 // CorrectDppWithResponse Correct a DPP from its source
 //
-// Carries a correction made to the product onto a passport already written. A passport freezes the product identity, the components and the properties when it is created, so a product edited afterwards never reaches it on its own. Fix the product first and then call this, rather than issuing a second passport for a unit that already has one. The re-freeze reads what the create-time freeze read - the live product at model granularity, the lot's frozen values at batch and item - and mints a signed version anchored to a `corrected` event. A correction with nothing to correct mints nothing and answers `corrected` false, naming the version that still stands.
+// Carries a correction made to the product onto a passport already written. A passport freezes the product identity, the components and the properties when it is created, so a product edited afterwards never reaches it on its own. Fix the product first and then call this, rather than issuing a second passport for a unit that already has one. The re-freeze reads what the create-time freeze read - the live product at model granularity, the lot's frozen values at batch and item - and mints a signed version anchored to a `corrected` event. A correction with nothing to correct mints nothing and answers `corrected` false, naming the version that still stands. Signing needs `dpp_publish` beside `dpp_write`; without it the answer is 403 and the passport stays as it was.
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
@@ -26369,7 +28961,7 @@ func (c *ClientWithResponses) CorrectDppWithResponse(ctx context.Context, id Id,
 
 // UpdateDppDynamicDataWithBodyWithResponse Update dynamic data
 //
-// Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface and never enters a signed per-version snapshot, so a write mints no version and records no lifecycle event. Keys you send are merged into the stored set; a key sent as an explicit null is removed. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.
+// Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none); every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -26384,7 +28976,7 @@ func (c *ClientWithResponses) UpdateDppDynamicDataWithBodyWithResponse(ctx conte
 
 // UpdateDppDynamicDataWithResponse Update dynamic data
 //
-// Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface and never enters a signed per-version snapshot, so a write mints no version and records no lifecycle event. Keys you send are merged into the stored set; a key sent as an explicit null is removed. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.
+// Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none); every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
@@ -26418,7 +29010,7 @@ func (c *ClientWithResponses) ListDppEventsWithResponse(ctx context.Context, id 
 //
 // Recalling a unit is a status change to `suspended`. The passport stays readable and keeps answering a scan, which is the point: whoever holds the unit learns of the recall when they scan its code. Voiding is a different operation, for a unit that no longer exists.
 //
-// An event is a pending draft until it is sealed. Send `publish: true` to seal it into the Vault at once (a status change is sealed into a new registered version); leave it out to keep the draft open. At most one pending event exists per passport, so a second call while one is open answers 409 until it is sealed or discarded.
+// An event is a pending draft until it is sealed. Send `publish: true` to seal it into the Vault at once (a status change is sealed into a new registered version, which needs `dpp_publish` as well); leave it out to keep the draft open. At most one pending event exists per passport, so a second call while one is open answers 409 until it is sealed or discarded.
 //
 // Versioned event types are rejected here: they stand for operations that mint a version, and those have their own endpoints (void, supersede, reissue, publish).
 //
@@ -26439,7 +29031,7 @@ func (c *ClientWithResponses) AppendDppEventWithBodyWithResponse(ctx context.Con
 //
 // Recalling a unit is a status change to `suspended`. The passport stays readable and keeps answering a scan, which is the point: whoever holds the unit learns of the recall when they scan its code. Voiding is a different operation, for a unit that no longer exists.
 //
-// An event is a pending draft until it is sealed. Send `publish: true` to seal it into the Vault at once (a status change is sealed into a new registered version); leave it out to keep the draft open. At most one pending event exists per passport, so a second call while one is open answers 409 until it is sealed or discarded.
+// An event is a pending draft until it is sealed. Send `publish: true` to seal it into the Vault at once (a status change is sealed into a new registered version, which needs `dpp_publish` as well); leave it out to keep the draft open. At most one pending event exists per passport, so a second call while one is open answers 409 until it is sealed or discarded.
 //
 // Versioned event types are rejected here: they stand for operations that mint a version, and those have their own endpoints (void, supersede, reissue, publish).
 //
@@ -26614,9 +29206,11 @@ func (c *ClientWithResponses) ListExportsWithResponse(ctx context.Context, param
 
 // CreateExportWithBodyWithResponse Start a passport export
 //
-// Packs the whole passport catalogue into an archive in the background and answers at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.
+// Packs what this consumer's own lists answer it with into an archive: the passports of `GET /dpps`, the products of `GET /products` and the components of `GET /components`, with the brands, categories and property types they use. The work runs in the background under the scope of the token that started it, and the answer comes at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.
 //
 // The consumer that starts an export is the only one that can read or download it. One export runs at a time per consumer: while one is pending or running, another request answers 409 `EXPORT_IN_PROGRESS` with a hint naming the URL to poll.
+//
+// The archive carries the passports, so starting an export needs `dpp_read` as well as `export_access`. A consumer without it gets 403 `DPP_FORBIDDEN`.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -26631,9 +29225,11 @@ func (c *ClientWithResponses) CreateExportWithBodyWithResponse(ctx context.Conte
 
 // CreateExportWithResponse Start a passport export
 //
-// Packs the whole passport catalogue into an archive in the background and answers at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.
+// Packs what this consumer's own lists answer it with into an archive: the passports of `GET /dpps`, the products of `GET /products` and the components of `GET /components`, with the brands, categories and property types they use. The work runs in the background under the scope of the token that started it, and the answer comes at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.
 //
 // The consumer that starts an export is the only one that can read or download it. One export runs at a time per consumer: while one is pending or running, another request answers 409 `EXPORT_IN_PROGRESS` with a hint naming the URL to poll.
+//
+// The archive carries the passports, so starting an export needs `dpp_read` as well as `export_access`. A consumer without it gets 403 `DPP_FORBIDDEN`.
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
@@ -26663,7 +29259,7 @@ func (c *ClientWithResponses) GetExportWithResponse(ctx context.Context, id Id, 
 
 // DownloadExportWithResponse Download an export archive
 //
-// The archive of a completed export as `application/gzip`. Before completion the answer is 409 `EXPORT_NOT_READY`; a failed export answers 409 `EXPORT_FAILED`; once the archive has been deleted, seven days after completion, the answer is 410 `EXPORT_EXPIRED`.
+// The archive of a completed export as `application/gzip`. Before completion the answer is 409 `EXPORT_NOT_READY`; a failed export answers 409 `EXPORT_FAILED`; once the archive has been deleted, seven days after completion, the answer is 410 `EXPORT_EXPIRED`. The archive carries the passports, so the download needs `dpp_read` as well; a consumer without it gets 403 `DPP_FORBIDDEN`.
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -27206,7 +29802,7 @@ func (c *ClientWithResponses) GetLocalizationWithResponse(ctx context.Context, r
 
 // ListLotsWithResponse List lots
 //
-// The lots batch and item passports freeze from, newest first. A lot is created with the first passport that names its identifier and reused by every later passport of the same lot, so there is nothing to create here: to issue a passport of a new lot, name the lot in `batchIdentifier` on `POST /dpps` or in the shared line of a bulk create.
+// The lots batch and item passports freeze from, newest first. A lot is created with the first passport that names its identifier and reused by every later passport of the same lot, so there is nothing to create here: to issue a passport of a new lot, name the lot in `batchIdentifier` on `POST /dpps` or in the shared line of a bulk create. A new lot is taken only of a product that passes every other required readiness check; until then that create answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, and `GET /dpps/requirements` shows what the product still lacks.
 //
 // Narrow the list with `product_id` to see which lots a product already has, or with `identifier` to find the lot a passport names.
 //
@@ -27238,7 +29834,7 @@ func (c *ClientWithResponses) GetLotWithResponse(ctx context.Context, id int, re
 
 // GetMeWithResponse What the presented token allows
 //
-// The consumer behind the bearer token, its permissions, the token's scope and expiry, the consumer's resource scope and rate limit. The cheapest way to check that a credential works. Never returns the secret. A user token gets the consumer error; users read themselves at `GET /users/me`.
+// The consumer behind the bearer token, its permissions, the token's scope and expiry, the consumer's resource scope and rate limit, and under `workspace` what the workspace does with a record as it is written. The cheapest way to check that a credential works. Never returns the secret. A user token gets the consumer error; users read themselves at `GET /users/me`.
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -28019,6 +30615,262 @@ func (c *ClientWithResponses) RefreshSessionWithResponse(ctx context.Context, re
 		return nil, err
 	}
 	return ParseRefreshSessionResponse(rsp)
+}
+
+// ListTasksWithResponse List tasks
+//
+// The tasks of one list, newest first. A credential that acts for a person (a grant the person approved, or their assistant) reads the lists as that person. Any other credential reads them as itself: it finds the tasks it asked for under `requested` and `done`, and nothing waits on it.
+//
+// - `mine` (the default): the tasks given to the person, the ones they claimed, and the group tasks nobody has claimed yet. The number beside the bell in the application manager counts these.
+// - `groups`: every open task of the person's groups, with who holds it.
+// - `requested`: the open tasks the caller asked of others.
+// - `done`: the finished and cancelled tasks the caller took part in.
+// - `all`: every task, for an admin only.
+//
+// A list the caller may not read answers 422 `TASK_LIST_INVALID`, naming the ones it may.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /tasks (the `ListTasks` operationId).
+func (c *ClientWithResponses) ListTasksWithResponse(ctx context.Context, params *ListTasksParams, reqEditors ...RequestEditorFn) (*ListTasksResponse, error) {
+	rsp, err := c.ListTasks(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListTasksResponse(rsp)
+}
+
+// CreateTaskWithBodyWithResponse Create a task
+//
+// Asks a person or a user group for something. The task is a request (`kind` custom) whatever the body says, and names the caller as the one who asked: the person a grant or an assistant acts for, or the credential itself. Every person the task reaches sees it at once in the application manager and hears of it in the bell; the morning mail carries it too.
+//
+// Find the `assigneeKey` with `GET /tasks/assignees`.
+//
+// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /tasks (the `CreateTask` operationId).
+func (c *ClientWithResponses) CreateTaskWithBodyWithResponse(ctx context.Context, params *CreateTaskParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateTaskResponse, error) {
+	rsp, err := c.CreateTaskWithBody(ctx, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateTaskResponse(rsp)
+}
+
+// CreateTaskWithResponse Create a task
+//
+// Asks a person or a user group for something. The task is a request (`kind` custom) whatever the body says, and names the caller as the one who asked: the person a grant or an assistant acts for, or the credential itself. Every person the task reaches sees it at once in the application manager and hears of it in the bell; the morning mail carries it too.
+//
+// Find the `assigneeKey` with `GET /tasks/assignees`.
+//
+// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /tasks (the `CreateTask` operationId).
+func (c *ClientWithResponses) CreateTaskWithResponse(ctx context.Context, params *CreateTaskParams, body CreateTaskJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateTaskResponse, error) {
+	rsp, err := c.CreateTask(ctx, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateTaskResponse(rsp)
+}
+
+// ListTaskAssigneesWithResponse List task assignees
+//
+// Whom a task may go to, matching `term`, as the `key` `POST /tasks` takes and the name the application manager shows. Groups with access to the application manager come first, then the people who can open it; 25 at most.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /tasks/assignees (the `ListTaskAssignees` operationId).
+func (c *ClientWithResponses) ListTaskAssigneesWithResponse(ctx context.Context, params *ListTaskAssigneesParams, reqEditors ...RequestEditorFn) (*ListTaskAssigneesResponse, error) {
+	rsp, err := c.ListTaskAssignees(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListTaskAssigneesResponse(rsp)
+}
+
+// GetTaskWithResponse Get a task
+//
+// One task the caller takes part in. A task it has no part in answers 404, as one that does not exist.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /tasks/{id} (the `GetTask` operationId).
+func (c *ClientWithResponses) GetTaskWithResponse(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*GetTaskResponse, error) {
+	rsp, err := c.GetTask(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetTaskResponse(rsp)
+}
+
+// UpdateTaskWithBodyWithResponse Update a task
+//
+// Changes the title, the note, the due date or the assignee of an open task. The one who asked for it may, or an admin; anyone else is refused with `TASK_NOT_PERMITTED`, and a closed task with `TASK_NOT_OPEN`. A new assignee clears the claim and is told.
+//
+// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with PUT /tasks/{id} (the `UpdateTask` operationId).
+func (c *ClientWithResponses) UpdateTaskWithBodyWithResponse(ctx context.Context, id Id, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateTaskResponse, error) {
+	rsp, err := c.UpdateTaskWithBody(ctx, id, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateTaskResponse(rsp)
+}
+
+// UpdateTaskWithResponse Update a task
+//
+// Changes the title, the note, the due date or the assignee of an open task. The one who asked for it may, or an admin; anyone else is refused with `TASK_NOT_PERMITTED`, and a closed task with `TASK_NOT_OPEN`. A new assignee clears the claim and is told.
+//
+// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with PUT /tasks/{id} (the `UpdateTask` operationId).
+func (c *ClientWithResponses) UpdateTaskWithResponse(ctx context.Context, id Id, body UpdateTaskJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateTaskResponse, error) {
+	rsp, err := c.UpdateTask(ctx, id, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateTaskResponse(rsp)
+}
+
+// ApproveTaskWithBodyWithResponse Approve a review
+//
+// Approves the step a review stands at, as the person the credential acts for. A review walks the steps of the workspace's review flow, or the one step of everyone who may sign passports where no flow fits. Approving a middle step passes the request on to the next step and signs nothing. Approving the last step carries the request out in the person's name: a publish review signs the passport, which needs `dpp_publish` in the credential's scope beside `task_access`; without it the answer is 403 and nothing is signed.
+//
+// Send the `step` the caller read, so a press on a review that moved on in between decides nothing (`TASK_STEP_MOVED`). The person who asked for a review decides no step of it (`TASK_OWN_REQUEST`). A publish the validator or the workspace refuses answers as `POST /dpps/{code}/publish` does, and the review stays open.
+//
+// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /tasks/{id}/approve (the `ApproveTask` operationId).
+func (c *ClientWithResponses) ApproveTaskWithBodyWithResponse(ctx context.Context, id Id, params *ApproveTaskParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ApproveTaskResponse, error) {
+	rsp, err := c.ApproveTaskWithBody(ctx, id, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseApproveTaskResponse(rsp)
+}
+
+// ApproveTaskWithResponse Approve a review
+//
+// Approves the step a review stands at, as the person the credential acts for. A review walks the steps of the workspace's review flow, or the one step of everyone who may sign passports where no flow fits. Approving a middle step passes the request on to the next step and signs nothing. Approving the last step carries the request out in the person's name: a publish review signs the passport, which needs `dpp_publish` in the credential's scope beside `task_access`; without it the answer is 403 and nothing is signed.
+//
+// Send the `step` the caller read, so a press on a review that moved on in between decides nothing (`TASK_STEP_MOVED`). The person who asked for a review decides no step of it (`TASK_OWN_REQUEST`). A publish the validator or the workspace refuses answers as `POST /dpps/{code}/publish` does, and the review stays open.
+//
+// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /tasks/{id}/approve (the `ApproveTask` operationId).
+func (c *ClientWithResponses) ApproveTaskWithResponse(ctx context.Context, id Id, params *ApproveTaskParams, body ApproveTaskJSONRequestBody, reqEditors ...RequestEditorFn) (*ApproveTaskResponse, error) {
+	rsp, err := c.ApproveTask(ctx, id, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseApproveTaskResponse(rsp)
+}
+
+// CancelTaskWithResponse Cancel a task
+//
+// Ends an open task as cancelled. The one who asked for it may, or an admin. The task stays on record and can be reopened.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /tasks/{id}/cancel (the `CancelTask` operationId).
+func (c *ClientWithResponses) CancelTaskWithResponse(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*CancelTaskResponse, error) {
+	rsp, err := c.CancelTask(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCancelTaskResponse(rsp)
+}
+
+// ClaimTaskWithResponse Claim a task
+//
+// Takes an open group task for the person the credential acts for. Only a current member of the group claims it, and only while nobody holds it; of two members claiming at once, one wins and the other is refused with `TASK_ALREADY_CLAIMED`.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /tasks/{id}/claim (the `ClaimTask` operationId).
+func (c *ClientWithResponses) ClaimTaskWithResponse(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*ClaimTaskResponse, error) {
+	rsp, err := c.ClaimTask(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseClaimTaskResponse(rsp)
+}
+
+// CompleteTaskWithResponse Complete a task
+//
+// Marks an open request as done. The person it is for may, or a current member of its group, who claims it in the same move; a task someone else holds stays theirs. Only a person works on a task, so a credential acting as itself is refused with `TASK_NOT_PERMITTED`, and a review ends in a decision in the application manager (`TASK_NOT_CUSTOM`). The one who asked hears of it in the bell.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /tasks/{id}/complete (the `CompleteTask` operationId).
+func (c *ClientWithResponses) CompleteTaskWithResponse(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*CompleteTaskResponse, error) {
+	rsp, err := c.CompleteTask(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCompleteTaskResponse(rsp)
+}
+
+// RejectTaskWithBodyWithResponse Reject a review
+//
+// Ends a review at the step it stands at, as the person the credential acts for. The subject stays as it was, and the person who asked reads the note in their bell, so a rejection needs one (`TASK_NOTE_REQUIRED`, at most 2000 characters, `TASK_NOTE_TOO_LONG`). Send the `step` the caller read, so a review that moved on in between is not rejected unseen (`TASK_STEP_MOVED`).
+//
+// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /tasks/{id}/reject (the `RejectTask` operationId).
+func (c *ClientWithResponses) RejectTaskWithBodyWithResponse(ctx context.Context, id Id, params *RejectTaskParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*RejectTaskResponse, error) {
+	rsp, err := c.RejectTaskWithBody(ctx, id, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseRejectTaskResponse(rsp)
+}
+
+// RejectTaskWithResponse Reject a review
+//
+// Ends a review at the step it stands at, as the person the credential acts for. The subject stays as it was, and the person who asked reads the note in their bell, so a rejection needs one (`TASK_NOTE_REQUIRED`, at most 2000 characters, `TASK_NOTE_TOO_LONG`). Send the `step` the caller read, so a review that moved on in between is not rejected unseen (`TASK_STEP_MOVED`).
+//
+// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /tasks/{id}/reject (the `RejectTask` operationId).
+func (c *ClientWithResponses) RejectTaskWithResponse(ctx context.Context, id Id, params *RejectTaskParams, body RejectTaskJSONRequestBody, reqEditors ...RequestEditorFn) (*RejectTaskResponse, error) {
+	rsp, err := c.RejectTask(ctx, id, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseRejectTaskResponse(rsp)
+}
+
+// ReleaseTaskWithResponse Release a task
+//
+// Hands a claimed task back to its group. The one holding it may, the one who asked for it, or an admin.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /tasks/{id}/release (the `ReleaseTask` operationId).
+func (c *ClientWithResponses) ReleaseTaskWithResponse(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*ReleaseTaskResponse, error) {
+	rsp, err := c.ReleaseTask(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseReleaseTaskResponse(rsp)
+}
+
+// ReopenTaskWithResponse Reopen a task
+//
+// Opens a finished or cancelled request again. The one who asked for it may, or an admin; whoever works on it hears of it in the bell.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /tasks/{id}/reopen (the `ReopenTask` operationId).
+func (c *ClientWithResponses) ReopenTaskWithResponse(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*ReopenTaskResponse, error) {
+	rsp, err := c.ReopenTask(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseReopenTaskResponse(rsp)
 }
 
 // RegisterUserWithBodyWithResponse Register a new user
@@ -29547,6 +32399,13 @@ func ParseBulkCreateDppsResponse(rsp *http.Response) (*BulkCreateDppsResponse, e
 		}
 		response.JSON403 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 413:
 		var dest Error
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -30124,7 +32983,7 @@ func ParseGetDppResponse(rsp *http.Response) (*GetDppResponse, error) {
 		response.JSON404 = &dest
 
 	case rsp.StatusCode == 200:
-		// Content-type (image/png) unsupported
+		// Content-type (image/svg+xml) unsupported
 
 	}
 
@@ -34416,6 +37275,682 @@ func ParseRefreshSessionResponse(rsp *http.Response) (*RefreshSessionResponse, e
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
 		var dest ValidationError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListTasksResponse parses an HTTP response from a ListTasksWithResponse call
+func ParseListTasksResponse(rsp *http.Response) (*ListTasksResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListTasksResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			Tasks *[]Task `json:"tasks,omitempty"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 200:
+		var headers ListTasksResponse200Headers
+		if values := rsp.Header.Values("API-Count"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "API-Count", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.APICount = &value
+		}
+		if values := rsp.Header.Values("API-Offset"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "API-Offset", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.APIOffset = &value
+		}
+		if values := rsp.Header.Values("API-Page"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "API-Page", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.APIPage = &value
+		}
+		if values := rsp.Header.Values("API-Per-Page"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "API-Per-Page", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.APIPerPage = &value
+		}
+		if values := rsp.Header.Values("API-Total"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "API-Total", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.APITotal = &value
+		}
+		if values := rsp.Header.Values("Link"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "Link", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.Link = &value
+		}
+		response.Headers200 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseCreateTaskResponse parses an HTTP response from a CreateTaskWithResponse call
+func ParseCreateTaskResponse(rsp *http.Response) (*CreateTaskResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateTaskResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest Task
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListTaskAssigneesResponse parses an HTTP response from a ListTaskAssigneesWithResponse call
+func ParseListTaskAssigneesResponse(rsp *http.Response) (*ListTaskAssigneesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListTaskAssigneesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			Assignees *[]struct {
+				// Key `User:<id>` or `UserGroup:<id>`
+				Key  *string `json:"key,omitempty"`
+				Name *string `json:"name,omitempty"`
+			} `json:"assignees,omitempty"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetTaskResponse parses an HTTP response from a GetTaskWithResponse call
+func ParseGetTaskResponse(rsp *http.Response) (*GetTaskResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetTaskResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Task
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseUpdateTaskResponse parses an HTTP response from a UpdateTaskWithResponse call
+func ParseUpdateTaskResponse(rsp *http.Response) (*UpdateTaskResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UpdateTaskResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Task
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseApproveTaskResponse parses an HTTP response from a ApproveTaskWithResponse call
+func ParseApproveTaskResponse(rsp *http.Response) (*ApproveTaskResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ApproveTaskResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Task
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseCancelTaskResponse parses an HTTP response from a CancelTaskWithResponse call
+func ParseCancelTaskResponse(rsp *http.Response) (*CancelTaskResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CancelTaskResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Task
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseClaimTaskResponse parses an HTTP response from a ClaimTaskWithResponse call
+func ParseClaimTaskResponse(rsp *http.Response) (*ClaimTaskResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ClaimTaskResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Task
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseCompleteTaskResponse parses an HTTP response from a CompleteTaskWithResponse call
+func ParseCompleteTaskResponse(rsp *http.Response) (*CompleteTaskResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CompleteTaskResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Task
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseRejectTaskResponse parses an HTTP response from a RejectTaskWithResponse call
+func ParseRejectTaskResponse(rsp *http.Response) (*RejectTaskResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &RejectTaskResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Task
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseReleaseTaskResponse parses an HTTP response from a ReleaseTaskWithResponse call
+func ParseReleaseTaskResponse(rsp *http.Response) (*ReleaseTaskResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ReleaseTaskResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Task
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseReopenTaskResponse parses an HTTP response from a ReopenTaskWithResponse call
+func ParseReopenTaskResponse(rsp *http.Response) (*ReopenTaskResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ReopenTaskResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Task
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Error
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}

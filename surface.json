@@ -908,6 +908,115 @@
     ]
   },
   {
+    "path": "transpareo tasks approve",
+    "args": "<id>",
+    "flags": [
+      "file",
+      "idempotency-key",
+      "output",
+      "set"
+    ],
+    "operationId": "approve_task"
+  },
+  {
+    "path": "transpareo tasks assignees list",
+    "flags": [
+      "output",
+      "term"
+    ],
+    "operationId": "list_task_assignees"
+  },
+  {
+    "path": "transpareo tasks cancel",
+    "args": "<id>",
+    "flags": [
+      "output"
+    ],
+    "operationId": "cancel_task"
+  },
+  {
+    "path": "transpareo tasks claim",
+    "args": "<id>",
+    "flags": [
+      "output"
+    ],
+    "operationId": "claim_task"
+  },
+  {
+    "path": "transpareo tasks complete",
+    "args": "<id>",
+    "flags": [
+      "output"
+    ],
+    "operationId": "complete_task"
+  },
+  {
+    "path": "transpareo tasks create",
+    "flags": [
+      "file",
+      "idempotency-key",
+      "output",
+      "set"
+    ],
+    "operationId": "create_task"
+  },
+  {
+    "path": "transpareo tasks get",
+    "args": "<id>",
+    "flags": [
+      "output"
+    ],
+    "operationId": "get_task"
+  },
+  {
+    "path": "transpareo tasks list",
+    "flags": [
+      "list",
+      "output",
+      "page",
+      "per-page",
+      "term"
+    ],
+    "operationId": "list_tasks"
+  },
+  {
+    "path": "transpareo tasks reject",
+    "args": "<id>",
+    "flags": [
+      "file",
+      "idempotency-key",
+      "output",
+      "set"
+    ],
+    "operationId": "reject_task"
+  },
+  {
+    "path": "transpareo tasks release",
+    "args": "<id>",
+    "flags": [
+      "output"
+    ],
+    "operationId": "release_task"
+  },
+  {
+    "path": "transpareo tasks reopen",
+    "args": "<id>",
+    "flags": [
+      "output"
+    ],
+    "operationId": "reopen_task"
+  },
+  {
+    "path": "transpareo tasks update",
+    "args": "<id>",
+    "flags": [
+      "file",
+      "output",
+      "set"
+    ],
+    "operationId": "update_task"
+  },
+  {
     "path": "transpareo tasks wait",
     "args": "<statusUrl>"
   },

@@ -221,7 +221,8 @@ The server offers curated tools covering the flows:
 `me`; products, components and brands; the passport flow from
 `dpp_requirements` through `validate_dpp`, `create_dpp` and
 `publish_dpp` to `void_dpp` and the bulk calls; imports, exports,
-tasks and the event feed; webhooks. `search_operations` and
+waiting on background work and the event feed; webhooks; the work
+tasks colleagues hand each other. `search_operations` and
 `call_api` reach every other operation. Every tool description
 carries the permission it needs, whether the action can be undone,
 the data tier of its answer and one example. Tools that cannot be

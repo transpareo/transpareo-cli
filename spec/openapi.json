@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Transpareo API",
-    "version": "2.4.1",
+    "version": "2.11.0",
     "description": "This site runs on the [Transpareo](https://transpareo.com) product information platform. The REST API gives programs access to products, product components, brands, Digital Product Passports, categories and configuration. The version is selected with the `Accept` header, not a path segment.\n\nThe guide at [/apidocs/guide](/apidocs/guide) is the narrative companion to this reference: credentials, permissions, pagination, idempotency, the passport flows, the event feed, webhooks, rate limits and the error format. It is also served as Markdown at [/apidocs/guide.md](/apidocs/guide.md).\n\nPrograms authenticate with the OAuth 2.0 client credentials grant. Exchange the client id and secret once, then send the token on every request:\n\n```\ncurl -X POST https://<host>/api/oauth/token -d grant_type=client_credentials -d client_id=<key> -d client_secret=<secret>\n\ncurl https://<host>/api/me -H \"Authorization: Bearer <access_token>\"\n```\n\nAn assistant that speaks the Model Context Protocol connects to `/mcp` on this host and calls these operations as tools, named in the catalogue at [/apidocs/mcp-tools.json](/apidocs/mcp-tools.json) and explained by the guide's Assistants section.",
     "contact": {
       "name": "Transpareo Support",
@@ -46,7 +46,7 @@
     },
     {
       "name": "Lots",
-      "description": "The lots batch and item passports freeze from, created with the first passport that names them"
+      "description": "The lots batch and item passports freeze from, created with the first passport that names them once the product passes every other required readiness check"
     },
     {
       "name": "Grants",
@@ -67,6 +67,10 @@
     {
       "name": "Imports",
       "description": "Spreadsheet imports: upload, map the columns, validate, execute, revert"
+    },
+    {
+      "name": "Tasks",
+      "description": "Work colleagues hand each other: what waits on a person, asking someone for something, and claiming, finishing, cancelling and reopening a task"
     },
     {
       "name": "Categories",
@@ -147,11 +151,13 @@
               "import_access": "Upload, map, validate, execute and revert imports",
               "product_access": "Read products and write own products",
               "product_category_access": "Read product categories and write own categories",
+              "task_access": "List, create and move tasks",
               "webhook_access": "Manage own webhook subscriptions",
               "brand_write": "Write every brand of the workspace",
               "component_write": "Write every component of the workspace",
               "dpp_read": "Read passports",
-              "dpp_write": "Create, update and publish passports",
+              "dpp_write": "Create and update passports",
+              "dpp_publish": "Sign a new version of a passport",
               "dpp_events": "Append lifecycle events to passports",
               "dpp_dynamic": "Update the dynamic data of passports",
               "dpp_history": "Read the events and versions of passports",
@@ -168,11 +174,13 @@
               "import_access": "Upload, map, validate, execute and revert imports",
               "product_access": "Read products and write own products",
               "product_category_access": "Read product categories and write own categories",
+              "task_access": "List, create and move tasks",
               "webhook_access": "Manage own webhook subscriptions",
               "brand_write": "Write every brand of the workspace",
               "component_write": "Write every component of the workspace",
               "dpp_read": "Read passports",
-              "dpp_write": "Create, update and publish passports",
+              "dpp_write": "Create and update passports",
+              "dpp_publish": "Sign a new version of a passport",
               "dpp_events": "Append lifecycle events to passports",
               "dpp_dynamic": "Update the dynamic data of passports",
               "dpp_history": "Read the events and versions of passports",
@@ -573,7 +581,7 @@
           },
           "fields": {
             "type": "object",
-            "description": "On `DPP_INVALID`: the failing attribute names mapped to their error.",
+            "description": "On `DPP_INVALID`: the failing attribute names mapped to their error. A row naming a new lot of a product that fails another required readiness check answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, and the rest of the run goes on.",
             "additionalProperties": {
               "type": "object",
               "properties": {
@@ -641,7 +649,7 @@
           },
           "validation": {
             "$ref": "#/components/schemas/DppValidationReport",
-            "description": "The report a publish of this row would produce. Absent when model errors stopped the row before the publish rules ran."
+            "description": "The report a publish of this row would produce. Absent when model errors stopped the row before the publish rules ran; a row refused only over its new lot (`DPP_BATCH_PRODUCT_NOT_READY` on `batch`) still carries it, naming the checks the product fails."
           },
           "id": {
             "type": "integer",
@@ -1312,6 +1320,16 @@
           },
           "bulkItemsPerMinute": {
             "type": "integer"
+          },
+          "workspace": {
+            "type": "object",
+            "description": "What the workspace itself does with what a caller writes",
+            "properties": {
+              "publishesOnCreate": {
+                "type": "boolean",
+                "description": "True where the workspace has no storefront. Every product and every component is published as it is created, the publish and unpublish operations answer 403, and the person using the workspace never sees publishing as a step, so asking them to publish something asks for a control their screens do not show. False where a storefront decides what the catalogue shows, and a record is published on demand."
+              }
+            }
           }
         },
         "example": {
@@ -1336,7 +1354,10 @@
             "used": 12,
             "windowStartedAt": "2026-09-08T14:10:00Z"
           },
-          "bulkItemsPerMinute": 5000
+          "bulkItemsPerMinute": 5000,
+          "workspace": {
+            "publishesOnCreate": true
+          }
         }
       },
       "Country": {
@@ -1456,6 +1477,19 @@
               "item"
             ]
           },
+          "passportLevel": {
+            "type": "string",
+            "description": "The level of the product the passport describes, as the published passport names it (`passportLevel`). Always present.",
+            "enum": [
+              "model",
+              "lot",
+              "item"
+            ]
+          },
+          "autoIssued": {
+            "type": "boolean",
+            "description": "Whether the workspace issued the passport by itself above its unit passports, a model passport answering the GTIN or a lot passport of an item workspace. Such a passport is included in the plan, is never submitted to the EU registry, and is left out of the passport list's default view. Always present."
+          },
           "status": {
             "type": "string",
             "description": "Where the passport stands in its life. Always present.",
@@ -1517,6 +1551,11 @@
             "type": "string",
             "format": "uri",
             "description": "URL to download QR code as PNG"
+          },
+          "svgUrl": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL to download QR code as SVG, a self-contained vector of the code alone on a white ground with its four-module quiet zone. The frame and the rating stamp the PDF and PNG may carry are left out."
           },
           "propertyTypes": {
             "type": "array",
@@ -1811,7 +1850,7 @@
           },
           "batchIdentifier": {
             "type": "string",
-            "description": "Required at batch and item granularity. The lot is created from the product as it stands the first time its identifier is used, and reused by every later passport of the same lot."
+            "description": "Required at batch and item granularity. The lot is created from the product as it stands the first time its identifier is used, and reused by every later passport of the same lot. A new lot is taken only of a product that passes every other required readiness check; until then the create answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`."
           },
           "serialIdentifier": {
             "type": "string",
@@ -1820,7 +1859,7 @@
           "dynamicData": {
             "type": "object",
             "additionalProperties": true,
-            "description": "Values that change over the unit's life, keyed by the vocabulary term of their property type. They ride on the separately signed dynamic surface and never enter a signed per-version snapshot; `PATCH /dpps/{id}/dynamic_data` writes them afterwards."
+            "description": "Values that change over the unit's life, keyed by the vocabulary term of their property type. They ride on the separately signed dynamic surface; a version seals only the reading held when the passport's copy is frozen, as a row whose `dynamic` flag is true. That surface is public and carries only the keys naming a published property type in the public tier. `PATCH /dpps/{id}/dynamic_data` writes them afterwards."
           },
           "propertyTypeIds": {
             "type": "array",
@@ -1945,7 +1984,7 @@
           },
           "dynamicPropertyTypes": {
             "type": "array",
-            "description": "Property types whose value changes over a unit's life. Their values ride on the separately signed dynamic surface, keyed by the vocabulary term in `namespace`, and never enter a signed per-version snapshot.",
+            "description": "Property types whose value changes over a unit's life. Their live values ride on the separately signed dynamic surface, keyed by the vocabulary term in `namespace`; a version seals the reading held when the passport's copy is frozen, as a row whose `dynamic` flag is true.",
             "items": {
               "type": "object",
               "properties": {
@@ -2085,7 +2124,7 @@
               "identifier",
               "manufacturedOn"
             ],
-            "description": "A lot is created from the product as it stands the first time its identifier is used; later passports of the same lot reuse it."
+            "description": "Created from the product the first time its identifier is used, reused afterwards. A new lot is taken only of a product that passes every other required readiness check; until then a passport naming one is refused with DPP_BATCH_PRODUCT_NOT_READY on batch."
           },
           "dynamicPropertyTypes": [
             {
@@ -2192,7 +2231,7 @@
           },
           "validation": {
             "$ref": "#/components/schemas/DppValidationReport",
-            "description": "Null while `fields` is not empty - a payload that cannot be saved is never run against the publish rules."
+            "description": "Null while `fields` is not empty - a payload that cannot be saved is never run against the publish rules. The one exception is a payload refused only over its new lot (`DPP_BATCH_PRODUCT_NOT_READY` on `batch`), whose report names the checks the product still fails."
           },
           "publishBlocked": {
             "type": "boolean",
@@ -2361,7 +2400,7 @@
       },
       "DynamicDataInput": {
         "type": "object",
-        "description": "The keys to write onto the passport's dynamic-data surface. Sent keys are merged into the stored set; a key sent as an explicit null is removed. Field names are yours - no schema is imposed until the EU Battery Regulation's implementing acts pin the list.",
+        "description": "The keys to write onto the passport's dynamic-data surface. Sent keys are merged into the stored set; a key sent as an explicit null is removed. Every key is stored. The public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none).",
         "additionalProperties": true,
         "example": {
           "stateOfHealth": 87.3,
@@ -2608,7 +2647,7 @@
       },
       "ExportInput": {
         "type": "object",
-        "description": "What to export and how. Every field is optional; the default is the whole passport catalogue as JSON-LD.",
+        "description": "What to export and how. Every field is optional; the default is a JSON-LD archive of the passports and catalogue the consumer's lists answer it with.",
         "properties": {
           "dataType": {
             "type": "string",
@@ -3034,7 +3073,8 @@
               "type": "object",
               "properties": {
                 "key": {
-                  "type": "string"
+                  "type": "string",
+                  "description": "The cause. `column_conflict` and `ambiguous_type` refuse the whole run before any row is written; their samples name the columns and the property type instead of rows. `column_conflict` is two or more columns going to one property type, `ambiguous_type` a column whose name several property types carry."
                 },
                 "message": {
                   "type": "string"
@@ -3271,7 +3311,8 @@
                     "map_to_attribute",
                     "use_existing",
                     "create_new",
-                    "skip"
+                    "skip",
+                    "choose"
                   ]
                 },
                 "coreAttribute": {
@@ -3291,13 +3332,28 @@
                     "attribute",
                     "exact",
                     "fuzzy",
-                    "none"
+                    "none",
+                    "conflict"
                   ],
-                  "description": "How the header was recognised. `exact` and `attribute` resolve on their own; `fuzzy` is a guess by similarity; `none` found nothing."
+                  "description": "How the header was recognised. `exact` and `attribute` resolve on their own; `fuzzy` is a match by similarity, the one the mapping page prefills, so take its suggestion; `none` found nothing, and that is the one column a person has to decide. `conflict` marks a column that goes to the same property type as another column (`conflictColumns`), or whose header several property types carry (`conflictTypes`); its suggested action is `choose`, and a run whose mapping leaves two columns on one type is refused before any row."
                 },
                 "similarity": {
                   "type": "number",
                   "description": "The similarity of a fuzzy match, 0 to 1"
+                },
+                "conflictColumns": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "The other columns that go to the same property type as this one"
+                },
+                "conflictTypes": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "The names of the property types that all carry this column's header"
                 }
               }
             }
@@ -3725,7 +3781,7 @@
           "manufacturedOn": {
             "type": "string",
             "format": "date",
-            "description": "Only present when set"
+            "description": "Only present when set. Every passport frozen from the lot signs it as `lotManufacturedOn`, so it can no longer change once a passport of the lot is published, like the lot number."
           },
           "dppsCount": {
             "type": "integer",
@@ -4460,7 +4516,7 @@
                 },
                 "dynamic": {
                   "type": "boolean",
-                  "description": "Whether the value changes over a unit's life. A dynamic value rides on the passport's separately signed dynamic surface and never enters a signed per-version snapshot. Only present when true."
+                  "description": "Whether the value changes over a unit's life. A dynamic value's live reading rides on the passport's separately signed dynamic surface; a version seals the reading held when the passport's copy is frozen, as a row whose `dynamic` flag is true. Only present when true."
                 },
                 "mandatoryWhen": {
                   "type": "object",
@@ -4867,6 +4923,351 @@
           "trial": {
             "type": "boolean"
           }
+        }
+      },
+      "Task": {
+        "type": "object",
+        "description": "A piece of work one person asks of another, assigned to one person or to one user group. A member claims a group task before working on it. A task ends done or cancelled and stays on record.\n\nA review walks the steps of the workspace's review flow, one after the other: `step` is where it stands, `steps` what became of each, and `review` what it asks for. Its assignee is the group of the current step, or a `Permission` when the step waits on everyone holding it.\n\nEveryone a task names is written as `type`, `id` and `name`; one that is gone keeps its type and id. A value the task does not carry is left out, and a task without `requester` was made by the system.",
+        "required": [
+          "id",
+          "kind",
+          "title",
+          "status"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "Task"
+            ]
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "custom",
+              "review",
+              "publish_review"
+            ],
+            "description": "`custom` for what a person asks; the review kinds come from a review flow and end in an `outcome`"
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "note": {
+            "type": "string",
+            "maxLength": 5000
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "open",
+              "done",
+              "cancelled"
+            ]
+          },
+          "outcome": {
+            "type": "string",
+            "enum": [
+              "approved",
+              "rejected"
+            ],
+            "description": "The decision of a finished review"
+          },
+          "closingNote": {
+            "type": "string",
+            "description": "Why the review was rejected, in the decider's words"
+          },
+          "closingReason": {
+            "type": "string",
+            "enum": [
+              "subject_missing",
+              "withdrawn",
+              "event_gone",
+              "settled"
+            ],
+            "description": "Why a review closed without a decision"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "admin",
+              "vendor_api",
+              "import"
+            ],
+            "description": "The door a review's request came through"
+          },
+          "step": {
+            "type": "object",
+            "description": "The step a review stands at",
+            "properties": {
+              "index": {
+                "type": "integer",
+                "description": "From 0; the `step` a decision sends"
+              },
+              "count": {
+                "type": "integer"
+              },
+              "name": {
+                "type": "string",
+                "description": "Whom the step is with"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "review"
+                ]
+              }
+            }
+          },
+          "steps": {
+            "type": "array",
+            "description": "Every step of a review, in order, with what became of it",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "review"
+                  ]
+                },
+                "required": {
+                  "type": "boolean",
+                  "description": "An optional step nobody can decide is passed over"
+                },
+                "state": {
+                  "type": "string",
+                  "enum": [
+                    "approved",
+                    "rejected",
+                    "skipped",
+                    "current",
+                    "waiting",
+                    "not_reached"
+                  ]
+                },
+                "decidedBy": {
+                  "$ref": "#/components/schemas/TaskParty"
+                },
+                "decidedAt": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            }
+          },
+          "review": {
+            "type": "object",
+            "description": "What a review asks for, and while it is open what approving does",
+            "properties": {
+              "action": {
+                "type": "string",
+                "enum": [
+                  "publish",
+                  "seal_event",
+                  "correct",
+                  "correct_lot"
+                ]
+              },
+              "summary": {
+                "type": "string",
+                "description": "In the language of the request"
+              }
+            }
+          },
+          "dueOn": {
+            "type": "string",
+            "format": "date"
+          },
+          "overdue": {
+            "type": "boolean",
+            "description": "Open with a due date before today"
+          },
+          "assigneeKey": {
+            "type": "string",
+            "description": "The assignee as `User:<id>` or `UserGroup:<id>`, the value `POST /tasks` takes"
+          },
+          "assignee": {
+            "$ref": "#/components/schemas/TaskParty"
+          },
+          "requester": {
+            "$ref": "#/components/schemas/TaskParty"
+          },
+          "claimedBy": {
+            "$ref": "#/components/schemas/TaskParty"
+          },
+          "claimedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "closedBy": {
+            "$ref": "#/components/schemas/TaskParty"
+          },
+          "closedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "subject": {
+            "$ref": "#/components/schemas/TaskParty"
+          },
+          "moves": {
+            "type": "array",
+            "description": "The moves this credential may take on the task now, each a `POST /tasks/{id}/<move>`",
+            "items": {
+              "type": "string",
+              "enum": [
+                "approve",
+                "reject",
+                "claim",
+                "release",
+                "complete",
+                "cancel",
+                "reopen"
+              ]
+            }
+          },
+          "editable": {
+            "type": "boolean",
+            "description": "Whether this credential may change the task with `PUT /tasks/{id}`"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "example": {
+          "id": 42,
+          "type": "Task",
+          "kind": "custom",
+          "title": "Check the supplier declaration",
+          "note": "The one for the spring range",
+          "status": "open",
+          "dueOn": "2026-10-01",
+          "overdue": false,
+          "assigneeKey": "UserGroup:3",
+          "assignee": {
+            "type": "UserGroup",
+            "id": 3,
+            "name": "Quality"
+          },
+          "requester": {
+            "type": "User",
+            "id": 12,
+            "name": "Hans Tester"
+          },
+          "claimedBy": {
+            "type": "User",
+            "id": 15,
+            "name": "Maria Muster"
+          },
+          "claimedAt": "2026-09-24T10:02:00Z",
+          "moves": [
+            "release",
+            "complete"
+          ],
+          "editable": false,
+          "createdAt": "2026-09-24T09:40:00Z",
+          "updatedAt": "2026-09-24T10:02:00Z"
+        }
+      },
+      "TaskDecision": {
+        "type": "object",
+        "description": "A decision on the step a review stands at.",
+        "properties": {
+          "step": {
+            "type": "integer",
+            "description": "The `step.index` the caller read. A review that moved on since is refused with `TASK_STEP_MOVED`; left out, the decision takes the step the review stands at."
+          },
+          "note": {
+            "type": "string",
+            "maxLength": 2000,
+            "description": "Why the review is rejected, which the person who asked reads. Required to reject; an approval takes none."
+          }
+        },
+        "example": {
+          "step": 1,
+          "note": "The care instructions are missing"
+        }
+      },
+      "TaskInput": {
+        "type": "object",
+        "required": [
+          "task"
+        ],
+        "properties": {
+          "task": {
+            "type": "object",
+            "description": "On create, `title` and `assigneeKey` are needed; on update, send only what changes.",
+            "properties": {
+              "title": {
+                "type": "string",
+                "maxLength": 200,
+                "description": "What needs doing, in one line"
+              },
+              "note": {
+                "type": "string",
+                "maxLength": 5000,
+                "description": "Anything the person needs to get it done"
+              },
+              "dueOn": {
+                "type": "string",
+                "format": "date",
+                "description": "Optional; not in the past. From the day after, the task counts as overdue."
+              },
+              "assigneeKey": {
+                "type": "string",
+                "description": "`User:<id>` or `UserGroup:<id>`, as `GET /tasks/assignees` names them. A person who can open the application manager, or a group with access to it and at least one member. A new assignee clears the claim and is told."
+              }
+            }
+          }
+        },
+        "example": {
+          "task": {
+            "title": "Check the supplier declaration",
+            "note": "The one for the spring range",
+            "dueOn": "2026-10-01",
+            "assigneeKey": "UserGroup:3"
+          }
+        }
+      },
+      "TaskParty": {
+        "type": "object",
+        "description": "A person, group, credential, permission or record a task names. `name` is left out once the record is gone.",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "`User`, `UserGroup`, `ApiConsumer`, `Permission` for a review that waits on everyone holding it, or `Superadmin` for platform support that acted in the workspace; a subject names its own record type"
+          },
+          "id": {
+            "type": "integer",
+            "description": "The record's id; a `Permission` carries `key` instead"
+          },
+          "key": {
+            "type": "string",
+            "description": "The permission a `Permission` party names, such as `dpp_publish`"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "type": "UserGroup",
+          "id": 3,
+          "name": "Quality"
         }
       },
       "TokenResponse": {
@@ -6365,6 +6766,7 @@
                       "url": "https://example.com/A1B2C3D4E",
                       "pdfUrl": "https://example.com/api/dpps/14.pdf",
                       "pngUrl": "https://example.com/api/dpps/14.png",
+                      "svgUrl": "https://example.com/api/dpps/14.svg",
                       "unlockable": {
                         "id": 11,
                         "type": "Product",
@@ -6410,7 +6812,7 @@
           "DPPs"
         ],
         "summary": "Create a DPP",
-        "description": "Creates a new Digital Product Passport linked to a product. Generates a unique short code and QR code.\n\n`granularity` says which unit the passport stands for and therefore which identifiers it needs: `model` needs none of its own, `batch` needs a `batchIdentifier`, `item` needs a `serialIdentifier` as well. The lot is created from the product as it stands the first time its identifier is used and reused by every later passport of the same lot.\n\nThe answer carries `validation` and `publishBlocked` alongside the passport: the same report `POST /dpps/validate` produces, over the record that was just written, so a caller that skipped the dry run still sees what a publish would refuse or warn about.",
+        "description": "Creates a new Digital Product Passport linked to a product. Generates a unique short code and QR code.\n\n`granularity` says which unit the passport stands for and therefore which identifiers it needs: `model` needs none of its own, `batch` needs a `batchIdentifier`, `item` needs a `serialIdentifier` as well. The lot is created from the product as it stands the first time its identifier is used and reused by every later passport of the same lot. A new lot is taken only of a product that passes every other required readiness check; until then the create answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`.\n\nThe answer carries `validation` and `publishBlocked` alongside the passport: the same report `POST /dpps/validate` produces, over the record that was just written, so a caller that skipped the dry run still sees what a publish would refuse or warn about.",
         "operationId": "create_dpp",
         "x-permission": "dpp_write",
         "security": [
@@ -6487,7 +6889,7 @@
           "DPPs"
         ],
         "summary": "Validate a DPP payload",
-        "description": "The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot.\n\nA payload the platform would refuse is a plain `200` with `valid: false` - the request succeeded, the passport would not. Only a missing permission, a missing `dpp` object or an unreadable body answer with an error status.",
+        "description": "The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot; a new lot its product may not have yet shows as `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, beside the report that names the checks the product still fails. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.\n\nA payload the platform would refuse is a plain `200` with `valid: false` - the request succeeded, the passport would not. Only a missing permission, a missing `dpp` object or an unreadable body answer with an error status.",
         "operationId": "validate_dpp",
         "x-permission": "dpp_write",
         "x-safe": true,
@@ -6569,9 +6971,10 @@
           "DPPs"
         ],
         "summary": "Create DPPs in bulk",
-        "description": "Streams passports in as newline-delimited JSON, one passport per line, so a line of production writes one request instead of thousands. Each row is created and its first version published; the response reports one result line per input row.\n\nAn optional first line `{\"shared\": {...}}` carries batch-wide defaults that each following row deep-merges over (a nested `\"__replace__\": true` opts a sub-tree out of the merge). An unsupported `shared.granularity` is rejected before any row is processed; per-row problems never abort the batch.\n\nRow keys may be written in camelCase (`unlockableId`, `modelIdentifier`, `serialIdentifier`) or as the snake_case attribute names; `tenantData` is an alias for `dynamicData`. The keys inside `dynamicData` are left as they are.\n\nResubmission is safe. Rows are deduplicated by natural key rather than by `Idempotency-Key`: at `model` granularity that is `modelIdentifier`, at `batch` it adds `batchIdentifier`, at `item` it adds `serialIdentifier`. A key that already maps to a published passport comes back as `duplicate`; one that maps to a passport that never published is resumed and published, so a retry after a partial failure finishes the job instead of duplicating it.\n\nSynchronous by default, capped at 500 rows and 5 MB. Send `Prefer: respond-async` to have the body persisted and processed by a background task instead: the response is `202` with a polling URL, and the caps rise to 50000 rows and 25 MB. Beyond that, batch across requests.",
+        "description": "Streams passports in as newline-delimited JSON, one passport per line, so a line of production writes one request instead of thousands. Each row is created and its first version published; the response reports one result line per input row.\n\nAn optional first line `{\"shared\": {...}}` carries batch-wide defaults that each following row deep-merges over (a nested `\"__replace__\": true` opts a sub-tree out of the merge). An unsupported `shared.granularity` is rejected before any row is processed; per-row problems never abort the batch.\n\nRow keys may be written in camelCase (`unlockableId`, `modelIdentifier`, `serialIdentifier`) or as the snake_case attribute names; `tenantData` is an alias for `dynamicData`. The keys inside `dynamicData` are left as they are.\n\nResubmission is safe. Rows are deduplicated by natural key rather than by `Idempotency-Key`: at `model` granularity that is `modelIdentifier`, at `batch` it adds `batchIdentifier`, at `item` it adds `serialIdentifier`. A key that already maps to a published passport comes back as `duplicate`; one that maps to a passport that never published is resumed and published, so a retry after a partial failure finishes the job instead of duplicating it.\n\nSynchronous by default, capped at 500 rows and 5 MB. Send `Prefer: respond-async` to have the body persisted and processed by a background task instead: the response is `202` with a polling URL, and the caps rise to 50000 rows and 25 MB. Beyond that, batch across requests.\n\nEvery row it creates is signed, so the call needs `dpp_publish` as well; without it the answer is 403 and nothing is created. Where the workspace reviews every publish through a review flow, the answer is 409 `DPP_REVIEW_REQUIRED` and nothing is created.",
         "operationId": "bulk_create_dpps",
         "x-permission": "dpp_bulk_write",
+        "x-permission-also": "dpp_publish",
         "security": [
           {
             "oauth2": []
@@ -6678,6 +7081,20 @@
           },
           "403": {
             "$ref": "#/components/responses/Forbidden"
+          },
+          "409": {
+            "description": "The workspace reviews every publish through a review flow; ask for it in the application manager (`DPP_REVIEW_REQUIRED`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "DPP_REVIEW_REQUIRED",
+                  "message": "This workspace reviews every publish; ask for it in the application manager."
+                }
+              }
+            }
           },
           "413": {
             "description": "The body exceeds the row or byte cap for the chosen mode",
@@ -6953,7 +7370,7 @@
           "DPPs"
         ],
         "summary": "Read a DPP",
-        "description": "Returns the passport itself as JSON, in the shape the list carries. Ask for the QR carrier instead with the .png or .pdf extension on the path, the ones pngUrl and pdfUrl name, and for the historical signed snapshot of a version with ?version=N.",
+        "description": "Returns the passport itself as JSON, in the shape the list carries. Ask for the QR carrier instead with the .png, .svg or .pdf extension on the path, the ones pngUrl, svgUrl and pdfUrl name, and for the historical signed snapshot of a version with ?version=N. The SVG is the code alone as a vector, for label artwork.",
         "operationId": "get_dpp",
         "x-permission": "dpp_read",
         "security": [
@@ -6988,6 +7405,11 @@
                   "format": "binary"
                 }
               },
+              "image/svg+xml": {
+                "schema": {
+                  "type": "string"
+                }
+              },
               "application/pdf": {
                 "schema": {
                   "type": "string",
@@ -7017,6 +7439,7 @@
                   "url": "https://example.com/A1B2C3D4E",
                   "pdfUrl": "https://example.com/api/dpps/14.pdf",
                   "pngUrl": "https://example.com/api/dpps/14.png",
+                  "svgUrl": "https://example.com/api/dpps/14.svg",
                   "unlockable": {
                     "id": 11,
                     "type": "Product",
@@ -7446,7 +7869,7 @@
           "DPPs"
         ],
         "summary": "Append an event to a DPP",
-        "description": "Records one event against the passport. `eventType: status_change` moves the passport to the `status` you name and is recorded as a `lifecycle_transition`; any other type is recorded as a plain event.\n\nRecalling a unit is a status change to `suspended`. The passport stays readable and keeps answering a scan, which is the point: whoever holds the unit learns of the recall when they scan its code. Voiding is a different operation, for a unit that no longer exists.\n\nAn event is a pending draft until it is sealed. Send `publish: true` to seal it into the Vault at once (a status change is sealed into a new registered version); leave it out to keep the draft open. At most one pending event exists per passport, so a second call while one is open answers 409 until it is sealed or discarded.\n\nVersioned event types are rejected here: they stand for operations that mint a version, and those have their own endpoints (void, supersede, reissue, publish).",
+        "description": "Records one event against the passport. `eventType: status_change` moves the passport to the `status` you name and is recorded as a `lifecycle_transition`; any other type is recorded as a plain event.\n\nRecalling a unit is a status change to `suspended`. The passport stays readable and keeps answering a scan, which is the point: whoever holds the unit learns of the recall when they scan its code. Voiding is a different operation, for a unit that no longer exists.\n\nAn event is a pending draft until it is sealed. Send `publish: true` to seal it into the Vault at once (a status change is sealed into a new registered version, which needs `dpp_publish` as well); leave it out to keep the draft open. At most one pending event exists per passport, so a second call while one is open answers 409 until it is sealed or discarded.\n\nVersioned event types are rejected here: they stand for operations that mint a version, and those have their own endpoints (void, supersede, reissue, publish).",
         "operationId": "append_dpp_event",
         "x-permission": "dpp_events",
         "security": [
@@ -7526,7 +7949,7 @@
             "$ref": "#/components/responses/NotFound"
           },
           "409": {
-            "description": "A pending event is already open on this passport",
+            "description": "A pending event is already open on this passport (`PENDING_EVENT_OPEN`), or a status change asked to be sealed while the workspace reviews every publish through a review flow (`DPP_REVIEW_REQUIRED`)",
             "content": {
               "application/json": {
                 "schema": {
@@ -7562,7 +7985,7 @@
           "DPPs"
         ],
         "summary": "Update dynamic data",
-        "description": "Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface and never enters a signed per-version snapshot, so a write mints no version and records no lifecycle event. Keys you send are merged into the stored set; a key sent as an explicit null is removed. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.",
+        "description": "Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none); every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.",
         "operationId": "update_dpp_dynamic_data",
         "x-permission": "dpp_dynamic",
         "security": [
@@ -7949,9 +8372,10 @@
           "DPPs"
         ],
         "summary": "Correct a DPP from its source",
-        "description": "Carries a correction made to the product onto a passport already written. A passport freezes the product identity, the components and the properties when it is created, so a product edited afterwards never reaches it on its own. Fix the product first and then call this, rather than issuing a second passport for a unit that already has one. The re-freeze reads what the create-time freeze read - the live product at model granularity, the lot's frozen values at batch and item - and mints a signed version anchored to a `corrected` event. A correction with nothing to correct mints nothing and answers `corrected` false, naming the version that still stands.",
+        "description": "Carries a correction made to the product onto a passport already written. A passport freezes the product identity, the components and the properties when it is created, so a product edited afterwards never reaches it on its own. Fix the product first and then call this, rather than issuing a second passport for a unit that already has one. The re-freeze reads what the create-time freeze read - the live product at model granularity, the lot's frozen values at batch and item - and mints a signed version anchored to a `corrected` event. A correction with nothing to correct mints nothing and answers `corrected` false, naming the version that still stands. Signing needs `dpp_publish` beside `dpp_write`; without it the answer is 403 and the passport stays as it was.",
         "operationId": "correct_dpp",
         "x-permission": "dpp_write",
+        "x-permission-also": "dpp_publish",
         "security": [
           {
             "userToken": []
@@ -8042,7 +8466,7 @@
             "$ref": "#/components/responses/NotFound"
           },
           "409": {
-            "description": "The signing key or the workspace context needed to publish the corrected version is missing (`DPP_PUBLISH_PRECONDITION`), or the workspace signs with its own key and has registered a public key for only one of the two signing curves (`DPP_PUBLISH_BYOK_INCOMPLETE`).",
+            "description": "The signing key or the workspace context needed to publish the corrected version is missing (`DPP_PUBLISH_PRECONDITION`), the workspace signs with its own key and has registered a public key for only one of the two signing curves (`DPP_PUBLISH_BYOK_INCOMPLETE`), or the workspace reviews every correction through a review flow and it is asked for in the application manager (`DPP_REVIEW_REQUIRED`).",
             "content": {
               "application/json": {
                 "schema": {
@@ -8085,9 +8509,10 @@
           "DPPs"
         ],
         "summary": "Publish a DPP",
-        "description": "Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.",
+        "description": "Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. Publishing needs `dpp_publish` beside `dpp_write`; without it the answer is 403. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.",
         "operationId": "publish_dpp",
         "x-permission": "dpp_write",
+        "x-permission-also": "dpp_publish",
         "security": [
           {
             "userToken": []
@@ -8180,7 +8605,7 @@
             "$ref": "#/components/responses/NotFound"
           },
           "409": {
-            "description": "The signing key or the workspace context needed to publish is missing (`DPP_PUBLISH_PRECONDITION`), or the workspace signs with its own key and has registered a public key for only one of the two signing curves (`DPP_PUBLISH_BYOK_INCOMPLETE`). The second answer names the curve whose public key is still missing; register it under signing keys in the application manager and publish again.",
+            "description": "The signing key or the workspace context needed to publish is missing (`DPP_PUBLISH_PRECONDITION`), or the workspace signs with its own key and has registered a public key for only one of the two signing curves (`DPP_PUBLISH_BYOK_INCOMPLETE`). The second answer names the curve whose public key is still missing; register it under signing keys in the application manager and publish again. Where the workspace reviews every publish through a review flow, the answer is `DPP_REVIEW_REQUIRED`: the publish is asked for in the application manager, and a colleague of the flow's first step decides it.",
             "content": {
               "application/json": {
                 "schema": {
@@ -8581,7 +9006,7 @@
           "Exports"
         ],
         "summary": "Start a passport export",
-        "description": "Packs the whole passport catalogue into an archive in the background and answers at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.\n\nThe consumer that starts an export is the only one that can read or download it. One export runs at a time per consumer: while one is pending or running, another request answers 409 `EXPORT_IN_PROGRESS` with a hint naming the URL to poll.",
+        "description": "Packs what this consumer's own lists answer it with into an archive: the passports of `GET /dpps`, the products of `GET /products` and the components of `GET /components`, with the brands, categories and property types they use. The work runs in the background under the scope of the token that started it, and the answer comes at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.\n\nThe consumer that starts an export is the only one that can read or download it. One export runs at a time per consumer: while one is pending or running, another request answers 409 `EXPORT_IN_PROGRESS` with a hint naming the URL to poll.\n\nThe archive carries the passports, so starting an export needs `dpp_read` as well as `export_access`. A consumer without it gets 403 `DPP_FORBIDDEN`.",
         "operationId": "create_export",
         "x-permission": "export_access",
         "security": [
@@ -8703,7 +9128,7 @@
           "Exports"
         ],
         "summary": "Download an export archive",
-        "description": "The archive of a completed export as `application/gzip`. Before completion the answer is 409 `EXPORT_NOT_READY`; a failed export answers 409 `EXPORT_FAILED`; once the archive has been deleted, seven days after completion, the answer is 410 `EXPORT_EXPIRED`.",
+        "description": "The archive of a completed export as `application/gzip`. Before completion the answer is 409 `EXPORT_NOT_READY`; a failed export answers 409 `EXPORT_FAILED`; once the archive has been deleted, seven days after completion, the answer is 410 `EXPORT_EXPIRED`. The archive carries the passports, so the download needs `dpp_read` as well; a consumer without it gets 403 `DPP_FORBIDDEN`.",
         "operationId": "download_export",
         "x-permission": "export_access",
         "security": [
@@ -9603,7 +10028,7 @@
             }
           },
           "422": {
-            "description": "No file (`IMPORT_FILE_REQUIRED`), a format the importer cannot read (`IMPORT_FILE_UNSUPPORTED`), or a mapping sent along that leaves a required attribute out (`IMPORT_MAPPING_INCOMPLETE`)",
+            "description": "No file (`IMPORT_FILE_REQUIRED`), a format the importer cannot read (`IMPORT_FILE_UNSUPPORTED`), two headers the importer reads as one column because they differ only in case or spacing (`IMPORT_HEADERS_COLLIDE`), or a mapping sent along that leaves a required attribute out (`IMPORT_MAPPING_INCOMPLETE`)",
             "content": {
               "application/json": {
                 "schema": {
@@ -10400,7 +10825,7 @@
           "Lots"
         ],
         "summary": "List lots",
-        "description": "The lots batch and item passports freeze from, newest first. A lot is created with the first passport that names its identifier and reused by every later passport of the same lot, so there is nothing to create here: to issue a passport of a new lot, name the lot in `batchIdentifier` on `POST /dpps` or in the shared line of a bulk create.\n\nNarrow the list with `product_id` to see which lots a product already has, or with `identifier` to find the lot a passport names.",
+        "description": "The lots batch and item passports freeze from, newest first. A lot is created with the first passport that names its identifier and reused by every later passport of the same lot, so there is nothing to create here: to issue a passport of a new lot, name the lot in `batchIdentifier` on `POST /dpps` or in the shared line of a bulk create. A new lot is taken only of a product that passes every other required readiness check; until then that create answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, and `GET /dpps/requirements` shows what the product still lacks.\n\nNarrow the list with `product_id` to see which lots a product already has, or with `identifier` to find the lot a passport names.",
         "operationId": "list_lots",
         "x-permission": "dpp_read",
         "security": [
@@ -11269,7 +11694,7 @@
           "Authentication"
         ],
         "summary": "What the presented token allows",
-        "description": "The consumer behind the bearer token, its permissions, the token's scope and expiry, the consumer's resource scope and rate limit. The cheapest way to check that a credential works. Never returns the secret. A user token gets the consumer error; users read themselves at `GET /users/me`.",
+        "description": "The consumer behind the bearer token, its permissions, the token's scope and expiry, the consumer's resource scope and rate limit, and under `workspace` what the workspace does with a record as it is written. The cheapest way to check that a credential works. Never returns the secret. A user token gets the consumer error; users read themselves at `GET /users/me`.",
         "operationId": "get_me",
         "x-permission": [],
         "security": [
@@ -13422,6 +13847,780 @@
                 },
                 "example": {
                   "message": "Logged out"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tasks": {
+      "get": {
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "List tasks",
+        "description": "The tasks of one list, newest first. A credential that acts for a person (a grant the person approved, or their assistant) reads the lists as that person. Any other credential reads them as itself: it finds the tasks it asked for under `requested` and `done`, and nothing waits on it.\n\n- `mine` (the default): the tasks given to the person, the ones they claimed, and the group tasks nobody has claimed yet. The number beside the bell in the application manager counts these.\n- `groups`: every open task of the person's groups, with who holds it.\n- `requested`: the open tasks the caller asked of others.\n- `done`: the finished and cancelled tasks the caller took part in.\n- `all`: every task, for an admin only.\n\nA list the caller may not read answers 422 `TASK_LIST_INVALID`, naming the ones it may.",
+        "operationId": "list_tasks",
+        "x-permission": "task_access",
+        "security": [
+          {
+            "oauth2": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "list",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "mine",
+                "groups",
+                "requested",
+                "done",
+                "all"
+              ],
+              "default": "mine"
+            },
+            "description": "Which list to read"
+          },
+          {
+            "name": "term",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Keep only the tasks with these words in the title"
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "$ref": "#/components/parameters/per_page"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The tasks",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "tasks": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Task"
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "tasks": [
+                    {
+                      "id": 42,
+                      "type": "Task",
+                      "kind": "custom",
+                      "title": "Check the supplier declaration",
+                      "status": "open",
+                      "dueOn": "2026-10-01",
+                      "overdue": false,
+                      "assigneeKey": "UserGroup:3",
+                      "assignee": {
+                        "type": "UserGroup",
+                        "id": 3,
+                        "name": "Quality"
+                      },
+                      "requester": {
+                        "type": "User",
+                        "id": 12,
+                        "name": "Hans Tester"
+                      },
+                      "moves": [
+                        "claim",
+                        "complete"
+                      ],
+                      "editable": false,
+                      "createdAt": "2026-09-24T09:40:00Z",
+                      "updatedAt": "2026-09-24T09:40:00Z"
+                    }
+                  ]
+                }
+              }
+            },
+            "headers": {
+              "API-Total": {
+                "$ref": "#/components/headers/API-Total"
+              },
+              "API-Count": {
+                "$ref": "#/components/headers/API-Count"
+              },
+              "API-Offset": {
+                "$ref": "#/components/headers/API-Offset"
+              },
+              "API-Page": {
+                "$ref": "#/components/headers/API-Page"
+              },
+              "API-Per-Page": {
+                "$ref": "#/components/headers/API-Per-Page"
+              },
+              "Link": {
+                "$ref": "#/components/headers/Link"
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "422": {
+            "description": "A list the caller may not read (`TASK_LIST_INVALID`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Create a task",
+        "description": "Asks a person or a user group for something. The task is a request (`kind` custom) whatever the body says, and names the caller as the one who asked: the person a grant or an assistant acts for, or the credential itself. Every person the task reaches sees it at once in the application manager and hears of it in the bell; the morning mail carries it too.\n\nFind the `assigneeKey` with `GET /tasks/assignees`.",
+        "operationId": "create_task",
+        "x-permission": "task_access",
+        "security": [
+          {
+            "oauth2": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/idempotency_key"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The task",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Task"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "422": {
+            "description": "A missing title, an assignee who cannot take the task, or a due date in the past (`TASK_INVALID`, see `fields`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tasks/assignees": {
+      "get": {
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "List task assignees",
+        "description": "Whom a task may go to, matching `term`, as the `key` `POST /tasks` takes and the name the application manager shows. Groups with access to the application manager come first, then the people who can open it; 25 at most.",
+        "operationId": "list_task_assignees",
+        "x-permission": "task_access",
+        "security": [
+          {
+            "oauth2": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "term",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Words in the name of the person or group"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The matches",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "assignees": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "key": {
+                            "type": "string",
+                            "description": "`User:<id>` or `UserGroup:<id>`"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "assignees": [
+                    {
+                      "key": "UserGroup:3",
+                      "name": "Group Quality"
+                    },
+                    {
+                      "key": "User:15",
+                      "name": "Maria Muster"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        }
+      }
+    },
+    "/tasks/{id}": {
+      "get": {
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Get a task",
+        "description": "One task the caller takes part in. A task it has no part in answers 404, as one that does not exist.",
+        "operationId": "get_task",
+        "x-permission": "task_access",
+        "security": [
+          {
+            "oauth2": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The task",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Task"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Update a task",
+        "description": "Changes the title, the note, the due date or the assignee of an open task. The one who asked for it may, or an admin; anyone else is refused with `TASK_NOT_PERMITTED`, and a closed task with `TASK_NOT_OPEN`. A new assignee clears the claim and is told.",
+        "operationId": "update_task",
+        "x-permission": "task_access",
+        "security": [
+          {
+            "oauth2": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The task",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Task"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "422": {
+            "description": "The task refuses the change (`TASK_NOT_OPEN`, `TASK_NOT_PERMITTED`) or the change is invalid (`TASK_INVALID`, see `fields`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tasks/{id}/claim": {
+      "post": {
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Claim a task",
+        "description": "Takes an open group task for the person the credential acts for. Only a current member of the group claims it, and only while nobody holds it; of two members claiming at once, one wins and the other is refused with `TASK_ALREADY_CLAIMED`.",
+        "operationId": "claim_task",
+        "x-permission": "task_access",
+        "security": [
+          {
+            "oauth2": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The task, held by the person",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Task"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "422": {
+            "description": "The task refuses the move (`TASK_NOT_OPEN`, `TASK_NOT_GROUP_TASK`, `TASK_ALREADY_CLAIMED`, `TASK_NOT_MEMBER`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tasks/{id}/release": {
+      "post": {
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Release a task",
+        "description": "Hands a claimed task back to its group. The one holding it may, the one who asked for it, or an admin.",
+        "operationId": "release_task",
+        "x-permission": "task_access",
+        "security": [
+          {
+            "oauth2": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The task, back with its group",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Task"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "422": {
+            "description": "The task refuses the move (`TASK_NOT_OPEN`, `TASK_NOT_CLAIMED`, `TASK_NOT_PERMITTED`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tasks/{id}/complete": {
+      "post": {
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Complete a task",
+        "description": "Marks an open request as done. The person it is for may, or a current member of its group, who claims it in the same move; a task someone else holds stays theirs. Only a person works on a task, so a credential acting as itself is refused with `TASK_NOT_PERMITTED`, and a review ends in a decision in the application manager (`TASK_NOT_CUSTOM`). The one who asked hears of it in the bell.",
+        "operationId": "complete_task",
+        "x-permission": "task_access",
+        "security": [
+          {
+            "oauth2": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The task, done",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Task"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "422": {
+            "description": "The task refuses the move (`TASK_NOT_OPEN`, `TASK_NOT_CUSTOM`, `TASK_NOT_PERMITTED`, `TASK_ALREADY_CLAIMED`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tasks/{id}/cancel": {
+      "post": {
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Cancel a task",
+        "description": "Ends an open task as cancelled. The one who asked for it may, or an admin. The task stays on record and can be reopened.",
+        "operationId": "cancel_task",
+        "x-permission": "task_access",
+        "security": [
+          {
+            "oauth2": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The task, cancelled",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Task"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "422": {
+            "description": "The task refuses the move (`TASK_NOT_OPEN`, `TASK_NOT_PERMITTED`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tasks/{id}/reopen": {
+      "post": {
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Reopen a task",
+        "description": "Opens a finished or cancelled request again. The one who asked for it may, or an admin; whoever works on it hears of it in the bell.",
+        "operationId": "reopen_task",
+        "x-permission": "task_access",
+        "security": [
+          {
+            "oauth2": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The task, open again",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Task"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "422": {
+            "description": "The task refuses the move (`TASK_NOT_CUSTOM`, `TASK_NOT_CLOSED`, `TASK_NOT_PERMITTED`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tasks/{id}/approve": {
+      "post": {
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Approve a review",
+        "description": "Approves the step a review stands at, as the person the credential acts for. A review walks the steps of the workspace's review flow, or the one step of everyone who may sign passports where no flow fits. Approving a middle step passes the request on to the next step and signs nothing. Approving the last step carries the request out in the person's name: a publish review signs the passport, which needs `dpp_publish` in the credential's scope beside `task_access`; without it the answer is 403 and nothing is signed.\n\nSend the `step` the caller read, so a press on a review that moved on in between decides nothing (`TASK_STEP_MOVED`). The person who asked for a review decides no step of it (`TASK_OWN_REQUEST`). A publish the validator or the workspace refuses answers as `POST /dpps/{code}/publish` does, and the review stays open.",
+        "operationId": "approve_task",
+        "x-permission": "task_access",
+        "security": [
+          {
+            "oauth2": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          },
+          {
+            "$ref": "#/components/parameters/idempotency_key"
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskDecision"
+              },
+              "example": {
+                "step": 0
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The review, handed on to its next step, or done and approved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Task"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "description": "The signing key or the workspace context is missing (`DPP_PUBLISH_PRECONDITION`), or the workspace's own key set is incomplete (`DPP_PUBLISH_BYOK_INCOMPLETE`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The review refuses the decision (`TASK_NOT_OPEN`, `TASK_NOT_REVIEW`, `TASK_OWN_REQUEST`, `TASK_NOT_PERMITTED`, `TASK_ALREADY_CLAIMED`, `TASK_DECIDING`, `TASK_STEP_MOVED`, or what its subject says, such as `TASK_PENDING_EVENT`), or the validator refuses the publish (`DPP_PUBLISH_VALIDATION_BLOCKED`, see `fields`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tasks/{id}/reject": {
+      "post": {
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Reject a review",
+        "description": "Ends a review at the step it stands at, as the person the credential acts for. The subject stays as it was, and the person who asked reads the note in their bell, so a rejection needs one (`TASK_NOTE_REQUIRED`, at most 2000 characters, `TASK_NOTE_TOO_LONG`). Send the `step` the caller read, so a review that moved on in between is not rejected unseen (`TASK_STEP_MOVED`).",
+        "operationId": "reject_task",
+        "x-permission": "task_access",
+        "security": [
+          {
+            "oauth2": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          },
+          {
+            "$ref": "#/components/parameters/idempotency_key"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskDecision"
+              },
+              "example": {
+                "step": 0,
+                "note": "The care instructions are missing"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The review, done and rejected",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Task"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "422": {
+            "description": "The review refuses the decision (`TASK_NOT_OPEN`, `TASK_NOT_REVIEW`, `TASK_OWN_REQUEST`, `TASK_NOT_PERMITTED`, `TASK_ALREADY_CLAIMED`, `TASK_DECIDING`, `TASK_STEP_MOVED`, `TASK_NOTE_REQUIRED`, `TASK_NOTE_TOO_LONG`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
                 }
               }
             }

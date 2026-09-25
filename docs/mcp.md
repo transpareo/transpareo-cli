@@ -43,17 +43,18 @@ protocol.
 - `--tools <group,...>` narrows the tools to groups: `products`
   (products, components, brands and the property types), `dpps`
   (passports, requirements, validation, lots and bulk calls),
-  `data` (imports, exports, tasks and the event feed),
-  `webhooks` and `help` (the articles the application manager
-  shows a person). `me`, `search_operations` and `call_api` are
-  always present. A catalogue assistant does not carry webhook
-  tools.
+  `data` (imports, exports, waiting on background work and the
+  event feed), `webhooks`, `help` (the articles the application
+  manager shows a person) and `tasks` (the work colleagues hand
+  each other, and the decisions of a review). `me`,
+  `search_operations` and `call_api` are always present. A
+  catalogue assistant does not carry webhook tools.
 - `--read-only` removes every tool that changes data and keeps the
   validations. `call_api` refuses writes in that mode too.
 
 ## Tools
 
-Forty-six curated tools cover the flows, and two escape hatches
+Fifty-seven curated tools cover the flows, and two escape hatches
 reach every other endpoint.
 
 Which operations are curated, under what names, in which groups,
@@ -99,6 +100,14 @@ code, and a test compares what the two buildings produced.
   shows a person, by the question in their own words, and
   `read_help` reads one whole. They answer how a person works a
   screen, where the API guide answers how a program makes a call.
+- Tasks: `list_tasks`, `get_task`, `create_task`, `claim_task`,
+  `release_task`, `complete_task`, `cancel_task`, `reopen_task`,
+  `list_task_assignees`, and for a review `approve_task` and
+  `reject_task`. Where a workspace reviews every publish, the
+  publish tools answer 409 `DPP_REVIEW_REQUIRED`; a person asks
+  for the review in the application manager, and a reviewer
+  decides it with these two tools. The person who asked never
+  decides it. `update_task` is reached through `call_api`.
 - Webhooks: `list_webhooks`, `create_webhook`, `test_webhook`,
   `regenerate_webhook_secret`, `delete_webhook`. The create and
   regenerate tools answer the signing secret, because nothing

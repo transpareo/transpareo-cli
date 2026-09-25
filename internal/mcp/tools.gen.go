@@ -5,12 +5,19 @@ package mcp
 // instructions is what the assistant reads when it connects.
 const instructions = `Transpareo holds a workspace's products, components and Digital
 Product Passports. Start with me to learn what the credential
-allows. For a new product call product_property_types before
+allows. Where its workspace.publishesOnCreate is true, every
+product and component is published as it is created, so never
+ask the person to publish anything and never mention a
+storefront, catalogue visibility or a frontend app.
+For a new product call product_property_types before
 create_product. For passports of an existing product call
 dpp_requirements, then validate_dpp before create_dpp. A passport
 of a batch or an item names its lot in batchIdentifier and the lot
 is created with the first passport that names it; there is no
-separate lot step. list_lots shows the lots a product already
+separate lot step. A new lot is taken only of a product that
+passes every other required readiness check; until then the
+create answers DPP_BATCH_PRODUCT_NOT_READY on batch, and the
+product is completed first. list_lots shows the lots a product already
 has. A run of passports goes through bulk_create_dpps with the
 lot in shared. publish_dpp
 signs the passport and cannot be undone. Recalling a unit is a
@@ -19,12 +26,18 @@ void_dpp is for a unit that no longer exists. void_dpp and
 supersede_dpp need the confirm argument with the stated phrase.
 A spreadsheet you have read goes in through import_spreadsheet as
 rows keyed by the column headers, never as base64; when it
-answers a preview, propose the column mapping to the person and
-call again with the same rows and mappings, using create_new for
-columns that should become property types. Set auto where the
-mapping is clear: the headings are those of the import template,
-or ones you have already seen resolve in this workspace. While
-any column is uncertain, work from the preview.
+answers a preview, take the suggestion of every column with a
+match, ask the person one short question per column with
+matchType none, and call again with the same rows and mappings,
+using create_new for columns that should become property types.
+Set auto where the mapping is clear: the headings are those of
+the import template, or ones you have already seen resolve in
+this workspace. While a column has no match, work from the preview.
+A spreadsheet the person attached in the application manager
+stays on the server and is read with read_attachment, a page of
+rows at a time under its handle. Importing what it holds is a
+separate step the person asks for; the same handle then goes to
+import_spreadsheet as upload.
 A run started earlier, or in another session, is found with
 list_imports or list_exports and read with wait_for_task on its
 statusUrl.
@@ -33,8 +46,13 @@ manager is answered from the help articles: search_help for the
 topic, then read_help for the article. The API guide describes the
 calls a program makes; the help articles describe the screens a
 person uses.
+Work colleagues ask of the person is a task: list_tasks answers
+what waits on them, and each task names in moves what the
+credential may do with it. Reviews show there as well and are
+decided with approve_task and reject_task.
 Anything without a tool: search_operations, then call_api. Lists
-are paged; follow nextPage.`
+are paged; follow nextPage. Keep every answer short: what was
+done, what was found, the one decision that is open.`
 
 // curated is the tool table, one entry per tool the catalogue
 // declares over an operation. Every other operation of the
@@ -49,6 +67,13 @@ var curated = []Tool{
 		Description: `Recalling a unit is an event here: a status change to suspended, so the passport goes on answering a scan with the recall.`,
 	},
 	{
+		Name:        "approve_task",
+		Group:       GroupTasks,
+		Operation:   "approve_task",
+		Kind:        kindWrite,
+		Description: `Approving the last step signs as the person the credential acts for; an earlier step passes the request on.`,
+	},
+	{
 		Name:        "bulk_create_dpps",
 		Group:       GroupDpps,
 		Operation:   "bulk_create_dpps",
@@ -60,6 +85,27 @@ var curated = []Tool{
 		Group:     GroupDpps,
 		Operation: "validate_dpps_bulk",
 		Kind:      kindRows,
+	},
+	{
+		Name:        "cancel_task",
+		Group:       GroupTasks,
+		Operation:   "cancel_task",
+		Kind:        kindWrite,
+		Description: `A cancelled task stays on record and can be reopened.`,
+	},
+	{
+		Name:        "claim_task",
+		Group:       GroupTasks,
+		Operation:   "claim_task",
+		Kind:        kindWrite,
+		Description: `A group task goes to the first member who claims it.`,
+	},
+	{
+		Name:        "complete_task",
+		Group:       GroupTasks,
+		Operation:   "complete_task",
+		Kind:        kindWrite,
+		Description: `A member finishing an unclaimed group task claims it in the same call.`,
 	},
 	{
 		Name:      "create_brand",
@@ -92,6 +138,13 @@ var curated = []Tool{
 		Operation:   "create_product",
 		Kind:        kindWrite,
 		Description: `Call product_property_types first: a product missing a mandatory property is refused.`,
+	},
+	{
+		Name:        "create_task",
+		Group:       GroupTasks,
+		Operation:   "create_task",
+		Kind:        kindWrite,
+		Description: `Find the assigneeKey with list_task_assignees first.`,
 	},
 	{
 		Name:        "create_webhook",
@@ -139,6 +192,12 @@ var curated = []Tool{
 		Kind:      kindGet,
 	},
 	{
+		Name:      "get_task",
+		Group:     GroupTasks,
+		Operation: "get_task",
+		Kind:      kindGet,
+	},
+	{
 		Name:      "list_brands",
 		Group:     GroupProducts,
 		Operation: "list_brands",
@@ -174,7 +233,7 @@ var curated = []Tool{
 		Group:       GroupDpps,
 		Operation:   "list_lots",
 		Kind:        kindList,
-		Description: `The lots batch and item passports freeze from. Narrow by product_id or identifier; a lot is created by the first passport that names it, never here.`,
+		Description: `The lots batch and item passports freeze from. Narrow by product_id or identifier; a lot is created by the first passport that names it, never here, once its product passes every other required readiness check.`,
 	},
 	{
 		Name:      "list_mediafiles",
@@ -187,6 +246,20 @@ var curated = []Tool{
 		Group:     GroupProducts,
 		Operation: "list_products",
 		Kind:      kindList,
+	},
+	{
+		Name:        "list_task_assignees",
+		Group:       GroupTasks,
+		Operation:   "list_task_assignees",
+		Kind:        kindGet,
+		Description: `The assigneeKey create_task takes, for the people and groups whose names match term.`,
+	},
+	{
+		Name:        "list_tasks",
+		Group:       GroupTasks,
+		Operation:   "list_tasks",
+		Kind:        kindList,
+		Description: `The default list, mine, is what waits on the person the credential acts for. Each task names in moves what this credential may do with it now.`,
 	},
 	{
 		Name:      "list_webhooks",
@@ -241,6 +314,25 @@ var curated = []Tool{
 		Name:      "reissue_dpp",
 		Group:     GroupDpps,
 		Operation: "reissue_dpp",
+		Kind:      kindWrite,
+	},
+	{
+		Name:        "reject_task",
+		Group:       GroupTasks,
+		Operation:   "reject_task",
+		Kind:        kindWrite,
+		Description: `A rejection needs a note, which the requester reads.`,
+	},
+	{
+		Name:      "release_task",
+		Group:     GroupTasks,
+		Operation: "release_task",
+		Kind:      kindWrite,
+	},
+	{
+		Name:      "reopen_task",
+		Group:     GroupTasks,
+		Operation: "reopen_task",
 		Kind:      kindWrite,
 	},
 	{

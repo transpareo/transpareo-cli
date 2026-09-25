@@ -114,3 +114,28 @@ func TestFlagName(t *testing.T) {
 		}
 	}
 }
+
+// The work tasks take the product's word, which the hand-written
+// `tasks wait` already carries, so both live under one command.
+func TestGeneratedGroupJoinsTheHandWrittenCommand(t *testing.T) {
+	root := (&App{}).Root()
+	var tasks []string
+	found := 0
+	for _, cmd := range root.Commands() {
+		if cmd.Name() == "tasks" {
+			found++
+			for _, child := range cmd.Commands() {
+				tasks = append(tasks, child.Name())
+			}
+		}
+	}
+	if found != 1 {
+		t.Fatalf("root carries %d commands named tasks, want 1", found)
+	}
+	joined := " " + strings.Join(tasks, " ") + " "
+	for _, want := range []string{"wait", "list", "claim", "complete"} {
+		if !strings.Contains(joined, " "+want+" ") {
+			t.Errorf("tasks carries %v, missing %q", tasks, want)
+		}
+	}
+}

@@ -1,6 +1,6 @@
 # Command reference
 
-Every command of `transpareo`, generated from API specification 2.4.1. `--help` on any command prints the same example and permission key.
+Every command of `transpareo`, generated from API specification 2.11.0. `--help` on any command prints the same example and permission key.
 
 | Option on every command | What it does |
 |---|---|
@@ -12,7 +12,7 @@ Every command of `transpareo`, generated from API specification 2.4.1. `--help` 
 | `--read-only` | refuse every operation that changes data |
 | `--yes` | confirm an operation that cannot be undone |
 
-[General](#general) · [Brands](#brands) · [Categories](#categories) · [Components](#components) · [Configuration](#configuration) · [Coupons](#coupons) · [DPPs](#dpps) · [Events](#events) · [Exports](#exports) · [Grants](#grants) · [Help](#help) · [Imports](#imports) · [Lots](#lots) · [Mediafiles](#mediafiles) · [Permalinks](#permalinks) · [Plans](#plans) · [Products](#products) · [Reference Data](#reference-data) · [Search](#search) · [Webhooks](#webhooks)
+[General](#general) · [Brands](#brands) · [Categories](#categories) · [Components](#components) · [Configuration](#configuration) · [Coupons](#coupons) · [DPPs](#dpps) · [Events](#events) · [Exports](#exports) · [Grants](#grants) · [Help](#help) · [Imports](#imports) · [Lots](#lots) · [Mediafiles](#mediafiles) · [Permalinks](#permalinks) · [Plans](#plans) · [Products](#products) · [Reference Data](#reference-data) · [Search](#search) · [Tasks](#tasks) · [Webhooks](#webhooks)
 
 ## General
 
@@ -1293,7 +1293,7 @@ transpareo imports validate <id>
 
 ## Lots
 
-The lots batch and item passports freeze from, created with the first passport that names them.
+The lots batch and item passports freeze from, created with the first passport that names them once the product passes every other required readiness check.
 
 ### transpareo lots get
 
@@ -1733,6 +1733,197 @@ transpareo search catalogue --query <query>
 | `--query` \<value\> | Search query |
 
 `GET /search` · operation `search_catalogue` · no permission needed, the endpoint is public
+
+## Tasks
+
+Work colleagues hand each other: what waits on a person, asking someone for something, and claiming, finishing, cancelling and reopening a task.
+
+### transpareo tasks approve
+
+Approve a review.
+
+```sh
+transpareo tasks approve <id>
+transpareo tasks approve <id> --file body.json
+```
+
+| Option | What it does |
+|---|---|
+| `--file` \<value\> | request body from a file, or - for standard input |
+| `--idempotency-key` \<value\> | makes the call safe to repeat: the same key within a day answers the result of the first call (default: random) |
+| `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
+| `--set` \<value\>... | body field as key=value, nested with dots (repeatable) |
+
+`POST /tasks/{id}/approve` · operation `approve_task` · permission `task_access`
+
+### transpareo tasks assignees list
+
+List task assignees.
+
+```sh
+transpareo tasks assignees list --term <term>
+```
+
+| Option | What it does |
+|---|---|
+| `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
+| `--term` \<value\> | Words in the name of the person or group |
+
+`GET /tasks/assignees` · operation `list_task_assignees` · permission `task_access`
+
+### transpareo tasks cancel
+
+Cancel a task.
+
+```sh
+transpareo tasks cancel <id>
+```
+
+| Option | What it does |
+|---|---|
+| `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
+
+`POST /tasks/{id}/cancel` · operation `cancel_task` · permission `task_access`
+
+### transpareo tasks claim
+
+Claim a task.
+
+```sh
+transpareo tasks claim <id>
+```
+
+| Option | What it does |
+|---|---|
+| `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
+
+`POST /tasks/{id}/claim` · operation `claim_task` · permission `task_access`
+
+### transpareo tasks complete
+
+Complete a task.
+
+```sh
+transpareo tasks complete <id>
+```
+
+| Option | What it does |
+|---|---|
+| `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
+
+`POST /tasks/{id}/complete` · operation `complete_task` · permission `task_access`
+
+### transpareo tasks create
+
+Create a task.
+
+```sh
+transpareo tasks create --file body.json
+```
+
+| Option | What it does |
+|---|---|
+| `--file` \<value\> | request body from a file, or - for standard input |
+| `--idempotency-key` \<value\> | makes the call safe to repeat: the same key within a day answers the result of the first call (default: random) |
+| `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
+| `--set` \<value\>... | body field as key=value, nested with dots (repeatable) |
+
+`POST /tasks` · operation `create_task` · permission `task_access`
+
+### transpareo tasks get
+
+Get a task.
+
+```sh
+transpareo tasks get <id>
+```
+
+| Option | What it does |
+|---|---|
+| `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
+
+`GET /tasks/{id}` · operation `get_task` · permission `task_access`
+
+### transpareo tasks list
+
+List tasks.
+
+```sh
+transpareo tasks list --list <list>
+```
+
+| Option | What it does |
+|---|---|
+| `--list` \<value\> | Which list to read |
+| `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
+| `--page` \<n\> | Page number |
+| `--per-page` \<n\> | Records per page (default: 100, max: 500) |
+| `--term` \<value\> | Keep only the tasks with these words in the title |
+
+`GET /tasks` · operation `list_tasks` · permission `task_access`
+
+### transpareo tasks reject
+
+Reject a review.
+
+```sh
+transpareo tasks reject <id>
+transpareo tasks reject <id> --file body.json
+```
+
+| Option | What it does |
+|---|---|
+| `--file` \<value\> | request body from a file, or - for standard input |
+| `--idempotency-key` \<value\> | makes the call safe to repeat: the same key within a day answers the result of the first call (default: random) |
+| `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
+| `--set` \<value\>... | body field as key=value, nested with dots (repeatable) |
+
+`POST /tasks/{id}/reject` · operation `reject_task` · permission `task_access`
+
+### transpareo tasks release
+
+Release a task.
+
+```sh
+transpareo tasks release <id>
+```
+
+| Option | What it does |
+|---|---|
+| `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
+
+`POST /tasks/{id}/release` · operation `release_task` · permission `task_access`
+
+### transpareo tasks reopen
+
+Reopen a task.
+
+```sh
+transpareo tasks reopen <id>
+```
+
+| Option | What it does |
+|---|---|
+| `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
+
+`POST /tasks/{id}/reopen` · operation `reopen_task` · permission `task_access`
+
+### transpareo tasks update
+
+Update a task.
+
+```sh
+transpareo tasks update <id>
+transpareo tasks update <id> --file body.json
+```
+
+| Option | What it does |
+|---|---|
+| `--file` \<value\> | request body from a file, or - for standard input |
+| `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
+| `--set` \<value\>... | body field as key=value, nested with dots (repeatable) |
+
+`PUT /tasks/{id}` · operation `update_task` · permission `task_access`
 
 ## Webhooks
 

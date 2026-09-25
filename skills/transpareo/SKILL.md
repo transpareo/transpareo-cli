@@ -222,6 +222,18 @@ any of them shows an example and the permission it needs;
 - `transpareo schema <operationId>`: Print the request schema and example of an operation
 - `transpareo search catalogue`: Search products and components
 - `transpareo setup <assistant>`: Install the skill and register the MCP server for claude or codex
+- `transpareo tasks approve <id>`: Approve a review (task_access)
+- `transpareo tasks assignees list`: List task assignees (task_access)
+- `transpareo tasks cancel <id>`: Cancel a task (task_access)
+- `transpareo tasks claim <id>`: Claim a task (task_access)
+- `transpareo tasks complete <id>`: Complete a task (task_access)
+- `transpareo tasks create`: Create a task (task_access)
+- `transpareo tasks get <id>`: Get a task (task_access)
+- `transpareo tasks list`: List tasks (task_access)
+- `transpareo tasks reject <id>`: Reject a review (task_access)
+- `transpareo tasks release <id>`: Release a task (task_access)
+- `transpareo tasks reopen <id>`: Reopen a task (task_access)
+- `transpareo tasks update <id>`: Update a task (task_access)
 - `transpareo tasks wait <statusUrl>`: Poll a status URL until the work is done
 - `transpareo upgrade [--version <x.y.z>] [--check]`: Replace this binary with a verified release from GitHub
 - `transpareo version`: Print the version of the binary and of its API specification

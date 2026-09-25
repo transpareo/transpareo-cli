@@ -51,6 +51,11 @@ type Operation struct {
 	// Permission lists the keys of which the consumer needs one.
 	Permission []string `json:"permission"`
 
+	// PermissionAlso lists the keys the consumer needs beside
+	// one of Permission, as signing a passport needs dpp_publish
+	// beside dpp_write.
+	PermissionAlso []string `json:"permissionAlso,omitempty"`
+
 	// Destructive marks an operation that cannot be undone; Safe
 	// marks a POST that changes nothing; NDJSON marks a response
 	// of one JSON object per line; Task marks an operation whose
@@ -287,6 +292,9 @@ func (r *resolver) operation(method, path string, raw map[string]any,
 		Safe:        raw["x-safe"] == true,
 		NDJSON:      raw["x-ndjson"] == true,
 		Permission:  stringList(raw["x-permission"]),
+	}
+	if also := stringList(raw["x-permission-also"]); len(also) > 0 {
+		op.PermissionAlso = also
 	}
 	tags, _ := raw["tags"].([]any)
 	if len(tags) > 0 {
@@ -598,6 +606,22 @@ func schemes(security []any) ([]string, bool) {
 // "dpps", "Reference Data" becomes "reference-data".
 func groupName(tag string) string {
 	return strings.ToLower(strings.Join(strings.Fields(tag), "-"))
+}
+
+// PermissionText names the keys an operation needs: one key, or
+// one of several, and then every key it needs beside them. Empty
+// when it names none.
+func (op *Operation) PermissionText() string {
+	var held string
+	switch {
+	case len(op.Permission) == 1:
+		held = op.Permission[0]
+	case len(op.Permission) > 1:
+		held = "one of " + strings.Join(op.Permission, ", ")
+	default:
+		return ""
+	}
+	return strings.Join(append([]string{held}, op.PermissionAlso...), ", and ")
 }
 
 func stringList(v any) []string {

@@ -33,6 +33,7 @@ var groups = map[string]string{
 	"data":      "GroupData",
 	"webhooks":  "GroupWebhooks",
 	"help":      "GroupHelp",
+	"tasks":     "GroupTasks",
 }
 
 // kinds maps a catalogue kind onto the constant that decides how

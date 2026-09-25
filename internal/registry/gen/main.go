@@ -76,6 +76,10 @@ func writeOperation(b *bytes.Buffer, op registry.Operation) {
 	raw("ResponseSchema", op.ResponseSchema)
 	raw("ResponseExample", op.ResponseExample)
 	fmt.Fprintf(b, "\t\tPermission: %s,\n", stringSlice(op.Permission))
+	if len(op.PermissionAlso) > 0 {
+		fmt.Fprintf(b, "\t\tPermissionAlso: %s,\n",
+			stringSlice(op.PermissionAlso))
+	}
 	boolean("Destructive", op.Destructive)
 	boolean("Safe", op.Safe)
 	boolean("NDJSON", op.NDJSON)

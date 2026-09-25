@@ -13,7 +13,7 @@ import (
 func (a *App) tasksCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "tasks",
-		Short: "Background work: bulk creates, exports and imports",
+		Short: "Work colleagues hand each other, and waiting on background work",
 	}
 	cmd.AddCommand(a.tasksWaitCommand())
 	return cmd

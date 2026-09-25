@@ -413,3 +413,41 @@ func TestGeneratedTableMatchesTheDocument(t *testing.T) {
 		}
 	}
 }
+
+// A key under x-permission-also is needed beside the ones under
+// x-permission, which are alternatives, so the text names both
+// and neither reads as enough on its own.
+func TestPermissionText(t *testing.T) {
+	cases := []struct {
+		op   Operation
+		want string
+	}{
+		{Operation{Permission: []string{"dpp_write"}}, "dpp_write"},
+		{Operation{Permission: []string{"brand_access", "brand_write"}},
+			"one of brand_access, brand_write"},
+		{Operation{Permission: []string{"dpp_write"},
+			PermissionAlso: []string{"dpp_publish"}},
+			"dpp_write, and dpp_publish"},
+		{Operation{Permission: []string{}}, ""},
+	}
+	for _, c := range cases {
+		if got := c.op.PermissionText(); got != c.want {
+			t.Errorf("PermissionText() = %q, want %q", got, c.want)
+		}
+	}
+}
+
+func TestPermissionAlsoFromTheSpecification(t *testing.T) {
+	reg, err := Load(spec.JSON)
+	if err != nil {
+		t.Fatal(err)
+	}
+	op := reg.Find("publish_dpp")
+	if op == nil {
+		t.Fatal("publish_dpp missing from the vendored specification")
+	}
+	if strings.Join(op.PermissionAlso, ",") != "dpp_publish" {
+		t.Errorf("publish_dpp PermissionAlso = %v, want [dpp_publish]",
+			op.PermissionAlso)
+	}
+}
