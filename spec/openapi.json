@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Transpareo API",
-    "version": "2.12.0",
+    "version": "2.16.0",
     "description": "This site runs on the [Transpareo](https://transpareo.com) product information platform. The REST API gives programs access to products, product components, brands, Digital Product Passports, categories and configuration. The version is selected with the `Accept` header, not a path segment.\n\nThe guide at [/apidocs/guide](/apidocs/guide) is the narrative companion to this reference: credentials, permissions, pagination, idempotency, the passport flows, the event feed, webhooks, rate limits and the error format. It is also served as Markdown at [/apidocs/guide.md](/apidocs/guide.md).\n\nPrograms authenticate with the OAuth 2.0 client credentials grant. Exchange the client id and secret once, then send the token on every request:\n\n```\ncurl -X POST https://<host>/api/oauth/token -d grant_type=client_credentials -d client_id=<key> -d client_secret=<secret>\n\ncurl https://<host>/api/me -H \"Authorization: Bearer <access_token>\"\n```\n\nAn assistant that speaks the Model Context Protocol connects to `/mcp` on this host and calls these operations as tools, named in the catalogue at [/apidocs/mcp-tools.json](/apidocs/mcp-tools.json) and explained by the guide's Assistants section.",
     "contact": {
       "name": "Transpareo Support",
@@ -886,6 +886,10 @@
           "rating": {
             "type": "string",
             "description": "A-D or 'protected'"
+          },
+          "mpn": {
+            "type": "string",
+            "description": "The article number (Manufacturer Part Number) the maker gives the component. Present only when set, and only for a signed-in caller or an API consumer."
           }
         },
         "example": {
@@ -926,6 +930,10 @@
           "rating": {
             "type": "string",
             "description": "Component rating (very_good/good/neutral/bad/very_bad) when unlocked via DPP key or authorized. Returns 'protected' otherwise. Only present when ratings are enabled."
+          },
+          "mpn": {
+            "type": "string",
+            "description": "The article number (Manufacturer Part Number) the maker gives the component. Present only when set, and only for a signed-in caller or an API consumer."
           },
           "properties": {
             "type": "object",
@@ -984,6 +992,7 @@
           "published": true,
           "publishedAt": "2026-01-10T08:00:00Z",
           "rating": "A",
+          "mpn": "SB-RAW-25KG",
           "properties": {
             "Origin": {
               "id": 14,
@@ -1011,6 +1020,10 @@
               "name": {
                 "type": "string",
                 "description": "Unique across the workspace"
+              },
+              "mpn": {
+                "type": "string",
+                "description": "The article number (Manufacturer Part Number) the maker gives the component"
               }
             }
           },
@@ -1068,7 +1081,8 @@
         },
         "example": {
           "component": {
-            "name": "Shea Butter"
+            "name": "Shea Butter",
+            "mpn": "SB-RAW-25KG"
           },
           "properties": {
             "new": {
@@ -2666,7 +2680,7 @@
               "sql"
             ],
             "default": "jsonld",
-            "description": "`jsonld` packs one document per passport, product and component into a tar archive; the tabular formats flatten the catalogue into one sheet each"
+            "description": "`jsonld` packs one document per passport, product and component into a tar archive; the tabular formats flatten the catalogue into one sheet each. A variant names its parent in `parent_key` in CSV and XLSX (the GTIN of the parent, else its name, which the product import reads back), in `parent_id` in SQL and in `isVariantOf` in JSON-LD. A parent outside the archive goes unnamed"
           },
           "normalize": {
             "type": "boolean",
@@ -4353,7 +4367,17 @@
           },
           "weight": {
             "type": "number",
-            "description": "Product weight (only when present)"
+            "description": "Product weight, in `weightUnit` (only when present)"
+          },
+          "weightUnit": {
+            "type": "string",
+            "enum": [
+              "kg",
+              "g",
+              "mg",
+              "t"
+            ],
+            "description": "The unit of `weight` (present with the weight)"
           }
         },
         "example": {
@@ -4608,7 +4632,17 @@
           },
           "weight": {
             "type": "number",
-            "description": "Product weight. Only present when the product carries one."
+            "description": "Product weight, in `weightUnit`. Only present when the product carries one."
+          },
+          "weightUnit": {
+            "type": "string",
+            "enum": [
+              "kg",
+              "g",
+              "mg",
+              "t"
+            ],
+            "description": "The unit of `weight`. Present with the weight."
           },
           "createdAt": {
             "type": "string",
@@ -4949,9 +4983,10 @@
             "enum": [
               "custom",
               "review",
-              "publish_review"
+              "publish_review",
+              "request_for_information"
             ],
-            "description": "`custom` for what a person asks; the review kinds come from a review flow and end in an `outcome`"
+            "description": "`custom` for what a person asks; the review kinds come from a review flow and end in an `outcome`; `request_for_information` stands for a request to a supplier and opens and closes with it"
           },
           "title": {
             "type": "string",
@@ -5478,6 +5513,7 @@
         "description": "One webhook subscription and its delivery state. Every delivery carries `X-Transpareo-Signature` as `t=<unix time>,v1=<hex>`, an HMAC-SHA256 over `<t>.<body>` with the subscription's secret. `secret` is answered once, on create and on regenerate.",
         "required": [
           "id",
+          "name",
           "url",
           "active",
           "eventTypes"
@@ -5485,6 +5521,10 @@
         "properties": {
           "id": {
             "type": "integer"
+          },
+          "name": {
+            "type": "string",
+            "description": "A short label so a list of subscriptions is scannable by more than the URL"
           },
           "url": {
             "type": "string",
@@ -5546,6 +5586,7 @@
         },
         "example": {
           "id": 7,
+          "name": "Order fulfilment",
           "url": "https://hooks.example.com/transpareo",
           "active": true,
           "eventTypes": [
@@ -5566,7 +5607,14 @@
         "properties": {
           "webhook": {
             "type": "object",
+            "required": [
+              "name"
+            ],
             "properties": {
+              "name": {
+                "type": "string",
+                "description": "A short label so a list of subscriptions is scannable by more than the URL"
+              },
               "url": {
                 "type": "string",
                 "format": "uri",
@@ -5609,6 +5657,7 @@
         },
         "example": {
           "webhook": {
+            "name": "Order fulfilment",
             "url": "https://hooks.example.com/transpareo",
             "eventTypes": [
               "published",
@@ -8182,7 +8231,7 @@
           "DPPs"
         ],
         "summary": "Supersede a DPP",
-        "description": "Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. A consumer also needs write access to the passport itself (`dpp_write`).",
+        "description": "Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. Superseding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).",
         "operationId": "supersede_dpp",
         "x-permission": "dpp_lifecycle",
         "x-destructive": true,
@@ -13604,7 +13653,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Comma-separated model types to search (e.g. `products`, `components`)"
+            "description": "Models to search, out of `products` and `components`, as a comma-separated list or as repeated `models[]` entries. Blank and repeated names are dropped; left out, both are searched. An unknown model answers 422 `SEARCH_MODELS_INVALID`"
           },
           {
             "$ref": "#/components/parameters/page"
@@ -13666,6 +13715,16 @@
               },
               "Link": {
                 "$ref": "#/components/headers/Link"
+              }
+            }
+          },
+          "422": {
+            "description": "A model the search does not index (`SEARCH_MODELS_INVALID`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
               }
             }
           }

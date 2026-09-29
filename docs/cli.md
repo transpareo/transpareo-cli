@@ -1,6 +1,6 @@
 # Command reference
 
-Every command of `transpareo`, generated from API specification 2.12.0. `--help` on any command prints the same example and permission key.
+Every command of `transpareo`, generated from API specification 2.16.0. `--help` on any command prints the same example and permission key.
 
 | Option on every command | What it does |
 |---|---|
@@ -1726,7 +1726,7 @@ transpareo search catalogue --query <query>
 
 | Option | What it does |
 |---|---|
-| `--models` \<value\> | Comma-separated model types to search (e.g. 'products', 'components') |
+| `--models` \<value\> | Models to search, out of 'products' and 'components', as a comma-separated list or as repeated 'models[]' entries. Blank and repeated names are dropped; left out, both are searched. An unknown model answers 422 'SEARCH_MODELS_INVALID' |
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 | `--page` \<n\> | Page number |
 | `--per-page` \<n\> | Records per page (default: 100, max: 500) |
