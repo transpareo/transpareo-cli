@@ -126,7 +126,7 @@ dockers_v2:
       - ghcr.io/transpareo/transpareo-signer
     tags:
       - "{{ .Version }}"
-      - "{{ .Major }}.{{ .Minor }}"
+      - "{{ if not .Prerelease }}{{ .Major }}.{{ .Minor }}{{ end }}"
       - "{{ if not .Prerelease }}latest{{ end }}"
     platforms:
       - linux/amd64
@@ -176,6 +176,9 @@ homebrew_casks:
       email: hello@transpareo.com
     commit_msg_template: >-
       Cask update for {{ .ProjectName }} version {{ .Tag }}
+    # A prerelease tag stays out of the tap, so an rc never reaches
+    # macOS users as if it were stable.
+    skip_upload: auto
     homepage: https://transpareo.com
     description: >-
       Command-line tool, MCP server and Go client for the Transpareo API
@@ -215,6 +218,8 @@ scoops:
       email: hello@transpareo.com
     commit_msg_template: >-
       Scoop update for {{ .ProjectName }} version {{ .Tag }}
+    # A prerelease tag stays out of the bucket as well.
+    skip_upload: auto
     homepage: https://transpareo.com
     description: >-
       Command-line tool, MCP server and Go client for the Transpareo API
