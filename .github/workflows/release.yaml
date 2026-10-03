@@ -98,7 +98,12 @@ jobs:
           distribution: goreleaser
           version: "~> v2"
           args: release --clean
+        # A stable tag usually lands on the commit its release
+        # candidate was tagged on, and goreleaser would then pick
+        # either tag by itself. The tag that started the run is the
+        # one released.
         env:
+          GORELEASER_CURRENT_TAG: ${{ github.ref_name }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           HOMEBREW_TAP_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
           SCOOP_BUCKET_TOKEN: ${{ secrets.SCOOP_BUCKET_TOKEN }}
