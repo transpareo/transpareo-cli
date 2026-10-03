@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"path"
 	"strconv"
 	"strings"
 	"sync"
@@ -363,7 +364,8 @@ func createWebhook(t *testing.T, c *transpareo.Client, url string) webhook {
 	t.Helper()
 	var out webhook
 	body := map[string]any{"webhook": map[string]any{
-		"url": url, "eventTypes": []string{"published", "voided"}}}
+		"name": path.Base(url), "url": url,
+		"eventTypes": []string{"published", "voided"}}}
 	_, err := c.Post(context.Background(), "/webhooks", body, &out)
 	if err != nil {
 		t.Fatalf("create webhook %q: %v", url, err)

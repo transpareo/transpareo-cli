@@ -1161,6 +1161,54 @@ func (e OAuthErrorError) Valid() bool {
 	}
 }
 
+// Defines values for ProductWeightUnit.
+const (
+	ProductWeightUnitG  ProductWeightUnit = "g"
+	ProductWeightUnitKg ProductWeightUnit = "kg"
+	ProductWeightUnitMg ProductWeightUnit = "mg"
+	ProductWeightUnitT  ProductWeightUnit = "t"
+)
+
+// Valid indicates whether the value is a known member of the ProductWeightUnit enum.
+func (e ProductWeightUnit) Valid() bool {
+	switch e {
+	case ProductWeightUnitG:
+		return true
+	case ProductWeightUnitKg:
+		return true
+	case ProductWeightUnitMg:
+		return true
+	case ProductWeightUnitT:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ProductDetailWeightUnit.
+const (
+	ProductDetailWeightUnitG  ProductDetailWeightUnit = "g"
+	ProductDetailWeightUnitKg ProductDetailWeightUnit = "kg"
+	ProductDetailWeightUnitMg ProductDetailWeightUnit = "mg"
+	ProductDetailWeightUnitT  ProductDetailWeightUnit = "t"
+)
+
+// Valid indicates whether the value is a known member of the ProductDetailWeightUnit enum.
+func (e ProductDetailWeightUnit) Valid() bool {
+	switch e {
+	case ProductDetailWeightUnitG:
+		return true
+	case ProductDetailWeightUnitKg:
+		return true
+	case ProductDetailWeightUnitMg:
+		return true
+	case ProductDetailWeightUnitT:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for RegisteredClientTokenEndpointAuthMethod.
 const (
 	RegisteredClientTokenEndpointAuthMethodClientSecretBasic RegisteredClientTokenEndpointAuthMethod = "client_secret_basic"
@@ -1208,9 +1256,10 @@ func (e TaskClosingReason) Valid() bool {
 
 // Defines values for TaskKind.
 const (
-	TaskKindCustom        TaskKind = "custom"
-	TaskKindPublishReview TaskKind = "publish_review"
-	TaskKindReview        TaskKind = "review"
+	TaskKindCustom                TaskKind = "custom"
+	TaskKindPublishReview         TaskKind = "publish_review"
+	TaskKindRequestForInformation TaskKind = "request_for_information"
+	TaskKindReview                TaskKind = "review"
 )
 
 // Valid indicates whether the value is a known member of the TaskKind enum.
@@ -1219,6 +1268,8 @@ func (e TaskKind) Valid() bool {
 	case TaskKindCustom:
 		return true
 	case TaskKindPublishReview:
+		return true
+	case TaskKindRequestForInformation:
 		return true
 	case TaskKindReview:
 		return true
@@ -2105,6 +2156,9 @@ type ClientRegistrationTokenEndpointAuthMethod string
 type Component struct {
 	Id *int `json:"id,omitempty"`
 
+	// Mpn The article number (Manufacturer Part Number) the maker gives the component. Present only when set, and only for a signed-in caller or an API consumer.
+	Mpn *string `json:"mpn,omitempty"`
+
 	// Name Example: Glycerin
 	Name      *string `json:"name,omitempty"`
 	Permalink *string `json:"permalink,omitempty"`
@@ -2122,7 +2176,7 @@ type Component struct {
 
 // ComponentDetail Full component details (returned by show action)
 //
-// Example: {"citations":[],"id":13,"mediafiles":[],"name":"Shea Butter","permalink":"/components/shea-butter","properties":{"Origin":{"id":14,"rated":true,"values":[{"id":811,"rating":"A","value":"West Africa"}]}},"published":true,"publishedAt":"2026-01-10T08:00:00Z","rating":"A","type":"Component"}
+// Example: {"citations":[],"id":13,"mediafiles":[],"mpn":"SB-RAW-25KG","name":"Shea Butter","permalink":"/components/shea-butter","properties":{"Origin":{"id":14,"rated":true,"values":[{"id":811,"rating":"A","value":"West Africa"}]}},"published":true,"publishedAt":"2026-01-10T08:00:00Z","rating":"A","type":"Component"}
 type ComponentDetail struct {
 	// Citations Scientific citations. Only present when citations are enabled in tenant config and the user has access (citations may be protected behind login).
 	Citations *[]Citation `json:"citations,omitempty"`
@@ -2130,6 +2184,9 @@ type ComponentDetail struct {
 
 	// Mediafiles Component images. Only present in show action.
 	Mediafiles *[]Mediafile `json:"mediafiles,omitempty"`
+
+	// Mpn The article number (Manufacturer Part Number) the maker gives the component. Present only when set, and only for a signed-in caller or an API consumer.
+	Mpn *string `json:"mpn,omitempty"`
 
 	// Name Example: Glycerin
 	Name      *string `json:"name,omitempty"`
@@ -2164,9 +2221,12 @@ type ComponentDetail struct {
 
 // ComponentInput A component write. `component` carries the attributes; `properties` and `templateIds` ride beside it in the shape the application manager's form sends and are applied after the component is saved.
 //
-// Example: {"component":{"name":"Shea Butter"},"properties":{"existing":{"14":{"811":{"value":"ES"}}},"new":{"12":[{"value":"Emollient"}]}},"templateIds":["507"]}
+// Example: {"component":{"mpn":"SB-RAW-25KG","name":"Shea Butter"},"properties":{"existing":{"14":{"811":{"value":"ES"}}},"new":{"12":[{"value":"Emollient"}]}},"templateIds":["507"]}
 type ComponentInput struct {
 	Component *struct {
+		// Mpn The article number (Manufacturer Part Number) the maker gives the component
+		Mpn *string `json:"mpn,omitempty"`
+
 		// Name Unique across the workspace
 		Name *string `json:"name,omitempty"`
 	} `json:"component,omitempty"`
@@ -2912,7 +2972,7 @@ type ExportInput struct {
 	// DataType The API exports passports. Payments, users and audit logs are exported from the application manager.
 	DataType *ExportInputDataType `json:"dataType,omitempty"`
 
-	// Format `jsonld` packs one document per passport, product and component into a tar archive; the tabular formats flatten the catalogue into one sheet each
+	// Format `jsonld` packs one document per passport, product and component into a tar archive; the tabular formats flatten the catalogue into one sheet each. A variant names its parent in `parent_key` in CSV and XLSX (the GTIN of the parent, else its name, which the product import reads back), in `parent_id` in SQL and in `isVariantOf` in JSON-LD. A parent outside the archive goes unnamed
 	Format *ExportInputFormat `json:"format,omitempty"`
 
 	// IncludeMedia Copy the product and component media files into the archive
@@ -2925,7 +2985,7 @@ type ExportInput struct {
 // ExportInputDataType The API exports passports. Payments, users and audit logs are exported from the application manager.
 type ExportInputDataType string
 
-// ExportInputFormat `jsonld` packs one document per passport, product and component into a tar archive; the tabular formats flatten the catalogue into one sheet each
+// ExportInputFormat `jsonld` packs one document per passport, product and component into a tar archive; the tabular formats flatten the catalogue into one sheet each. A variant names its parent in `parent_key` in CSV and XLSX (the GTIN of the parent, else its name, which the product import reads back), in `parent_id` in SQL and in `isVariantOf` in JSON-LD. A parent outside the archive goes unnamed
 type ExportInputFormat string
 
 // ExportSummary One export as a list answers it: where the run stands as the record has it, and where its archive is. The progress of a running export is read from `GET /exports/{id}`.
@@ -3684,9 +3744,15 @@ type Product struct {
 	// Type Example: Product
 	Type *string `json:"type,omitempty"`
 
-	// Weight Product weight (only when present)
+	// Weight Product weight, in `weightUnit` (only when present)
 	Weight *float32 `json:"weight,omitempty"`
+
+	// WeightUnit The unit of `weight` (present with the weight)
+	WeightUnit *ProductWeightUnit `json:"weightUnit,omitempty"`
 }
+
+// ProductWeightUnit The unit of `weight` (present with the weight)
+type ProductWeightUnit string
 
 // ProductComponent A component as it appears within a product (includes rating and properties when unlocked)
 type ProductComponent struct {
@@ -3832,9 +3898,15 @@ type ProductDetail struct {
 	// UpdatedAt Only present when the API consumer has the include_dates context flag.
 	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
 
-	// Weight Product weight. Only present when the product carries one.
+	// Weight Product weight, in `weightUnit`. Only present when the product carries one.
 	Weight *float32 `json:"weight,omitempty"`
+
+	// WeightUnit The unit of `weight`. Present with the weight.
+	WeightUnit *ProductDetailWeightUnit `json:"weightUnit,omitempty"`
 }
+
+// ProductDetailWeightUnit The unit of `weight`. Present with the weight.
+type ProductDetailWeightUnit string
 
 // ProductInput The fields of a product write. A create needs `name` and `componentsInput`, which the create operation says; an update carries only what it means to change, because every field it names is written.
 type ProductInput struct {
@@ -3981,7 +4053,7 @@ type Task struct {
 	Editable *bool `json:"editable,omitempty"`
 	Id       int   `json:"id"`
 
-	// Kind `custom` for what a person asks; the review kinds come from a review flow and end in an `outcome`
+	// Kind `custom` for what a person asks; the review kinds come from a review flow and end in an `outcome`; `request_for_information` stands for a request to a supplier and opens and closes with it
 	Kind TaskKind `json:"kind"`
 
 	// Moves The moves this credential may take on the task now, each a `POST /tasks/{id}/<move>`
@@ -4051,7 +4123,7 @@ type Task struct {
 // TaskClosingReason Why a review closed without a decision
 type TaskClosingReason string
 
-// TaskKind `custom` for what a person asks; the review kinds come from a review flow and end in an `outcome`
+// TaskKind `custom` for what a person asks; the review kinds come from a review flow and end in an `outcome`; `request_for_information` stands for a request to a supplier and opens and closes with it
 type TaskKind string
 
 // TaskMoves defines model for Task.Moves.
@@ -4231,7 +4303,7 @@ type UserInput struct {
 
 // Webhook One webhook subscription and its delivery state. Every delivery carries `X-Transpareo-Signature` as `t=<unix time>,v1=<hex>`, an HMAC-SHA256 over `<t>.<body>` with the subscription's secret. `secret` is answered once, on create and on regenerate.
 //
-// Example: {"active":true,"createdAt":"2026-09-08T09:12:44Z","eventTypes":["published","voided"],"failureCount":0,"id":7,"resourceScopeDppCodes":[],"secret":"3f9c1d2e4b5a6978c0d1e2f3a4b5c6d7e8f90a1b2c3d4e5f60718293a4b5c6d7","url":"https://hooks.example.com/transpareo"}
+// Example: {"active":true,"createdAt":"2026-09-08T09:12:44Z","eventTypes":["published","voided"],"failureCount":0,"id":7,"name":"Order fulfilment","resourceScopeDppCodes":[],"secret":"3f9c1d2e4b5a6978c0d1e2f3a4b5c6d7e8f90a1b2c3d4e5f60718293a4b5c6d7","url":"https://hooks.example.com/transpareo"}
 type Webhook struct {
 	// Active Switched off by hand, or by the platform after eight failed deliveries in a row. Switching it on again starts the failure count afresh.
 	Active    bool       `json:"active"`
@@ -4246,6 +4318,9 @@ type Webhook struct {
 	LastDeliveryAt *time.Time `json:"lastDeliveryAt,omitempty"`
 	LastFailureAt  *time.Time `json:"lastFailureAt,omitempty"`
 
+	// Name A short label so a list of subscriptions is scannable by more than the URL
+	Name string `json:"name"`
+
 	// ResourceScopeDppCodes Public codes of the passports the subscription is confined to; empty means every passport
 	ResourceScopeDppCodes *[]string `json:"resourceScopeDppCodes,omitempty"`
 
@@ -4259,13 +4334,16 @@ type Webhook struct {
 // WebhookEventTypes defines model for Webhook.EventTypes.
 type WebhookEventTypes string
 
-// WebhookInput Example: {"webhook":{"eventTypes":["published","voided"],"url":"https://hooks.example.com/transpareo"}}
+// WebhookInput Example: {"webhook":{"eventTypes":["published","voided"],"name":"Order fulfilment","url":"https://hooks.example.com/transpareo"}}
 type WebhookInput struct {
 	Webhook struct {
 		Active *bool `json:"active,omitempty"`
 
 		// EventTypes The versioned event types to deliver; empty or absent means all of them
 		EventTypes *[]WebhookInputWebhookEventTypes `json:"eventTypes,omitempty"`
+
+		// Name A short label so a list of subscriptions is scannable by more than the URL
+		Name string `json:"name"`
 
 		// ResourceScopeDppCodes Confine the subscription to these passports by public code; empty means every passport
 		ResourceScopeDppCodes *[]string `json:"resourceScopeDppCodes,omitempty"`
@@ -5085,7 +5163,7 @@ type SearchCatalogueParams struct {
 	// Query Search query
 	Query *string `form:"query,omitempty" json:"query,omitempty"`
 
-	// Models Comma-separated model types to search (e.g. `products`, `components`)
+	// Models Models to search, out of `products` and `components`, as a comma-separated list or as repeated `models[]` entries. Blank and repeated names are dropped; left out, both are searched. An unknown model answers 422 `SEARCH_MODELS_INVALID`
 	Models *string `form:"models,omitempty" json:"models,omitempty"`
 
 	// Page Page number
@@ -6130,7 +6208,7 @@ type ClientInterface interface {
 
 	// SupersedeDppWithBody Supersede a DPP
 	//
-	// Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. A consumer also needs write access to the passport itself (`dpp_write`).
+	// Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. Superseding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -6139,7 +6217,7 @@ type ClientInterface interface {
 
 	// SupersedeDpp Supersede a DPP
 	//
-	// Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. A consumer also needs write access to the passport itself (`dpp_write`).
+	// Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. Superseding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -8285,7 +8363,7 @@ func (c *Client) GetDppStats(ctx context.Context, id Id, params *GetDppStatsPara
 
 // SupersedeDppWithBody Supersede a DPP
 //
-// Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. A consumer also needs write access to the passport itself (`dpp_write`).
+// Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. Superseding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
 //
 // Takes any type of body and a specified content type.
 //
@@ -8304,7 +8382,7 @@ func (c *Client) SupersedeDppWithBody(ctx context.Context, id Id, params *Supers
 
 // SupersedeDpp Supersede a DPP
 //
-// Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. A consumer also needs write access to the passport itself (`dpp_write`).
+// Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. Superseding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
 //
 // Takes a body of the `application/json` content type.
 //
@@ -18020,7 +18098,7 @@ type ClientWithResponsesInterface interface {
 
 	// SupersedeDppWithBodyWithResponse Supersede a DPP
 	//
-	// Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. A consumer also needs write access to the passport itself (`dpp_write`).
+	// Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. Superseding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -18029,7 +18107,7 @@ type ClientWithResponsesInterface interface {
 
 	// SupersedeDppWithResponse Supersede a DPP
 	//
-	// Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. A consumer also needs write access to the passport itself (`dpp_write`).
+	// Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. Superseding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -25134,7 +25212,7 @@ type ResolvePermalinkResponse struct {
 
 		// Component Full component details (returned by show action)
 		//
-		// Example: {"citations":[],"id":13,"mediafiles":[],"name":"Shea Butter","permalink":"/components/shea-butter","properties":{"Origin":{"id":14,"rated":true,"values":[{"id":811,"rating":"A","value":"West Africa"}]}},"published":true,"publishedAt":"2026-01-10T08:00:00Z","rating":"A","type":"Component"}
+		// Example: {"citations":[],"id":13,"mediafiles":[],"mpn":"SB-RAW-25KG","name":"Shea Butter","permalink":"/components/shea-butter","properties":{"Origin":{"id":14,"rated":true,"values":[{"id":811,"rating":"A","value":"West Africa"}]}},"published":true,"publishedAt":"2026-01-10T08:00:00Z","rating":"A","type":"Component"}
 		Component *ComponentDetail        `json:"component,omitempty"`
 		Page      *map[string]interface{} `json:"page,omitempty"`
 
@@ -25163,7 +25241,7 @@ func (r ResolvePermalinkResponse) GetJSON200() *struct {
 
 	// Component Full component details (returned by show action)
 	//
-	// Example: {"citations":[],"id":13,"mediafiles":[],"name":"Shea Butter","permalink":"/components/shea-butter","properties":{"Origin":{"id":14,"rated":true,"values":[{"id":811,"rating":"A","value":"West Africa"}]}},"published":true,"publishedAt":"2026-01-10T08:00:00Z","rating":"A","type":"Component"}
+	// Example: {"citations":[],"id":13,"mediafiles":[],"mpn":"SB-RAW-25KG","name":"Shea Butter","permalink":"/components/shea-butter","properties":{"Origin":{"id":14,"rated":true,"values":[{"id":811,"rating":"A","value":"West Africa"}]}},"published":true,"publishedAt":"2026-01-10T08:00:00Z","rating":"A","type":"Component"}
 	Component *ComponentDetail        `json:"component,omitempty"`
 	Page      *map[string]interface{} `json:"page,omitempty"`
 
@@ -26307,6 +26385,8 @@ type SearchCatalogueResponse struct {
 		// Results Mixed array of products and components. Use the `type` field to distinguish.
 		Results *[]SearchCatalogue200JSONResponseBody_Results_Item `json:"results,omitempty"`
 	}
+	// JSON422 the response for an HTTP 422 `application/json` response
+	JSON422 *Error
 	// Headers200 the parsed response headers for an HTTP 200 response
 	Headers200 *SearchCatalogueResponse200Headers
 }
@@ -26317,6 +26397,11 @@ func (r SearchCatalogueResponse) GetJSON200() *struct {
 	Results *[]SearchCatalogue200JSONResponseBody_Results_Item `json:"results,omitempty"`
 } {
 	return r.JSON200
+}
+
+// GetJSON422 returns the response for an HTTP 422 `application/json` response
+func (r SearchCatalogueResponse) GetJSON422() *Error {
+	return r.JSON422
 }
 
 // GetBody returns the raw response body bytes
@@ -29100,7 +29185,7 @@ func (c *ClientWithResponses) GetDppStatsWithResponse(ctx context.Context, id Id
 
 // SupersedeDppWithBodyWithResponse Supersede a DPP
 //
-// Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. A consumer also needs write access to the passport itself (`dpp_write`).
+// Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. Superseding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -29115,7 +29200,7 @@ func (c *ClientWithResponses) SupersedeDppWithBodyWithResponse(ctx context.Conte
 
 // SupersedeDppWithResponse Supersede a DPP
 //
-// Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. A consumer also needs write access to the passport itself (`dpp_write`).
+// Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. Superseding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
@@ -36116,7 +36201,7 @@ func ParseResolvePermalinkResponse(rsp *http.Response) (*ResolvePermalinkRespons
 
 			// Component Full component details (returned by show action)
 			//
-			// Example: {"citations":[],"id":13,"mediafiles":[],"name":"Shea Butter","permalink":"/components/shea-butter","properties":{"Origin":{"id":14,"rated":true,"values":[{"id":811,"rating":"A","value":"West Africa"}]}},"published":true,"publishedAt":"2026-01-10T08:00:00Z","rating":"A","type":"Component"}
+			// Example: {"citations":[],"id":13,"mediafiles":[],"mpn":"SB-RAW-25KG","name":"Shea Butter","permalink":"/components/shea-butter","properties":{"Origin":{"id":14,"rated":true,"values":[{"id":811,"rating":"A","value":"West Africa"}]}},"published":true,"publishedAt":"2026-01-10T08:00:00Z","rating":"A","type":"Component"}
 			Component *ComponentDetail        `json:"component,omitempty"`
 			Page      *map[string]interface{} `json:"page,omitempty"`
 
@@ -37117,6 +37202,13 @@ func ParseSearchCatalogueResponse(rsp *http.Response) (*SearchCatalogueResponse,
 			return nil, err
 		}
 		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
 
 	}
 

@@ -1,5 +1,5 @@
 {
-  "version": "2.12.0",
+  "version": "2.16.0",
   "instructions": "Transpareo holds a workspace's products, components and Digital\nProduct Passports. Start with me to learn what the credential\nallows. Where its workspace.publishesOnCreate is true, every\nproduct and component is published as it is created, so never\nask the person to publish anything and never mention a\nstorefront, catalogue visibility or a frontend app.\nFor a new product call product_property_types before\ncreate_product. For passports of an existing product call\ndpp_requirements, then validate_dpp before create_dpp. A passport\nof a batch or an item names its lot in batchIdentifier and the lot\nis created with the first passport that names it; there is no\nseparate lot step. A new lot is taken only of a product that\npasses every other required readiness check; until then the\ncreate answers DPP_BATCH_PRODUCT_NOT_READY on batch, and the\nproduct is completed first. list_lots shows the lots a product already\nhas. A run of passports goes through bulk_create_dpps with the\nlot in shared. publish_dpp\nsigns the passport and cannot be undone. Recalling a unit is a\nstatus change to suspended through append_dpp_event, not a void;\nvoid_dpp is for a unit that no longer exists. void_dpp and\nsupersede_dpp need the confirm argument with the stated phrase.\nA spreadsheet you have read goes in through import_spreadsheet as\nrows keyed by the column headers, never as base64; when it\nanswers a preview, take the suggestion of every column with a\nmatch, ask the person one short question per column with\nmatchType none, and call again with the same rows and mappings,\nusing create_new for columns that should become property types.\nSet auto where the mapping is clear: the headings are those of\nthe import template, or ones you have already seen resolve in\nthis workspace. While a column has no match, work from the preview.\nA spreadsheet the person attached in the application manager\nstays on the server and is read with read_attachment, a page of\nrows at a time under its handle. Importing what it holds is a\nseparate step the person asks for; the same handle then goes to\nimport_spreadsheet as upload.\nA run started earlier, or in another session, is found with\nlist_imports or list_exports and read with wait_for_task on its\nstatusUrl.\nA question about how a person does something in the application\nmanager is answered from the help articles: search_help for the\ntopic, then read_help for the article. The API guide describes the\ncalls a program makes; the help articles describe the screens a\nperson uses.\nWork colleagues ask of the person is a task: list_tasks answers\nwhat waits on them, and each task names in moves what the\ncredential may do with it. Reviews show there as well and are\ndecided with approve_task and reject_task.\nAnything without a tool: search_operations, then call_api. Lists\nare paged; follow nextPage. Keep every answer short: what was\ndone, what was found, the one decision that is open.",
   "tools": [
     {
@@ -238,9 +238,10 @@
             "enum": [
               "custom",
               "review",
-              "publish_review"
+              "publish_review",
+              "request_for_information"
             ],
-            "description": "`custom` for what a person asks; the review kinds come from a review flow and end in an `outcome`"
+            "description": "`custom` for what a person asks; the review kinds come from a review flow and end in an `outcome`; `request_for_information` stands for a request to a supplier and opens and closes with it"
           },
           "title": {
             "type": "string",
@@ -1083,9 +1084,10 @@
             "enum": [
               "custom",
               "review",
-              "publish_review"
+              "publish_review",
+              "request_for_information"
             ],
-            "description": "`custom` for what a person asks; the review kinds come from a review flow and end in an `outcome`"
+            "description": "`custom` for what a person asks; the review kinds come from a review flow and end in an `outcome`; `request_for_information` stands for a request to a supplier and opens and closes with it"
           },
           "title": {
             "type": "string",
@@ -1531,9 +1533,10 @@
             "enum": [
               "custom",
               "review",
-              "publish_review"
+              "publish_review",
+              "request_for_information"
             ],
-            "description": "`custom` for what a person asks; the review kinds come from a review flow and end in an `outcome`"
+            "description": "`custom` for what a person asks; the review kinds come from a review flow and end in an `outcome`; `request_for_information` stands for a request to a supplier and opens and closes with it"
           },
           "title": {
             "type": "string",
@@ -1979,9 +1982,10 @@
             "enum": [
               "custom",
               "review",
-              "publish_review"
+              "publish_review",
+              "request_for_information"
             ],
-            "description": "`custom` for what a person asks; the review kinds come from a review flow and end in an `outcome`"
+            "description": "`custom` for what a person asks; the review kinds come from a review flow and end in an `outcome`; `request_for_information` stands for a request to a supplier and opens and closes with it"
           },
           "title": {
             "type": "string",
@@ -2483,6 +2487,10 @@
               "name": {
                 "type": "string",
                 "description": "Unique across the workspace"
+              },
+              "mpn": {
+                "type": "string",
+                "description": "The article number (Manufacturer Part Number) the maker gives the component"
               }
             }
           },
@@ -2572,6 +2580,10 @@
           "rating": {
             "type": "string",
             "description": "Component rating (very_good/good/neutral/bad/very_bad) when unlocked via DPP key or authorized. Returns 'protected' otherwise. Only present when ratings are enabled."
+          },
+          "mpn": {
+            "type": "string",
+            "description": "The article number (Manufacturer Part Number) the maker gives the component. Present only when set, and only for a signed-in caller or an API consumer."
           },
           "properties": {
             "type": "object",
@@ -2739,7 +2751,17 @@
                 },
                 "weight": {
                   "type": "number",
-                  "description": "Product weight (only when present)"
+                  "description": "Product weight, in `weightUnit` (only when present)"
+                },
+                "weightUnit": {
+                  "type": "string",
+                  "enum": [
+                    "kg",
+                    "g",
+                    "mg",
+                    "t"
+                  ],
+                  "description": "The unit of `weight` (present with the weight)"
                 }
               },
               "example": {
@@ -2764,6 +2786,7 @@
           "published": true,
           "publishedAt": "2026-01-10T08:00:00Z",
           "rating": "A",
+          "mpn": "SB-RAW-25KG",
           "properties": {
             "Origin": {
               "id": 14,
@@ -2943,7 +2966,17 @@
               },
               "weight": {
                 "type": "number",
-                "description": "Product weight (only when present)"
+                "description": "Product weight, in `weightUnit` (only when present)"
+              },
+              "weightUnit": {
+                "type": "string",
+                "enum": [
+                  "kg",
+                  "g",
+                  "mg",
+                  "t"
+                ],
+                "description": "The unit of `weight` (present with the weight)"
               }
             },
             "example": {
@@ -3764,7 +3797,17 @@
           },
           "weight": {
             "type": "number",
-            "description": "Product weight. Only present when the product carries one."
+            "description": "Product weight, in `weightUnit`. Only present when the product carries one."
+          },
+          "weightUnit": {
+            "type": "string",
+            "enum": [
+              "kg",
+              "g",
+              "mg",
+              "t"
+            ],
+            "description": "The unit of `weight`. Present with the weight."
           },
           "createdAt": {
             "type": "string",
@@ -3909,9 +3952,10 @@
             "enum": [
               "custom",
               "review",
-              "publish_review"
+              "publish_review",
+              "request_for_information"
             ],
-            "description": "`custom` for what a person asks; the review kinds come from a review flow and end in an `outcome`"
+            "description": "`custom` for what a person asks; the review kinds come from a review flow and end in an `outcome`; `request_for_information` stands for a request to a supplier and opens and closes with it"
           },
           "title": {
             "type": "string",
@@ -4320,13 +4364,20 @@
     {
       "name": "create_webhook",
       "title": "Create a webhook subscription",
-      "description": "Create a webhook subscription. The answer carries the signing secret, shown only here.\nPermission: webhook_access. Data tier: authorised (the workspace's own catalogue).\nExample: create_webhook {\"webhook\":{\"url\":\"https://hooks.example.com/transpareo\",\"eventTypes\":[\"published\",\"voided\"]}}",
+      "description": "Create a webhook subscription. The answer carries the signing secret, shown only here.\nPermission: webhook_access. Data tier: authorised (the workspace's own catalogue).\nExample: create_webhook {\"webhook\":{\"name\":\"Order fulfilment\",\"url\":\"https://hooks.example.com/transpareo\",\"eventTypes\":[\"published\",\"voided\"]}}",
       "inputSchema": {
         "type": "object",
         "properties": {
           "webhook": {
             "type": "object",
+            "required": [
+              "name"
+            ],
             "properties": {
+              "name": {
+                "type": "string",
+                "description": "A short label so a list of subscriptions is scannable by more than the URL"
+              },
               "url": {
                 "type": "string",
                 "format": "uri",
@@ -4380,6 +4431,7 @@
         "description": "One webhook subscription and its delivery state. Every delivery carries `X-Transpareo-Signature` as `t=<unix time>,v1=<hex>`, an HMAC-SHA256 over `<t>.<body>` with the subscription's secret. `secret` is answered once, on create and on regenerate.",
         "required": [
           "id",
+          "name",
           "url",
           "active",
           "eventTypes"
@@ -4387,6 +4439,10 @@
         "properties": {
           "id": {
             "type": "integer"
+          },
+          "name": {
+            "type": "string",
+            "description": "A short label so a list of subscriptions is scannable by more than the URL"
           },
           "url": {
             "type": "string",
@@ -4448,6 +4504,7 @@
         },
         "example": {
           "id": 7,
+          "name": "Order fulfilment",
           "url": "https://hooks.example.com/transpareo",
           "active": true,
           "eventTypes": [
@@ -5089,6 +5146,10 @@
             "type": "string",
             "description": "Component rating (very_good/good/neutral/bad/very_bad) when unlocked via DPP key or authorized. Returns 'protected' otherwise. Only present when ratings are enabled."
           },
+          "mpn": {
+            "type": "string",
+            "description": "The article number (Manufacturer Part Number) the maker gives the component. Present only when set, and only for a signed-in caller or an API consumer."
+          },
           "properties": {
             "type": "object",
             "description": "Component properties grouped by type name. Only present in show action. Protected types return {\"protected\": true} instead of values when user is not unlocked.",
@@ -5255,7 +5316,17 @@
                 },
                 "weight": {
                   "type": "number",
-                  "description": "Product weight (only when present)"
+                  "description": "Product weight, in `weightUnit` (only when present)"
+                },
+                "weightUnit": {
+                  "type": "string",
+                  "enum": [
+                    "kg",
+                    "g",
+                    "mg",
+                    "t"
+                  ],
+                  "description": "The unit of `weight` (present with the weight)"
                 }
               },
               "example": {
@@ -5280,6 +5351,7 @@
           "published": true,
           "publishedAt": "2026-01-10T08:00:00Z",
           "rating": "A",
+          "mpn": "SB-RAW-25KG",
           "properties": {
             "Origin": {
               "id": 14,
@@ -5413,7 +5485,17 @@
                   },
                   "weight": {
                     "type": "number",
-                    "description": "Product weight (only when present)"
+                    "description": "Product weight, in `weightUnit` (only when present)"
+                  },
+                  "weightUnit": {
+                    "type": "string",
+                    "enum": [
+                      "kg",
+                      "g",
+                      "mg",
+                      "t"
+                    ],
+                    "description": "The unit of `weight` (present with the weight)"
                   }
                 },
                 "example": {
@@ -6232,7 +6314,17 @@
           },
           "weight": {
             "type": "number",
-            "description": "Product weight. Only present when the product carries one."
+            "description": "Product weight, in `weightUnit`. Only present when the product carries one."
+          },
+          "weightUnit": {
+            "type": "string",
+            "enum": [
+              "kg",
+              "g",
+              "mg",
+              "t"
+            ],
+            "description": "The unit of `weight`. Present with the weight."
           },
           "createdAt": {
             "type": "string",
@@ -6356,9 +6448,10 @@
             "enum": [
               "custom",
               "review",
-              "publish_review"
+              "publish_review",
+              "request_for_information"
             ],
-            "description": "`custom` for what a person asks; the review kinds come from a review flow and end in an `outcome`"
+            "description": "`custom` for what a person asks; the review kinds come from a review flow and end in an `outcome`; `request_for_information` stands for a request to a supplier and opens and closes with it"
           },
           "title": {
             "type": "string",
@@ -7022,6 +7115,10 @@
                 "rating": {
                   "type": "string",
                   "description": "A-D or 'protected'"
+                },
+                "mpn": {
+                  "type": "string",
+                  "description": "The article number (Manufacturer Part Number) the maker gives the component. Present only when set, and only for a signed-in caller or an API consumer."
                 }
               },
               "example": {
@@ -7177,7 +7274,17 @@
                     },
                     "weight": {
                       "type": "number",
-                      "description": "Product weight (only when present)"
+                      "description": "Product weight, in `weightUnit` (only when present)"
+                    },
+                    "weightUnit": {
+                      "type": "string",
+                      "enum": [
+                        "kg",
+                        "g",
+                        "mg",
+                        "t"
+                      ],
+                      "description": "The unit of `weight` (present with the weight)"
                     }
                   },
                   "example": {
@@ -8109,7 +8216,17 @@
                 },
                 "weight": {
                   "type": "number",
-                  "description": "Product weight (only when present)"
+                  "description": "Product weight, in `weightUnit` (only when present)"
+                },
+                "weightUnit": {
+                  "type": "string",
+                  "enum": [
+                    "kg",
+                    "g",
+                    "mg",
+                    "t"
+                  ],
+                  "description": "The unit of `weight` (present with the weight)"
                 }
               },
               "example": {
@@ -8285,9 +8402,10 @@
                   "enum": [
                     "custom",
                     "review",
-                    "publish_review"
+                    "publish_review",
+                    "request_for_information"
                   ],
-                  "description": "`custom` for what a person asks; the review kinds come from a review flow and end in an `outcome`"
+                  "description": "`custom` for what a person asks; the review kinds come from a review flow and end in an `outcome`; `request_for_information` stands for a request to a supplier and opens and closes with it"
                 },
                 "title": {
                   "type": "string",
@@ -8743,6 +8861,7 @@
               "description": "One webhook subscription and its delivery state. Every delivery carries `X-Transpareo-Signature` as `t=<unix time>,v1=<hex>`, an HMAC-SHA256 over `<t>.<body>` with the subscription's secret. `secret` is answered once, on create and on regenerate.",
               "required": [
                 "id",
+                "name",
                 "url",
                 "active",
                 "eventTypes"
@@ -8750,6 +8869,10 @@
               "properties": {
                 "id": {
                   "type": "integer"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "A short label so a list of subscriptions is scannable by more than the URL"
                 },
                 "url": {
                   "type": "string",
@@ -8811,6 +8934,7 @@
               },
               "example": {
                 "id": 7,
+                "name": "Order fulfilment",
                 "url": "https://hooks.example.com/transpareo",
                 "active": true,
                 "eventTypes": [
@@ -9400,7 +9524,17 @@
           },
           "weight": {
             "type": "number",
-            "description": "Product weight. Only present when the product carries one."
+            "description": "Product weight, in `weightUnit`. Only present when the product carries one."
+          },
+          "weightUnit": {
+            "type": "string",
+            "enum": [
+              "kg",
+              "g",
+              "mg",
+              "t"
+            ],
+            "description": "The unit of `weight`. Present with the weight."
           },
           "createdAt": {
             "type": "string",
@@ -9943,7 +10077,17 @@
           },
           "weight": {
             "type": "number",
-            "description": "Product weight. Only present when the product carries one."
+            "description": "Product weight, in `weightUnit`. Only present when the product carries one."
+          },
+          "weightUnit": {
+            "type": "string",
+            "enum": [
+              "kg",
+              "g",
+              "mg",
+              "t"
+            ],
+            "description": "The unit of `weight`. Present with the weight."
           },
           "createdAt": {
             "type": "string",
@@ -10249,6 +10393,7 @@
         "description": "One webhook subscription and its delivery state. Every delivery carries `X-Transpareo-Signature` as `t=<unix time>,v1=<hex>`, an HMAC-SHA256 over `<t>.<body>` with the subscription's secret. `secret` is answered once, on create and on regenerate.",
         "required": [
           "id",
+          "name",
           "url",
           "active",
           "eventTypes"
@@ -10256,6 +10401,10 @@
         "properties": {
           "id": {
             "type": "integer"
+          },
+          "name": {
+            "type": "string",
+            "description": "A short label so a list of subscriptions is scannable by more than the URL"
           },
           "url": {
             "type": "string",
@@ -10317,6 +10466,7 @@
         },
         "example": {
           "id": 7,
+          "name": "Order fulfilment",
           "url": "https://hooks.example.com/transpareo",
           "active": true,
           "eventTypes": [
@@ -10448,7 +10598,17 @@
               },
               "weight": {
                 "type": "number",
-                "description": "Product weight (only when present)"
+                "description": "Product weight, in `weightUnit` (only when present)"
+              },
+              "weightUnit": {
+                "type": "string",
+                "enum": [
+                  "kg",
+                  "g",
+                  "mg",
+                  "t"
+                ],
+                "description": "The unit of `weight` (present with the weight)"
               }
             },
             "example": {
@@ -10777,9 +10937,10 @@
             "enum": [
               "custom",
               "review",
-              "publish_review"
+              "publish_review",
+              "request_for_information"
             ],
-            "description": "`custom` for what a person asks; the review kinds come from a review flow and end in an `outcome`"
+            "description": "`custom` for what a person asks; the review kinds come from a review flow and end in an `outcome`; `request_for_information` stands for a request to a supplier and opens and closes with it"
           },
           "title": {
             "type": "string",
@@ -11225,9 +11386,10 @@
             "enum": [
               "custom",
               "review",
-              "publish_review"
+              "publish_review",
+              "request_for_information"
             ],
-            "description": "`custom` for what a person asks; the review kinds come from a review flow and end in an `outcome`"
+            "description": "`custom` for what a person asks; the review kinds come from a review flow and end in an `outcome`; `request_for_information` stands for a request to a supplier and opens and closes with it"
           },
           "title": {
             "type": "string",
@@ -11672,9 +11834,10 @@
             "enum": [
               "custom",
               "review",
-              "publish_review"
+              "publish_review",
+              "request_for_information"
             ],
-            "description": "`custom` for what a person asks; the review kinds come from a review flow and end in an `outcome`"
+            "description": "`custom` for what a person asks; the review kinds come from a review flow and end in an `outcome`; `request_for_information` stands for a request to a supplier and opens and closes with it"
           },
           "title": {
             "type": "string",
@@ -12307,7 +12470,7 @@
     {
       "name": "supersede_dpp",
       "title": "Supersede a DPP",
-      "description": "Supersede a DPP\nPermission: dpp_lifecycle. Cannot be undone; confirm must be \"supersede <id>\". Data tier: authorised (the workspace's own catalogue).\nExample: supersede_dpp {\"confirm\":\"supersede <id>\",\"description\":\"Replaced under warranty\",\"id\":\"<id>\",\"successorCode\":\"F9G8H7J6K\"}",
+      "description": "Supersede a DPP. For a unit another passport replaced. Superseding cannot be undone.\nPermission: dpp_lifecycle. Cannot be undone; confirm must be \"supersede <id>\". Data tier: authorised (the workspace's own catalogue).\nExample: supersede_dpp {\"confirm\":\"supersede <id>\",\"description\":\"Replaced under warranty\",\"id\":\"<id>\",\"successorCode\":\"F9G8H7J6K\"}",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -12408,7 +12571,17 @@
               },
               "weight": {
                 "type": "number",
-                "description": "Product weight (only when present)"
+                "description": "Product weight, in `weightUnit` (only when present)"
+              },
+              "weightUnit": {
+                "type": "string",
+                "enum": [
+                  "kg",
+                  "g",
+                  "mg",
+                  "t"
+                ],
+                "description": "The unit of `weight` (present with the weight)"
               }
             },
             "example": {
@@ -12682,6 +12855,7 @@
         "safe": false,
         "group": "dpps",
         "kind": "write",
+        "sentence": "For a unit another passport replaced. Superseding cannot be undone.",
         "confirm": "supersede <id>"
       }
     },
@@ -13200,7 +13374,17 @@
           },
           "weight": {
             "type": "number",
-            "description": "Product weight. Only present when the product carries one."
+            "description": "Product weight, in `weightUnit`. Only present when the product carries one."
+          },
+          "weightUnit": {
+            "type": "string",
+            "enum": [
+              "kg",
+              "g",
+              "mg",
+              "t"
+            ],
+            "description": "The unit of `weight`. Present with the weight."
           },
           "createdAt": {
             "type": "string",
@@ -13282,7 +13466,7 @@
     {
       "name": "update_component",
       "title": "Update a component",
-      "description": "Update a component\nPermission: one of component_access, component_write. Data tier: authorised (the workspace's own catalogue).\nExample: update_component {\"component\":{\"name\":\"Shea Butter\"},\"id\":\"<id>\",\"properties\":{\"new\":{\"12\":[{\"value\":\"Emollient\"}]},\"existing\":{\"14\":{\"811\":{\"value\":\"ES\"}}}},\"templateIds\":[\"507\"]}",
+      "description": "Update a component\nPermission: one of component_access, component_write. Data tier: authorised (the workspace's own catalogue).\nExample: update_component {\"component\":{\"name\":\"Shea Butter\",\"mpn\":\"SB-RAW-25KG\"},\"id\":\"<id>\",\"properties\":{\"new\":{\"12\":[{\"value\":\"Emollient\"}]},\"existing\":{\"14\":{\"811\":{\"value\":\"ES\"}}}},\"templateIds\":[\"507\"]}",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -13296,6 +13480,10 @@
               "name": {
                 "type": "string",
                 "description": "Unique across the workspace"
+              },
+              "mpn": {
+                "type": "string",
+                "description": "The article number (Manufacturer Part Number) the maker gives the component"
               }
             }
           },
@@ -13384,6 +13572,10 @@
           "rating": {
             "type": "string",
             "description": "Component rating (very_good/good/neutral/bad/very_bad) when unlocked via DPP key or authorized. Returns 'protected' otherwise. Only present when ratings are enabled."
+          },
+          "mpn": {
+            "type": "string",
+            "description": "The article number (Manufacturer Part Number) the maker gives the component. Present only when set, and only for a signed-in caller or an API consumer."
           },
           "properties": {
             "type": "object",
@@ -13551,7 +13743,17 @@
                 },
                 "weight": {
                   "type": "number",
-                  "description": "Product weight (only when present)"
+                  "description": "Product weight, in `weightUnit` (only when present)"
+                },
+                "weightUnit": {
+                  "type": "string",
+                  "enum": [
+                    "kg",
+                    "g",
+                    "mg",
+                    "t"
+                  ],
+                  "description": "The unit of `weight` (present with the weight)"
                 }
               },
               "example": {
@@ -13576,6 +13778,7 @@
           "published": true,
           "publishedAt": "2026-01-10T08:00:00Z",
           "rating": "A",
+          "mpn": "SB-RAW-25KG",
           "properties": {
             "Origin": {
               "id": 14,
@@ -13755,7 +13958,17 @@
               },
               "weight": {
                 "type": "number",
-                "description": "Product weight (only when present)"
+                "description": "Product weight, in `weightUnit` (only when present)"
+              },
+              "weightUnit": {
+                "type": "string",
+                "enum": [
+                  "kg",
+                  "g",
+                  "mg",
+                  "t"
+                ],
+                "description": "The unit of `weight` (present with the weight)"
               }
             },
             "example": {
@@ -14559,7 +14772,17 @@
           },
           "weight": {
             "type": "number",
-            "description": "Product weight. Only present when the product carries one."
+            "description": "Product weight, in `weightUnit`. Only present when the product carries one."
+          },
+          "weightUnit": {
+            "type": "string",
+            "enum": [
+              "kg",
+              "g",
+              "mg",
+              "t"
+            ],
+            "description": "The unit of `weight`. Present with the weight."
           },
           "createdAt": {
             "type": "string",
@@ -15023,7 +15246,17 @@
               },
               "weight": {
                 "type": "number",
-                "description": "Product weight (only when present)"
+                "description": "Product weight, in `weightUnit` (only when present)"
+              },
+              "weightUnit": {
+                "type": "string",
+                "enum": [
+                  "kg",
+                  "g",
+                  "mg",
+                  "t"
+                ],
+                "description": "The unit of `weight` (present with the weight)"
               }
             },
             "example": {

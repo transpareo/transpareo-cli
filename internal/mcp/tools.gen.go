@@ -343,11 +343,12 @@ var curated = []Tool{
 		Description: `How a person does something in the application manager, from the articles it shows them. Give term the question in the reader's own words. A call with no term answers the whole set, which is how an empty answer is told apart from a workspace whose help content has not arrived.`,
 	},
 	{
-		Name:      "supersede_dpp",
-		Group:     GroupDpps,
-		Operation: "supersede_dpp",
-		Kind:      kindWrite,
-		Confirm:   "supersede <id>",
+		Name:        "supersede_dpp",
+		Group:       GroupDpps,
+		Operation:   "supersede_dpp",
+		Kind:        kindWrite,
+		Confirm:     "supersede <id>",
+		Description: `For a unit another passport replaced. Superseding cannot be undone.`,
 	},
 	{
 		Name:      "test_webhook",
