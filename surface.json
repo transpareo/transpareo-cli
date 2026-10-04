@@ -332,6 +332,14 @@
     "operationId": "list_dpps"
   },
   {
+    "path": "transpareo dpps private-dynamic-data",
+    "args": "<code>",
+    "flags": [
+      "output"
+    ],
+    "operationId": "get_dpp_private_dynamic_data"
+  },
+  {
     "path": "transpareo dpps private-properties",
     "args": "<code>",
     "flags": [
@@ -795,6 +803,16 @@
     "operationId": "publish_product"
   },
   {
+    "path": "transpareo products restore-values",
+    "args": "<id>",
+    "flags": [
+      "file",
+      "output",
+      "set"
+    ],
+    "operationId": "restore_product_values"
+  },
+  {
     "path": "transpareo products unpublish",
     "args": "<id>",
     "flags": [
@@ -925,6 +943,14 @@
       "term"
     ],
     "operationId": "list_task_assignees"
+  },
+  {
+    "path": "transpareo tasks attachment",
+    "args": "<id> <attachmentId>",
+    "flags": [
+      "output"
+    ],
+    "operationId": "get_task_attachment"
   },
   {
     "path": "transpareo tasks cancel",

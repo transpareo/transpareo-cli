@@ -2,8 +2,8 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Transpareo API",
-    "version": "2.16.0",
-    "description": "This site runs on the [Transpareo](https://transpareo.com) product information platform. The REST API gives programs access to products, product components, brands, Digital Product Passports, categories and configuration. The version is selected with the `Accept` header, not a path segment.\n\nThe guide at [/apidocs/guide](/apidocs/guide) is the narrative companion to this reference: credentials, permissions, pagination, idempotency, the passport flows, the event feed, webhooks, rate limits and the error format. It is also served as Markdown at [/apidocs/guide.md](/apidocs/guide.md).\n\nPrograms authenticate with the OAuth 2.0 client credentials grant. Exchange the client id and secret once, then send the token on every request:\n\n```\ncurl -X POST https://<host>/api/oauth/token -d grant_type=client_credentials -d client_id=<key> -d client_secret=<secret>\n\ncurl https://<host>/api/me -H \"Authorization: Bearer <access_token>\"\n```\n\nAn assistant that speaks the Model Context Protocol connects to `/mcp` on this host and calls these operations as tools, named in the catalogue at [/apidocs/mcp-tools.json](/apidocs/mcp-tools.json) and explained by the guide's Assistants section.",
+    "version": "2.27.0",
+    "description": "This site runs on the [Transpareo](https://transpareo.com) product information platform. The REST API gives programs access to products, product components, brands, Digital Product Passports, categories and configuration. This reference describes version 2, which a request names with `Accept: application/vnd.api.v2+json` or `?v=2`, and which answers a request that names none; version 1 is its earlier name and is answered the same way. The guide's [Versions](/apidocs/guide#versions) section says how versions change.\n\nThe guide at [/apidocs/guide](/apidocs/guide) is the narrative companion to this reference: credentials, permissions, pagination, idempotency, the passport flows, the event feed, webhooks, rate limits and the error format. It is also served as Markdown at [/apidocs/guide.md](/apidocs/guide.md).\n\nPrograms authenticate with the OAuth 2.0 client credentials grant. Exchange the client id and secret once, then send the token on every request:\n\n```\ncurl -X POST https://<host>/api/oauth/token -d grant_type=client_credentials -d client_id=<key> -d client_secret=<secret>\n\ncurl https://<host>/api/me -H \"Authorization: Bearer <access_token>\"\n```\n\nAn assistant that speaks the Model Context Protocol connects to `/mcp` on this host and calls these operations as tools, named in the catalogue at [/apidocs/mcp-tools.json](/apidocs/mcp-tools.json) and explained by the guide's Assistants section.",
     "contact": {
       "name": "Transpareo Support",
       "url": "https://transpareo.com"
@@ -935,6 +935,13 @@
             "type": "string",
             "description": "The article number (Manufacturer Part Number) the maker gives the component. Present only when set, and only for a signed-in caller or an API consumer."
           },
+          "templateIds": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "The components this one takes its properties from, in order. Where two templates fill a property that holds one value, the first one wins; list and composition properties take the values of every template, a shared one once. A write's `templateIds` sets the order too. Present only for a signed-in caller or an API consumer."
+          },
           "properties": {
             "type": "object",
             "description": "Component properties grouped by type name. Only present in show action. Protected types return {\"protected\": true} instead of values when user is not unlocked.",
@@ -993,6 +1000,9 @@
           "publishedAt": "2026-01-10T08:00:00Z",
           "rating": "A",
           "mpn": "SB-RAW-25KG",
+          "templateIds": [
+            7
+          ],
           "properties": {
             "Origin": {
               "id": 14,
@@ -1073,7 +1083,7 @@
           },
           "templateIds": {
             "type": "array",
-            "description": "The components this one inherits properties from; replaces the current set",
+            "description": "The components this one inherits properties from, in order; replaces the current set and its order. Where two of them fill a property that holds one value, the first one wins.",
             "items": {
               "type": "string"
             }
@@ -2412,6 +2422,59 @@
           }
         }
       },
+      "DynamicDataDocument": {
+        "type": "object",
+        "description": "A passport's live readings, signed with the Transpareo platform key. The public document on the CDN and the restricted answer of `GET /dpps/{code}/private_dynamic_data` share this shape; each holds only the rows of its own tier. `@id` and `issuer` are copied from the passport's current version and are absent before its first published version.",
+        "properties": {
+          "@type": {
+            "type": "string",
+            "example": "DppDynamicData"
+          },
+          "@id": {
+            "type": "string",
+            "format": "uri",
+            "description": "The passport's IRI, as its current version states it"
+          },
+          "code": {
+            "type": "string",
+            "description": "The public passport code"
+          },
+          "issuer": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "The issuer, as the passport's current version states it"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the readings were last written"
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "propertyID": {
+                  "type": "string",
+                  "description": "The vocabulary term of the property type, or its id when it has none"
+                },
+                "value": {
+                  "description": "The reading"
+                },
+                "unitCode": {
+                  "type": "string",
+                  "description": "UN/CEFACT unit code, when the reading carries one"
+                }
+              }
+            }
+          },
+          "signature": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "The platform's Data Integrity proof over the rest of the document"
+          }
+        }
+      },
       "DynamicDataInput": {
         "type": "object",
         "description": "The keys to write onto the passport's dynamic-data surface. Sent keys are merged into the stored set; a key sent as an explicit null is removed. Every key is stored. The public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none).",
@@ -3557,6 +3620,16 @@
           "statusUrl": "https://example.com/api/imports/12"
         }
       },
+      "InheritanceState": {
+        "type": "string",
+        "description": "What a variant does with a value its parent holds. `follows` takes the parent's value whenever it changes; `pinned` holds a value of the variant's own; `parent_moved` holds one while the parent changed its value since; `own` marks a property value or a component the variant added itself.",
+        "enum": [
+          "follows",
+          "pinned",
+          "parent_moved",
+          "own"
+        ]
+      },
       "Language": {
         "type": "object",
         "properties": {
@@ -4365,6 +4438,11 @@
             "type": "string",
             "description": "Claim token for unclaimed products (only when present)"
           },
+          "parentId": {
+            "type": "integer",
+            "nullable": true,
+            "description": "The product this one is a variant of, null on a root. Present only for a signed-in caller or an API consumer."
+          },
           "weight": {
             "type": "number",
             "description": "Product weight, in `weightUnit` (only when present)"
@@ -4396,7 +4474,8 @@
         "description": "A component as it appears within a product (includes rating and properties when unlocked)",
         "properties": {
           "id": {
-            "type": "integer"
+            "type": "integer",
+            "description": "The row's own id within the product, which stays the same across saves"
           },
           "type": {
             "type": "string"
@@ -4426,6 +4505,14 @@
               "$ref": "#/components/schemas/Property"
             },
             "description": "Rated properties (only when unlocked)"
+          },
+          "inheritance": {
+            "description": "Whether the variant follows its parent for this component, its name, share and origin. Present only on a variant's components, for a signed-in caller or an API consumer.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/InheritanceState"
+              }
+            ]
           }
         }
       },
@@ -4467,6 +4554,39 @@
             "type": "string",
             "description": "Claim token for unclaimed products. Only present when the product has an unresolved token."
           },
+          "parentId": {
+            "type": "integer",
+            "nullable": true,
+            "description": "The product this one is a variant of, null on a root. Present only for a signed-in caller or an API consumer."
+          },
+          "variantsCount": {
+            "type": "integer",
+            "description": "How many products are variants of this one. Present only for a signed-in caller or an API consumer."
+          },
+          "inheritance": {
+            "type": "object",
+            "description": "Per value a variant takes from its parent, whether it follows the parent (`follows`), holds a value of its own (`pinned`), or holds one while the parent changed its value since (`parent_moved`). `images` is the list of files as one value, `componentsOrder` the order of the components. Present only on a variant, for a signed-in caller or an API consumer; each property value and each component carries its own.",
+            "properties": {
+              "brand": {
+                "$ref": "#/components/schemas/InheritanceState"
+              },
+              "categories": {
+                "$ref": "#/components/schemas/InheritanceState"
+              },
+              "hsCode": {
+                "$ref": "#/components/schemas/InheritanceState"
+              },
+              "weight": {
+                "$ref": "#/components/schemas/InheritanceState"
+              },
+              "images": {
+                "$ref": "#/components/schemas/InheritanceState"
+              },
+              "componentsOrder": {
+                "$ref": "#/components/schemas/InheritanceState"
+              }
+            }
+          },
           "ownerName": {
             "type": "string",
             "description": "Name of the record owner. Only present in show action when the product has an owner."
@@ -4491,7 +4611,7 @@
           },
           "properties": {
             "type": "object",
-            "description": "Product properties grouped by property type name. Only present in show/permalink actions. Filtered by the show parameter and user group access.",
+            "description": "Product properties grouped by property type name. Only present in show/permalink actions. Filtered by the show parameter and access group access.",
             "additionalProperties": {
               "type": "object",
               "properties": {
@@ -4598,7 +4718,7 @@
                 },
                 "restrictedByGroup": {
                   "type": "boolean",
-                  "description": "Restricted to specific user groups"
+                  "description": "Restricted to specific access groups"
                 },
                 "restrictedByParam": {
                   "type": "boolean",
@@ -4663,6 +4783,16 @@
           "publishedAt": "2026-01-15T10:30:00Z",
           "rating": "A",
           "gtin": "4006381333931",
+          "parentId": 4,
+          "variantsCount": 0,
+          "inheritance": {
+            "brand": "follows",
+            "categories": "follows",
+            "hsCode": "follows",
+            "weight": "pinned",
+            "images": "parent_moved",
+            "componentsOrder": "follows"
+          },
           "brand": {
             "id": 12,
             "type": "Brand",
@@ -4677,19 +4807,22 @@
               "inputType": "text",
               "values": [
                 {
-                  "value": "50 ml"
+                  "value": "50 ml",
+                  "rowId": 2,
+                  "inheritance": "follows"
                 }
               ]
             }
           },
           "components": [
             {
-              "id": 13,
-              "type": "Component",
+              "id": 1,
+              "type": "ProductComponent",
               "name": "Shea Butter",
               "permalink": "/components/shea-butter",
               "componentId": 13,
-              "rating": "A"
+              "rating": "A",
+              "inheritance": "follows"
             }
           ],
           "categories": [
@@ -4704,7 +4837,7 @@
       },
       "ProductInput": {
         "type": "object",
-        "description": "The fields of a product write. A create needs `name` and `componentsInput`, which the create operation says; an update carries only what it means to change, because every field it names is written.",
+        "description": "The fields of a product write. A create needs `name` and `componentsInput`, which the create operation says, and `name` alone where it names `parentId`; an update carries only what it means to change, because every field it names is written.",
         "properties": {
           "name": {
             "type": "string",
@@ -4712,6 +4845,10 @@
           },
           "gtin": {
             "type": "string"
+          },
+          "parentId": {
+            "type": "integer",
+            "description": "On a create, the product the new one is a variant of. It starts as a copy of that product and takes its later changes, and the other fields of the body become its own where they differ. An update leaves it out or names the parent the product has."
           },
           "componentsInput": {
             "description": "The product's components in order, as a list of names or a list of objects naming an existing component by componentId or a new one by name. Naming it replaces the whole list, so on an update send the components the product is to have from then on, not the ones being added; leaving it out keeps the list as it is.",
@@ -4751,7 +4888,7 @@
           },
           "propertiesInput": {
             "type": "object",
-            "description": "Property values keyed by property type id, as GET /products/new lists them. An entry is a bare value, an object with value plus an optional percentage and compositionRows, or a list of either for a type that takes several values. A type named here is replaced by what the entry carries; a type left out keeps the values it has.",
+            "description": "Property values keyed by property type id, as GET /products/new lists them. An entry is a bare value, an object with value plus an optional percentage and compositionRows, or a list of either for a type that takes several values. A type named here is replaced by what the entry carries; a type left out keeps the values it has. On a variant, a value the product already holds stays as it is, so a value it inherits goes on following its parent; a value that differs becomes the variant's own, and the parent's later changes to that value no longer reach it. A type sent with no value keeps the parent's values for it out of the variant.",
             "additionalProperties": true,
             "example": {
               "1": "https://example.com/documents/technical-documentation.pdf",
@@ -4794,6 +4931,18 @@
           "rating": {
             "type": "string",
             "description": "Property rating A-D (only for rated properties when unlocked)"
+          },
+          "rowId": {
+            "type": "integer",
+            "description": "The row a variant holds the value in. One value document may serve several products, so the row is what a variant follows or holds as its own. Present only on a variant's values, for a signed-in caller or an API consumer."
+          },
+          "inheritance": {
+            "description": "Whether the variant follows its parent for this value. Present with `rowId`.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/InheritanceState"
+              }
+            ]
           }
         }
       },
@@ -4961,7 +5110,7 @@
       },
       "Task": {
         "type": "object",
-        "description": "A piece of work one person asks of another, assigned to one person or to one user group. A member claims a group task before working on it. A task ends done or cancelled and stays on record.\n\nA review walks the steps of the workspace's review flow, one after the other: `step` is where it stands, `steps` what became of each, and `review` what it asks for. Its assignee is the group of the current step, or a `Permission` when the step waits on everyone holding it.\n\nEveryone a task names is written as `type`, `id` and `name`; one that is gone keeps its type and id. A value the task does not carry is left out, and a task without `requester` was made by the system.",
+        "description": "A piece of work one person asks of another, assigned to one person or to one access group. A member claims a group task before working on it. A task ends done or cancelled and stays on record.\n\nA review walks the steps of the workspace's review flow, one after the other: `step` is where it stands, `steps` what became of each, and `review` what it asks for. Its assignee is the group of the current step, or a `Permission` when the step waits on everyone holding it.\n\nEveryone a task names is written as `type`, `id` and `name`; one that is gone keeps its type and id. A value the task does not carry is left out, and a task without `requester` was made by the system.",
         "required": [
           "id",
           "kind",
@@ -4984,9 +5133,10 @@
               "custom",
               "review",
               "publish_review",
-              "request_for_information"
+              "request_for_information",
+              "supply_answer"
             ],
-            "description": "`custom` for what a person asks; the review kinds come from a review flow and end in an `outcome`; `request_for_information` stands for a request to a supplier and opens and closes with it"
+            "description": "`custom` for what a person asks; the review kinds come from a review flow and end in an `outcome`; `request_for_information` stands for a request to a supplier and opens and closes with it, `supply_answer` for the answer a supplier's group is asked for"
           },
           "title": {
             "type": "string",
@@ -5125,9 +5275,23 @@
             "type": "boolean",
             "description": "Open with a due date before today"
           },
+          "priority": {
+            "type": "string",
+            "enum": [
+              "low",
+              "normal",
+              "high",
+              "urgent"
+            ],
+            "description": "How urgent the task is; `normal` unless someone said otherwise"
+          },
+          "subjectKey": {
+            "type": "string",
+            "description": "The record the task is about as `<type>:<id>`, the value `POST /tasks` takes: `Product`, `Component`, `Dpp` (a passport), `Batch` (a lot) or `Supplier`. `subject` names it."
+          },
           "assigneeKey": {
             "type": "string",
-            "description": "The assignee as `User:<id>` or `UserGroup:<id>`, the value `POST /tasks` takes"
+            "description": "The assignee as `User:<id>` or `AccessGroup:<id>`, the value `POST /tasks` takes"
           },
           "assignee": {
             "$ref": "#/components/schemas/TaskParty"
@@ -5151,6 +5315,33 @@
           },
           "subject": {
             "$ref": "#/components/schemas/TaskParty"
+          },
+          "attachments": {
+            "type": "array",
+            "description": "The files the task carries, in their order. Only those who see the task read them, each at its `url`; they are added in the application manager.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "extension": {
+                  "type": "string",
+                  "description": "The kind of file, such as `pdf` or `png`"
+                },
+                "bytes": {
+                  "type": "integer"
+                },
+                "url": {
+                  "type": "string",
+                  "format": "uri",
+                  "description": "`GET /tasks/{id}/attachments/{attachmentId}`"
+                }
+              }
+            }
           },
           "moves": {
             "type": "array",
@@ -5190,9 +5381,11 @@
           "status": "open",
           "dueOn": "2026-10-01",
           "overdue": false,
-          "assigneeKey": "UserGroup:3",
+          "priority": "high",
+          "subjectKey": "Product:7",
+          "assigneeKey": "AccessGroup:3",
           "assignee": {
-            "type": "UserGroup",
+            "type": "AccessGroup",
             "id": 3,
             "name": "Quality"
           },
@@ -5207,6 +5400,20 @@
             "name": "Maria Muster"
           },
           "claimedAt": "2026-09-24T10:02:00Z",
+          "subject": {
+            "type": "Product",
+            "id": 7,
+            "name": "Spring shirt"
+          },
+          "attachments": [
+            {
+              "id": 31,
+              "name": "Supplier declaration",
+              "extension": "pdf",
+              "bytes": 184320,
+              "url": "https://example.com/api/tasks/42/attachments/31"
+            }
+          ],
           "moves": [
             "release",
             "complete"
@@ -5262,7 +5469,21 @@
               },
               "assigneeKey": {
                 "type": "string",
-                "description": "`User:<id>` or `UserGroup:<id>`, as `GET /tasks/assignees` names them. A person who can open the application manager, or a group with access to it and at least one member. A new assignee clears the claim and is told."
+                "description": "`User:<id>` or `AccessGroup:<id>`, as `GET /tasks/assignees` names them. A person who can open the application manager, or a group with access to it and at least one member. A new assignee clears the claim and is told."
+              },
+              "subjectKey": {
+                "type": "string",
+                "description": "Optional; the one record the task is about, as `Product:<id>`, `Component:<id>`, `Dpp:<id>` (a passport), `Batch:<id>` (a lot) or `Supplier:<id>`. The one who asks has to read it: a record they may not read is refused like one that is not there. A program acting as itself reads a kind it holds the grant of (`product_access`, `component_access`, `dpp_read` for passports and lots) and links no supplier. An empty value unlinks the record."
+              },
+              "priority": {
+                "type": "string",
+                "enum": [
+                  "low",
+                  "normal",
+                  "high",
+                  "urgent"
+                ],
+                "description": "Optional; `normal` when left out."
               }
             }
           }
@@ -5272,7 +5493,9 @@
             "title": "Check the supplier declaration",
             "note": "The one for the spring range",
             "dueOn": "2026-10-01",
-            "assigneeKey": "UserGroup:3"
+            "assigneeKey": "AccessGroup:3",
+            "subjectKey": "Product:7",
+            "priority": "high"
           }
         }
       },
@@ -5285,7 +5508,7 @@
         "properties": {
           "type": {
             "type": "string",
-            "description": "`User`, `UserGroup`, `ApiConsumer`, `Permission` for a review that waits on everyone holding it, or `Superadmin` for platform support that acted in the workspace; a subject names its own record type"
+            "description": "`User`, `AccessGroup`, `ApiConsumer`, `Permission` for a review that waits on everyone holding it, or `Superadmin` for platform support that acted in the workspace; a subject names its own record type"
           },
           "id": {
             "type": "integer",
@@ -5300,7 +5523,7 @@
           }
         },
         "example": {
-          "type": "UserGroup",
+          "type": "AccessGroup",
           "id": 3,
           "name": "Quality"
         }
@@ -5607,13 +5830,10 @@
         "properties": {
           "webhook": {
             "type": "object",
-            "required": [
-              "name"
-            ],
             "properties": {
               "name": {
                 "type": "string",
-                "description": "A short label so a list of subscriptions is scannable by more than the URL"
+                "description": "A short label so a list of subscriptions is scannable by more than the URL; left out or empty, the URL's host names the subscription"
               },
               "url": {
                 "type": "string",
@@ -8034,7 +8254,7 @@
           "DPPs"
         ],
         "summary": "Update dynamic data",
-        "description": "Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none); every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.",
+        "description": "Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none). A key naming a published legitimate-interest type is served to the readers its access groups admit by `GET /dpps/{code}/private_dynamic_data`; every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.",
         "operationId": "update_dpp_dynamic_data",
         "x-permission": "dpp_dynamic",
         "security": [
@@ -8558,7 +8778,7 @@
           "DPPs"
         ],
         "summary": "Publish a DPP",
-        "description": "Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. Publishing needs `dpp_publish` beside `dpp_write`; without it the answer is 403. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.",
+        "description": "Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. Publishing needs `dpp_publish` beside `dpp_write`; without it the answer is 403. A passport whose publish review was approved waits ready to publish, and the person who asked for the review publishes it here through a credential of theirs with `dpp_write` alone, and so does any caller with `dpp_publish`. That publish carries the reason and the move to the publish stage the request asked for, and `reason` is not read. The approval stands until the product changes; after that the call is judged like any other publish. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.",
         "operationId": "publish_dpp",
         "x-permission": "dpp_write",
         "x-permission-also": "dpp_publish",
@@ -8854,6 +9074,90 @@
           },
           "204": {
             "description": "Authenticated, but no restricted row of this version is visible to the reader"
+          },
+          "401": {
+            "description": "No authenticated reader. Carries the `X-Auth-Fields` challenge."
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/dpps/{code}/private_dynamic_data": {
+      "get": {
+        "tags": [
+          "DPPs"
+        ],
+        "summary": "Read the restricted dynamic data",
+        "description": "The passport's live readings in the legitimate-interest tier that this reader may see. The public dynamic-data document carries the public tier only; this answer has the same shape, holds only the restricted rows, and is signed with the same platform key, so a reader verifies it the same way and merges the two. A key is served when it names a published property type in the legitimate-interest tier, no property type sharing its vocabulary term sits in the authorities or internal tier, and the reader belongs to an access group of every legitimate-interest type sharing it. An authority consumer reads without a group. A passport holding no such key answers 404; an authenticated reader who may see none of them gets 204. An unauthenticated request answers 401 with the `X-Auth-Fields` challenge the passport page uses to sign a reader in.",
+        "operationId": "get_dpp_private_dynamic_data",
+        "x-permission": "dpp_read",
+        "security": [
+          {
+            "userToken": []
+          },
+          {
+            "oauth2": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The public passport code printed on QR codes"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The signed document over the rows this reader may see",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DynamicDataDocument"
+                },
+                "example": {
+                  "@type": "DppDynamicData",
+                  "@id": "https://example.com/dpp/A1B2C3D4E",
+                  "code": "A1B2C3D4E",
+                  "issuer": {
+                    "@type": "Organization",
+                    "name": "Volturra GmbH",
+                    "did": "did:web:volturra.example"
+                  },
+                  "updatedAt": "2026-09-30T08:15:00Z",
+                  "values": [
+                    {
+                      "propertyID": "bpass:fullCycleCount",
+                      "value": 412
+                    }
+                  ],
+                  "signature": {
+                    "type": "DataIntegrityProof",
+                    "cryptosuite": "eddsa-jcs-2022",
+                    "created": "2026-09-30T08:15:02Z",
+                    "verificationMethod": "https://transpareo.com/.well-known/dpp-keys/v2.pub#key-2",
+                    "proofPurpose": "assertionMethod",
+                    "proofValue": "z3FXQjecWg..."
+                  }
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Always `private, no-store`"
+              }
+            }
+          },
+          "204": {
+            "description": "Authenticated, but no restricted reading of this passport is visible to the reader"
           },
           "401": {
             "description": "No authenticated reader. Carries the `X-Auth-Fields` challenge."
@@ -12188,7 +12492,7 @@
             "$ref": "#/components/responses/MembershipExpired"
           },
           "403": {
-            "description": "Property type restricted to specific user groups",
+            "description": "Property type restricted to specific access groups",
             "content": {
               "application/json": {
                 "schema": {
@@ -12480,7 +12784,7 @@
           "Products"
         ],
         "summary": "Create a product",
-        "description": "Creates a new product. The authenticated user or API consumer becomes the owner. A product needs a brand, named alongside it (an existing brand of that name is used, a new one created and owned by the caller), and at least one component under componentsInput. A consumer needs `product_access`.",
+        "description": "Creates a new product. The authenticated user or API consumer becomes the owner. A product needs a brand, named alongside it (an existing brand of that name is used, a new one created and owned by the caller), and at least one component under componentsInput. A consumer needs `product_access`, and to create the brand it names also `brand_access`, as `POST /brands` asks; without it a new brand name answers 403 `BRAND_FORBIDDEN`.\n\nA credential acting for a person (one granted on the consent screen, or the assistant's) names only the categories, the brand and the manufacturers that person reads in the application manager, and creates a brand only where that person may; anything else answers 422 naming `categories`, `brand` or `properties`.\n\nA product naming a parent under `parentId` is created as its variant: it starts as a copy of the parent, with its brand, categories, components, images and property values, and takes the parent's later changes. Such a body needs a name only. The brand, categories, components and property values it names besides become the variant's own where they differ from the parent's, and the variant's read marks them `pinned`. The parent is a product the caller may update, since a variant holds its parent's delete back: a parent the caller cannot read answers 422 `PRODUCT_PARENT_NOT_FOUND`, one it cannot update 403. A variant takes its mandatory values from its parent, so its create asks for none of them.",
         "operationId": "create_product",
         "x-permission": "product_access",
         "security": [
@@ -12503,8 +12807,7 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "product",
-                  "brand"
+                  "product"
                 ],
                 "properties": {
                   "product": {
@@ -12512,6 +12815,7 @@
                   },
                   "brand": {
                     "type": "object",
+                    "description": "The brand of the product, required unless `product.parentId` names a parent, whose brand a variant takes.",
                     "required": [
                       "name"
                     ],
@@ -12554,6 +12858,9 @@
           },
           "401": {
             "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
           },
           "422": {
             "description": "Validation failed. When mandatory property types have no value, `fields.properties.missing` names the ones still needed and `hint` repeats them in prose. `GET /products/new` lists every property type with its `mandatory` flag.",
@@ -12800,7 +13107,7 @@
           "Products"
         ],
         "summary": "Update a product",
-        "description": "Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are.",
+        "description": "Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are. A brand name no brand carries creates the brand, which asks a consumer for `brand_access` (403 `BRAND_FORBIDDEN` without it); a credential acting for a person names only what that person reads, as on create. On a variant, a value the body changes becomes the variant's own and a value it sends as it was read goes on following the parent. `parentId` is left out or names the parent the product has; any other answers 422 `PRODUCT_PARENT_READ_ONLY`, since a variant moves to another parent through a spreadsheet import only.",
         "operationId": "update_product",
         "x-permission": "product_access",
         "security": [
@@ -13047,7 +13354,7 @@
           "Products"
         ],
         "summary": "Update product mediafile assignments",
-        "description": "Replaces all mediafile assignments on a product with the given list in the specified order. Requires the product mediafiles feature to be enabled.",
+        "description": "Replaces all mediafile assignments on a product with the given list in the specified order, as one change. On a variant, a list that differs from its parent's becomes the variant's own, and the list sent as it was read goes on following the parent. Requires the product mediafiles feature to be enabled.",
         "operationId": "update_product_mediafiles",
         "x-permission": "product_access",
         "security": [
@@ -13121,6 +13428,135 @@
           },
           "422": {
             "$ref": "#/components/responses/ValidationError"
+          }
+        }
+      }
+    },
+    "/products/{id}/restore": {
+      "put": {
+        "tags": [
+          "Products"
+        ],
+        "summary": "Have a variant follow its parent again",
+        "description": "Makes a variant follow its parent again for the values the body names: the variant's own value goes, the parent's present value is written, and the parent's later changes reach the value again. `GET /products/{id}` names the state of each value of a variant under `inheritance`, on each property value and on each component row; a value that follows already is left as it is. The body names values as the reads do:\n\n- `keys`: the keys of `inheritance`\n- `propertyRowIds`: the `rowId` of a property value\n- `componentRowIds`: the `id` of a component row\n- `parentComponentRowIds` and `parentPropertyIds`: the `id` of a component row and of a property value in the parent's read. No read of the variant names a row it took out of what its parent hands down, so the parent's read names it.\n- `all`: every value the variant holds of its own.\n\nA name matching nothing the variant takes from its parent (a key the map lacks, a row the variant added itself) refuses the whole request with 422 `RESTORE_UNKNOWN_KEYS`, naming each; a body naming nothing answers 422 `RESTORE_KEYS_REQUIRED`. A product without a parent, or whose parent is in the trash, answers 422 `PRODUCT_NOT_A_VARIANT`. A restore is a write like any other: the product's history records it, and writing the value again makes it the variant's own once more.",
+        "operationId": "restore_product_values",
+        "x-permission": "product_access",
+        "security": [
+          {
+            "userToken": []
+          },
+          {
+            "oauth2": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "keys": {
+                    "type": "array",
+                    "description": "Values of the product itself, by their keys in `inheritance`",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "brand",
+                        "categories",
+                        "hsCode",
+                        "weight",
+                        "images",
+                        "componentsOrder"
+                      ]
+                    }
+                  },
+                  "propertyRowIds": {
+                    "type": "array",
+                    "description": "Property values of the variant, by their `rowId`",
+                    "items": {
+                      "type": "integer"
+                    }
+                  },
+                  "componentRowIds": {
+                    "type": "array",
+                    "description": "Component rows of the variant, by their `id`",
+                    "items": {
+                      "type": "integer"
+                    }
+                  },
+                  "parentComponentRowIds": {
+                    "type": "array",
+                    "description": "Component rows of the parent, by their `id` in the parent's read; the variant's row taken from each follows again, one the variant took out included",
+                    "items": {
+                      "type": "integer"
+                    }
+                  },
+                  "parentPropertyIds": {
+                    "type": "array",
+                    "description": "Property values of the parent, by their `id` in the parent's read; the variant's value taken from each follows again, one the variant took out included",
+                    "items": {
+                      "type": "integer"
+                    }
+                  },
+                  "all": {
+                    "type": "boolean",
+                    "description": "Every value the variant holds of its own follows again; the lists are then left unread"
+                  }
+                }
+              },
+              "example": {
+                "keys": [
+                  "hsCode"
+                ],
+                "componentRowIds": [
+                  2
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The variant as it stands after the restore",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/components/responses/MembershipExpired"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "422": {
+            "description": "The product follows no parent (`PRODUCT_NOT_A_VARIANT`), the body names nothing (`RESTORE_KEYS_REQUIRED`), or it names something the variant takes nothing for from its parent (`RESTORE_UNKNOWN_KEYS`, the message naming each).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "RESTORE_UNKNOWN_KEYS",
+                  "message": "Nothing this variant takes from its parent goes by these names: keys colour, componentRowIds 9."
+                }
+              }
+            }
           }
         }
       }
@@ -13635,7 +14071,7 @@
           "Search"
         ],
         "summary": "Search products and components",
-        "description": "Full-text search powered by Elasticsearch. Returns a flat results array containing mixed product and component records.",
+        "description": "Full-text search powered by Elasticsearch. Returns a flat results array containing mixed product and component records. Search answers what the lists answer, so products are left out while `GET /products` answers 204 and components while `GET /components` does; with both lists off the results are empty.",
         "operationId": "search_catalogue",
         "parameters": [
           {
@@ -13929,7 +14365,7 @@
           "Tasks"
         ],
         "summary": "List tasks",
-        "description": "The tasks of one list, newest first. A credential that acts for a person (a grant the person approved, or their assistant) reads the lists as that person. Any other credential reads them as itself: it finds the tasks it asked for under `requested` and `done`, and nothing waits on it.\n\n- `mine` (the default): the tasks given to the person, the ones they claimed, and the group tasks nobody has claimed yet. The number beside the bell in the application manager counts these.\n- `groups`: every open task of the person's groups, with who holds it.\n- `requested`: the open tasks the caller asked of others.\n- `done`: the finished and cancelled tasks the caller took part in.\n- `all`: every task, for an admin only.\n\nA list the caller may not read answers 422 `TASK_LIST_INVALID`, naming the ones it may.",
+        "description": "The tasks of one list, newest first. A credential that acts for a person (a grant the person approved, or their assistant) reads the lists as that person. Any other credential reads them as itself: it finds the tasks it asked for under `requested` and `done`, and nothing waits on it.\n\n- `mine` (the default): what the person has to do: the tasks given to them, the ones they claimed, and the group tasks and reviews nobody has claimed yet. A request for information waiting for its supplier is left out. The number beside the bell in the application manager counts these.\n- `waiting`: the person's requests for information while they wait for the supplier, and the tasks they take part in that someone else has claimed.\n- `requested`: the open tasks the caller asked of others.\n- `done`: the finished and cancelled tasks the caller took part in.\n- `all`: every task the caller takes part in; every task for an admin.\n- `groups`: retired, read as `mine` until the next release.\n\nA list the caller may not read answers 422 `TASK_LIST_INVALID`, naming the ones it may.",
         "operationId": "list_tasks",
         "x-permission": "task_access",
         "security": [
@@ -13945,10 +14381,11 @@
               "type": "string",
               "enum": [
                 "mine",
-                "groups",
+                "waiting",
                 "requested",
                 "done",
-                "all"
+                "all",
+                "groups"
               ],
               "default": "mine"
             },
@@ -13995,9 +14432,9 @@
                       "status": "open",
                       "dueOn": "2026-10-01",
                       "overdue": false,
-                      "assigneeKey": "UserGroup:3",
+                      "assigneeKey": "AccessGroup:3",
                       "assignee": {
-                        "type": "UserGroup",
+                        "type": "AccessGroup",
                         "id": 3,
                         "name": "Quality"
                       },
@@ -14062,7 +14499,7 @@
           "Tasks"
         ],
         "summary": "Create a task",
-        "description": "Asks a person or a user group for something. The task is a request (`kind` custom) whatever the body says, and names the caller as the one who asked: the person a grant or an assistant acts for, or the credential itself. Every person the task reaches sees it at once in the application manager and hears of it in the bell; the morning mail carries it too.\n\nFind the `assigneeKey` with `GET /tasks/assignees`.",
+        "description": "Asks a person or an access group for something. The task is a request (`kind` custom) whatever the body says, and names the caller as the one who asked: the person a grant or an assistant acts for, or the credential itself. Every person the task reaches sees it at once in the application manager and hears of it in the bell; the morning mail carries it too.\n\nFind the `assigneeKey` with `GET /tasks/assignees`. A task may link one record the caller reads (`subjectKey`) and carry a `priority`.",
         "operationId": "create_task",
         "x-permission": "task_access",
         "security": [
@@ -14154,7 +14591,7 @@
                         "properties": {
                           "key": {
                             "type": "string",
-                            "description": "`User:<id>` or `UserGroup:<id>`"
+                            "description": "`User:<id>` or `AccessGroup:<id>`"
                           },
                           "name": {
                             "type": "string"
@@ -14167,7 +14604,7 @@
                 "example": {
                   "assignees": [
                     {
-                      "key": "UserGroup:3",
+                      "key": "AccessGroup:3",
                       "name": "Group Quality"
                     },
                     {
@@ -14286,6 +14723,58 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/tasks/{id}/attachments/{attachmentId}": {
+      "get": {
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Download a file of a task",
+        "description": "One of the files a task carries, the `url` its `attachments` name. Only those who see the task read its files, so a task the caller has no part in answers 404, and so does a file the task does not carry (`MEDIAFILE_NOT_FOUND`). Images and PDFs come inline, every other kind as an attachment. Files are added in the application manager.",
+        "operationId": "get_task_attachment",
+        "x-permission": "task_access",
+        "security": [
+          {
+            "oauth2": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          },
+          {
+            "name": "attachmentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "The `id` of the file in the task's `attachments`"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The file",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
           }
         }
       }
@@ -14452,7 +14941,7 @@
           "Tasks"
         ],
         "summary": "Cancel a task",
-        "description": "Ends an open task as cancelled. The one who asked for it may, or an admin. The task stays on record and can be reopened.",
+        "description": "Ends an open task as cancelled. The one who asked for it may, or an admin, and so may the person a custom task is with, declining it. The task stays on record and can be reopened.",
         "operationId": "cancel_task",
         "x-permission": "task_access",
         "security": [
@@ -14556,7 +15045,7 @@
           "Tasks"
         ],
         "summary": "Approve a review",
-        "description": "Approves the step a review stands at, as the person the credential acts for. A review walks the steps of the workspace's review flow, or the one step of everyone who may sign passports where no flow fits. Approving a middle step passes the request on to the next step and signs nothing. Approving the last step carries the request out in the person's name: a publish review signs the passport, which needs `dpp_publish` in the credential's scope beside `task_access`; without it the answer is 403 and nothing is signed.\n\nSend the `step` the caller read, so a press on a review that moved on in between decides nothing (`TASK_STEP_MOVED`). The person who asked for a review decides no step of it (`TASK_OWN_REQUEST`). A publish the validator or the workspace refuses answers as `POST /dpps/{code}/publish` does, and the review stays open.",
+        "description": "Approves the step a review stands at, as the person the credential acts for. A review walks the steps of the workspace's review flow, or the one step of everyone who may sign passports where no flow fits. Approving a middle step passes the request on to the next step and signs nothing. Approving the last step carries the request out in the person's name, which needs `dpp_publish` in the credential's scope beside `task_access`; without it the answer is 403 and the review stays open. A publish review then approves the passport, which waits ready to publish for the person who asked (`POST /dpps/{code}/publish`) until the product changes; a review of an event's seal or of a correction signs at once.\n\nSend the `step` the caller read, so a press on a review that moved on in between decides nothing (`TASK_STEP_MOVED`). The person who asked for a review decides no step of it (`TASK_OWN_REQUEST`). A publish the validator or the workspace refuses answers as `POST /dpps/{code}/publish` does, and the review stays open.",
         "operationId": "approve_task",
         "x-permission": "task_access",
         "security": [
@@ -15478,7 +15967,7 @@
             "$ref": "#/components/responses/Forbidden"
           },
           "422": {
-            "description": "A URL that is not https or points at a private host, an event type the platform does not version, or a cap reached (`WEBHOOK_INVALID`, see `fields`)",
+            "description": "A URL that is not https or points at a private host, a missing name, or an event type the platform does not version (`WEBHOOK_INVALID`, see `fields`); or a cap reached, ten for the consumer or fifty for the workspace (`WEBHOOK_LIMIT_REACHED`, the message names the cap)",
             "content": {
               "application/json": {
                 "schema": {

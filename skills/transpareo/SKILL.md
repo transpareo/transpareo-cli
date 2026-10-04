@@ -163,6 +163,7 @@ any of them shows an example and the permission it needs;
 - `transpareo dpps events list <id>`: List the event log of a DPP (dpp_history)
 - `transpareo dpps get <id>`: Read a DPP (dpp_read)
 - `transpareo dpps list`: List Digital Product Passports (dpp_read)
+- `transpareo dpps private-dynamic-data <code>`: Read the restricted dynamic data (dpp_read)
 - `transpareo dpps private-properties <code>`: Read the private properties of several versions (dpp_read)
 - `transpareo dpps publish <code>`: Publish a DPP (dpp_write)
 - `transpareo dpps reissue <id>`: Reissue a DPP (dpp_lifecycle)
@@ -211,6 +212,7 @@ any of them shows an example and the permission it needs;
 - `transpareo products new`: Get new product template
 - `transpareo products properties list`: List product properties
 - `transpareo products publish <id>`: Publish a product (product_access)
+- `transpareo products restore-values <id>`: Have a variant follow its parent again (product_access)
 - `transpareo products unpublish <id>`: Unpublish a product (product_access)
 - `transpareo products update <id>`: Update a product (product_access)
 - `transpareo reference-data component-functions list`: List component functions
@@ -224,6 +226,7 @@ any of them shows an example and the permission it needs;
 - `transpareo setup <assistant>`: Install the skill and register the MCP server for claude or codex
 - `transpareo tasks approve <id>`: Approve a review (task_access)
 - `transpareo tasks assignees list`: List task assignees (task_access)
+- `transpareo tasks attachment <id> <attachmentId>`: Download a file of a task (task_access)
 - `transpareo tasks cancel <id>`: Cancel a task (task_access)
 - `transpareo tasks claim <id>`: Claim a task (task_access)
 - `transpareo tasks complete <id>`: Complete a task (task_access)

@@ -1,6 +1,6 @@
 # Command reference
 
-Every command of `transpareo`, generated from API specification 2.16.0. `--help` on any command prints the same example and permission key.
+Every command of `transpareo`, generated from API specification 2.27.0. `--help` on any command prints the same example and permission key.
 
 | Option on every command | What it does |
 |---|---|
@@ -745,6 +745,20 @@ transpareo dpps list --term <term>
 | `--term` \<value\> | Search DPPs by code or description |
 
 `GET /dpps` · operation `list_dpps` · permission `dpp_read`
+
+### transpareo dpps private-dynamic-data
+
+Read the restricted dynamic data.
+
+```sh
+transpareo dpps private-dynamic-data <code>
+```
+
+| Option | What it does |
+|---|---|
+| `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
+
+`GET /dpps/{code}/private_dynamic_data` · operation `get_dpp_private_dynamic_data` · permission `dpp_read`
 
 ### transpareo dpps private-properties
 
@@ -1587,6 +1601,23 @@ transpareo products publish <id>
 
 `PUT /products/{id}/publish` · operation `publish_product` · permission `product_access`
 
+### transpareo products restore-values
+
+Have a variant follow its parent again.
+
+```sh
+transpareo products restore-values <id>
+transpareo products restore-values <id> --file body.json
+```
+
+| Option | What it does |
+|---|---|
+| `--file` \<value\> | request body from a file, or - for standard input |
+| `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
+| `--set` \<value\>... | body field as key=value, nested with dots (repeatable) |
+
+`PUT /products/{id}/restore` · operation `restore_product_values` · permission `product_access`
+
 ### transpareo products unpublish
 
 Unpublish a product.
@@ -1770,6 +1801,20 @@ transpareo tasks assignees list --term <term>
 | `--term` \<value\> | Words in the name of the person or group |
 
 `GET /tasks/assignees` · operation `list_task_assignees` · permission `task_access`
+
+### transpareo tasks attachment
+
+Download a file of a task.
+
+```sh
+transpareo tasks attachment <id> <attachmentId>
+```
+
+| Option | What it does |
+|---|---|
+| `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
+
+`GET /tasks/{id}/attachments/{attachmentId}` · operation `get_task_attachment` · permission `task_access`
 
 ### transpareo tasks cancel
 
