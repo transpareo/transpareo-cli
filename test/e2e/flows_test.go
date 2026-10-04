@@ -151,9 +151,10 @@ func declaredUnfillable(unfillable, missing []string) bool {
 }
 
 // throwawayProduct creates a product for the run and deletes it
-// at the end. It fills the workspace's mandatory properties from
-// the product template, and skips only when one of them needs a
-// shape this check does not build.
+// at the end, unless a passport named a lot of it. It fills the
+// workspace's mandatory properties from the product template, and
+// skips only when one of them needs a shape this check does not
+// build.
 func throwawayProduct(t *testing.T, c *transpareo.Client) json.Number {
 	t.Helper()
 	sweepLeftovers(t, c)
@@ -190,10 +191,9 @@ func throwawayProduct(t *testing.T, c *transpareo.Client) json.Number {
 		if err == nil {
 			return
 		}
-		_, passported := published.Load(created.ID.String())
-		if passported && errorCode(err) == "PRODUCT_DELETE_REFUSED" {
-			t.Logf("product %s stays with its published passport: %v",
-				created.ID, err)
+		_, lotted := withLot.Load(created.ID.String())
+		if lotted && errorCode(err) == "PRODUCT_DELETE_REFUSED" {
+			t.Logf("product %s stays with its lot: %v", created.ID, err)
 			return
 		}
 		t.Errorf("delete product %s: %v", created.ID, err)
@@ -201,10 +201,11 @@ func throwawayProduct(t *testing.T, c *transpareo.Client) json.Number {
 	return created.ID
 }
 
-// published holds the ids of the products this run published a
-// passport against. The platform keeps such a product, so its
-// cleanup takes the refused delete as the expected answer.
-var published sync.Map
+// withLot holds the ids of the products this run created a
+// passport against. The passport names a lot, the platform keeps
+// a product a lot was taken of, and no endpoint deletes a lot, so
+// the cleanup takes the refused delete as the expected answer.
+var withLot sync.Map
 
 // lotIdentifier is the lot every passport of this suite names.
 // The platform creates the lot with the first passport that names
@@ -222,8 +223,8 @@ type passport struct {
 }
 
 // throwawayPassport fills the workspace's own create template for
-// the product and creates a passport from it. It is deleted with
-// the product it hangs from.
+// the product and creates a passport from it. The passport names
+// lotIdentifier, which keeps the product past the run.
 func throwawayPassport(t *testing.T, c *transpareo.Client,
 	productID json.Number) passport {
 	t.Helper()
@@ -279,6 +280,7 @@ func throwawayPassport(t *testing.T, c *transpareo.Client,
 	if _, err := c.Post(ctx, "/dpps", dpp, &created); err != nil {
 		t.Fatalf("create dpp: %v", err)
 	}
+	withLot.Store(productID.String(), true)
 	if created.Code == "" || created.ID == "" {
 		t.Fatalf("created passport lacks an id or a code: %+v", created)
 	}
@@ -301,7 +303,6 @@ func TestPassportFlowOnAThrowawayProduct(t *testing.T) {
 		map[string]any{"reason": "edit"}, nil)
 	switch {
 	case err == nil:
-		published.Store(productID.String(), true)
 	case created.PublishBlocked &&
 		strings.HasPrefix(errorCode(err), "DPP_PUBLISH_"):
 		t.Logf("publish blocked by the workspace's templates: %v", err)
