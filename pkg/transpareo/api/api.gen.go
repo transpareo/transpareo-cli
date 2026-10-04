@@ -1125,6 +1125,30 @@ func (e ImportSummaryStatus) Valid() bool {
 	}
 }
 
+// Defines values for InheritanceState.
+const (
+	Follows     InheritanceState = "follows"
+	Own         InheritanceState = "own"
+	ParentMoved InheritanceState = "parent_moved"
+	Pinned      InheritanceState = "pinned"
+)
+
+// Valid indicates whether the value is a known member of the InheritanceState enum.
+func (e InheritanceState) Valid() bool {
+	switch e {
+	case Follows:
+		return true
+	case Own:
+		return true
+	case ParentMoved:
+		return true
+	case Pinned:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for OAuthErrorError.
 const (
 	AccessDenied          OAuthErrorError = "access_denied"
@@ -1260,6 +1284,7 @@ const (
 	TaskKindPublishReview         TaskKind = "publish_review"
 	TaskKindRequestForInformation TaskKind = "request_for_information"
 	TaskKindReview                TaskKind = "review"
+	TaskKindSupplyAnswer          TaskKind = "supply_answer"
 )
 
 // Valid indicates whether the value is a known member of the TaskKind enum.
@@ -1272,6 +1297,8 @@ func (e TaskKind) Valid() bool {
 	case TaskKindRequestForInformation:
 		return true
 	case TaskKindReview:
+		return true
+	case TaskKindSupplyAnswer:
 		return true
 	default:
 		return false
@@ -1323,6 +1350,30 @@ func (e TaskOutcome) Valid() bool {
 	case TaskOutcomeApproved:
 		return true
 	case TaskOutcomeRejected:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for TaskPriority.
+const (
+	TaskPriorityHigh   TaskPriority = "high"
+	TaskPriorityLow    TaskPriority = "low"
+	TaskPriorityNormal TaskPriority = "normal"
+	TaskPriorityUrgent TaskPriority = "urgent"
+)
+
+// Valid indicates whether the value is a known member of the TaskPriority enum.
+func (e TaskPriority) Valid() bool {
+	switch e {
+	case TaskPriorityHigh:
+		return true
+	case TaskPriorityLow:
+		return true
+	case TaskPriorityNormal:
+		return true
+	case TaskPriorityUrgent:
 		return true
 	default:
 		return false
@@ -1464,6 +1515,30 @@ const (
 func (e TaskType) Valid() bool {
 	switch e {
 	case TaskTypeTask:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for TaskInputTaskPriority.
+const (
+	TaskInputTaskPriorityHigh   TaskInputTaskPriority = "high"
+	TaskInputTaskPriorityLow    TaskInputTaskPriority = "low"
+	TaskInputTaskPriorityNormal TaskInputTaskPriority = "normal"
+	TaskInputTaskPriorityUrgent TaskInputTaskPriority = "urgent"
+)
+
+// Valid indicates whether the value is a known member of the TaskInputTaskPriority enum.
+func (e TaskInputTaskPriority) Valid() bool {
+	switch e {
+	case TaskInputTaskPriorityHigh:
+		return true
+	case TaskInputTaskPriorityLow:
+		return true
+	case TaskInputTaskPriorityNormal:
+		return true
+	case TaskInputTaskPriorityUrgent:
 		return true
 	default:
 		return false
@@ -1848,6 +1923,36 @@ func (e ExchangeTokenFormdataBodyGrantType) Valid() bool {
 	}
 }
 
+// Defines values for RestoreProductValuesJSONBodyKeys.
+const (
+	RestoreProductValuesJSONBodyKeysBrand           RestoreProductValuesJSONBodyKeys = "brand"
+	RestoreProductValuesJSONBodyKeysCategories      RestoreProductValuesJSONBodyKeys = "categories"
+	RestoreProductValuesJSONBodyKeysComponentsOrder RestoreProductValuesJSONBodyKeys = "componentsOrder"
+	RestoreProductValuesJSONBodyKeysHsCode          RestoreProductValuesJSONBodyKeys = "hsCode"
+	RestoreProductValuesJSONBodyKeysImages          RestoreProductValuesJSONBodyKeys = "images"
+	RestoreProductValuesJSONBodyKeysWeight          RestoreProductValuesJSONBodyKeys = "weight"
+)
+
+// Valid indicates whether the value is a known member of the RestoreProductValuesJSONBodyKeys enum.
+func (e RestoreProductValuesJSONBodyKeys) Valid() bool {
+	switch e {
+	case RestoreProductValuesJSONBodyKeysBrand:
+		return true
+	case RestoreProductValuesJSONBodyKeysCategories:
+		return true
+	case RestoreProductValuesJSONBodyKeysComponentsOrder:
+		return true
+	case RestoreProductValuesJSONBodyKeysHsCode:
+		return true
+	case RestoreProductValuesJSONBodyKeysImages:
+		return true
+	case RestoreProductValuesJSONBodyKeysWeight:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for StartPasswordResetJSONBodyForce.
 const (
 	False StartPasswordResetJSONBodyForce = "false"
@@ -1873,6 +1978,7 @@ const (
 	ListTasksParamsListGroups    ListTasksParamsList = "groups"
 	ListTasksParamsListMine      ListTasksParamsList = "mine"
 	ListTasksParamsListRequested ListTasksParamsList = "requested"
+	ListTasksParamsListWaiting   ListTasksParamsList = "waiting"
 )
 
 // Valid indicates whether the value is a known member of the ListTasksParamsList enum.
@@ -1887,6 +1993,8 @@ func (e ListTasksParamsList) Valid() bool {
 	case ListTasksParamsListMine:
 		return true
 	case ListTasksParamsListRequested:
+		return true
+	case ListTasksParamsListWaiting:
 		return true
 	default:
 		return false
@@ -2176,7 +2284,7 @@ type Component struct {
 
 // ComponentDetail Full component details (returned by show action)
 //
-// Example: {"citations":[],"id":13,"mediafiles":[],"mpn":"SB-RAW-25KG","name":"Shea Butter","permalink":"/components/shea-butter","properties":{"Origin":{"id":14,"rated":true,"values":[{"id":811,"rating":"A","value":"West Africa"}]}},"published":true,"publishedAt":"2026-01-10T08:00:00Z","rating":"A","type":"Component"}
+// Example: {"citations":[],"id":13,"mediafiles":[],"mpn":"SB-RAW-25KG","name":"Shea Butter","permalink":"/components/shea-butter","properties":{"Origin":{"id":14,"rated":true,"values":[{"id":811,"rating":"A","value":"West Africa"}]}},"published":true,"publishedAt":"2026-01-10T08:00:00Z","rating":"A","templateIds":[7],"type":"Component"}
 type ComponentDetail struct {
 	// Citations Scientific citations. Only present when citations are enabled in tenant config and the user has access (citations may be protected behind login).
 	Citations *[]Citation `json:"citations,omitempty"`
@@ -2215,6 +2323,9 @@ type ComponentDetail struct {
 	// Rating Component rating (very_good/good/neutral/bad/very_bad) when unlocked via DPP key or authorized. Returns 'protected' otherwise. Only present when ratings are enabled.
 	Rating *string `json:"rating,omitempty"`
 
+	// TemplateIds The components this one takes its properties from, in order. Where two templates fill a property that holds one value, the first one wins; list and composition properties take the values of every template, a shared one once. A write's `templateIds` sets the order too. Present only for a signed-in caller or an API consumer.
+	TemplateIds *[]int `json:"templateIds,omitempty"`
+
 	// Type Example: Component
 	Type *string `json:"type,omitempty"`
 }
@@ -2248,7 +2359,7 @@ type ComponentInput struct {
 		} `json:"new,omitempty"`
 	} `json:"properties,omitempty"`
 
-	// TemplateIds The components this one inherits properties from; replaces the current set
+	// TemplateIds The components this one inherits properties from, in order; replaces the current set and its order. Where two of them fill a property that holds one value, the first one wins.
 	TemplateIds *[]string `json:"templateIds,omitempty"`
 }
 
@@ -2833,6 +2944,37 @@ type DppVersionSnapshot struct {
 	Version *int `json:"version,omitempty"`
 }
 
+// DynamicDataDocument A passport's live readings, signed with the Transpareo platform key. The public document on the CDN and the restricted answer of `GET /dpps/{code}/private_dynamic_data` share this shape; each holds only the rows of its own tier. `@id` and `issuer` are copied from the passport's current version and are absent before its first published version.
+type DynamicDataDocument struct {
+	// Id The passport's IRI, as its current version states it
+	Id *string `json:"@id,omitempty"`
+
+	// Type Example: DppDynamicData
+	Type *string `json:"@type,omitempty"`
+
+	// Code The public passport code
+	Code *string `json:"code,omitempty"`
+
+	// Issuer The issuer, as the passport's current version states it
+	Issuer *map[string]interface{} `json:"issuer,omitempty"`
+
+	// Signature The platform's Data Integrity proof over the rest of the document
+	Signature *map[string]interface{} `json:"signature,omitempty"`
+
+	// UpdatedAt When the readings were last written
+	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
+	Values    *[]struct {
+		// PropertyID The vocabulary term of the property type, or its id when it has none
+		PropertyID *string `json:"propertyID,omitempty"`
+
+		// UnitCode UN/CEFACT unit code, when the reading carries one
+		UnitCode *string `json:"unitCode,omitempty"`
+
+		// Value The reading
+		Value interface{} `json:"value,omitempty"`
+	} `json:"values,omitempty"`
+}
+
 // DynamicDataInput The keys to write onto the passport's dynamic-data surface. Sent keys are merged into the stored set; a key sent as an explicit null is removed. Every key is stored. The public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none).
 //
 // Example: {"cycleCount":412,"retiredReason":null,"stateOfHealth":87.3}
@@ -3397,6 +3539,9 @@ type ImportSummaryFileFormat string
 // ImportSummaryStatus defines model for ImportSummary.Status.
 type ImportSummaryStatus string
 
+// InheritanceState What a variant does with a value its parent holds. `follows` takes the parent's value whenever it changes; `pinned` holds a value of the variant's own; `parent_moved` holds one while the parent changed its value since; `own` marks a property value or a component the variant added itself.
+type InheritanceState string
+
 // Language defines model for Language.
 type Language struct {
 	CompanyName *string `json:"companyName,omitempty"`
@@ -3727,6 +3872,9 @@ type Product struct {
 	// Name Example: Nivea Creme
 	Name *string `json:"name,omitempty"`
 
+	// ParentId The product this one is a variant of, null on a root. Present only for a signed-in caller or an API consumer.
+	ParentId *int `json:"parentId,omitempty"`
+
 	// Permalink Example: /products/nivea-nivea-creme
 	Permalink *string `json:"permalink,omitempty"`
 
@@ -3758,7 +3906,12 @@ type ProductWeightUnit string
 type ProductComponent struct {
 	// ComponentId Reference to the canonical component
 	ComponentId *int `json:"componentId,omitempty"`
-	Id          *int `json:"id,omitempty"`
+
+	// Id The row's own id within the product, which stays the same across saves
+	Id *int `json:"id,omitempty"`
+
+	// Inheritance Whether the variant follows its parent for this component, its name, share and origin. Present only on a variant's components, for a signed-in caller or an API consumer.
+	Inheritance *InheritanceState `json:"inheritance,omitempty"`
 
 	// Name Example: Aqua
 	Name *string `json:"name,omitempty"`
@@ -3777,7 +3930,7 @@ type ProductComponent struct {
 
 // ProductDetail Full product details (returned by show action and permalink resolution). Includes nested brand, components, properties, categories, and mediafiles.
 //
-// Example: {"brand":{"id":12,"name":"NaturaCare","permalink":"/brands/naturacare","productsCount":12,"published":true,"type":"Brand"},"categories":[{"id":20,"name":"Skincare","type":"ProductCategory"}],"components":[{"componentId":13,"id":13,"name":"Shea Butter","permalink":"/components/shea-butter","rating":"A","type":"Component"}],"gtin":"4006381333931","id":11,"mediafiles":[],"name":"Hydrating Face Cream","permalink":"/products/naturacare-hydrating-face-cream","properties":{"Capacity":{"id":21,"inputType":"text","values":[{"value":"50 ml"}]}},"publishedAt":"2026-01-15T10:30:00Z","rating":"A","type":"Product"}
+// Example: {"brand":{"id":12,"name":"NaturaCare","permalink":"/brands/naturacare","productsCount":12,"published":true,"type":"Brand"},"categories":[{"id":20,"name":"Skincare","type":"ProductCategory"}],"components":[{"componentId":13,"id":1,"inheritance":"follows","name":"Shea Butter","permalink":"/components/shea-butter","rating":"A","type":"ProductComponent"}],"gtin":"4006381333931","id":11,"inheritance":{"brand":"follows","categories":"follows","componentsOrder":"follows","hsCode":"follows","images":"parent_moved","weight":"pinned"},"mediafiles":[],"name":"Hydrating Face Cream","parentId":4,"permalink":"/products/naturacare-hydrating-face-cream","properties":{"Capacity":{"id":21,"inputType":"text","values":[{"inheritance":"follows","rowId":2,"value":"50 ml"}]}},"publishedAt":"2026-01-15T10:30:00Z","rating":"A","type":"Product","variantsCount":0}
 type ProductDetail struct {
 	// Brand Example: {"id":12,"name":"NaturaCare","permalink":"/brands/naturacare","productsCount":12,"type":"Brand"}
 	Brand *Brand `json:"brand,omitempty"`
@@ -3801,6 +3954,27 @@ type ProductDetail struct {
 	Gtin *string `json:"gtin,omitempty"`
 	Id   *int    `json:"id,omitempty"`
 
+	// Inheritance Per value a variant takes from its parent, whether it follows the parent (`follows`), holds a value of its own (`pinned`), or holds one while the parent changed its value since (`parent_moved`). `images` is the list of files as one value, `componentsOrder` the order of the components. Present only on a variant, for a signed-in caller or an API consumer; each property value and each component carries its own.
+	Inheritance *struct {
+		// Brand What a variant does with a value its parent holds. `follows` takes the parent's value whenever it changes; `pinned` holds a value of the variant's own; `parent_moved` holds one while the parent changed its value since; `own` marks a property value or a component the variant added itself.
+		Brand *InheritanceState `json:"brand,omitempty"`
+
+		// Categories What a variant does with a value its parent holds. `follows` takes the parent's value whenever it changes; `pinned` holds a value of the variant's own; `parent_moved` holds one while the parent changed its value since; `own` marks a property value or a component the variant added itself.
+		Categories *InheritanceState `json:"categories,omitempty"`
+
+		// ComponentsOrder What a variant does with a value its parent holds. `follows` takes the parent's value whenever it changes; `pinned` holds a value of the variant's own; `parent_moved` holds one while the parent changed its value since; `own` marks a property value or a component the variant added itself.
+		ComponentsOrder *InheritanceState `json:"componentsOrder,omitempty"`
+
+		// HsCode What a variant does with a value its parent holds. `follows` takes the parent's value whenever it changes; `pinned` holds a value of the variant's own; `parent_moved` holds one while the parent changed its value since; `own` marks a property value or a component the variant added itself.
+		HsCode *InheritanceState `json:"hsCode,omitempty"`
+
+		// Images What a variant does with a value its parent holds. `follows` takes the parent's value whenever it changes; `pinned` holds a value of the variant's own; `parent_moved` holds one while the parent changed its value since; `own` marks a property value or a component the variant added itself.
+		Images *InheritanceState `json:"images,omitempty"`
+
+		// Weight What a variant does with a value its parent holds. `follows` takes the parent's value whenever it changes; `pinned` holds a value of the variant's own; `parent_moved` holds one while the parent changed its value since; `own` marks a property value or a component the variant added itself.
+		Weight *InheritanceState `json:"weight,omitempty"`
+	} `json:"inheritance,omitempty"`
+
 	// Mediafiles Product images. Only present when product mediafiles feature is enabled in tenant config and in show/permalink actions.
 	Mediafiles *[]Mediafile `json:"mediafiles,omitempty"`
 
@@ -3812,9 +3986,12 @@ type ProductDetail struct {
 
 	// OwnerName Name of the record owner. Only present in show action when the product has an owner.
 	OwnerName *string `json:"ownerName,omitempty"`
+
+	// ParentId The product this one is a variant of, null on a root. Present only for a signed-in caller or an API consumer.
+	ParentId  *int    `json:"parentId,omitempty"`
 	Permalink *string `json:"permalink,omitempty"`
 
-	// Properties Product properties grouped by property type name. Only present in show/permalink actions. Filtered by the show parameter and user group access.
+	// Properties Product properties grouped by property type name. Only present in show/permalink actions. Filtered by the show parameter and access group access.
 	Properties *map[string]struct {
 		// AllowedValues The closed set of values a templated property type accepts (battery chemistries, for example). Only present when the type carries one; a value outside the set is refused.
 		AllowedValues *[]string `json:"allowedValues,omitempty"`
@@ -3867,7 +4044,7 @@ type ProductDetail struct {
 		// Example: bpass:batteryChemistry
 		Namespace *string `json:"namespace,omitempty"`
 
-		// RestrictedByGroup Restricted to specific user groups
+		// RestrictedByGroup Restricted to specific access groups
 		RestrictedByGroup *bool `json:"restrictedByGroup,omitempty"`
 
 		// RestrictedByParam Requires the show parameter to display
@@ -3898,6 +4075,9 @@ type ProductDetail struct {
 	// UpdatedAt Only present when the API consumer has the include_dates context flag.
 	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
 
+	// VariantsCount How many products are variants of this one. Present only for a signed-in caller or an API consumer.
+	VariantsCount *int `json:"variantsCount,omitempty"`
+
 	// Weight Product weight, in `weightUnit`. Only present when the product carries one.
 	Weight *float32 `json:"weight,omitempty"`
 
@@ -3908,7 +4088,7 @@ type ProductDetail struct {
 // ProductDetailWeightUnit The unit of `weight`. Present with the weight.
 type ProductDetailWeightUnit string
 
-// ProductInput The fields of a product write. A create needs `name` and `componentsInput`, which the create operation says; an update carries only what it means to change, because every field it names is written.
+// ProductInput The fields of a product write. A create needs `name` and `componentsInput`, which the create operation says, and `name` alone where it names `parentId`; an update carries only what it means to change, because every field it names is written.
 type ProductInput struct {
 	CategoryIds *[]string `json:"categoryIds,omitempty"`
 
@@ -3919,7 +4099,10 @@ type ProductInput struct {
 	// Name Example: New Product
 	Name *string `json:"name,omitempty"`
 
-	// PropertiesInput Property values keyed by property type id, as GET /products/new lists them. An entry is a bare value, an object with value plus an optional percentage and compositionRows, or a list of either for a type that takes several values. A type named here is replaced by what the entry carries; a type left out keeps the values it has.
+	// ParentId On a create, the product the new one is a variant of. It starts as a copy of that product and takes its later changes, and the other fields of the body become its own where they differ. An update leaves it out or names the parent the product has.
+	ParentId *int `json:"parentId,omitempty"`
+
+	// PropertiesInput Property values keyed by property type id, as GET /products/new lists them. An entry is a bare value, an object with value plus an optional percentage and compositionRows, or a list of either for a type that takes several values. A type named here is replaced by what the entry carries; a type left out keeps the values it has. On a variant, a value the product already holds stays as it is, so a value it inherits goes on following its parent; a value that differs becomes the variant's own, and the parent's later changes to that value no longer reach it. A type sent with no value keeps the parent's values for it out of the variant.
 	//
 	// Example: {"1":"https://example.com/documents/technical-documentation.pdf","12":["Red","Blue"],"5":"100% organic cotton","9":{"percentage":95,"value":"Cotton"}}
 	PropertiesInput *map[string]interface{} `json:"propertiesInput,omitempty"`
@@ -3947,11 +4130,17 @@ type Property struct {
 	// Id The property's own id, which the `existing` half of a properties payload is keyed by
 	Id *int `json:"id,omitempty"`
 
+	// Inheritance Whether the variant follows its parent for this value. Present with `rowId`.
+	Inheritance *InheritanceState `json:"inheritance,omitempty"`
+
 	// Percentage The share of the product the value stands for. Only present when the property carries one.
 	Percentage *float32 `json:"percentage,omitempty"`
 
 	// Rating Property rating A-D (only for rated properties when unlocked)
 	Rating *string `json:"rating,omitempty"`
+
+	// RowId The row a variant holds the value in. One value document may serve several products, so the row is what a variant follows or holds as its own. Present only on a variant's values, for a signed-in caller or an API consumer.
+	RowId *int `json:"rowId,omitempty"`
 
 	// Value Rendered HTML value (or raw value when ?raw=true)
 	Value *string `json:"value,omitempty"`
@@ -4013,32 +4202,45 @@ type Subscription struct {
 	Upgradable   *bool      `json:"upgradable,omitempty"`
 }
 
-// Task A piece of work one person asks of another, assigned to one person or to one user group. A member claims a group task before working on it. A task ends done or cancelled and stays on record.
+// Task A piece of work one person asks of another, assigned to one person or to one access group. A member claims a group task before working on it. A task ends done or cancelled and stays on record.
 //
 // A review walks the steps of the workspace's review flow, one after the other: `step` is where it stands, `steps` what became of each, and `review` what it asks for. Its assignee is the group of the current step, or a `Permission` when the step waits on everyone holding it.
 //
 // Everyone a task names is written as `type`, `id` and `name`; one that is gone keeps its type and id. A value the task does not carry is left out, and a task without `requester` was made by the system.
 //
-// Example: {"assignee":{"id":3,"name":"Quality","type":"UserGroup"},"assigneeKey":"UserGroup:3","claimedAt":"2026-09-24T10:02:00Z","claimedBy":{"id":15,"name":"Maria Muster","type":"User"},"createdAt":"2026-09-24T09:40:00Z","dueOn":"2026-10-01","editable":false,"id":42,"kind":"custom","moves":["release","complete"],"note":"The one for the spring range","overdue":false,"requester":{"id":12,"name":"Hans Tester","type":"User"},"status":"open","title":"Check the supplier declaration","type":"Task","updatedAt":"2026-09-24T10:02:00Z"}
+// Example: {"assignee":{"id":3,"name":"Quality","type":"AccessGroup"},"assigneeKey":"AccessGroup:3","attachments":[{"bytes":184320,"extension":"pdf","id":31,"name":"Supplier declaration","url":"https://example.com/api/tasks/42/attachments/31"}],"claimedAt":"2026-09-24T10:02:00Z","claimedBy":{"id":15,"name":"Maria Muster","type":"User"},"createdAt":"2026-09-24T09:40:00Z","dueOn":"2026-10-01","editable":false,"id":42,"kind":"custom","moves":["release","complete"],"note":"The one for the spring range","overdue":false,"priority":"high","requester":{"id":12,"name":"Hans Tester","type":"User"},"status":"open","subject":{"id":7,"name":"Spring shirt","type":"Product"},"subjectKey":"Product:7","title":"Check the supplier declaration","type":"Task","updatedAt":"2026-09-24T10:02:00Z"}
 type Task struct {
 	// Assignee A person, group, credential, permission or record a task names. `name` is left out once the record is gone.
 	//
-	// Example: {"id":3,"name":"Quality","type":"UserGroup"}
+	// Example: {"id":3,"name":"Quality","type":"AccessGroup"}
 	Assignee *TaskParty `json:"assignee,omitempty"`
 
-	// AssigneeKey The assignee as `User:<id>` or `UserGroup:<id>`, the value `POST /tasks` takes
-	AssigneeKey *string    `json:"assigneeKey,omitempty"`
-	ClaimedAt   *time.Time `json:"claimedAt,omitempty"`
+	// AssigneeKey The assignee as `User:<id>` or `AccessGroup:<id>`, the value `POST /tasks` takes
+	AssigneeKey *string `json:"assigneeKey,omitempty"`
+
+	// Attachments The files the task carries, in their order. Only those who see the task read them, each at its `url`; they are added in the application manager.
+	Attachments *[]struct {
+		Bytes *int `json:"bytes,omitempty"`
+
+		// Extension The kind of file, such as `pdf` or `png`
+		Extension *string `json:"extension,omitempty"`
+		Id        *int    `json:"id,omitempty"`
+		Name      *string `json:"name,omitempty"`
+
+		// Url `GET /tasks/{id}/attachments/{attachmentId}`
+		Url *string `json:"url,omitempty"`
+	} `json:"attachments,omitempty"`
+	ClaimedAt *time.Time `json:"claimedAt,omitempty"`
 
 	// ClaimedBy A person, group, credential, permission or record a task names. `name` is left out once the record is gone.
 	//
-	// Example: {"id":3,"name":"Quality","type":"UserGroup"}
+	// Example: {"id":3,"name":"Quality","type":"AccessGroup"}
 	ClaimedBy *TaskParty `json:"claimedBy,omitempty"`
 	ClosedAt  *time.Time `json:"closedAt,omitempty"`
 
 	// ClosedBy A person, group, credential, permission or record a task names. `name` is left out once the record is gone.
 	//
-	// Example: {"id":3,"name":"Quality","type":"UserGroup"}
+	// Example: {"id":3,"name":"Quality","type":"AccessGroup"}
 	ClosedBy *TaskParty `json:"closedBy,omitempty"`
 
 	// ClosingNote Why the review was rejected, in the decider's words
@@ -4053,7 +4255,7 @@ type Task struct {
 	Editable *bool `json:"editable,omitempty"`
 	Id       int   `json:"id"`
 
-	// Kind `custom` for what a person asks; the review kinds come from a review flow and end in an `outcome`; `request_for_information` stands for a request to a supplier and opens and closes with it
+	// Kind `custom` for what a person asks; the review kinds come from a review flow and end in an `outcome`; `request_for_information` stands for a request to a supplier and opens and closes with it, `supply_answer` for the answer a supplier's group is asked for
 	Kind TaskKind `json:"kind"`
 
 	// Moves The moves this credential may take on the task now, each a `POST /tasks/{id}/<move>`
@@ -4066,9 +4268,12 @@ type Task struct {
 	// Overdue Open with a due date before today
 	Overdue *bool `json:"overdue,omitempty"`
 
+	// Priority How urgent the task is; `normal` unless someone said otherwise
+	Priority *TaskPriority `json:"priority,omitempty"`
+
 	// Requester A person, group, credential, permission or record a task names. `name` is left out once the record is gone.
 	//
-	// Example: {"id":3,"name":"Quality","type":"UserGroup"}
+	// Example: {"id":3,"name":"Quality","type":"AccessGroup"}
 	Requester *TaskParty `json:"requester,omitempty"`
 
 	// Review What a review asks for, and while it is open what approving does
@@ -4101,7 +4306,7 @@ type Task struct {
 
 		// DecidedBy A person, group, credential, permission or record a task names. `name` is left out once the record is gone.
 		//
-		// Example: {"id":3,"name":"Quality","type":"UserGroup"}
+		// Example: {"id":3,"name":"Quality","type":"AccessGroup"}
 		DecidedBy *TaskParty `json:"decidedBy,omitempty"`
 		Name      *string    `json:"name,omitempty"`
 
@@ -4113,17 +4318,20 @@ type Task struct {
 
 	// Subject A person, group, credential, permission or record a task names. `name` is left out once the record is gone.
 	//
-	// Example: {"id":3,"name":"Quality","type":"UserGroup"}
-	Subject   *TaskParty `json:"subject,omitempty"`
-	Title     string     `json:"title"`
-	Type      *TaskType  `json:"type,omitempty"`
-	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
+	// Example: {"id":3,"name":"Quality","type":"AccessGroup"}
+	Subject *TaskParty `json:"subject,omitempty"`
+
+	// SubjectKey The record the task is about as `<type>:<id>`, the value `POST /tasks` takes: `Product`, `Component`, `Dpp` (a passport), `Batch` (a lot) or `Supplier`. `subject` names it.
+	SubjectKey *string    `json:"subjectKey,omitempty"`
+	Title      string     `json:"title"`
+	Type       *TaskType  `json:"type,omitempty"`
+	UpdatedAt  *time.Time `json:"updatedAt,omitempty"`
 }
 
 // TaskClosingReason Why a review closed without a decision
 type TaskClosingReason string
 
-// TaskKind `custom` for what a person asks; the review kinds come from a review flow and end in an `outcome`; `request_for_information` stands for a request to a supplier and opens and closes with it
+// TaskKind `custom` for what a person asks; the review kinds come from a review flow and end in an `outcome`; `request_for_information` stands for a request to a supplier and opens and closes with it, `supply_answer` for the answer a supplier's group is asked for
 type TaskKind string
 
 // TaskMoves defines model for Task.Moves.
@@ -4131,6 +4339,9 @@ type TaskMoves string
 
 // TaskOutcome The decision of a finished review
 type TaskOutcome string
+
+// TaskPriority How urgent the task is; `normal` unless someone said otherwise
+type TaskPriority string
 
 // TaskReviewAction defines model for Task.Review.Action.
 type TaskReviewAction string
@@ -4164,11 +4375,11 @@ type TaskDecision struct {
 	Step *int `json:"step,omitempty"`
 }
 
-// TaskInput Example: {"task":{"assigneeKey":"UserGroup:3","dueOn":"2026-10-01","note":"The one for the spring range","title":"Check the supplier declaration"}}
+// TaskInput Example: {"task":{"assigneeKey":"AccessGroup:3","dueOn":"2026-10-01","note":"The one for the spring range","priority":"high","subjectKey":"Product:7","title":"Check the supplier declaration"}}
 type TaskInput struct {
 	// Task On create, `title` and `assigneeKey` are needed; on update, send only what changes.
 	Task struct {
-		// AssigneeKey `User:<id>` or `UserGroup:<id>`, as `GET /tasks/assignees` names them. A person who can open the application manager, or a group with access to it and at least one member. A new assignee clears the claim and is told.
+		// AssigneeKey `User:<id>` or `AccessGroup:<id>`, as `GET /tasks/assignees` names them. A person who can open the application manager, or a group with access to it and at least one member. A new assignee clears the claim and is told.
 		AssigneeKey *string `json:"assigneeKey,omitempty"`
 
 		// DueOn Optional; not in the past. From the day after, the task counts as overdue.
@@ -4177,14 +4388,23 @@ type TaskInput struct {
 		// Note Anything the person needs to get it done
 		Note *string `json:"note,omitempty"`
 
+		// Priority Optional; `normal` when left out.
+		Priority *TaskInputTaskPriority `json:"priority,omitempty"`
+
+		// SubjectKey Optional; the one record the task is about, as `Product:<id>`, `Component:<id>`, `Dpp:<id>` (a passport), `Batch:<id>` (a lot) or `Supplier:<id>`. The one who asks has to read it: a record they may not read is refused like one that is not there. A program acting as itself reads a kind it holds the grant of (`product_access`, `component_access`, `dpp_read` for passports and lots) and links no supplier. An empty value unlinks the record.
+		SubjectKey *string `json:"subjectKey,omitempty"`
+
 		// Title What needs doing, in one line
 		Title *string `json:"title,omitempty"`
 	} `json:"task"`
 }
 
+// TaskInputTaskPriority Optional; `normal` when left out.
+type TaskInputTaskPriority string
+
 // TaskParty A person, group, credential, permission or record a task names. `name` is left out once the record is gone.
 //
-// Example: {"id":3,"name":"Quality","type":"UserGroup"}
+// Example: {"id":3,"name":"Quality","type":"AccessGroup"}
 type TaskParty struct {
 	// Id The record's id; a `Permission` carries `key` instead
 	Id *int `json:"id,omitempty"`
@@ -4193,7 +4413,7 @@ type TaskParty struct {
 	Key  *string `json:"key,omitempty"`
 	Name *string `json:"name,omitempty"`
 
-	// Type `User`, `UserGroup`, `ApiConsumer`, `Permission` for a review that waits on everyone holding it, or `Superadmin` for platform support that acted in the workspace; a subject names its own record type
+	// Type `User`, `AccessGroup`, `ApiConsumer`, `Permission` for a review that waits on everyone holding it, or `Superadmin` for platform support that acted in the workspace; a subject names its own record type
 	Type string `json:"type"`
 }
 
@@ -4342,8 +4562,8 @@ type WebhookInput struct {
 		// EventTypes The versioned event types to deliver; empty or absent means all of them
 		EventTypes *[]WebhookInputWebhookEventTypes `json:"eventTypes,omitempty"`
 
-		// Name A short label so a list of subscriptions is scannable by more than the URL
-		Name string `json:"name"`
+		// Name A short label so a list of subscriptions is scannable by more than the URL; left out or empty, the URL's host names the subscription
+		Name *string `json:"name,omitempty"`
 
 		// ResourceScopeDppCodes Confine the subscription to these passports by public code; empty means every passport
 		ResourceScopeDppCodes *[]string `json:"resourceScopeDppCodes,omitempty"`
@@ -5090,12 +5310,13 @@ type ListProductsParams struct {
 
 // CreateProductJSONBody defines parameters for CreateProduct.
 type CreateProductJSONBody struct {
-	Brand struct {
+	// Brand The brand of the product, required unless `product.parentId` names a parent, whose brand a variant takes.
+	Brand *struct {
 		// Name Brand name (finds or creates)
 		Name string `json:"name"`
-	} `json:"brand"`
+	} `json:"brand,omitempty"`
 
-	// Product The fields of a product write. A create needs `name` and `componentsInput`, which the create operation says; an update carries only what it means to change, because every field it names is written.
+	// Product The fields of a product write. A create needs `name` and `componentsInput`, which the create operation says, and `name` alone where it names `parentId`; an update carries only what it means to change, because every field it names is written.
 	Product ProductInput `json:"product"`
 }
 
@@ -5126,7 +5347,7 @@ type UpdateProductJSONBody struct {
 		Name *string `json:"name,omitempty"`
 	} `json:"brand,omitempty"`
 
-	// Product The fields of a product write. A create needs `name` and `componentsInput`, which the create operation says; an update carries only what it means to change, because every field it names is written.
+	// Product The fields of a product write. A create needs `name` and `componentsInput`, which the create operation says, and `name` alone where it names `parentId`; an update carries only what it means to change, because every field it names is written.
 	Product *ProductInput `json:"product,omitempty"`
 }
 
@@ -5135,6 +5356,30 @@ type UpdateProductMediafilesJSONBody struct {
 	// MediafileIds Ordered list of mediafile IDs to assign
 	MediafileIds *[]int `json:"mediafileIds,omitempty"`
 }
+
+// RestoreProductValuesJSONBody defines parameters for RestoreProductValues.
+type RestoreProductValuesJSONBody struct {
+	// All Every value the variant holds of its own follows again; the lists are then left unread
+	All *bool `json:"all,omitempty"`
+
+	// ComponentRowIds Component rows of the variant, by their `id`
+	ComponentRowIds *[]int `json:"componentRowIds,omitempty"`
+
+	// Keys Values of the product itself, by their keys in `inheritance`
+	Keys *[]RestoreProductValuesJSONBodyKeys `json:"keys,omitempty"`
+
+	// ParentComponentRowIds Component rows of the parent, by their `id` in the parent's read; the variant's row taken from each follows again, one the variant took out included
+	ParentComponentRowIds *[]int `json:"parentComponentRowIds,omitempty"`
+
+	// ParentPropertyIds Property values of the parent, by their `id` in the parent's read; the variant's value taken from each follows again, one the variant took out included
+	ParentPropertyIds *[]int `json:"parentPropertyIds,omitempty"`
+
+	// PropertyRowIds Property values of the variant, by their `rowId`
+	PropertyRowIds *[]int `json:"propertyRowIds,omitempty"`
+}
+
+// RestoreProductValuesJSONBodyKeys defines parameters for RestoreProductValues.
+type RestoreProductValuesJSONBodyKeys string
 
 // ResetPasswordJSONBody defines parameters for ResetPassword.
 type ResetPasswordJSONBody struct {
@@ -5381,6 +5626,9 @@ type UpdateProductJSONRequestBody UpdateProductJSONBody
 
 // UpdateProductMediafilesJSONRequestBody defines body for UpdateProductMediafiles for application/json ContentType.
 type UpdateProductMediafilesJSONRequestBody UpdateProductMediafilesJSONBody
+
+// RestoreProductValuesJSONRequestBody defines body for RestoreProductValues for application/json ContentType.
+type RestoreProductValuesJSONRequestBody RestoreProductValuesJSONBody
 
 // ResetPasswordJSONRequestBody defines body for ResetPassword for application/json ContentType.
 type ResetPasswordJSONRequestBody ResetPasswordJSONBody
@@ -6040,6 +6288,13 @@ type ClientInterface interface {
 	// Corresponds with POST /dpps/validate (the `ValidateDpp` operationId).
 	ValidateDpp(ctx context.Context, body ValidateDppJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetDppPrivateDynamicData Read the restricted dynamic data
+	//
+	// The passport's live readings in the legitimate-interest tier that this reader may see. The public dynamic-data document carries the public tier only; this answer has the same shape, holds only the restricted rows, and is signed with the same platform key, so a reader verifies it the same way and merges the two. A key is served when it names a published property type in the legitimate-interest tier, no property type sharing its vocabulary term sits in the authorities or internal tier, and the reader belongs to an access group of every legitimate-interest type sharing it. An authority consumer reads without a group. A passport holding no such key answers 404; an authenticated reader who may see none of them gets 204. An unauthenticated request answers 401 with the `X-Auth-Fields` challenge the passport page uses to sign a reader in.
+	//
+	// Corresponds with GET /dpps/{code}/private_dynamic_data (the `GetDppPrivateDynamicData` operationId).
+	GetDppPrivateDynamicData(ctx context.Context, code string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetDppPrivateProperties Read the private properties of several versions
 	//
 	// The reader-derived confidential rows for several versions of one passport in a single round-trip. Name the versions with `?versions=1,3,7`; at most 50 are derived per request. A version is left out when it carries no confidential rows or the reader may see none of them, so the answer only contains versions where the reader gains rows beyond the public passport. An unauthenticated request answers 401 with the `X-Auth-Fields` challenge the passport page uses to sign a reader in.
@@ -6056,7 +6311,7 @@ type ClientInterface interface {
 
 	// PublishDppWithBody Publish a DPP
 	//
-	// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. Publishing needs `dpp_publish` beside `dpp_write`; without it the answer is 403. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
+	// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. Publishing needs `dpp_publish` beside `dpp_write`; without it the answer is 403. A passport whose publish review was approved waits ready to publish, and the person who asked for the review publishes it here through a credential of theirs with `dpp_write` alone, and so does any caller with `dpp_publish`. That publish carries the reason and the move to the publish stage the request asked for, and `reason` is not read. The approval stands until the product changes; after that the call is judged like any other publish. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -6065,7 +6320,7 @@ type ClientInterface interface {
 
 	// PublishDpp Publish a DPP
 	//
-	// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. Publishing needs `dpp_publish` beside `dpp_write`; without it the answer is 403. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
+	// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. Publishing needs `dpp_publish` beside `dpp_write`; without it the answer is 403. A passport whose publish review was approved waits ready to publish, and the person who asked for the review publishes it here through a credential of theirs with `dpp_write` alone, and so does any caller with `dpp_publish`. That publish carries the reason and the move to the publish stage the request asked for, and `reason` is not read. The approval stands until the product changes; after that the call is judged like any other publish. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -6128,7 +6383,7 @@ type ClientInterface interface {
 
 	// UpdateDppDynamicDataWithBody Update dynamic data
 	//
-	// Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none); every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.
+	// Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none). A key naming a published legitimate-interest type is served to the readers its access groups admit by `GET /dpps/{code}/private_dynamic_data`; every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -6137,7 +6392,7 @@ type ClientInterface interface {
 
 	// UpdateDppDynamicData Update dynamic data
 	//
-	// Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none); every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.
+	// Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none). A key naming a published legitimate-interest type is served to the readers its access groups admit by `GET /dpps/{code}/private_dynamic_data`; every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -6884,7 +7139,11 @@ type ClientInterface interface {
 
 	// CreateProductWithBody Create a product
 	//
-	// Creates a new product. The authenticated user or API consumer becomes the owner. A product needs a brand, named alongside it (an existing brand of that name is used, a new one created and owned by the caller), and at least one component under componentsInput. A consumer needs `product_access`.
+	// Creates a new product. The authenticated user or API consumer becomes the owner. A product needs a brand, named alongside it (an existing brand of that name is used, a new one created and owned by the caller), and at least one component under componentsInput. A consumer needs `product_access`, and to create the brand it names also `brand_access`, as `POST /brands` asks; without it a new brand name answers 403 `BRAND_FORBIDDEN`.
+	//
+	// A credential acting for a person (one granted on the consent screen, or the assistant's) names only the categories, the brand and the manufacturers that person reads in the application manager, and creates a brand only where that person may; anything else answers 422 naming `categories`, `brand` or `properties`.
+	//
+	// A product naming a parent under `parentId` is created as its variant: it starts as a copy of the parent, with its brand, categories, components, images and property values, and takes the parent's later changes. Such a body needs a name only. The brand, categories, components and property values it names besides become the variant's own where they differ from the parent's, and the variant's read marks them `pinned`. The parent is a product the caller may update, since a variant holds its parent's delete back: a parent the caller cannot read answers 422 `PRODUCT_PARENT_NOT_FOUND`, one it cannot update 403. A variant takes its mandatory values from its parent, so its create asks for none of them.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -6893,7 +7152,11 @@ type ClientInterface interface {
 
 	// CreateProduct Create a product
 	//
-	// Creates a new product. The authenticated user or API consumer becomes the owner. A product needs a brand, named alongside it (an existing brand of that name is used, a new one created and owned by the caller), and at least one component under componentsInput. A consumer needs `product_access`.
+	// Creates a new product. The authenticated user or API consumer becomes the owner. A product needs a brand, named alongside it (an existing brand of that name is used, a new one created and owned by the caller), and at least one component under componentsInput. A consumer needs `product_access`, and to create the brand it names also `brand_access`, as `POST /brands` asks; without it a new brand name answers 403 `BRAND_FORBIDDEN`.
+	//
+	// A credential acting for a person (one granted on the consent screen, or the assistant's) names only the categories, the brand and the manufacturers that person reads in the application manager, and creates a brand only where that person may; anything else answers 422 naming `categories`, `brand` or `properties`.
+	//
+	// A product naming a parent under `parentId` is created as its variant: it starts as a copy of the parent, with its brand, categories, components, images and property values, and takes the parent's later changes. Such a body needs a name only. The brand, categories, components and property values it names besides become the variant's own where they differ from the parent's, and the variant's read marks them `pinned`. The parent is a product the caller may update, since a variant holds its parent's delete back: a parent the caller cannot read answers 422 `PRODUCT_PARENT_NOT_FOUND`, one it cannot update 403. A variant takes its mandatory values from its parent, so its create asks for none of them.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -6943,7 +7206,7 @@ type ClientInterface interface {
 
 	// UpdateProductWithBody Update a product
 	//
-	// Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are.
+	// Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are. A brand name no brand carries creates the brand, which asks a consumer for `brand_access` (403 `BRAND_FORBIDDEN` without it); a credential acting for a person names only what that person reads, as on create. On a variant, a value the body changes becomes the variant's own and a value it sends as it was read goes on following the parent. `parentId` is left out or names the parent the product has; any other answers 422 `PRODUCT_PARENT_READ_ONLY`, since a variant moves to another parent through a spreadsheet import only.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -6952,7 +7215,7 @@ type ClientInterface interface {
 
 	// UpdateProduct Update a product
 	//
-	// Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are.
+	// Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are. A brand name no brand carries creates the brand, which asks a consumer for `brand_access` (403 `BRAND_FORBIDDEN` without it); a credential acting for a person names only what that person reads, as on create. On a variant, a value the body changes becomes the variant's own and a value it sends as it was read goes on following the parent. `parentId` is left out or names the parent the product has; any other answers 422 `PRODUCT_PARENT_READ_ONLY`, since a variant moves to another parent through a spreadsheet import only.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -6961,7 +7224,7 @@ type ClientInterface interface {
 
 	// UpdateProductMediafilesWithBody Update product mediafile assignments
 	//
-	// Replaces all mediafile assignments on a product with the given list in the specified order. Requires the product mediafiles feature to be enabled.
+	// Replaces all mediafile assignments on a product with the given list in the specified order, as one change. On a variant, a list that differs from its parent's becomes the variant's own, and the list sent as it was read goes on following the parent. Requires the product mediafiles feature to be enabled.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -6970,7 +7233,7 @@ type ClientInterface interface {
 
 	// UpdateProductMediafiles Update product mediafile assignments
 	//
-	// Replaces all mediafile assignments on a product with the given list in the specified order. Requires the product mediafiles feature to be enabled.
+	// Replaces all mediafile assignments on a product with the given list in the specified order, as one change. On a variant, a list that differs from its parent's becomes the variant's own, and the list sent as it was read goes on following the parent. Requires the product mediafiles feature to be enabled.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -6983,6 +7246,40 @@ type ClientInterface interface {
 	//
 	// Corresponds with PUT /products/{id}/publish (the `PublishProduct` operationId).
 	PublishProduct(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// RestoreProductValuesWithBody Have a variant follow its parent again
+	//
+	// Makes a variant follow its parent again for the values the body names: the variant's own value goes, the parent's present value is written, and the parent's later changes reach the value again. `GET /products/{id}` names the state of each value of a variant under `inheritance`, on each property value and on each component row; a value that follows already is left as it is. The body names values as the reads do:
+	//
+	// - `keys`: the keys of `inheritance`
+	// - `propertyRowIds`: the `rowId` of a property value
+	// - `componentRowIds`: the `id` of a component row
+	// - `parentComponentRowIds` and `parentPropertyIds`: the `id` of a component row and of a property value in the parent's read. No read of the variant names a row it took out of what its parent hands down, so the parent's read names it.
+	// - `all`: every value the variant holds of its own.
+	//
+	// A name matching nothing the variant takes from its parent (a key the map lacks, a row the variant added itself) refuses the whole request with 422 `RESTORE_UNKNOWN_KEYS`, naming each; a body naming nothing answers 422 `RESTORE_KEYS_REQUIRED`. A product without a parent, or whose parent is in the trash, answers 422 `PRODUCT_NOT_A_VARIANT`. A restore is a write like any other: the product's history records it, and writing the value again makes it the variant's own once more.
+	//
+	// Takes any type of body and a specified content type.
+	//
+	// Corresponds with PUT /products/{id}/restore (the `RestoreProductValues` operationId).
+	RestoreProductValuesWithBody(ctx context.Context, id Id, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// RestoreProductValues Have a variant follow its parent again
+	//
+	// Makes a variant follow its parent again for the values the body names: the variant's own value goes, the parent's present value is written, and the parent's later changes reach the value again. `GET /products/{id}` names the state of each value of a variant under `inheritance`, on each property value and on each component row; a value that follows already is left as it is. The body names values as the reads do:
+	//
+	// - `keys`: the keys of `inheritance`
+	// - `propertyRowIds`: the `rowId` of a property value
+	// - `componentRowIds`: the `id` of a component row
+	// - `parentComponentRowIds` and `parentPropertyIds`: the `id` of a component row and of a property value in the parent's read. No read of the variant names a row it took out of what its parent hands down, so the parent's read names it.
+	// - `all`: every value the variant holds of its own.
+	//
+	// A name matching nothing the variant takes from its parent (a key the map lacks, a row the variant added itself) refuses the whole request with 422 `RESTORE_UNKNOWN_KEYS`, naming each; a body naming nothing answers 422 `RESTORE_KEYS_REQUIRED`. A product without a parent, or whose parent is in the trash, answers 422 `PRODUCT_NOT_A_VARIANT`. A restore is a write like any other: the product's history records it, and writing the value again makes it the variant's own once more.
+	//
+	// Takes a body of the `application/json` content type.
+	//
+	// Corresponds with PUT /products/{id}/restore (the `RestoreProductValues` operationId).
+	RestoreProductValues(ctx context.Context, id Id, body RestoreProductValuesJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// UnpublishProduct Unpublish a product
 	//
@@ -7029,7 +7326,7 @@ type ClientInterface interface {
 
 	// SearchCatalogue Search products and components
 	//
-	// Full-text search powered by Elasticsearch. Returns a flat results array containing mixed product and component records.
+	// Full-text search powered by Elasticsearch. Returns a flat results array containing mixed product and component records. Search answers what the lists answer, so products are left out while `GET /products` answers 204 and components while `GET /components` does; with both lists off the results are empty.
 	//
 	// Corresponds with GET /search (the `SearchCatalogue` operationId).
 	SearchCatalogue(ctx context.Context, params *SearchCatalogueParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -7070,11 +7367,12 @@ type ClientInterface interface {
 	//
 	// The tasks of one list, newest first. A credential that acts for a person (a grant the person approved, or their assistant) reads the lists as that person. Any other credential reads them as itself: it finds the tasks it asked for under `requested` and `done`, and nothing waits on it.
 	//
-	// - `mine` (the default): the tasks given to the person, the ones they claimed, and the group tasks nobody has claimed yet. The number beside the bell in the application manager counts these.
-	// - `groups`: every open task of the person's groups, with who holds it.
+	// - `mine` (the default): what the person has to do: the tasks given to them, the ones they claimed, and the group tasks and reviews nobody has claimed yet. A request for information waiting for its supplier is left out. The number beside the bell in the application manager counts these.
+	// - `waiting`: the person's requests for information while they wait for the supplier, and the tasks they take part in that someone else has claimed.
 	// - `requested`: the open tasks the caller asked of others.
 	// - `done`: the finished and cancelled tasks the caller took part in.
-	// - `all`: every task, for an admin only.
+	// - `all`: every task the caller takes part in; every task for an admin.
+	// - `groups`: retired, read as `mine` until the next release.
 	//
 	// A list the caller may not read answers 422 `TASK_LIST_INVALID`, naming the ones it may.
 	//
@@ -7083,9 +7381,9 @@ type ClientInterface interface {
 
 	// CreateTaskWithBody Create a task
 	//
-	// Asks a person or a user group for something. The task is a request (`kind` custom) whatever the body says, and names the caller as the one who asked: the person a grant or an assistant acts for, or the credential itself. Every person the task reaches sees it at once in the application manager and hears of it in the bell; the morning mail carries it too.
+	// Asks a person or an access group for something. The task is a request (`kind` custom) whatever the body says, and names the caller as the one who asked: the person a grant or an assistant acts for, or the credential itself. Every person the task reaches sees it at once in the application manager and hears of it in the bell; the morning mail carries it too.
 	//
-	// Find the `assigneeKey` with `GET /tasks/assignees`.
+	// Find the `assigneeKey` with `GET /tasks/assignees`. A task may link one record the caller reads (`subjectKey`) and carry a `priority`.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -7094,9 +7392,9 @@ type ClientInterface interface {
 
 	// CreateTask Create a task
 	//
-	// Asks a person or a user group for something. The task is a request (`kind` custom) whatever the body says, and names the caller as the one who asked: the person a grant or an assistant acts for, or the credential itself. Every person the task reaches sees it at once in the application manager and hears of it in the bell; the morning mail carries it too.
+	// Asks a person or an access group for something. The task is a request (`kind` custom) whatever the body says, and names the caller as the one who asked: the person a grant or an assistant acts for, or the credential itself. Every person the task reaches sees it at once in the application manager and hears of it in the bell; the morning mail carries it too.
 	//
-	// Find the `assigneeKey` with `GET /tasks/assignees`.
+	// Find the `assigneeKey` with `GET /tasks/assignees`. A task may link one record the caller reads (`subjectKey`) and carry a `priority`.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -7137,7 +7435,7 @@ type ClientInterface interface {
 
 	// ApproveTaskWithBody Approve a review
 	//
-	// Approves the step a review stands at, as the person the credential acts for. A review walks the steps of the workspace's review flow, or the one step of everyone who may sign passports where no flow fits. Approving a middle step passes the request on to the next step and signs nothing. Approving the last step carries the request out in the person's name: a publish review signs the passport, which needs `dpp_publish` in the credential's scope beside `task_access`; without it the answer is 403 and nothing is signed.
+	// Approves the step a review stands at, as the person the credential acts for. A review walks the steps of the workspace's review flow, or the one step of everyone who may sign passports where no flow fits. Approving a middle step passes the request on to the next step and signs nothing. Approving the last step carries the request out in the person's name, which needs `dpp_publish` in the credential's scope beside `task_access`; without it the answer is 403 and the review stays open. A publish review then approves the passport, which waits ready to publish for the person who asked (`POST /dpps/{code}/publish`) until the product changes; a review of an event's seal or of a correction signs at once.
 	//
 	// Send the `step` the caller read, so a press on a review that moved on in between decides nothing (`TASK_STEP_MOVED`). The person who asked for a review decides no step of it (`TASK_OWN_REQUEST`). A publish the validator or the workspace refuses answers as `POST /dpps/{code}/publish` does, and the review stays open.
 	//
@@ -7148,7 +7446,7 @@ type ClientInterface interface {
 
 	// ApproveTask Approve a review
 	//
-	// Approves the step a review stands at, as the person the credential acts for. A review walks the steps of the workspace's review flow, or the one step of everyone who may sign passports where no flow fits. Approving a middle step passes the request on to the next step and signs nothing. Approving the last step carries the request out in the person's name: a publish review signs the passport, which needs `dpp_publish` in the credential's scope beside `task_access`; without it the answer is 403 and nothing is signed.
+	// Approves the step a review stands at, as the person the credential acts for. A review walks the steps of the workspace's review flow, or the one step of everyone who may sign passports where no flow fits. Approving a middle step passes the request on to the next step and signs nothing. Approving the last step carries the request out in the person's name, which needs `dpp_publish` in the credential's scope beside `task_access`; without it the answer is 403 and the review stays open. A publish review then approves the passport, which waits ready to publish for the person who asked (`POST /dpps/{code}/publish`) until the product changes; a review of an event's seal or of a correction signs at once.
 	//
 	// Send the `step` the caller read, so a press on a review that moved on in between decides nothing (`TASK_STEP_MOVED`). The person who asked for a review decides no step of it (`TASK_OWN_REQUEST`). A publish the validator or the workspace refuses answers as `POST /dpps/{code}/publish` does, and the review stays open.
 	//
@@ -7157,9 +7455,16 @@ type ClientInterface interface {
 	// Corresponds with POST /tasks/{id}/approve (the `ApproveTask` operationId).
 	ApproveTask(ctx context.Context, id Id, params *ApproveTaskParams, body ApproveTaskJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetTaskAttachment Download a file of a task
+	//
+	// One of the files a task carries, the `url` its `attachments` name. Only those who see the task read its files, so a task the caller has no part in answers 404, and so does a file the task does not carry (`MEDIAFILE_NOT_FOUND`). Images and PDFs come inline, every other kind as an attachment. Files are added in the application manager.
+	//
+	// Corresponds with GET /tasks/{id}/attachments/{attachmentId} (the `GetTaskAttachment` operationId).
+	GetTaskAttachment(ctx context.Context, id Id, attachmentId int, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// CancelTask Cancel a task
 	//
-	// Ends an open task as cancelled. The one who asked for it may, or an admin. The task stays on record and can be reopened.
+	// Ends an open task as cancelled. The one who asked for it may, or an admin, and so may the person a custom task is with, declining it. The task stays on record and can be reopened.
 	//
 	// Corresponds with POST /tasks/{id}/cancel (the `CancelTask` operationId).
 	CancelTask(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -8015,6 +8320,23 @@ func (c *Client) ValidateDpp(ctx context.Context, body ValidateDppJSONRequestBod
 	return c.Client.Do(req)
 }
 
+// GetDppPrivateDynamicData Read the restricted dynamic data
+//
+// The passport's live readings in the legitimate-interest tier that this reader may see. The public dynamic-data document carries the public tier only; this answer has the same shape, holds only the restricted rows, and is signed with the same platform key, so a reader verifies it the same way and merges the two. A key is served when it names a published property type in the legitimate-interest tier, no property type sharing its vocabulary term sits in the authorities or internal tier, and the reader belongs to an access group of every legitimate-interest type sharing it. An authority consumer reads without a group. A passport holding no such key answers 404; an authenticated reader who may see none of them gets 204. An unauthenticated request answers 401 with the `X-Auth-Fields` challenge the passport page uses to sign a reader in.
+//
+// Corresponds with GET /dpps/{code}/private_dynamic_data (the `GetDppPrivateDynamicData` operationId).
+func (c *Client) GetDppPrivateDynamicData(ctx context.Context, code string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetDppPrivateDynamicDataRequest(c.Server, code)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 // GetDppPrivateProperties Read the private properties of several versions
 //
 // The reader-derived confidential rows for several versions of one passport in a single round-trip. Name the versions with `?versions=1,3,7`; at most 50 are derived per request. A version is left out when it carries no confidential rows or the reader may see none of them, so the answer only contains versions where the reader gains rows beyond the public passport. An unauthenticated request answers 401 with the `X-Auth-Fields` challenge the passport page uses to sign a reader in.
@@ -8051,7 +8373,7 @@ func (c *Client) GetDppVersionPrivateProperties(ctx context.Context, code string
 
 // PublishDppWithBody Publish a DPP
 //
-// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. Publishing needs `dpp_publish` beside `dpp_write`; without it the answer is 403. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
+// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. Publishing needs `dpp_publish` beside `dpp_write`; without it the answer is 403. A passport whose publish review was approved waits ready to publish, and the person who asked for the review publishes it here through a credential of theirs with `dpp_write` alone, and so does any caller with `dpp_publish`. That publish carries the reason and the move to the publish stage the request asked for, and `reason` is not read. The approval stands until the product changes; after that the call is judged like any other publish. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
 //
 // Takes any type of body and a specified content type.
 //
@@ -8070,7 +8392,7 @@ func (c *Client) PublishDppWithBody(ctx context.Context, code string, params *Pu
 
 // PublishDpp Publish a DPP
 //
-// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. Publishing needs `dpp_publish` beside `dpp_write`; without it the answer is 403. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
+// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. Publishing needs `dpp_publish` beside `dpp_write`; without it the answer is 403. A passport whose publish review was approved waits ready to publish, and the person who asked for the review publishes it here through a credential of theirs with `dpp_write` alone, and so does any caller with `dpp_publish`. That publish carries the reason and the move to the publish stage the request asked for, and `reason` is not read. The approval stands until the product changes; after that the call is judged like any other publish. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -8203,7 +8525,7 @@ func (c *Client) CorrectDpp(ctx context.Context, id Id, params *CorrectDppParams
 
 // UpdateDppDynamicDataWithBody Update dynamic data
 //
-// Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none); every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.
+// Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none). A key naming a published legitimate-interest type is served to the readers its access groups admit by `GET /dpps/{code}/private_dynamic_data`; every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.
 //
 // Takes any type of body and a specified content type.
 //
@@ -8222,7 +8544,7 @@ func (c *Client) UpdateDppDynamicDataWithBody(ctx context.Context, id Id, conten
 
 // UpdateDppDynamicData Update dynamic data
 //
-// Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none); every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.
+// Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none). A key naming a published legitimate-interest type is served to the readers its access groups admit by `GET /dpps/{code}/private_dynamic_data`; every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -9779,7 +10101,11 @@ func (c *Client) ListProducts(ctx context.Context, params *ListProductsParams, r
 
 // CreateProductWithBody Create a product
 //
-// Creates a new product. The authenticated user or API consumer becomes the owner. A product needs a brand, named alongside it (an existing brand of that name is used, a new one created and owned by the caller), and at least one component under componentsInput. A consumer needs `product_access`.
+// Creates a new product. The authenticated user or API consumer becomes the owner. A product needs a brand, named alongside it (an existing brand of that name is used, a new one created and owned by the caller), and at least one component under componentsInput. A consumer needs `product_access`, and to create the brand it names also `brand_access`, as `POST /brands` asks; without it a new brand name answers 403 `BRAND_FORBIDDEN`.
+//
+// A credential acting for a person (one granted on the consent screen, or the assistant's) names only the categories, the brand and the manufacturers that person reads in the application manager, and creates a brand only where that person may; anything else answers 422 naming `categories`, `brand` or `properties`.
+//
+// A product naming a parent under `parentId` is created as its variant: it starts as a copy of the parent, with its brand, categories, components, images and property values, and takes the parent's later changes. Such a body needs a name only. The brand, categories, components and property values it names besides become the variant's own where they differ from the parent's, and the variant's read marks them `pinned`. The parent is a product the caller may update, since a variant holds its parent's delete back: a parent the caller cannot read answers 422 `PRODUCT_PARENT_NOT_FOUND`, one it cannot update 403. A variant takes its mandatory values from its parent, so its create asks for none of them.
 //
 // Takes any type of body and a specified content type.
 //
@@ -9798,7 +10124,11 @@ func (c *Client) CreateProductWithBody(ctx context.Context, params *CreateProduc
 
 // CreateProduct Create a product
 //
-// Creates a new product. The authenticated user or API consumer becomes the owner. A product needs a brand, named alongside it (an existing brand of that name is used, a new one created and owned by the caller), and at least one component under componentsInput. A consumer needs `product_access`.
+// Creates a new product. The authenticated user or API consumer becomes the owner. A product needs a brand, named alongside it (an existing brand of that name is used, a new one created and owned by the caller), and at least one component under componentsInput. A consumer needs `product_access`, and to create the brand it names also `brand_access`, as `POST /brands` asks; without it a new brand name answers 403 `BRAND_FORBIDDEN`.
+//
+// A credential acting for a person (one granted on the consent screen, or the assistant's) names only the categories, the brand and the manufacturers that person reads in the application manager, and creates a brand only where that person may; anything else answers 422 naming `categories`, `brand` or `properties`.
+//
+// A product naming a parent under `parentId` is created as its variant: it starts as a copy of the parent, with its brand, categories, components, images and property values, and takes the parent's later changes. Such a body needs a name only. The brand, categories, components and property values it names besides become the variant's own where they differ from the parent's, and the variant's read marks them `pinned`. The parent is a product the caller may update, since a variant holds its parent's delete back: a parent the caller cannot read answers 422 `PRODUCT_PARENT_NOT_FOUND`, one it cannot update 403. A variant takes its mandatory values from its parent, so its create asks for none of them.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -9908,7 +10238,7 @@ func (c *Client) GetProduct(ctx context.Context, id Id, params *GetProductParams
 
 // UpdateProductWithBody Update a product
 //
-// Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are.
+// Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are. A brand name no brand carries creates the brand, which asks a consumer for `brand_access` (403 `BRAND_FORBIDDEN` without it); a credential acting for a person names only what that person reads, as on create. On a variant, a value the body changes becomes the variant's own and a value it sends as it was read goes on following the parent. `parentId` is left out or names the parent the product has; any other answers 422 `PRODUCT_PARENT_READ_ONLY`, since a variant moves to another parent through a spreadsheet import only.
 //
 // Takes any type of body and a specified content type.
 //
@@ -9927,7 +10257,7 @@ func (c *Client) UpdateProductWithBody(ctx context.Context, id Id, contentType s
 
 // UpdateProduct Update a product
 //
-// Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are.
+// Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are. A brand name no brand carries creates the brand, which asks a consumer for `brand_access` (403 `BRAND_FORBIDDEN` without it); a credential acting for a person names only what that person reads, as on create. On a variant, a value the body changes becomes the variant's own and a value it sends as it was read goes on following the parent. `parentId` is left out or names the parent the product has; any other answers 422 `PRODUCT_PARENT_READ_ONLY`, since a variant moves to another parent through a spreadsheet import only.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -9946,7 +10276,7 @@ func (c *Client) UpdateProduct(ctx context.Context, id Id, body UpdateProductJSO
 
 // UpdateProductMediafilesWithBody Update product mediafile assignments
 //
-// Replaces all mediafile assignments on a product with the given list in the specified order. Requires the product mediafiles feature to be enabled.
+// Replaces all mediafile assignments on a product with the given list in the specified order, as one change. On a variant, a list that differs from its parent's becomes the variant's own, and the list sent as it was read goes on following the parent. Requires the product mediafiles feature to be enabled.
 //
 // Takes any type of body and a specified content type.
 //
@@ -9965,7 +10295,7 @@ func (c *Client) UpdateProductMediafilesWithBody(ctx context.Context, id Id, con
 
 // UpdateProductMediafiles Update product mediafile assignments
 //
-// Replaces all mediafile assignments on a product with the given list in the specified order. Requires the product mediafiles feature to be enabled.
+// Replaces all mediafile assignments on a product with the given list in the specified order, as one change. On a variant, a list that differs from its parent's becomes the variant's own, and the list sent as it was read goes on following the parent. Requires the product mediafiles feature to be enabled.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -9989,6 +10319,60 @@ func (c *Client) UpdateProductMediafiles(ctx context.Context, id Id, body Update
 // Corresponds with PUT /products/{id}/publish (the `PublishProduct` operationId).
 func (c *Client) PublishProduct(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewPublishProductRequest(c.Server, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// RestoreProductValuesWithBody Have a variant follow its parent again
+//
+// Makes a variant follow its parent again for the values the body names: the variant's own value goes, the parent's present value is written, and the parent's later changes reach the value again. `GET /products/{id}` names the state of each value of a variant under `inheritance`, on each property value and on each component row; a value that follows already is left as it is. The body names values as the reads do:
+//
+// - `keys`: the keys of `inheritance`
+// - `propertyRowIds`: the `rowId` of a property value
+// - `componentRowIds`: the `id` of a component row
+// - `parentComponentRowIds` and `parentPropertyIds`: the `id` of a component row and of a property value in the parent's read. No read of the variant names a row it took out of what its parent hands down, so the parent's read names it.
+// - `all`: every value the variant holds of its own.
+//
+// A name matching nothing the variant takes from its parent (a key the map lacks, a row the variant added itself) refuses the whole request with 422 `RESTORE_UNKNOWN_KEYS`, naming each; a body naming nothing answers 422 `RESTORE_KEYS_REQUIRED`. A product without a parent, or whose parent is in the trash, answers 422 `PRODUCT_NOT_A_VARIANT`. A restore is a write like any other: the product's history records it, and writing the value again makes it the variant's own once more.
+//
+// Takes any type of body and a specified content type.
+//
+// Corresponds with PUT /products/{id}/restore (the `RestoreProductValues` operationId).
+func (c *Client) RestoreProductValuesWithBody(ctx context.Context, id Id, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewRestoreProductValuesRequestWithBody(c.Server, id, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// RestoreProductValues Have a variant follow its parent again
+//
+// Makes a variant follow its parent again for the values the body names: the variant's own value goes, the parent's present value is written, and the parent's later changes reach the value again. `GET /products/{id}` names the state of each value of a variant under `inheritance`, on each property value and on each component row; a value that follows already is left as it is. The body names values as the reads do:
+//
+// - `keys`: the keys of `inheritance`
+// - `propertyRowIds`: the `rowId` of a property value
+// - `componentRowIds`: the `id` of a component row
+// - `parentComponentRowIds` and `parentPropertyIds`: the `id` of a component row and of a property value in the parent's read. No read of the variant names a row it took out of what its parent hands down, so the parent's read names it.
+// - `all`: every value the variant holds of its own.
+//
+// A name matching nothing the variant takes from its parent (a key the map lacks, a row the variant added itself) refuses the whole request with 422 `RESTORE_UNKNOWN_KEYS`, naming each; a body naming nothing answers 422 `RESTORE_KEYS_REQUIRED`. A product without a parent, or whose parent is in the trash, answers 422 `PRODUCT_NOT_A_VARIANT`. A restore is a write like any other: the product's history records it, and writing the value again makes it the variant's own once more.
+//
+// Takes a body of the `application/json` content type.
+//
+// Corresponds with PUT /products/{id}/restore (the `RestoreProductValues` operationId).
+func (c *Client) RestoreProductValues(ctx context.Context, id Id, body RestoreProductValuesJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewRestoreProductValuesRequest(c.Server, id, body)
 	if err != nil {
 		return nil, err
 	}
@@ -10094,7 +10478,7 @@ func (c *Client) StartPasswordReset(ctx context.Context, body StartPasswordReset
 
 // SearchCatalogue Search products and components
 //
-// Full-text search powered by Elasticsearch. Returns a flat results array containing mixed product and component records.
+// Full-text search powered by Elasticsearch. Returns a flat results array containing mixed product and component records. Search answers what the lists answer, so products are left out while `GET /products` answers 204 and components while `GET /components` does; with both lists off the results are empty.
 //
 // Corresponds with GET /search (the `SearchCatalogue` operationId).
 func (c *Client) SearchCatalogue(ctx context.Context, params *SearchCatalogueParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -10185,11 +10569,12 @@ func (c *Client) RefreshSession(ctx context.Context, reqEditors ...RequestEditor
 //
 // The tasks of one list, newest first. A credential that acts for a person (a grant the person approved, or their assistant) reads the lists as that person. Any other credential reads them as itself: it finds the tasks it asked for under `requested` and `done`, and nothing waits on it.
 //
-// - `mine` (the default): the tasks given to the person, the ones they claimed, and the group tasks nobody has claimed yet. The number beside the bell in the application manager counts these.
-// - `groups`: every open task of the person's groups, with who holds it.
+// - `mine` (the default): what the person has to do: the tasks given to them, the ones they claimed, and the group tasks and reviews nobody has claimed yet. A request for information waiting for its supplier is left out. The number beside the bell in the application manager counts these.
+// - `waiting`: the person's requests for information while they wait for the supplier, and the tasks they take part in that someone else has claimed.
 // - `requested`: the open tasks the caller asked of others.
 // - `done`: the finished and cancelled tasks the caller took part in.
-// - `all`: every task, for an admin only.
+// - `all`: every task the caller takes part in; every task for an admin.
+// - `groups`: retired, read as `mine` until the next release.
 //
 // A list the caller may not read answers 422 `TASK_LIST_INVALID`, naming the ones it may.
 //
@@ -10208,9 +10593,9 @@ func (c *Client) ListTasks(ctx context.Context, params *ListTasksParams, reqEdit
 
 // CreateTaskWithBody Create a task
 //
-// Asks a person or a user group for something. The task is a request (`kind` custom) whatever the body says, and names the caller as the one who asked: the person a grant or an assistant acts for, or the credential itself. Every person the task reaches sees it at once in the application manager and hears of it in the bell; the morning mail carries it too.
+// Asks a person or an access group for something. The task is a request (`kind` custom) whatever the body says, and names the caller as the one who asked: the person a grant or an assistant acts for, or the credential itself. Every person the task reaches sees it at once in the application manager and hears of it in the bell; the morning mail carries it too.
 //
-// Find the `assigneeKey` with `GET /tasks/assignees`.
+// Find the `assigneeKey` with `GET /tasks/assignees`. A task may link one record the caller reads (`subjectKey`) and carry a `priority`.
 //
 // Takes any type of body and a specified content type.
 //
@@ -10229,9 +10614,9 @@ func (c *Client) CreateTaskWithBody(ctx context.Context, params *CreateTaskParam
 
 // CreateTask Create a task
 //
-// Asks a person or a user group for something. The task is a request (`kind` custom) whatever the body says, and names the caller as the one who asked: the person a grant or an assistant acts for, or the credential itself. Every person the task reaches sees it at once in the application manager and hears of it in the bell; the morning mail carries it too.
+// Asks a person or an access group for something. The task is a request (`kind` custom) whatever the body says, and names the caller as the one who asked: the person a grant or an assistant acts for, or the credential itself. Every person the task reaches sees it at once in the application manager and hears of it in the bell; the morning mail carries it too.
 //
-// Find the `assigneeKey` with `GET /tasks/assignees`.
+// Find the `assigneeKey` with `GET /tasks/assignees`. A task may link one record the caller reads (`subjectKey`) and carry a `priority`.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -10322,7 +10707,7 @@ func (c *Client) UpdateTask(ctx context.Context, id Id, body UpdateTaskJSONReque
 
 // ApproveTaskWithBody Approve a review
 //
-// Approves the step a review stands at, as the person the credential acts for. A review walks the steps of the workspace's review flow, or the one step of everyone who may sign passports where no flow fits. Approving a middle step passes the request on to the next step and signs nothing. Approving the last step carries the request out in the person's name: a publish review signs the passport, which needs `dpp_publish` in the credential's scope beside `task_access`; without it the answer is 403 and nothing is signed.
+// Approves the step a review stands at, as the person the credential acts for. A review walks the steps of the workspace's review flow, or the one step of everyone who may sign passports where no flow fits. Approving a middle step passes the request on to the next step and signs nothing. Approving the last step carries the request out in the person's name, which needs `dpp_publish` in the credential's scope beside `task_access`; without it the answer is 403 and the review stays open. A publish review then approves the passport, which waits ready to publish for the person who asked (`POST /dpps/{code}/publish`) until the product changes; a review of an event's seal or of a correction signs at once.
 //
 // Send the `step` the caller read, so a press on a review that moved on in between decides nothing (`TASK_STEP_MOVED`). The person who asked for a review decides no step of it (`TASK_OWN_REQUEST`). A publish the validator or the workspace refuses answers as `POST /dpps/{code}/publish` does, and the review stays open.
 //
@@ -10343,7 +10728,7 @@ func (c *Client) ApproveTaskWithBody(ctx context.Context, id Id, params *Approve
 
 // ApproveTask Approve a review
 //
-// Approves the step a review stands at, as the person the credential acts for. A review walks the steps of the workspace's review flow, or the one step of everyone who may sign passports where no flow fits. Approving a middle step passes the request on to the next step and signs nothing. Approving the last step carries the request out in the person's name: a publish review signs the passport, which needs `dpp_publish` in the credential's scope beside `task_access`; without it the answer is 403 and nothing is signed.
+// Approves the step a review stands at, as the person the credential acts for. A review walks the steps of the workspace's review flow, or the one step of everyone who may sign passports where no flow fits. Approving a middle step passes the request on to the next step and signs nothing. Approving the last step carries the request out in the person's name, which needs `dpp_publish` in the credential's scope beside `task_access`; without it the answer is 403 and the review stays open. A publish review then approves the passport, which waits ready to publish for the person who asked (`POST /dpps/{code}/publish`) until the product changes; a review of an event's seal or of a correction signs at once.
 //
 // Send the `step` the caller read, so a press on a review that moved on in between decides nothing (`TASK_STEP_MOVED`). The person who asked for a review decides no step of it (`TASK_OWN_REQUEST`). A publish the validator or the workspace refuses answers as `POST /dpps/{code}/publish` does, and the review stays open.
 //
@@ -10362,9 +10747,26 @@ func (c *Client) ApproveTask(ctx context.Context, id Id, params *ApproveTaskPara
 	return c.Client.Do(req)
 }
 
+// GetTaskAttachment Download a file of a task
+//
+// One of the files a task carries, the `url` its `attachments` name. Only those who see the task read its files, so a task the caller has no part in answers 404, and so does a file the task does not carry (`MEDIAFILE_NOT_FOUND`). Images and PDFs come inline, every other kind as an attachment. Files are added in the application manager.
+//
+// Corresponds with GET /tasks/{id}/attachments/{attachmentId} (the `GetTaskAttachment` operationId).
+func (c *Client) GetTaskAttachment(ctx context.Context, id Id, attachmentId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetTaskAttachmentRequest(c.Server, id, attachmentId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 // CancelTask Cancel a task
 //
-// Ends an open task as cancelled. The one who asked for it may, or an admin. The task stays on record and can be reopened.
+// Ends an open task as cancelled. The one who asked for it may, or an admin, and so may the person a custom task is with, declining it. The task stays on record and can be reopened.
 //
 // Corresponds with POST /tasks/{id}/cancel (the `CancelTask` operationId).
 func (c *Client) CancelTask(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -12171,6 +12573,40 @@ func NewValidateDppRequestWithBody(server string, contentType string, body io.Re
 	}
 
 	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewGetDppPrivateDynamicDataRequest constructs an http.Request for the GetDppPrivateDynamicData method
+func NewGetDppPrivateDynamicDataRequest(server string, code string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "code", code, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/dpps/%s/private_dynamic_data", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
 
 	return req, nil
 }
@@ -16030,6 +16466,53 @@ func NewPublishProductRequest(server string, id Id) (*http.Request, error) {
 	return req, nil
 }
 
+// NewRestoreProductValuesRequest calls the generic RestoreProductValues builder with application/json body
+func NewRestoreProductValuesRequest(server string, id Id, body RestoreProductValuesJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewRestoreProductValuesRequestWithBody(server, id, "application/json", bodyReader)
+}
+
+// NewRestoreProductValuesRequestWithBody constructs an http.Request for the RestoreProductValues method, with any body, and a specified content type
+func NewRestoreProductValuesRequestWithBody(server string, id Id, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/products/%s/restore", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPut, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
 // NewUnpublishProductRequest constructs an http.Request for the UnpublishProduct method
 func NewUnpublishProductRequest(server string, id Id) (*http.Request, error) {
 	var err error
@@ -16665,6 +17148,47 @@ func NewApproveTaskRequestWithBody(server string, id Id, params *ApproveTaskPara
 			req.Header.Set("Idempotency-Key", headerParam0)
 		}
 
+	}
+
+	return req, nil
+}
+
+// NewGetTaskAttachmentRequest constructs an http.Request for the GetTaskAttachment method
+func NewGetTaskAttachmentRequest(server string, id Id, attachmentId int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "attachmentId", attachmentId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/tasks/%s/attachments/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
 	}
 
 	return req, nil
@@ -17918,6 +18442,15 @@ type ClientWithResponsesInterface interface {
 	// Corresponds with POST /dpps/validate (the `ValidateDpp` operationId).
 	ValidateDppWithResponse(ctx context.Context, body ValidateDppJSONRequestBody, reqEditors ...RequestEditorFn) (*ValidateDppResponse, error)
 
+	// GetDppPrivateDynamicDataWithResponse Read the restricted dynamic data
+	//
+	// The passport's live readings in the legitimate-interest tier that this reader may see. The public dynamic-data document carries the public tier only; this answer has the same shape, holds only the restricted rows, and is signed with the same platform key, so a reader verifies it the same way and merges the two. A key is served when it names a published property type in the legitimate-interest tier, no property type sharing its vocabulary term sits in the authorities or internal tier, and the reader belongs to an access group of every legitimate-interest type sharing it. An authority consumer reads without a group. A passport holding no such key answers 404; an authenticated reader who may see none of them gets 204. An unauthenticated request answers 401 with the `X-Auth-Fields` challenge the passport page uses to sign a reader in.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /dpps/{code}/private_dynamic_data (the `GetDppPrivateDynamicData` operationId).
+	GetDppPrivateDynamicDataWithResponse(ctx context.Context, code string, reqEditors ...RequestEditorFn) (*GetDppPrivateDynamicDataResponse, error)
+
 	// GetDppPrivatePropertiesWithResponse Read the private properties of several versions
 	//
 	// The reader-derived confidential rows for several versions of one passport in a single round-trip. Name the versions with `?versions=1,3,7`; at most 50 are derived per request. A version is left out when it carries no confidential rows or the reader may see none of them, so the answer only contains versions where the reader gains rows beyond the public passport. An unauthenticated request answers 401 with the `X-Auth-Fields` challenge the passport page uses to sign a reader in.
@@ -17938,7 +18471,7 @@ type ClientWithResponsesInterface interface {
 
 	// PublishDppWithBodyWithResponse Publish a DPP
 	//
-	// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. Publishing needs `dpp_publish` beside `dpp_write`; without it the answer is 403. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
+	// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. Publishing needs `dpp_publish` beside `dpp_write`; without it the answer is 403. A passport whose publish review was approved waits ready to publish, and the person who asked for the review publishes it here through a credential of theirs with `dpp_write` alone, and so does any caller with `dpp_publish`. That publish carries the reason and the move to the publish stage the request asked for, and `reason` is not read. The approval stands until the product changes; after that the call is judged like any other publish. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -17947,7 +18480,7 @@ type ClientWithResponsesInterface interface {
 
 	// PublishDppWithResponse Publish a DPP
 	//
-	// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. Publishing needs `dpp_publish` beside `dpp_write`; without it the answer is 403. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
+	// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. Publishing needs `dpp_publish` beside `dpp_write`; without it the answer is 403. A passport whose publish review was approved waits ready to publish, and the person who asked for the review publishes it here through a credential of theirs with `dpp_write` alone, and so does any caller with `dpp_publish`. That publish carries the reason and the move to the publish stage the request asked for, and `reason` is not read. The approval stands until the product changes; after that the call is judged like any other publish. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -18014,7 +18547,7 @@ type ClientWithResponsesInterface interface {
 
 	// UpdateDppDynamicDataWithBodyWithResponse Update dynamic data
 	//
-	// Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none); every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.
+	// Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none). A key naming a published legitimate-interest type is served to the readers its access groups admit by `GET /dpps/{code}/private_dynamic_data`; every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -18023,7 +18556,7 @@ type ClientWithResponsesInterface interface {
 
 	// UpdateDppDynamicDataWithResponse Update dynamic data
 	//
-	// Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none); every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.
+	// Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none). A key naming a published legitimate-interest type is served to the readers its access groups admit by `GET /dpps/{code}/private_dynamic_data`; every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -18848,7 +19381,11 @@ type ClientWithResponsesInterface interface {
 
 	// CreateProductWithBodyWithResponse Create a product
 	//
-	// Creates a new product. The authenticated user or API consumer becomes the owner. A product needs a brand, named alongside it (an existing brand of that name is used, a new one created and owned by the caller), and at least one component under componentsInput. A consumer needs `product_access`.
+	// Creates a new product. The authenticated user or API consumer becomes the owner. A product needs a brand, named alongside it (an existing brand of that name is used, a new one created and owned by the caller), and at least one component under componentsInput. A consumer needs `product_access`, and to create the brand it names also `brand_access`, as `POST /brands` asks; without it a new brand name answers 403 `BRAND_FORBIDDEN`.
+	//
+	// A credential acting for a person (one granted on the consent screen, or the assistant's) names only the categories, the brand and the manufacturers that person reads in the application manager, and creates a brand only where that person may; anything else answers 422 naming `categories`, `brand` or `properties`.
+	//
+	// A product naming a parent under `parentId` is created as its variant: it starts as a copy of the parent, with its brand, categories, components, images and property values, and takes the parent's later changes. Such a body needs a name only. The brand, categories, components and property values it names besides become the variant's own where they differ from the parent's, and the variant's read marks them `pinned`. The parent is a product the caller may update, since a variant holds its parent's delete back: a parent the caller cannot read answers 422 `PRODUCT_PARENT_NOT_FOUND`, one it cannot update 403. A variant takes its mandatory values from its parent, so its create asks for none of them.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -18857,7 +19394,11 @@ type ClientWithResponsesInterface interface {
 
 	// CreateProductWithResponse Create a product
 	//
-	// Creates a new product. The authenticated user or API consumer becomes the owner. A product needs a brand, named alongside it (an existing brand of that name is used, a new one created and owned by the caller), and at least one component under componentsInput. A consumer needs `product_access`.
+	// Creates a new product. The authenticated user or API consumer becomes the owner. A product needs a brand, named alongside it (an existing brand of that name is used, a new one created and owned by the caller), and at least one component under componentsInput. A consumer needs `product_access`, and to create the brand it names also `brand_access`, as `POST /brands` asks; without it a new brand name answers 403 `BRAND_FORBIDDEN`.
+	//
+	// A credential acting for a person (one granted on the consent screen, or the assistant's) names only the categories, the brand and the manufacturers that person reads in the application manager, and creates a brand only where that person may; anything else answers 422 naming `categories`, `brand` or `properties`.
+	//
+	// A product naming a parent under `parentId` is created as its variant: it starts as a copy of the parent, with its brand, categories, components, images and property values, and takes the parent's later changes. Such a body needs a name only. The brand, categories, components and property values it names besides become the variant's own where they differ from the parent's, and the variant's read marks them `pinned`. The parent is a product the caller may update, since a variant holds its parent's delete back: a parent the caller cannot read answers 422 `PRODUCT_PARENT_NOT_FOUND`, one it cannot update 403. A variant takes its mandatory values from its parent, so its create asks for none of them.
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -18913,7 +19454,7 @@ type ClientWithResponsesInterface interface {
 
 	// UpdateProductWithBodyWithResponse Update a product
 	//
-	// Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are.
+	// Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are. A brand name no brand carries creates the brand, which asks a consumer for `brand_access` (403 `BRAND_FORBIDDEN` without it); a credential acting for a person names only what that person reads, as on create. On a variant, a value the body changes becomes the variant's own and a value it sends as it was read goes on following the parent. `parentId` is left out or names the parent the product has; any other answers 422 `PRODUCT_PARENT_READ_ONLY`, since a variant moves to another parent through a spreadsheet import only.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -18922,7 +19463,7 @@ type ClientWithResponsesInterface interface {
 
 	// UpdateProductWithResponse Update a product
 	//
-	// Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are.
+	// Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are. A brand name no brand carries creates the brand, which asks a consumer for `brand_access` (403 `BRAND_FORBIDDEN` without it); a credential acting for a person names only what that person reads, as on create. On a variant, a value the body changes becomes the variant's own and a value it sends as it was read goes on following the parent. `parentId` is left out or names the parent the product has; any other answers 422 `PRODUCT_PARENT_READ_ONLY`, since a variant moves to another parent through a spreadsheet import only.
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -18931,7 +19472,7 @@ type ClientWithResponsesInterface interface {
 
 	// UpdateProductMediafilesWithBodyWithResponse Update product mediafile assignments
 	//
-	// Replaces all mediafile assignments on a product with the given list in the specified order. Requires the product mediafiles feature to be enabled.
+	// Replaces all mediafile assignments on a product with the given list in the specified order, as one change. On a variant, a list that differs from its parent's becomes the variant's own, and the list sent as it was read goes on following the parent. Requires the product mediafiles feature to be enabled.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -18940,7 +19481,7 @@ type ClientWithResponsesInterface interface {
 
 	// UpdateProductMediafilesWithResponse Update product mediafile assignments
 	//
-	// Replaces all mediafile assignments on a product with the given list in the specified order. Requires the product mediafiles feature to be enabled.
+	// Replaces all mediafile assignments on a product with the given list in the specified order, as one change. On a variant, a list that differs from its parent's becomes the variant's own, and the list sent as it was read goes on following the parent. Requires the product mediafiles feature to be enabled.
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -18955,6 +19496,40 @@ type ClientWithResponsesInterface interface {
 	//
 	// Corresponds with PUT /products/{id}/publish (the `PublishProduct` operationId).
 	PublishProductWithResponse(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*PublishProductResponse, error)
+
+	// RestoreProductValuesWithBodyWithResponse Have a variant follow its parent again
+	//
+	// Makes a variant follow its parent again for the values the body names: the variant's own value goes, the parent's present value is written, and the parent's later changes reach the value again. `GET /products/{id}` names the state of each value of a variant under `inheritance`, on each property value and on each component row; a value that follows already is left as it is. The body names values as the reads do:
+	//
+	// - `keys`: the keys of `inheritance`
+	// - `propertyRowIds`: the `rowId` of a property value
+	// - `componentRowIds`: the `id` of a component row
+	// - `parentComponentRowIds` and `parentPropertyIds`: the `id` of a component row and of a property value in the parent's read. No read of the variant names a row it took out of what its parent hands down, so the parent's read names it.
+	// - `all`: every value the variant holds of its own.
+	//
+	// A name matching nothing the variant takes from its parent (a key the map lacks, a row the variant added itself) refuses the whole request with 422 `RESTORE_UNKNOWN_KEYS`, naming each; a body naming nothing answers 422 `RESTORE_KEYS_REQUIRED`. A product without a parent, or whose parent is in the trash, answers 422 `PRODUCT_NOT_A_VARIANT`. A restore is a write like any other: the product's history records it, and writing the value again makes it the variant's own once more.
+	//
+	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with PUT /products/{id}/restore (the `RestoreProductValues` operationId).
+	RestoreProductValuesWithBodyWithResponse(ctx context.Context, id Id, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*RestoreProductValuesResponse, error)
+
+	// RestoreProductValuesWithResponse Have a variant follow its parent again
+	//
+	// Makes a variant follow its parent again for the values the body names: the variant's own value goes, the parent's present value is written, and the parent's later changes reach the value again. `GET /products/{id}` names the state of each value of a variant under `inheritance`, on each property value and on each component row; a value that follows already is left as it is. The body names values as the reads do:
+	//
+	// - `keys`: the keys of `inheritance`
+	// - `propertyRowIds`: the `rowId` of a property value
+	// - `componentRowIds`: the `id` of a component row
+	// - `parentComponentRowIds` and `parentPropertyIds`: the `id` of a component row and of a property value in the parent's read. No read of the variant names a row it took out of what its parent hands down, so the parent's read names it.
+	// - `all`: every value the variant holds of its own.
+	//
+	// A name matching nothing the variant takes from its parent (a key the map lacks, a row the variant added itself) refuses the whole request with 422 `RESTORE_UNKNOWN_KEYS`, naming each; a body naming nothing answers 422 `RESTORE_KEYS_REQUIRED`. A product without a parent, or whose parent is in the trash, answers 422 `PRODUCT_NOT_A_VARIANT`. A restore is a write like any other: the product's history records it, and writing the value again makes it the variant's own once more.
+	//
+	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with PUT /products/{id}/restore (the `RestoreProductValues` operationId).
+	RestoreProductValuesWithResponse(ctx context.Context, id Id, body RestoreProductValuesJSONRequestBody, reqEditors ...RequestEditorFn) (*RestoreProductValuesResponse, error)
 
 	// UnpublishProductWithResponse Unpublish a product
 	//
@@ -19003,7 +19578,7 @@ type ClientWithResponsesInterface interface {
 
 	// SearchCatalogueWithResponse Search products and components
 	//
-	// Full-text search powered by Elasticsearch. Returns a flat results array containing mixed product and component records.
+	// Full-text search powered by Elasticsearch. Returns a flat results array containing mixed product and component records. Search answers what the lists answer, so products are left out while `GET /products` answers 204 and components while `GET /components` does; with both lists off the results are empty.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
@@ -19050,11 +19625,12 @@ type ClientWithResponsesInterface interface {
 	//
 	// The tasks of one list, newest first. A credential that acts for a person (a grant the person approved, or their assistant) reads the lists as that person. Any other credential reads them as itself: it finds the tasks it asked for under `requested` and `done`, and nothing waits on it.
 	//
-	// - `mine` (the default): the tasks given to the person, the ones they claimed, and the group tasks nobody has claimed yet. The number beside the bell in the application manager counts these.
-	// - `groups`: every open task of the person's groups, with who holds it.
+	// - `mine` (the default): what the person has to do: the tasks given to them, the ones they claimed, and the group tasks and reviews nobody has claimed yet. A request for information waiting for its supplier is left out. The number beside the bell in the application manager counts these.
+	// - `waiting`: the person's requests for information while they wait for the supplier, and the tasks they take part in that someone else has claimed.
 	// - `requested`: the open tasks the caller asked of others.
 	// - `done`: the finished and cancelled tasks the caller took part in.
-	// - `all`: every task, for an admin only.
+	// - `all`: every task the caller takes part in; every task for an admin.
+	// - `groups`: retired, read as `mine` until the next release.
 	//
 	// A list the caller may not read answers 422 `TASK_LIST_INVALID`, naming the ones it may.
 	//
@@ -19065,9 +19641,9 @@ type ClientWithResponsesInterface interface {
 
 	// CreateTaskWithBodyWithResponse Create a task
 	//
-	// Asks a person or a user group for something. The task is a request (`kind` custom) whatever the body says, and names the caller as the one who asked: the person a grant or an assistant acts for, or the credential itself. Every person the task reaches sees it at once in the application manager and hears of it in the bell; the morning mail carries it too.
+	// Asks a person or an access group for something. The task is a request (`kind` custom) whatever the body says, and names the caller as the one who asked: the person a grant or an assistant acts for, or the credential itself. Every person the task reaches sees it at once in the application manager and hears of it in the bell; the morning mail carries it too.
 	//
-	// Find the `assigneeKey` with `GET /tasks/assignees`.
+	// Find the `assigneeKey` with `GET /tasks/assignees`. A task may link one record the caller reads (`subjectKey`) and carry a `priority`.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -19076,9 +19652,9 @@ type ClientWithResponsesInterface interface {
 
 	// CreateTaskWithResponse Create a task
 	//
-	// Asks a person or a user group for something. The task is a request (`kind` custom) whatever the body says, and names the caller as the one who asked: the person a grant or an assistant acts for, or the credential itself. Every person the task reaches sees it at once in the application manager and hears of it in the bell; the morning mail carries it too.
+	// Asks a person or an access group for something. The task is a request (`kind` custom) whatever the body says, and names the caller as the one who asked: the person a grant or an assistant acts for, or the credential itself. Every person the task reaches sees it at once in the application manager and hears of it in the bell; the morning mail carries it too.
 	//
-	// Find the `assigneeKey` with `GET /tasks/assignees`.
+	// Find the `assigneeKey` with `GET /tasks/assignees`. A task may link one record the caller reads (`subjectKey`) and carry a `priority`.
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -19123,7 +19699,7 @@ type ClientWithResponsesInterface interface {
 
 	// ApproveTaskWithBodyWithResponse Approve a review
 	//
-	// Approves the step a review stands at, as the person the credential acts for. A review walks the steps of the workspace's review flow, or the one step of everyone who may sign passports where no flow fits. Approving a middle step passes the request on to the next step and signs nothing. Approving the last step carries the request out in the person's name: a publish review signs the passport, which needs `dpp_publish` in the credential's scope beside `task_access`; without it the answer is 403 and nothing is signed.
+	// Approves the step a review stands at, as the person the credential acts for. A review walks the steps of the workspace's review flow, or the one step of everyone who may sign passports where no flow fits. Approving a middle step passes the request on to the next step and signs nothing. Approving the last step carries the request out in the person's name, which needs `dpp_publish` in the credential's scope beside `task_access`; without it the answer is 403 and the review stays open. A publish review then approves the passport, which waits ready to publish for the person who asked (`POST /dpps/{code}/publish`) until the product changes; a review of an event's seal or of a correction signs at once.
 	//
 	// Send the `step` the caller read, so a press on a review that moved on in between decides nothing (`TASK_STEP_MOVED`). The person who asked for a review decides no step of it (`TASK_OWN_REQUEST`). A publish the validator or the workspace refuses answers as `POST /dpps/{code}/publish` does, and the review stays open.
 	//
@@ -19134,7 +19710,7 @@ type ClientWithResponsesInterface interface {
 
 	// ApproveTaskWithResponse Approve a review
 	//
-	// Approves the step a review stands at, as the person the credential acts for. A review walks the steps of the workspace's review flow, or the one step of everyone who may sign passports where no flow fits. Approving a middle step passes the request on to the next step and signs nothing. Approving the last step carries the request out in the person's name: a publish review signs the passport, which needs `dpp_publish` in the credential's scope beside `task_access`; without it the answer is 403 and nothing is signed.
+	// Approves the step a review stands at, as the person the credential acts for. A review walks the steps of the workspace's review flow, or the one step of everyone who may sign passports where no flow fits. Approving a middle step passes the request on to the next step and signs nothing. Approving the last step carries the request out in the person's name, which needs `dpp_publish` in the credential's scope beside `task_access`; without it the answer is 403 and the review stays open. A publish review then approves the passport, which waits ready to publish for the person who asked (`POST /dpps/{code}/publish`) until the product changes; a review of an event's seal or of a correction signs at once.
 	//
 	// Send the `step` the caller read, so a press on a review that moved on in between decides nothing (`TASK_STEP_MOVED`). The person who asked for a review decides no step of it (`TASK_OWN_REQUEST`). A publish the validator or the workspace refuses answers as `POST /dpps/{code}/publish` does, and the review stays open.
 	//
@@ -19143,9 +19719,18 @@ type ClientWithResponsesInterface interface {
 	// Corresponds with POST /tasks/{id}/approve (the `ApproveTask` operationId).
 	ApproveTaskWithResponse(ctx context.Context, id Id, params *ApproveTaskParams, body ApproveTaskJSONRequestBody, reqEditors ...RequestEditorFn) (*ApproveTaskResponse, error)
 
+	// GetTaskAttachmentWithResponse Download a file of a task
+	//
+	// One of the files a task carries, the `url` its `attachments` name. Only those who see the task read its files, so a task the caller has no part in answers 404, and so does a file the task does not carry (`MEDIAFILE_NOT_FOUND`). Images and PDFs come inline, every other kind as an attachment. Files are added in the application manager.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /tasks/{id}/attachments/{attachmentId} (the `GetTaskAttachment` operationId).
+	GetTaskAttachmentWithResponse(ctx context.Context, id Id, attachmentId int, reqEditors ...RequestEditorFn) (*GetTaskAttachmentResponse, error)
+
 	// CancelTaskWithResponse Cancel a task
 	//
-	// Ends an open task as cancelled. The one who asked for it may, or an admin. The task stays on record and can be reopened.
+	// Ends an open task as cancelled. The one who asked for it may, or an admin, and so may the person a custom task is with, declining it. The task stays on record and can be reopened.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
@@ -21112,6 +21697,61 @@ func (r ValidateDppResponse) StatusCode() int {
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
 func (r ValidateDppResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// GetDppPrivateDynamicDataResponse200Headers the declared response headers of an HTTP 200 response for GetDppPrivateDynamicData
+type GetDppPrivateDynamicDataResponse200Headers struct {
+	CacheControl *string
+}
+
+type GetDppPrivateDynamicDataResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *DynamicDataDocument
+	// JSON404 the response for an HTTP 404 `application/json` response
+	JSON404 *NotFound
+	// Headers200 the parsed response headers for an HTTP 200 response
+	Headers200 *GetDppPrivateDynamicDataResponse200Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r GetDppPrivateDynamicDataResponse) GetJSON200() *DynamicDataDocument {
+	return r.JSON200
+}
+
+// GetJSON404 returns the response for an HTTP 404 `application/json` response
+func (r GetDppPrivateDynamicDataResponse) GetJSON404() *NotFound {
+	return r.JSON404
+}
+
+// GetBody returns the raw response body bytes
+func (r GetDppPrivateDynamicDataResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r GetDppPrivateDynamicDataResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetDppPrivateDynamicDataResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetDppPrivateDynamicDataResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
@@ -25212,13 +25852,13 @@ type ResolvePermalinkResponse struct {
 
 		// Component Full component details (returned by show action)
 		//
-		// Example: {"citations":[],"id":13,"mediafiles":[],"mpn":"SB-RAW-25KG","name":"Shea Butter","permalink":"/components/shea-butter","properties":{"Origin":{"id":14,"rated":true,"values":[{"id":811,"rating":"A","value":"West Africa"}]}},"published":true,"publishedAt":"2026-01-10T08:00:00Z","rating":"A","type":"Component"}
+		// Example: {"citations":[],"id":13,"mediafiles":[],"mpn":"SB-RAW-25KG","name":"Shea Butter","permalink":"/components/shea-butter","properties":{"Origin":{"id":14,"rated":true,"values":[{"id":811,"rating":"A","value":"West Africa"}]}},"published":true,"publishedAt":"2026-01-10T08:00:00Z","rating":"A","templateIds":[7],"type":"Component"}
 		Component *ComponentDetail        `json:"component,omitempty"`
 		Page      *map[string]interface{} `json:"page,omitempty"`
 
 		// Product Full product details (returned by show action and permalink resolution). Includes nested brand, components, properties, categories, and mediafiles.
 		//
-		// Example: {"brand":{"id":12,"name":"NaturaCare","permalink":"/brands/naturacare","productsCount":12,"published":true,"type":"Brand"},"categories":[{"id":20,"name":"Skincare","type":"ProductCategory"}],"components":[{"componentId":13,"id":13,"name":"Shea Butter","permalink":"/components/shea-butter","rating":"A","type":"Component"}],"gtin":"4006381333931","id":11,"mediafiles":[],"name":"Hydrating Face Cream","permalink":"/products/naturacare-hydrating-face-cream","properties":{"Capacity":{"id":21,"inputType":"text","values":[{"value":"50 ml"}]}},"publishedAt":"2026-01-15T10:30:00Z","rating":"A","type":"Product"}
+		// Example: {"brand":{"id":12,"name":"NaturaCare","permalink":"/brands/naturacare","productsCount":12,"published":true,"type":"Brand"},"categories":[{"id":20,"name":"Skincare","type":"ProductCategory"}],"components":[{"componentId":13,"id":1,"inheritance":"follows","name":"Shea Butter","permalink":"/components/shea-butter","rating":"A","type":"ProductComponent"}],"gtin":"4006381333931","id":11,"inheritance":{"brand":"follows","categories":"follows","componentsOrder":"follows","hsCode":"follows","images":"parent_moved","weight":"pinned"},"mediafiles":[],"name":"Hydrating Face Cream","parentId":4,"permalink":"/products/naturacare-hydrating-face-cream","properties":{"Capacity":{"id":21,"inputType":"text","values":[{"inheritance":"follows","rowId":2,"value":"50 ml"}]}},"publishedAt":"2026-01-15T10:30:00Z","rating":"A","type":"Product","variantsCount":0}
 		Product *ProductDetail `json:"product,omitempty"`
 
 		// Redirect The current path of the record, present when the permalink asked for is an alias the record has moved on from
@@ -25241,13 +25881,13 @@ func (r ResolvePermalinkResponse) GetJSON200() *struct {
 
 	// Component Full component details (returned by show action)
 	//
-	// Example: {"citations":[],"id":13,"mediafiles":[],"mpn":"SB-RAW-25KG","name":"Shea Butter","permalink":"/components/shea-butter","properties":{"Origin":{"id":14,"rated":true,"values":[{"id":811,"rating":"A","value":"West Africa"}]}},"published":true,"publishedAt":"2026-01-10T08:00:00Z","rating":"A","type":"Component"}
+	// Example: {"citations":[],"id":13,"mediafiles":[],"mpn":"SB-RAW-25KG","name":"Shea Butter","permalink":"/components/shea-butter","properties":{"Origin":{"id":14,"rated":true,"values":[{"id":811,"rating":"A","value":"West Africa"}]}},"published":true,"publishedAt":"2026-01-10T08:00:00Z","rating":"A","templateIds":[7],"type":"Component"}
 	Component *ComponentDetail        `json:"component,omitempty"`
 	Page      *map[string]interface{} `json:"page,omitempty"`
 
 	// Product Full product details (returned by show action and permalink resolution). Includes nested brand, components, properties, categories, and mediafiles.
 	//
-	// Example: {"brand":{"id":12,"name":"NaturaCare","permalink":"/brands/naturacare","productsCount":12,"published":true,"type":"Brand"},"categories":[{"id":20,"name":"Skincare","type":"ProductCategory"}],"components":[{"componentId":13,"id":13,"name":"Shea Butter","permalink":"/components/shea-butter","rating":"A","type":"Component"}],"gtin":"4006381333931","id":11,"mediafiles":[],"name":"Hydrating Face Cream","permalink":"/products/naturacare-hydrating-face-cream","properties":{"Capacity":{"id":21,"inputType":"text","values":[{"value":"50 ml"}]}},"publishedAt":"2026-01-15T10:30:00Z","rating":"A","type":"Product"}
+	// Example: {"brand":{"id":12,"name":"NaturaCare","permalink":"/brands/naturacare","productsCount":12,"published":true,"type":"Brand"},"categories":[{"id":20,"name":"Skincare","type":"ProductCategory"}],"components":[{"componentId":13,"id":1,"inheritance":"follows","name":"Shea Butter","permalink":"/components/shea-butter","rating":"A","type":"ProductComponent"}],"gtin":"4006381333931","id":11,"inheritance":{"brand":"follows","categories":"follows","componentsOrder":"follows","hsCode":"follows","images":"parent_moved","weight":"pinned"},"mediafiles":[],"name":"Hydrating Face Cream","parentId":4,"permalink":"/products/naturacare-hydrating-face-cream","properties":{"Capacity":{"id":21,"inputType":"text","values":[{"inheritance":"follows","rowId":2,"value":"50 ml"}]}},"publishedAt":"2026-01-15T10:30:00Z","rating":"A","type":"Product","variantsCount":0}
 	Product *ProductDetail `json:"product,omitempty"`
 
 	// Redirect The current path of the record, present when the permalink asked for is an alias the record has moved on from
@@ -25665,6 +26305,8 @@ type CreateProductResponse struct {
 	JSON201 *ProductDetail
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *Error
 }
@@ -25677,6 +26319,11 @@ func (r CreateProductResponse) GetJSON201() *ProductDetail {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r CreateProductResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r CreateProductResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON422 returns the response for an HTTP 422 `application/json` response
@@ -26190,6 +26837,82 @@ func (r PublishProductResponse) StatusCode() int {
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
 func (r PublishProductResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type RestoreProductValuesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *ProductDetail
+	// JSON401 the response for an HTTP 401 `application/json` response
+	JSON401 *Unauthorized
+	// JSON402 the response for an HTTP 402 `application/json` response
+	JSON402 *MembershipExpired
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
+	// JSON404 the response for an HTTP 404 `application/json` response
+	JSON404 *NotFound
+	// JSON422 the response for an HTTP 422 `application/json` response
+	JSON422 *Error
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r RestoreProductValuesResponse) GetJSON200() *ProductDetail {
+	return r.JSON200
+}
+
+// GetJSON401 returns the response for an HTTP 401 `application/json` response
+func (r RestoreProductValuesResponse) GetJSON401() *Unauthorized {
+	return r.JSON401
+}
+
+// GetJSON402 returns the response for an HTTP 402 `application/json` response
+func (r RestoreProductValuesResponse) GetJSON402() *MembershipExpired {
+	return r.JSON402
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r RestoreProductValuesResponse) GetJSON403() *Forbidden {
+	return r.JSON403
+}
+
+// GetJSON404 returns the response for an HTTP 404 `application/json` response
+func (r RestoreProductValuesResponse) GetJSON404() *NotFound {
+	return r.JSON404
+}
+
+// GetJSON422 returns the response for an HTTP 422 `application/json` response
+func (r RestoreProductValuesResponse) GetJSON422() *Error {
+	return r.JSON422
+}
+
+// GetBody returns the raw response body bytes
+func (r RestoreProductValuesResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r RestoreProductValuesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r RestoreProductValuesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r RestoreProductValuesResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
@@ -26767,7 +27490,7 @@ type ListTaskAssigneesResponse struct {
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
 		Assignees *[]struct {
-			// Key `User:<id>` or `UserGroup:<id>`
+			// Key `User:<id>` or `AccessGroup:<id>`
 			Key  *string `json:"key,omitempty"`
 			Name *string `json:"name,omitempty"`
 		} `json:"assignees,omitempty"`
@@ -26781,7 +27504,7 @@ type ListTaskAssigneesResponse struct {
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListTaskAssigneesResponse) GetJSON200() *struct {
 	Assignees *[]struct {
-		// Key `User:<id>` or `UserGroup:<id>`
+		// Key `User:<id>` or `AccessGroup:<id>`
 		Key  *string `json:"key,omitempty"`
 		Name *string `json:"name,omitempty"`
 	} `json:"assignees,omitempty"`
@@ -27029,6 +27752,61 @@ func (r ApproveTaskResponse) StatusCode() int {
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
 func (r ApproveTaskResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type GetTaskAttachmentResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON401 the response for an HTTP 401 `application/json` response
+	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
+	// JSON404 the response for an HTTP 404 `application/json` response
+	JSON404 *NotFound
+}
+
+// GetJSON401 returns the response for an HTTP 401 `application/json` response
+func (r GetTaskAttachmentResponse) GetJSON401() *Unauthorized {
+	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r GetTaskAttachmentResponse) GetJSON403() *Forbidden {
+	return r.JSON403
+}
+
+// GetJSON404 returns the response for an HTTP 404 `application/json` response
+func (r GetTaskAttachmentResponse) GetJSON404() *NotFound {
+	return r.JSON404
+}
+
+// GetBody returns the raw response body bytes
+func (r GetTaskAttachmentResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r GetTaskAttachmentResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetTaskAttachmentResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetTaskAttachmentResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
@@ -28897,6 +29675,21 @@ func (c *ClientWithResponses) ValidateDppWithResponse(ctx context.Context, body 
 	return ParseValidateDppResponse(rsp)
 }
 
+// GetDppPrivateDynamicDataWithResponse Read the restricted dynamic data
+//
+// The passport's live readings in the legitimate-interest tier that this reader may see. The public dynamic-data document carries the public tier only; this answer has the same shape, holds only the restricted rows, and is signed with the same platform key, so a reader verifies it the same way and merges the two. A key is served when it names a published property type in the legitimate-interest tier, no property type sharing its vocabulary term sits in the authorities or internal tier, and the reader belongs to an access group of every legitimate-interest type sharing it. An authority consumer reads without a group. A passport holding no such key answers 404; an authenticated reader who may see none of them gets 204. An unauthenticated request answers 401 with the `X-Auth-Fields` challenge the passport page uses to sign a reader in.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /dpps/{code}/private_dynamic_data (the `GetDppPrivateDynamicData` operationId).
+func (c *ClientWithResponses) GetDppPrivateDynamicDataWithResponse(ctx context.Context, code string, reqEditors ...RequestEditorFn) (*GetDppPrivateDynamicDataResponse, error) {
+	rsp, err := c.GetDppPrivateDynamicData(ctx, code, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetDppPrivateDynamicDataResponse(rsp)
+}
+
 // GetDppPrivatePropertiesWithResponse Read the private properties of several versions
 //
 // The reader-derived confidential rows for several versions of one passport in a single round-trip. Name the versions with `?versions=1,3,7`; at most 50 are derived per request. A version is left out when it carries no confidential rows or the reader may see none of them, so the answer only contains versions where the reader gains rows beyond the public passport. An unauthenticated request answers 401 with the `X-Auth-Fields` challenge the passport page uses to sign a reader in.
@@ -28929,7 +29722,7 @@ func (c *ClientWithResponses) GetDppVersionPrivatePropertiesWithResponse(ctx con
 
 // PublishDppWithBodyWithResponse Publish a DPP
 //
-// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. Publishing needs `dpp_publish` beside `dpp_write`; without it the answer is 403. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
+// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. Publishing needs `dpp_publish` beside `dpp_write`; without it the answer is 403. A passport whose publish review was approved waits ready to publish, and the person who asked for the review publishes it here through a credential of theirs with `dpp_write` alone, and so does any caller with `dpp_publish`. That publish carries the reason and the move to the publish stage the request asked for, and `reason` is not read. The approval stands until the product changes; after that the call is judged like any other publish. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -28944,7 +29737,7 @@ func (c *ClientWithResponses) PublishDppWithBodyWithResponse(ctx context.Context
 
 // PublishDppWithResponse Publish a DPP
 //
-// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. Publishing needs `dpp_publish` beside `dpp_write`; without it the answer is 403. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
+// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. Publishing needs `dpp_publish` beside `dpp_write`; without it the answer is 403. A passport whose publish review was approved waits ready to publish, and the person who asked for the review publishes it here through a credential of theirs with `dpp_write` alone, and so does any caller with `dpp_publish`. That publish carries the reason and the move to the publish stage the request asked for, and `reason` is not read. The approval stands until the product changes; after that the call is judged like any other publish. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
@@ -29053,7 +29846,7 @@ func (c *ClientWithResponses) CorrectDppWithResponse(ctx context.Context, id Id,
 
 // UpdateDppDynamicDataWithBodyWithResponse Update dynamic data
 //
-// Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none); every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.
+// Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none). A key naming a published legitimate-interest type is served to the readers its access groups admit by `GET /dpps/{code}/private_dynamic_data`; every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -29068,7 +29861,7 @@ func (c *ClientWithResponses) UpdateDppDynamicDataWithBodyWithResponse(ctx conte
 
 // UpdateDppDynamicDataWithResponse Update dynamic data
 //
-// Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none); every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.
+// Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none). A key naming a published legitimate-interest type is served to the readers its access groups admit by `GET /dpps/{code}/private_dynamic_data`; every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
@@ -30379,7 +31172,11 @@ func (c *ClientWithResponses) ListProductsWithResponse(ctx context.Context, para
 
 // CreateProductWithBodyWithResponse Create a product
 //
-// Creates a new product. The authenticated user or API consumer becomes the owner. A product needs a brand, named alongside it (an existing brand of that name is used, a new one created and owned by the caller), and at least one component under componentsInput. A consumer needs `product_access`.
+// Creates a new product. The authenticated user or API consumer becomes the owner. A product needs a brand, named alongside it (an existing brand of that name is used, a new one created and owned by the caller), and at least one component under componentsInput. A consumer needs `product_access`, and to create the brand it names also `brand_access`, as `POST /brands` asks; without it a new brand name answers 403 `BRAND_FORBIDDEN`.
+//
+// A credential acting for a person (one granted on the consent screen, or the assistant's) names only the categories, the brand and the manufacturers that person reads in the application manager, and creates a brand only where that person may; anything else answers 422 naming `categories`, `brand` or `properties`.
+//
+// A product naming a parent under `parentId` is created as its variant: it starts as a copy of the parent, with its brand, categories, components, images and property values, and takes the parent's later changes. Such a body needs a name only. The brand, categories, components and property values it names besides become the variant's own where they differ from the parent's, and the variant's read marks them `pinned`. The parent is a product the caller may update, since a variant holds its parent's delete back: a parent the caller cannot read answers 422 `PRODUCT_PARENT_NOT_FOUND`, one it cannot update 403. A variant takes its mandatory values from its parent, so its create asks for none of them.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -30394,7 +31191,11 @@ func (c *ClientWithResponses) CreateProductWithBodyWithResponse(ctx context.Cont
 
 // CreateProductWithResponse Create a product
 //
-// Creates a new product. The authenticated user or API consumer becomes the owner. A product needs a brand, named alongside it (an existing brand of that name is used, a new one created and owned by the caller), and at least one component under componentsInput. A consumer needs `product_access`.
+// Creates a new product. The authenticated user or API consumer becomes the owner. A product needs a brand, named alongside it (an existing brand of that name is used, a new one created and owned by the caller), and at least one component under componentsInput. A consumer needs `product_access`, and to create the brand it names also `brand_access`, as `POST /brands` asks; without it a new brand name answers 403 `BRAND_FORBIDDEN`.
+//
+// A credential acting for a person (one granted on the consent screen, or the assistant's) names only the categories, the brand and the manufacturers that person reads in the application manager, and creates a brand only where that person may; anything else answers 422 naming `categories`, `brand` or `properties`.
+//
+// A product naming a parent under `parentId` is created as its variant: it starts as a copy of the parent, with its brand, categories, components, images and property values, and takes the parent's later changes. Such a body needs a name only. The brand, categories, components and property values it names besides become the variant's own where they differ from the parent's, and the variant's read marks them `pinned`. The parent is a product the caller may update, since a variant holds its parent's delete back: a parent the caller cannot read answers 422 `PRODUCT_PARENT_NOT_FOUND`, one it cannot update 403. A variant takes its mandatory values from its parent, so its create asks for none of them.
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
@@ -30486,7 +31287,7 @@ func (c *ClientWithResponses) GetProductWithResponse(ctx context.Context, id Id,
 
 // UpdateProductWithBodyWithResponse Update a product
 //
-// Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are.
+// Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are. A brand name no brand carries creates the brand, which asks a consumer for `brand_access` (403 `BRAND_FORBIDDEN` without it); a credential acting for a person names only what that person reads, as on create. On a variant, a value the body changes becomes the variant's own and a value it sends as it was read goes on following the parent. `parentId` is left out or names the parent the product has; any other answers 422 `PRODUCT_PARENT_READ_ONLY`, since a variant moves to another parent through a spreadsheet import only.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -30501,7 +31302,7 @@ func (c *ClientWithResponses) UpdateProductWithBodyWithResponse(ctx context.Cont
 
 // UpdateProductWithResponse Update a product
 //
-// Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are.
+// Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are. A brand name no brand carries creates the brand, which asks a consumer for `brand_access` (403 `BRAND_FORBIDDEN` without it); a credential acting for a person names only what that person reads, as on create. On a variant, a value the body changes becomes the variant's own and a value it sends as it was read goes on following the parent. `parentId` is left out or names the parent the product has; any other answers 422 `PRODUCT_PARENT_READ_ONLY`, since a variant moves to another parent through a spreadsheet import only.
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
@@ -30516,7 +31317,7 @@ func (c *ClientWithResponses) UpdateProductWithResponse(ctx context.Context, id 
 
 // UpdateProductMediafilesWithBodyWithResponse Update product mediafile assignments
 //
-// Replaces all mediafile assignments on a product with the given list in the specified order. Requires the product mediafiles feature to be enabled.
+// Replaces all mediafile assignments on a product with the given list in the specified order, as one change. On a variant, a list that differs from its parent's becomes the variant's own, and the list sent as it was read goes on following the parent. Requires the product mediafiles feature to be enabled.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -30531,7 +31332,7 @@ func (c *ClientWithResponses) UpdateProductMediafilesWithBodyWithResponse(ctx co
 
 // UpdateProductMediafilesWithResponse Update product mediafile assignments
 //
-// Replaces all mediafile assignments on a product with the given list in the specified order. Requires the product mediafiles feature to be enabled.
+// Replaces all mediafile assignments on a product with the given list in the specified order, as one change. On a variant, a list that differs from its parent's becomes the variant's own, and the list sent as it was read goes on following the parent. Requires the product mediafiles feature to be enabled.
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
@@ -30557,6 +31358,52 @@ func (c *ClientWithResponses) PublishProductWithResponse(ctx context.Context, id
 		return nil, err
 	}
 	return ParsePublishProductResponse(rsp)
+}
+
+// RestoreProductValuesWithBodyWithResponse Have a variant follow its parent again
+//
+// Makes a variant follow its parent again for the values the body names: the variant's own value goes, the parent's present value is written, and the parent's later changes reach the value again. `GET /products/{id}` names the state of each value of a variant under `inheritance`, on each property value and on each component row; a value that follows already is left as it is. The body names values as the reads do:
+//
+// - `keys`: the keys of `inheritance`
+// - `propertyRowIds`: the `rowId` of a property value
+// - `componentRowIds`: the `id` of a component row
+// - `parentComponentRowIds` and `parentPropertyIds`: the `id` of a component row and of a property value in the parent's read. No read of the variant names a row it took out of what its parent hands down, so the parent's read names it.
+// - `all`: every value the variant holds of its own.
+//
+// A name matching nothing the variant takes from its parent (a key the map lacks, a row the variant added itself) refuses the whole request with 422 `RESTORE_UNKNOWN_KEYS`, naming each; a body naming nothing answers 422 `RESTORE_KEYS_REQUIRED`. A product without a parent, or whose parent is in the trash, answers 422 `PRODUCT_NOT_A_VARIANT`. A restore is a write like any other: the product's history records it, and writing the value again makes it the variant's own once more.
+//
+// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with PUT /products/{id}/restore (the `RestoreProductValues` operationId).
+func (c *ClientWithResponses) RestoreProductValuesWithBodyWithResponse(ctx context.Context, id Id, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*RestoreProductValuesResponse, error) {
+	rsp, err := c.RestoreProductValuesWithBody(ctx, id, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseRestoreProductValuesResponse(rsp)
+}
+
+// RestoreProductValuesWithResponse Have a variant follow its parent again
+//
+// Makes a variant follow its parent again for the values the body names: the variant's own value goes, the parent's present value is written, and the parent's later changes reach the value again. `GET /products/{id}` names the state of each value of a variant under `inheritance`, on each property value and on each component row; a value that follows already is left as it is. The body names values as the reads do:
+//
+// - `keys`: the keys of `inheritance`
+// - `propertyRowIds`: the `rowId` of a property value
+// - `componentRowIds`: the `id` of a component row
+// - `parentComponentRowIds` and `parentPropertyIds`: the `id` of a component row and of a property value in the parent's read. No read of the variant names a row it took out of what its parent hands down, so the parent's read names it.
+// - `all`: every value the variant holds of its own.
+//
+// A name matching nothing the variant takes from its parent (a key the map lacks, a row the variant added itself) refuses the whole request with 422 `RESTORE_UNKNOWN_KEYS`, naming each; a body naming nothing answers 422 `RESTORE_KEYS_REQUIRED`. A product without a parent, or whose parent is in the trash, answers 422 `PRODUCT_NOT_A_VARIANT`. A restore is a write like any other: the product's history records it, and writing the value again makes it the variant's own once more.
+//
+// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with PUT /products/{id}/restore (the `RestoreProductValues` operationId).
+func (c *ClientWithResponses) RestoreProductValuesWithResponse(ctx context.Context, id Id, body RestoreProductValuesJSONRequestBody, reqEditors ...RequestEditorFn) (*RestoreProductValuesResponse, error) {
+	rsp, err := c.RestoreProductValues(ctx, id, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseRestoreProductValuesResponse(rsp)
 }
 
 // UnpublishProductWithResponse Unpublish a product
@@ -30636,7 +31483,7 @@ func (c *ClientWithResponses) StartPasswordResetWithResponse(ctx context.Context
 
 // SearchCatalogueWithResponse Search products and components
 //
-// Full-text search powered by Elasticsearch. Returns a flat results array containing mixed product and component records.
+// Full-text search powered by Elasticsearch. Returns a flat results array containing mixed product and component records. Search answers what the lists answer, so products are left out while `GET /products` answers 204 and components while `GET /components` does; with both lists off the results are empty.
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -30713,11 +31560,12 @@ func (c *ClientWithResponses) RefreshSessionWithResponse(ctx context.Context, re
 //
 // The tasks of one list, newest first. A credential that acts for a person (a grant the person approved, or their assistant) reads the lists as that person. Any other credential reads them as itself: it finds the tasks it asked for under `requested` and `done`, and nothing waits on it.
 //
-// - `mine` (the default): the tasks given to the person, the ones they claimed, and the group tasks nobody has claimed yet. The number beside the bell in the application manager counts these.
-// - `groups`: every open task of the person's groups, with who holds it.
+// - `mine` (the default): what the person has to do: the tasks given to them, the ones they claimed, and the group tasks and reviews nobody has claimed yet. A request for information waiting for its supplier is left out. The number beside the bell in the application manager counts these.
+// - `waiting`: the person's requests for information while they wait for the supplier, and the tasks they take part in that someone else has claimed.
 // - `requested`: the open tasks the caller asked of others.
 // - `done`: the finished and cancelled tasks the caller took part in.
-// - `all`: every task, for an admin only.
+// - `all`: every task the caller takes part in; every task for an admin.
+// - `groups`: retired, read as `mine` until the next release.
 //
 // A list the caller may not read answers 422 `TASK_LIST_INVALID`, naming the ones it may.
 //
@@ -30734,9 +31582,9 @@ func (c *ClientWithResponses) ListTasksWithResponse(ctx context.Context, params 
 
 // CreateTaskWithBodyWithResponse Create a task
 //
-// Asks a person or a user group for something. The task is a request (`kind` custom) whatever the body says, and names the caller as the one who asked: the person a grant or an assistant acts for, or the credential itself. Every person the task reaches sees it at once in the application manager and hears of it in the bell; the morning mail carries it too.
+// Asks a person or an access group for something. The task is a request (`kind` custom) whatever the body says, and names the caller as the one who asked: the person a grant or an assistant acts for, or the credential itself. Every person the task reaches sees it at once in the application manager and hears of it in the bell; the morning mail carries it too.
 //
-// Find the `assigneeKey` with `GET /tasks/assignees`.
+// Find the `assigneeKey` with `GET /tasks/assignees`. A task may link one record the caller reads (`subjectKey`) and carry a `priority`.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -30751,9 +31599,9 @@ func (c *ClientWithResponses) CreateTaskWithBodyWithResponse(ctx context.Context
 
 // CreateTaskWithResponse Create a task
 //
-// Asks a person or a user group for something. The task is a request (`kind` custom) whatever the body says, and names the caller as the one who asked: the person a grant or an assistant acts for, or the credential itself. Every person the task reaches sees it at once in the application manager and hears of it in the bell; the morning mail carries it too.
+// Asks a person or an access group for something. The task is a request (`kind` custom) whatever the body says, and names the caller as the one who asked: the person a grant or an assistant acts for, or the credential itself. Every person the task reaches sees it at once in the application manager and hears of it in the bell; the morning mail carries it too.
 //
-// Find the `assigneeKey` with `GET /tasks/assignees`.
+// Find the `assigneeKey` with `GET /tasks/assignees`. A task may link one record the caller reads (`subjectKey`) and carry a `priority`.
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
@@ -30828,7 +31676,7 @@ func (c *ClientWithResponses) UpdateTaskWithResponse(ctx context.Context, id Id,
 
 // ApproveTaskWithBodyWithResponse Approve a review
 //
-// Approves the step a review stands at, as the person the credential acts for. A review walks the steps of the workspace's review flow, or the one step of everyone who may sign passports where no flow fits. Approving a middle step passes the request on to the next step and signs nothing. Approving the last step carries the request out in the person's name: a publish review signs the passport, which needs `dpp_publish` in the credential's scope beside `task_access`; without it the answer is 403 and nothing is signed.
+// Approves the step a review stands at, as the person the credential acts for. A review walks the steps of the workspace's review flow, or the one step of everyone who may sign passports where no flow fits. Approving a middle step passes the request on to the next step and signs nothing. Approving the last step carries the request out in the person's name, which needs `dpp_publish` in the credential's scope beside `task_access`; without it the answer is 403 and the review stays open. A publish review then approves the passport, which waits ready to publish for the person who asked (`POST /dpps/{code}/publish`) until the product changes; a review of an event's seal or of a correction signs at once.
 //
 // Send the `step` the caller read, so a press on a review that moved on in between decides nothing (`TASK_STEP_MOVED`). The person who asked for a review decides no step of it (`TASK_OWN_REQUEST`). A publish the validator or the workspace refuses answers as `POST /dpps/{code}/publish` does, and the review stays open.
 //
@@ -30845,7 +31693,7 @@ func (c *ClientWithResponses) ApproveTaskWithBodyWithResponse(ctx context.Contex
 
 // ApproveTaskWithResponse Approve a review
 //
-// Approves the step a review stands at, as the person the credential acts for. A review walks the steps of the workspace's review flow, or the one step of everyone who may sign passports where no flow fits. Approving a middle step passes the request on to the next step and signs nothing. Approving the last step carries the request out in the person's name: a publish review signs the passport, which needs `dpp_publish` in the credential's scope beside `task_access`; without it the answer is 403 and nothing is signed.
+// Approves the step a review stands at, as the person the credential acts for. A review walks the steps of the workspace's review flow, or the one step of everyone who may sign passports where no flow fits. Approving a middle step passes the request on to the next step and signs nothing. Approving the last step carries the request out in the person's name, which needs `dpp_publish` in the credential's scope beside `task_access`; without it the answer is 403 and the review stays open. A publish review then approves the passport, which waits ready to publish for the person who asked (`POST /dpps/{code}/publish`) until the product changes; a review of an event's seal or of a correction signs at once.
 //
 // Send the `step` the caller read, so a press on a review that moved on in between decides nothing (`TASK_STEP_MOVED`). The person who asked for a review decides no step of it (`TASK_OWN_REQUEST`). A publish the validator or the workspace refuses answers as `POST /dpps/{code}/publish` does, and the review stays open.
 //
@@ -30860,9 +31708,24 @@ func (c *ClientWithResponses) ApproveTaskWithResponse(ctx context.Context, id Id
 	return ParseApproveTaskResponse(rsp)
 }
 
+// GetTaskAttachmentWithResponse Download a file of a task
+//
+// One of the files a task carries, the `url` its `attachments` name. Only those who see the task read its files, so a task the caller has no part in answers 404, and so does a file the task does not carry (`MEDIAFILE_NOT_FOUND`). Images and PDFs come inline, every other kind as an attachment. Files are added in the application manager.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /tasks/{id}/attachments/{attachmentId} (the `GetTaskAttachment` operationId).
+func (c *ClientWithResponses) GetTaskAttachmentWithResponse(ctx context.Context, id Id, attachmentId int, reqEditors ...RequestEditorFn) (*GetTaskAttachmentResponse, error) {
+	rsp, err := c.GetTaskAttachment(ctx, id, attachmentId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetTaskAttachmentResponse(rsp)
+}
+
 // CancelTaskWithResponse Cancel a task
 //
-// Ends an open task as cancelled. The one who asked for it may, or an admin. The task stays on record and can be reopened.
+// Ends an open task as cancelled. The one who asked for it may, or an admin, and so may the person a custom task is with, declining it. The task stays on record and can be reopened.
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -32775,6 +33638,58 @@ func ParseValidateDppResponse(rsp *http.Response) (*ValidateDppResponse, error) 
 		}
 		response.JSON422 = &dest
 
+	}
+
+	return response, nil
+}
+
+// ParseGetDppPrivateDynamicDataResponse parses an HTTP response from a GetDppPrivateDynamicDataWithResponse call
+func ParseGetDppPrivateDynamicDataResponse(rsp *http.Response) (*GetDppPrivateDynamicDataResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetDppPrivateDynamicDataResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest DynamicDataDocument
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case rsp.StatusCode == 204:
+		break // No content-type
+
+	case rsp.StatusCode == 401:
+		break // No content-type
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 200:
+		var headers GetDppPrivateDynamicDataResponse200Headers
+		if values := rsp.Header.Values("Cache-Control"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "Cache-Control", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.CacheControl = &value
+		}
+		response.Headers200 = &headers
 	}
 
 	return response, nil
@@ -36201,13 +37116,13 @@ func ParseResolvePermalinkResponse(rsp *http.Response) (*ResolvePermalinkRespons
 
 			// Component Full component details (returned by show action)
 			//
-			// Example: {"citations":[],"id":13,"mediafiles":[],"mpn":"SB-RAW-25KG","name":"Shea Butter","permalink":"/components/shea-butter","properties":{"Origin":{"id":14,"rated":true,"values":[{"id":811,"rating":"A","value":"West Africa"}]}},"published":true,"publishedAt":"2026-01-10T08:00:00Z","rating":"A","type":"Component"}
+			// Example: {"citations":[],"id":13,"mediafiles":[],"mpn":"SB-RAW-25KG","name":"Shea Butter","permalink":"/components/shea-butter","properties":{"Origin":{"id":14,"rated":true,"values":[{"id":811,"rating":"A","value":"West Africa"}]}},"published":true,"publishedAt":"2026-01-10T08:00:00Z","rating":"A","templateIds":[7],"type":"Component"}
 			Component *ComponentDetail        `json:"component,omitempty"`
 			Page      *map[string]interface{} `json:"page,omitempty"`
 
 			// Product Full product details (returned by show action and permalink resolution). Includes nested brand, components, properties, categories, and mediafiles.
 			//
-			// Example: {"brand":{"id":12,"name":"NaturaCare","permalink":"/brands/naturacare","productsCount":12,"published":true,"type":"Brand"},"categories":[{"id":20,"name":"Skincare","type":"ProductCategory"}],"components":[{"componentId":13,"id":13,"name":"Shea Butter","permalink":"/components/shea-butter","rating":"A","type":"Component"}],"gtin":"4006381333931","id":11,"mediafiles":[],"name":"Hydrating Face Cream","permalink":"/products/naturacare-hydrating-face-cream","properties":{"Capacity":{"id":21,"inputType":"text","values":[{"value":"50 ml"}]}},"publishedAt":"2026-01-15T10:30:00Z","rating":"A","type":"Product"}
+			// Example: {"brand":{"id":12,"name":"NaturaCare","permalink":"/brands/naturacare","productsCount":12,"published":true,"type":"Brand"},"categories":[{"id":20,"name":"Skincare","type":"ProductCategory"}],"components":[{"componentId":13,"id":1,"inheritance":"follows","name":"Shea Butter","permalink":"/components/shea-butter","rating":"A","type":"ProductComponent"}],"gtin":"4006381333931","id":11,"inheritance":{"brand":"follows","categories":"follows","componentsOrder":"follows","hsCode":"follows","images":"parent_moved","weight":"pinned"},"mediafiles":[],"name":"Hydrating Face Cream","parentId":4,"permalink":"/products/naturacare-hydrating-face-cream","properties":{"Capacity":{"id":21,"inputType":"text","values":[{"inheritance":"follows","rowId":2,"value":"50 ml"}]}},"publishedAt":"2026-01-15T10:30:00Z","rating":"A","type":"Product","variantsCount":0}
 			Product *ProductDetail `json:"product,omitempty"`
 
 			// Redirect The current path of the record, present when the permalink asked for is an alias the record has moved on from
@@ -36673,6 +37588,13 @@ func ParseCreateProductResponse(rsp *http.Response) (*CreateProductResponse, err
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
 		var dest Error
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -37046,6 +37968,67 @@ func ParsePublishProductResponse(rsp *http.Response) (*PublishProductResponse, e
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
 		var dest ValidationError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseRestoreProductValuesResponse parses an HTTP response from a RestoreProductValuesWithResponse call
+func ParseRestoreProductValuesResponse(rsp *http.Response) (*RestoreProductValuesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &RestoreProductValuesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest ProductDetail
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 402:
+		var dest MembershipExpired
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON402 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Error
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -37552,7 +38535,7 @@ func ParseListTaskAssigneesResponse(rsp *http.Response) (*ListTaskAssigneesRespo
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
 			Assignees *[]struct {
-				// Key `User:<id>` or `UserGroup:<id>`
+				// Key `User:<id>` or `AccessGroup:<id>`
 				Key  *string `json:"key,omitempty"`
 				Name *string `json:"name,omitempty"`
 			} `json:"assignees,omitempty"`
@@ -37737,6 +38720,46 @@ func ParseApproveTaskResponse(rsp *http.Response) (*ApproveTaskResponse, error) 
 			return nil, err
 		}
 		response.JSON422 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetTaskAttachmentResponse parses an HTTP response from a GetTaskAttachmentWithResponse call
+func ParseGetTaskAttachmentResponse(rsp *http.Response) (*GetTaskAttachmentResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetTaskAttachmentResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
 
 	}
 

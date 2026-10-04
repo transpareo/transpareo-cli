@@ -10,7 +10,10 @@ product and component is published as it is created, so never
 ask the person to publish anything and never mention a
 storefront, catalogue visibility or a frontend app.
 For a new product call product_property_types before
-create_product. For passports of an existing product call
+create_product. A variant follows its parent in every value
+its inheritance does not mark pinned or parent_moved;
+restore_product_values has a value follow again. For
+passports of an existing product call
 dpp_requirements, then validate_dpp before create_dpp. A passport
 of a batch or an item names its lot in batchIdentifier and the lot
 is created with the first passport that names it; there is no
@@ -151,7 +154,7 @@ var curated = []Tool{
 		Group:       GroupWebhooks,
 		Operation:   "create_webhook",
 		Kind:        kindWrite,
-		Description: `The answer carries the signing secret, shown only here.`,
+		Description: `The answer carries the signing secret, shown only here. A consumer holds at most ten subscriptions and the workspace fifty; one more answers WEBHOOK_LIMIT_REACHED, and delete_webhook frees a place.`,
 	},
 	{
 		Name:      "delete_webhook",
@@ -286,7 +289,7 @@ var curated = []Tool{
 		Group:       GroupDpps,
 		Operation:   "publish_dpp",
 		Kind:        kindWrite,
-		Description: `Signs a snapshot into the ten-year archive. Publishing cannot be undone.`,
+		Description: `Signs a snapshot into the ten-year archive. Publishing cannot be undone. A passport whose publish review was approved is published here by the person who asked for it.`,
 	},
 	{
 		Name:        "publish_product",
@@ -334,6 +337,13 @@ var curated = []Tool{
 		Group:     GroupTasks,
 		Operation: "reopen_task",
 		Kind:      kindWrite,
+	},
+	{
+		Name:        "restore_product_values",
+		Group:       GroupProducts,
+		Operation:   "restore_product_values",
+		Kind:        kindWrite,
+		Description: `Makes a variant follow its parent again for the values named; get_product shows which values a variant pinned and where its parent moved.`,
 	},
 	{
 		Name:        "search_help",
