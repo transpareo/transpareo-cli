@@ -701,13 +701,19 @@ func (e EventFeedEventsEventType) Valid() bool {
 
 // Defines values for ExportDataType.
 const (
-	ExportDataTypeDpps ExportDataType = "dpps"
+	ExportDataTypeComponents ExportDataType = "components"
+	ExportDataTypeDpps       ExportDataType = "dpps"
+	ExportDataTypeProducts   ExportDataType = "products"
 )
 
 // Valid indicates whether the value is a known member of the ExportDataType enum.
 func (e ExportDataType) Valid() bool {
 	switch e {
+	case ExportDataTypeComponents:
+		return true
 	case ExportDataTypeDpps:
+		return true
+	case ExportDataTypeProducts:
 		return true
 	default:
 		return false
@@ -764,13 +770,19 @@ func (e ExportStatus) Valid() bool {
 
 // Defines values for ExportInputDataType.
 const (
-	ExportInputDataTypeDpps ExportInputDataType = "dpps"
+	ExportInputDataTypeComponents ExportInputDataType = "components"
+	ExportInputDataTypeDpps       ExportInputDataType = "dpps"
+	ExportInputDataTypeProducts   ExportInputDataType = "products"
 )
 
 // Valid indicates whether the value is a known member of the ExportInputDataType enum.
 func (e ExportInputDataType) Valid() bool {
 	switch e {
+	case ExportInputDataTypeComponents:
+		return true
 	case ExportInputDataTypeDpps:
+		return true
+	case ExportInputDataTypeProducts:
 		return true
 	default:
 		return false
@@ -803,13 +815,19 @@ func (e ExportInputFormat) Valid() bool {
 
 // Defines values for ExportSummaryDataType.
 const (
-	ExportSummaryDataTypeDpps ExportSummaryDataType = "dpps"
+	ExportSummaryDataTypeComponents ExportSummaryDataType = "components"
+	ExportSummaryDataTypeDpps       ExportSummaryDataType = "dpps"
+	ExportSummaryDataTypeProducts   ExportSummaryDataType = "products"
 )
 
 // Valid indicates whether the value is a known member of the ExportSummaryDataType enum.
 func (e ExportSummaryDataType) Valid() bool {
 	switch e {
+	case ExportSummaryDataTypeComponents:
+		return true
 	case ExportSummaryDataTypeDpps:
+		return true
+	case ExportSummaryDataTypeProducts:
 		return true
 	default:
 		return false
@@ -2891,9 +2909,9 @@ type DppValidationReport struct {
 	ValidatorVersion *string `json:"validatorVersion,omitempty"`
 }
 
-// DppVersion One registered version of a passport - the signed JSON-LD snapshot published at that point, with the integrity pair a reader verifies it against. Same shape as the entries of the per-passport manifest on the public CDN.
+// DppVersion One registered version of a passport - the signed JSON-LD snapshot published at that point, with the integrity pair a reader verifies it against. The fields of an entry in the per-passport manifest, with the file's absolute address in `url`.
 //
-// Example: {"hashAlgorithm":"sha256","hashCanonicalForm":"urdna2015","hashValue":"9f2b1c4e8a7d6035b1e2c9f04a8d7e6152b3c4d5e6f708192a3b4c5d6e7f8091","number":3,"publishedAt":"2026-09-08T09:12:44Z","reason":"edit","schemaVersion":1,"sizeBytes":8421,"url":"https://cdn.example.com/acme/dpp/A1B2C3D4E/v/3.jsonld.gz"}
+// Example: {"hashAlgorithm":"sha256","hashCanonicalForm":"urdna2015","hashValue":"9f2b1c4e8a7d6035b1e2c9f04a8d7e6152b3c4d5e6f708192a3b4c5d6e7f8091","number":3,"publishedAt":"2026-09-08T09:12:44Z","reason":"edit","schemaVersion":1,"sizeBytes":8421,"url":"https://cdn.example.com/acme/dpp/A1B2C3D4E/v/3-1a2b3c4d5e6f.json"}
 type DppVersion struct {
 	// HashAlgorithm Example: sha256
 	HashAlgorithm *string `json:"hashAlgorithm,omitempty"`
@@ -2919,13 +2937,13 @@ type DppVersion struct {
 	// SizeBytes Size of the published snapshot
 	SizeBytes *int `json:"sizeBytes,omitempty"`
 
-	// Url Public URL of the signed JSON-LD snapshot
+	// Url Absolute URL of the signed JSON-LD snapshot on the CDN. The manifest names the same file by its root path, `/{handle}/dpp/{code}/v/{file}`.
 	Url *string `json:"url,omitempty"`
 }
 
 // DppVersionSnapshot One published version of a passport, with the signed JSON-LD document as it was served, the hash it was signed over and the address it is kept at.
 //
-// Example: {"code":"A1B2C3D4E","hashValue":"9f2b1c4e8a7d6035b1e2c9f04a8d7e6152b3c4d5e6f708192a3b4c5d6e7f8091","publishedAt":"2026-09-08T09:12:44Z","snapshot":{"@context":["https://transpareo.com/vocab/vc/v1","https://transpareo.com/vocab/transpareo/v1"],"@id":"https://example.com/dpp/A1B2C3D4E#credential","issuer":"did:web:nordic-wear.002.fsn.transpareo.com","type":["VerifiableCredential","dpp:DigitalProductPassport"]},"url":"https://cdn.example.com/nordic-wear/dpp/A1B2C3D4E/v/3.jsonld.gz","version":3}
+// Example: {"code":"A1B2C3D4E","hashValue":"9f2b1c4e8a7d6035b1e2c9f04a8d7e6152b3c4d5e6f708192a3b4c5d6e7f8091","publishedAt":"2026-09-08T09:12:44Z","snapshot":{"@context":["https://transpareo.com/vocab/vc/v1","https://transpareo.com/vocab/transpareo/v1"],"@id":"https://example.com/dpp/A1B2C3D4E#credential","issuer":"did:web:nordic-wear.002.fsn.transpareo.com","type":["VerifiableCredential","dpp:DigitalProductPassport"]},"url":"https://cdn.example.com/nordic-wear/dpp/A1B2C3D4E/v/3-1a2b3c4d5e6f.json","version":3}
 type DppVersionSnapshot struct {
 	// Code The public code of the passport the version belongs to
 	Code *string `json:"code,omitempty"`
@@ -3058,14 +3076,16 @@ type EventFeedEventsEventType string
 
 // Export One export and where it stands. The archive fields appear once `status` is `completed`; `failure` once it is `failed`.
 //
-// Example: {"archiveSize":184320,"code":"k7m2pq","completedAt":"2026-09-08T09:13:01Z","componentCount":40,"createdAt":"2026-09-08T09:12:44Z","dataType":"dpps","downloadUrl":"https://example.com/api/exports/42/download","expiresAt":"2026-09-15T09:13:01Z","filename":"transpareo-export-20260908-091301.tar.gz","format":"jsonld","id":42,"includeMedia":false,"normalize":false,"productCount":12,"progress":100,"recordCount":64,"status":"completed","statusUrl":"https://example.com/api/exports/42"}
+// Example: {"archiveSize":184320,"code":"k7m2pq","completedAt":"2026-09-08T09:13:01Z","createdAt":"2026-09-08T09:12:44Z","dataType":"products","downloadUrl":"https://example.com/api/exports/42/download","expiresAt":"2026-09-15T09:13:01Z","filename":"products-20260908-091244.jsonld","format":"jsonld","id":42,"includeMedia":false,"productCount":12,"progress":100,"recordCount":12,"status":"completed","statusUrl":"https://example.com/api/exports/42"}
 type Export struct {
 	// ArchiveSize Archive bytes. On `completed`.
 	ArchiveSize *int `json:"archiveSize,omitempty"`
 
-	// Code The short code the application manager lists the export under
-	Code           *string         `json:"code,omitempty"`
-	CompletedAt    *time.Time      `json:"completedAt,omitempty"`
+	// Code A short code that identifies the export
+	Code        *string    `json:"code,omitempty"`
+	CompletedAt *time.Time `json:"completedAt,omitempty"`
+
+	// ComponentCount Components exported. On a completed components export.
 	ComponentCount *int            `json:"componentCount,omitempty"`
 	CreatedAt      *time.Time      `json:"createdAt,omitempty"`
 	DataType       *ExportDataType `json:"dataType,omitempty"`
@@ -3079,18 +3099,19 @@ type Export struct {
 	// Failure Why the export failed. Only on `failed`.
 	Failure *string `json:"failure,omitempty"`
 
-	// Filename The archive's file name. On `completed`.
+	// Filename The name the export goes by in the application manager and its archive downloads under, given when the export is started
 	Filename     *string       `json:"filename,omitempty"`
 	Format       *ExportFormat `json:"format,omitempty"`
 	Id           int           `json:"id"`
 	IncludeMedia *bool         `json:"includeMedia,omitempty"`
-	Normalize    *bool         `json:"normalize,omitempty"`
-	ProductCount *int          `json:"productCount,omitempty"`
+
+	// ProductCount Products exported. On a completed products export.
+	ProductCount *int `json:"productCount,omitempty"`
 
 	// Progress Percent of the work done. 100 once completed.
 	Progress *int `json:"progress,omitempty"`
 
-	// RecordCount Passports, products and components exported. On `completed`.
+	// RecordCount Records of the data type exported. On `completed`.
 	RecordCount *int         `json:"recordCount,omitempty"`
 	Status      ExportStatus `json:"status"`
 
@@ -3107,50 +3128,58 @@ type ExportFormat string
 // ExportStatus defines model for Export.Status.
 type ExportStatus string
 
-// ExportInput What to export and how. Every field is optional; the default is a JSON-LD archive of the passports and catalogue the consumer's lists answer it with.
+// ExportInput What to export and how. Every field is optional; the default is a JSON-LD file of the passports the consumer's list answers it with.
 //
-// Example: {"format":"csv","normalize":true}
+// Example: {"dataType":"products","includeMedia":true}
 type ExportInput struct {
-	// DataType The API exports passports. Payments, users and audit logs are exported from the application manager.
+	// DataType The records the archive carries, each type its own alone. Payments, users and audit logs are exported from the application manager.
 	DataType *ExportInputDataType `json:"dataType,omitempty"`
 
-	// Format `jsonld` packs one document per passport, product and component into a tar archive; the tabular formats flatten the catalogue into one sheet each. A variant names its parent in `parent_key` in CSV and XLSX (the GTIN of the parent, else its name, which the product import reads back), in `parent_id` in SQL and in `isVariantOf` in JSON-LD. A parent outside the archive goes unnamed
+	// Format `jsonld` downloads as one file, `<dataType>-<yyyymmdd-hhmmss>.jsonld`: one self-contained record per passport, product or component in the passport's vocabulary, translated texts as language maps. A variant names its parent in `isVariantOf`; a passport edited since its latest version carries `unpublishedChanges` and no version number. `csv` and `xlsx` write one sheet per language of the workspace, in the columns the spreadsheet import reads back: the one sheet of a workspace in one language as a file of its own, the sheets of several languages as a ZIP holding `<language>/<dataType>.csv` or `.xlsx`. `sql` downloads as one file of CREATE TABLE and INSERT statements in a small generic schema, translated texts in a `translations` table, that load into PostgreSQL, MySQL and SQLite.
 	Format *ExportInputFormat `json:"format,omitempty"`
 
-	// IncludeMedia Copy the product and component media files into the archive
+	// IncludeMedia Copy the product images (products) or the QR codes (passports) into `media/` beside the records; the export then downloads as a ZIP
 	IncludeMedia *bool `json:"includeMedia,omitempty"`
 
-	// Normalize Resolve references into the exported rows instead of carrying ids
+	// Normalize Accepted and ignored; exports no longer have this option
+	// Deprecated: this property has been marked as deprecated upstream, but no `x-deprecated-reason` was set
 	Normalize *bool `json:"normalize,omitempty"`
 }
 
-// ExportInputDataType The API exports passports. Payments, users and audit logs are exported from the application manager.
+// ExportInputDataType The records the archive carries, each type its own alone. Payments, users and audit logs are exported from the application manager.
 type ExportInputDataType string
 
-// ExportInputFormat `jsonld` packs one document per passport, product and component into a tar archive; the tabular formats flatten the catalogue into one sheet each. A variant names its parent in `parent_key` in CSV and XLSX (the GTIN of the parent, else its name, which the product import reads back), in `parent_id` in SQL and in `isVariantOf` in JSON-LD. A parent outside the archive goes unnamed
+// ExportInputFormat `jsonld` downloads as one file, `<dataType>-<yyyymmdd-hhmmss>.jsonld`: one self-contained record per passport, product or component in the passport's vocabulary, translated texts as language maps. A variant names its parent in `isVariantOf`; a passport edited since its latest version carries `unpublishedChanges` and no version number. `csv` and `xlsx` write one sheet per language of the workspace, in the columns the spreadsheet import reads back: the one sheet of a workspace in one language as a file of its own, the sheets of several languages as a ZIP holding `<language>/<dataType>.csv` or `.xlsx`. `sql` downloads as one file of CREATE TABLE and INSERT statements in a small generic schema, translated texts in a `translations` table, that load into PostgreSQL, MySQL and SQLite.
 type ExportInputFormat string
 
 // ExportSummary One export as a list answers it: where the run stands as the record has it, and where its archive is. The progress of a running export is read from `GET /exports/{id}`.
 //
-// Example: {"archiveSize":184320,"code":"k7m2pq","completedAt":"2026-09-08T09:13:01Z","componentCount":40,"createdAt":"2026-09-08T09:12:44Z","dataType":"dpps","downloadUrl":"https://example.com/api/exports/42/download","format":"jsonld","id":42,"productCount":12,"recordCount":64,"status":"completed","statusUrl":"https://example.com/api/exports/42"}
+// Example: {"archiveSize":184320,"code":"k7m2pq","completedAt":"2026-09-08T09:13:01Z","createdAt":"2026-09-08T09:12:44Z","dataType":"dpps","downloadUrl":"https://example.com/api/exports/42/download","filename":"dpps-20260908-091244.jsonld","format":"jsonld","id":42,"recordCount":64,"status":"completed","statusUrl":"https://example.com/api/exports/42"}
 type ExportSummary struct {
 	// ArchiveSize Archive bytes. On `completed`.
 	ArchiveSize *int `json:"archiveSize,omitempty"`
 
-	// Code The short code the application manager lists the export under
-	Code           *string                `json:"code,omitempty"`
-	CompletedAt    *time.Time             `json:"completedAt,omitempty"`
+	// Code A short code that identifies the export
+	Code        *string    `json:"code,omitempty"`
+	CompletedAt *time.Time `json:"completedAt,omitempty"`
+
+	// ComponentCount Components exported. On a completed components export.
 	ComponentCount *int                   `json:"componentCount,omitempty"`
 	CreatedAt      *time.Time             `json:"createdAt,omitempty"`
 	DataType       *ExportSummaryDataType `json:"dataType,omitempty"`
 
 	// DownloadUrl Where to fetch the archive. On `completed`.
-	DownloadUrl  *string              `json:"downloadUrl,omitempty"`
-	Format       *ExportSummaryFormat `json:"format,omitempty"`
-	Id           int                  `json:"id"`
-	ProductCount *int                 `json:"productCount,omitempty"`
+	DownloadUrl *string `json:"downloadUrl,omitempty"`
 
-	// RecordCount Passports, products and components exported. On `completed`.
+	// Filename The name the export goes by in the application manager and its archive downloads under, given when the export is started
+	Filename *string              `json:"filename,omitempty"`
+	Format   *ExportSummaryFormat `json:"format,omitempty"`
+	Id       int                  `json:"id"`
+
+	// ProductCount Products exported. On a completed products export.
+	ProductCount *int `json:"productCount,omitempty"`
+
+	// RecordCount Records of the data type exported. On `completed`.
 	RecordCount *int                `json:"recordCount,omitempty"`
 	Status      ExportSummaryStatus `json:"status"`
 
@@ -4919,9 +4948,9 @@ type ListExportsParams struct {
 
 // CreateExportJSONBody defines parameters for CreateExport.
 type CreateExportJSONBody struct {
-	// Export What to export and how. Every field is optional; the default is a JSON-LD archive of the passports and catalogue the consumer's lists answer it with.
+	// Export What to export and how. Every field is optional; the default is a JSON-LD file of the passports the consumer's list answers it with.
 	//
-	// Example: {"format":"csv","normalize":true}
+	// Example: {"dataType":"products","includeMedia":true}
 	Export *ExportInput `json:"export,omitempty"`
 }
 
@@ -6113,7 +6142,7 @@ type ClientInterface interface {
 
 	// DeleteComponent Delete a component
 	//
-	// Removes the component from the catalogue. A component that products still list answers 409 `COMPONENT_IN_USE` and names those products; unpublish it instead, or remove it from the products first. A component that a published passport refers to stays as well and answers 409 `COMPONENT_DELETE_REFUSED`, with the reason in the message and the next step in the hint. The caller must own the component, or hold `component_write`.
+	// Removes the component from the catalogue. A component that products still list answers 409 `COMPONENT_IN_USE` and names those products; unpublish it instead, or remove it from the products first. A component that a published passport refers to, or that a lot holds, stays as well and answers 409 `COMPONENT_DELETE_REFUSED`; the message names the reason, with the passport or the lot it means, and the hint, where there is one, the next step. The caller must own the component, or hold `component_write`.
 	//
 	// Corresponds with DELETE /components/{id} (the `DeleteComponent` operationId).
 	DeleteComponent(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -6481,7 +6510,7 @@ type ClientInterface interface {
 
 	// ListDppVersions List the registered versions of a DPP
 	//
-	// Every persisted version of the passport, newest first, each with the integrity pair a reader verifies its snapshot against. Same content as the per-passport manifest on the public CDN, served from the API origin for clients that prefer one host over the other. A scope-limited partner-grant token only reaches its own passports.
+	// Every persisted version of the passport, newest first, each with the integrity pair a reader verifies its snapshot against. The versions the per-passport manifest lists, served from the API origin for clients that prefer one host over the other. The manifest names each file by its root path, resolved against the host it was read from; `url` here is the file's absolute address. A scope-limited partner-grant token only reaches its own passports.
 	//
 	// Corresponds with GET /dpps/{id}/versions (the `ListDppVersions` operationId).
 	ListDppVersions(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -6526,26 +6555,26 @@ type ClientInterface interface {
 	// Corresponds with GET /exports (the `ListExports` operationId).
 	ListExports(ctx context.Context, params *ListExportsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// CreateExportWithBody Start a passport export
+	// CreateExportWithBody Start an export
 	//
-	// Packs what this consumer's own lists answer it with into an archive: the passports of `GET /dpps`, the products of `GET /products` and the components of `GET /components`, with the brands, categories and property types they use. The work runs in the background under the scope of the token that started it, and the answer comes at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.
+	// Packs the records of one data type this consumer's own list answers it with into an archive: the passports of `GET /dpps`, the products of `GET /products` or the components of `GET /components`. Each record is self-contained: a product names its components by their `@id`, a passport its product by GTIN and name. The work runs in the background under the scope of the token that started it, and the answer comes at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.
 	//
 	// The consumer that starts an export is the only one that can read or download it. One export runs at a time per consumer: while one is pending or running, another request answers 409 `EXPORT_IN_PROGRESS` with a hint naming the URL to poll.
 	//
-	// The archive carries the passports, so starting an export needs `dpp_read` as well as `export_access`. A consumer without it gets 403 `DPP_FORBIDDEN`.
+	// The archive carries the records, so starting an export needs the permission that reads them as well as `export_access`: `dpp_read` for passports, `product_access` for products, `component_access` for components. A consumer without it gets 403 (`DPP_FORBIDDEN`, `PRODUCT_FORBIDDEN`, `COMPONENT_FORBIDDEN`).
 	//
 	// Takes any type of body and a specified content type.
 	//
 	// Corresponds with POST /exports (the `CreateExport` operationId).
 	CreateExportWithBody(ctx context.Context, params *CreateExportParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// CreateExport Start a passport export
+	// CreateExport Start an export
 	//
-	// Packs what this consumer's own lists answer it with into an archive: the passports of `GET /dpps`, the products of `GET /products` and the components of `GET /components`, with the brands, categories and property types they use. The work runs in the background under the scope of the token that started it, and the answer comes at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.
+	// Packs the records of one data type this consumer's own list answers it with into an archive: the passports of `GET /dpps`, the products of `GET /products` or the components of `GET /components`. Each record is self-contained: a product names its components by their `@id`, a passport its product by GTIN and name. The work runs in the background under the scope of the token that started it, and the answer comes at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.
 	//
 	// The consumer that starts an export is the only one that can read or download it. One export runs at a time per consumer: while one is pending or running, another request answers 409 `EXPORT_IN_PROGRESS` with a hint naming the URL to poll.
 	//
-	// The archive carries the passports, so starting an export needs `dpp_read` as well as `export_access`. A consumer without it gets 403 `DPP_FORBIDDEN`.
+	// The archive carries the records, so starting an export needs the permission that reads them as well as `export_access`: `dpp_read` for passports, `product_access` for products, `component_access` for components. A consumer without it gets 403 (`DPP_FORBIDDEN`, `PRODUCT_FORBIDDEN`, `COMPONENT_FORBIDDEN`).
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -6561,7 +6590,7 @@ type ClientInterface interface {
 
 	// DownloadExport Download an export archive
 	//
-	// The archive of a completed export as `application/gzip`. Before completion the answer is 409 `EXPORT_NOT_READY`; a failed export answers 409 `EXPORT_FAILED`; once the archive has been deleted, seven days after completion, the answer is 410 `EXPORT_EXPIRED`. The archive carries the passports, so the download needs `dpp_read` as well; a consumer without it gets 403 `DPP_FORBIDDEN`.
+	// The file of a completed export, under the export's `filename`. An export of one data file comes as that file, as `application/ld+json`, `text/csv`, `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet` or `application/sql`; one with media files or sheets in several languages as `application/zip`, holding one folder named as the export. Before completion the answer is 409 `EXPORT_NOT_READY`; a failed export answers 409 `EXPORT_FAILED`; once the archive has been deleted, seven days after completion, the answer is 410 `EXPORT_EXPIRED`. The archive carries the records of its data type, so the download needs the permission that reads them as well; a consumer without it gets 403.
 	//
 	// Corresponds with GET /exports/{id}/download (the `DownloadExport` operationId).
 	DownloadExport(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -7192,7 +7221,7 @@ type ClientInterface interface {
 
 	// DeleteProduct Delete a product
 	//
-	// Deletes a product you own. A product that variants still refer to, or that a published passport was made from, stays and answers 409 `PRODUCT_DELETE_REFUSED`; the message names the reason and the hint the next step.
+	// Deletes a product you own. A product that a published passport was made from, that a lot was taken of, or that variants still refer to stays and answers 409 `PRODUCT_DELETE_REFUSED`; the message names the first of these reasons that applies, with the passport or the lot it means, and the hint, where there is one, the next step.
 	//
 	// Corresponds with DELETE /products/{id} (the `DeleteProduct` operationId).
 	DeleteProduct(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -7955,7 +7984,7 @@ func (c *Client) CreateComponent(ctx context.Context, params *CreateComponentPar
 
 // DeleteComponent Delete a component
 //
-// Removes the component from the catalogue. A component that products still list answers 409 `COMPONENT_IN_USE` and names those products; unpublish it instead, or remove it from the products first. A component that a published passport refers to stays as well and answers 409 `COMPONENT_DELETE_REFUSED`, with the reason in the message and the next step in the hint. The caller must own the component, or hold `component_write`.
+// Removes the component from the catalogue. A component that products still list answers 409 `COMPONENT_IN_USE` and names those products; unpublish it instead, or remove it from the products first. A component that a published passport refers to, or that a lot holds, stays as well and answers 409 `COMPONENT_DELETE_REFUSED`; the message names the reason, with the passport or the lot it means, and the hint, where there is one, the next step. The caller must own the component, or hold `component_write`.
 //
 // Corresponds with DELETE /components/{id} (the `DeleteComponent` operationId).
 func (c *Client) DeleteComponent(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -8723,7 +8752,7 @@ func (c *Client) SupersedeDpp(ctx context.Context, id Id, params *SupersedeDppPa
 
 // ListDppVersions List the registered versions of a DPP
 //
-// Every persisted version of the passport, newest first, each with the integrity pair a reader verifies its snapshot against. Same content as the per-passport manifest on the public CDN, served from the API origin for clients that prefer one host over the other. A scope-limited partner-grant token only reaches its own passports.
+// Every persisted version of the passport, newest first, each with the integrity pair a reader verifies its snapshot against. The versions the per-passport manifest lists, served from the API origin for clients that prefer one host over the other. The manifest names each file by its root path, resolved against the host it was read from; `url` here is the file's absolute address. A scope-limited partner-grant token only reaches its own passports.
 //
 // Corresponds with GET /dpps/{id}/versions (the `ListDppVersions` operationId).
 func (c *Client) ListDppVersions(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -8818,13 +8847,13 @@ func (c *Client) ListExports(ctx context.Context, params *ListExportsParams, req
 	return c.Client.Do(req)
 }
 
-// CreateExportWithBody Start a passport export
+// CreateExportWithBody Start an export
 //
-// Packs what this consumer's own lists answer it with into an archive: the passports of `GET /dpps`, the products of `GET /products` and the components of `GET /components`, with the brands, categories and property types they use. The work runs in the background under the scope of the token that started it, and the answer comes at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.
+// Packs the records of one data type this consumer's own list answers it with into an archive: the passports of `GET /dpps`, the products of `GET /products` or the components of `GET /components`. Each record is self-contained: a product names its components by their `@id`, a passport its product by GTIN and name. The work runs in the background under the scope of the token that started it, and the answer comes at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.
 //
 // The consumer that starts an export is the only one that can read or download it. One export runs at a time per consumer: while one is pending or running, another request answers 409 `EXPORT_IN_PROGRESS` with a hint naming the URL to poll.
 //
-// The archive carries the passports, so starting an export needs `dpp_read` as well as `export_access`. A consumer without it gets 403 `DPP_FORBIDDEN`.
+// The archive carries the records, so starting an export needs the permission that reads them as well as `export_access`: `dpp_read` for passports, `product_access` for products, `component_access` for components. A consumer without it gets 403 (`DPP_FORBIDDEN`, `PRODUCT_FORBIDDEN`, `COMPONENT_FORBIDDEN`).
 //
 // Takes any type of body and a specified content type.
 //
@@ -8841,13 +8870,13 @@ func (c *Client) CreateExportWithBody(ctx context.Context, params *CreateExportP
 	return c.Client.Do(req)
 }
 
-// CreateExport Start a passport export
+// CreateExport Start an export
 //
-// Packs what this consumer's own lists answer it with into an archive: the passports of `GET /dpps`, the products of `GET /products` and the components of `GET /components`, with the brands, categories and property types they use. The work runs in the background under the scope of the token that started it, and the answer comes at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.
+// Packs the records of one data type this consumer's own list answers it with into an archive: the passports of `GET /dpps`, the products of `GET /products` or the components of `GET /components`. Each record is self-contained: a product names its components by their `@id`, a passport its product by GTIN and name. The work runs in the background under the scope of the token that started it, and the answer comes at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.
 //
 // The consumer that starts an export is the only one that can read or download it. One export runs at a time per consumer: while one is pending or running, another request answers 409 `EXPORT_IN_PROGRESS` with a hint naming the URL to poll.
 //
-// The archive carries the passports, so starting an export needs `dpp_read` as well as `export_access`. A consumer without it gets 403 `DPP_FORBIDDEN`.
+// The archive carries the records, so starting an export needs the permission that reads them as well as `export_access`: `dpp_read` for passports, `product_access` for products, `component_access` for components. A consumer without it gets 403 (`DPP_FORBIDDEN`, `PRODUCT_FORBIDDEN`, `COMPONENT_FORBIDDEN`).
 //
 // Takes a body of the `application/json` content type.
 //
@@ -8883,7 +8912,7 @@ func (c *Client) GetExport(ctx context.Context, id Id, reqEditors ...RequestEdit
 
 // DownloadExport Download an export archive
 //
-// The archive of a completed export as `application/gzip`. Before completion the answer is 409 `EXPORT_NOT_READY`; a failed export answers 409 `EXPORT_FAILED`; once the archive has been deleted, seven days after completion, the answer is 410 `EXPORT_EXPIRED`. The archive carries the passports, so the download needs `dpp_read` as well; a consumer without it gets 403 `DPP_FORBIDDEN`.
+// The file of a completed export, under the export's `filename`. An export of one data file comes as that file, as `application/ld+json`, `text/csv`, `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet` or `application/sql`; one with media files or sheets in several languages as `application/zip`, holding one folder named as the export. Before completion the answer is 409 `EXPORT_NOT_READY`; a failed export answers 409 `EXPORT_FAILED`; once the archive has been deleted, seven days after completion, the answer is 410 `EXPORT_EXPIRED`. The archive carries the records of its data type, so the download needs the permission that reads them as well; a consumer without it gets 403.
 //
 // Corresponds with GET /exports/{id}/download (the `DownloadExport` operationId).
 func (c *Client) DownloadExport(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -10204,7 +10233,7 @@ func (c *Client) GetNewProduct(ctx context.Context, reqEditors ...RequestEditorF
 
 // DeleteProduct Delete a product
 //
-// Deletes a product you own. A product that variants still refer to, or that a published passport was made from, stays and answers 409 `PRODUCT_DELETE_REFUSED`; the message names the reason and the hint the next step.
+// Deletes a product you own. A product that a published passport was made from, that a lot was taken of, or that variants still refer to stays and answers 409 `PRODUCT_DELETE_REFUSED`; the message names the first of these reasons that applies, with the passport or the lot it means, and the hint, where there is one, the next step.
 //
 // Corresponds with DELETE /products/{id} (the `DeleteProduct` operationId).
 func (c *Client) DeleteProduct(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -18245,7 +18274,7 @@ type ClientWithResponsesInterface interface {
 
 	// DeleteComponentWithResponse Delete a component
 	//
-	// Removes the component from the catalogue. A component that products still list answers 409 `COMPONENT_IN_USE` and names those products; unpublish it instead, or remove it from the products first. A component that a published passport refers to stays as well and answers 409 `COMPONENT_DELETE_REFUSED`, with the reason in the message and the next step in the hint. The caller must own the component, or hold `component_write`.
+	// Removes the component from the catalogue. A component that products still list answers 409 `COMPONENT_IN_USE` and names those products; unpublish it instead, or remove it from the products first. A component that a published passport refers to, or that a lot holds, stays as well and answers 409 `COMPONENT_DELETE_REFUSED`; the message names the reason, with the passport or the lot it means, and the hint, where there is one, the next step. The caller must own the component, or hold `component_write`.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
@@ -18649,7 +18678,7 @@ type ClientWithResponsesInterface interface {
 
 	// ListDppVersionsWithResponse List the registered versions of a DPP
 	//
-	// Every persisted version of the passport, newest first, each with the integrity pair a reader verifies its snapshot against. Same content as the per-passport manifest on the public CDN, served from the API origin for clients that prefer one host over the other. A scope-limited partner-grant token only reaches its own passports.
+	// Every persisted version of the passport, newest first, each with the integrity pair a reader verifies its snapshot against. The versions the per-passport manifest lists, served from the API origin for clients that prefer one host over the other. The manifest names each file by its root path, resolved against the host it was read from; `url` here is the file's absolute address. A scope-limited partner-grant token only reaches its own passports.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
@@ -18700,26 +18729,26 @@ type ClientWithResponsesInterface interface {
 	// Corresponds with GET /exports (the `ListExports` operationId).
 	ListExportsWithResponse(ctx context.Context, params *ListExportsParams, reqEditors ...RequestEditorFn) (*ListExportsResponse, error)
 
-	// CreateExportWithBodyWithResponse Start a passport export
+	// CreateExportWithBodyWithResponse Start an export
 	//
-	// Packs what this consumer's own lists answer it with into an archive: the passports of `GET /dpps`, the products of `GET /products` and the components of `GET /components`, with the brands, categories and property types they use. The work runs in the background under the scope of the token that started it, and the answer comes at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.
+	// Packs the records of one data type this consumer's own list answers it with into an archive: the passports of `GET /dpps`, the products of `GET /products` or the components of `GET /components`. Each record is self-contained: a product names its components by their `@id`, a passport its product by GTIN and name. The work runs in the background under the scope of the token that started it, and the answer comes at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.
 	//
 	// The consumer that starts an export is the only one that can read or download it. One export runs at a time per consumer: while one is pending or running, another request answers 409 `EXPORT_IN_PROGRESS` with a hint naming the URL to poll.
 	//
-	// The archive carries the passports, so starting an export needs `dpp_read` as well as `export_access`. A consumer without it gets 403 `DPP_FORBIDDEN`.
+	// The archive carries the records, so starting an export needs the permission that reads them as well as `export_access`: `dpp_read` for passports, `product_access` for products, `component_access` for components. A consumer without it gets 403 (`DPP_FORBIDDEN`, `PRODUCT_FORBIDDEN`, `COMPONENT_FORBIDDEN`).
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with POST /exports (the `CreateExport` operationId).
 	CreateExportWithBodyWithResponse(ctx context.Context, params *CreateExportParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateExportResponse, error)
 
-	// CreateExportWithResponse Start a passport export
+	// CreateExportWithResponse Start an export
 	//
-	// Packs what this consumer's own lists answer it with into an archive: the passports of `GET /dpps`, the products of `GET /products` and the components of `GET /components`, with the brands, categories and property types they use. The work runs in the background under the scope of the token that started it, and the answer comes at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.
+	// Packs the records of one data type this consumer's own list answers it with into an archive: the passports of `GET /dpps`, the products of `GET /products` or the components of `GET /components`. Each record is self-contained: a product names its components by their `@id`, a passport its product by GTIN and name. The work runs in the background under the scope of the token that started it, and the answer comes at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.
 	//
 	// The consumer that starts an export is the only one that can read or download it. One export runs at a time per consumer: while one is pending or running, another request answers 409 `EXPORT_IN_PROGRESS` with a hint naming the URL to poll.
 	//
-	// The archive carries the passports, so starting an export needs `dpp_read` as well as `export_access`. A consumer without it gets 403 `DPP_FORBIDDEN`.
+	// The archive carries the records, so starting an export needs the permission that reads them as well as `export_access`: `dpp_read` for passports, `product_access` for products, `component_access` for components. A consumer without it gets 403 (`DPP_FORBIDDEN`, `PRODUCT_FORBIDDEN`, `COMPONENT_FORBIDDEN`).
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -18737,7 +18766,7 @@ type ClientWithResponsesInterface interface {
 
 	// DownloadExportWithResponse Download an export archive
 	//
-	// The archive of a completed export as `application/gzip`. Before completion the answer is 409 `EXPORT_NOT_READY`; a failed export answers 409 `EXPORT_FAILED`; once the archive has been deleted, seven days after completion, the answer is 410 `EXPORT_EXPIRED`. The archive carries the passports, so the download needs `dpp_read` as well; a consumer without it gets 403 `DPP_FORBIDDEN`.
+	// The file of a completed export, under the export's `filename`. An export of one data file comes as that file, as `application/ld+json`, `text/csv`, `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet` or `application/sql`; one with media files or sheets in several languages as `application/zip`, holding one folder named as the export. Before completion the answer is 409 `EXPORT_NOT_READY`; a failed export answers 409 `EXPORT_FAILED`; once the archive has been deleted, seven days after completion, the answer is 410 `EXPORT_EXPIRED`. The archive carries the records of its data type, so the download needs the permission that reads them as well; a consumer without it gets 403.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
@@ -19436,7 +19465,7 @@ type ClientWithResponsesInterface interface {
 
 	// DeleteProductWithResponse Delete a product
 	//
-	// Deletes a product you own. A product that variants still refer to, or that a published passport was made from, stays and answers 409 `PRODUCT_DELETE_REFUSED`; the message names the reason and the hint the next step.
+	// Deletes a product you own. A product that a published passport was made from, that a lot was taken of, or that variants still refer to stays and answers 409 `PRODUCT_DELETE_REFUSED`; the message names the first of these reasons that applies, with the passport or the lot it means, and the hint, where there is one, the next step.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
@@ -23183,6 +23212,8 @@ func (r GetExportResponse) ContentType() string {
 type DownloadExportResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
+	// ApplicationldJSON200 the response for an HTTP 200 `application/ld+json` response
+	ApplicationldJSON200 *openapi_types.File
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
 	// JSON403 the response for an HTTP 403 `application/json` response
@@ -23193,6 +23224,11 @@ type DownloadExportResponse struct {
 	JSON409 *Error
 	// JSON410 the response for an HTTP 410 `application/json` response
 	JSON410 *Error
+}
+
+// GetApplicationldJSON200 returns the response for an HTTP 200 `application/ld+json` response
+func (r DownloadExportResponse) GetApplicationldJSON200() *openapi_types.File {
+	return r.ApplicationldJSON200
 }
 
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
@@ -29364,7 +29400,7 @@ func (c *ClientWithResponses) CreateComponentWithResponse(ctx context.Context, p
 
 // DeleteComponentWithResponse Delete a component
 //
-// Removes the component from the catalogue. A component that products still list answers 409 `COMPONENT_IN_USE` and names those products; unpublish it instead, or remove it from the products first. A component that a published passport refers to stays as well and answers 409 `COMPONENT_DELETE_REFUSED`, with the reason in the message and the next step in the hint. The caller must own the component, or hold `component_write`.
+// Removes the component from the catalogue. A component that products still list answers 409 `COMPONENT_IN_USE` and names those products; unpublish it instead, or remove it from the products first. A component that a published passport refers to, or that a lot holds, stays as well and answers 409 `COMPONENT_DELETE_REFUSED`; the message names the reason, with the passport or the lot it means, and the hint, where there is one, the next step. The caller must own the component, or hold `component_write`.
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -30008,7 +30044,7 @@ func (c *ClientWithResponses) SupersedeDppWithResponse(ctx context.Context, id I
 
 // ListDppVersionsWithResponse List the registered versions of a DPP
 //
-// Every persisted version of the passport, newest first, each with the integrity pair a reader verifies its snapshot against. Same content as the per-passport manifest on the public CDN, served from the API origin for clients that prefer one host over the other. A scope-limited partner-grant token only reaches its own passports.
+// Every persisted version of the passport, newest first, each with the integrity pair a reader verifies its snapshot against. The versions the per-passport manifest lists, served from the API origin for clients that prefer one host over the other. The manifest names each file by its root path, resolved against the host it was read from; `url` here is the file's absolute address. A scope-limited partner-grant token only reaches its own passports.
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -30089,13 +30125,13 @@ func (c *ClientWithResponses) ListExportsWithResponse(ctx context.Context, param
 	return ParseListExportsResponse(rsp)
 }
 
-// CreateExportWithBodyWithResponse Start a passport export
+// CreateExportWithBodyWithResponse Start an export
 //
-// Packs what this consumer's own lists answer it with into an archive: the passports of `GET /dpps`, the products of `GET /products` and the components of `GET /components`, with the brands, categories and property types they use. The work runs in the background under the scope of the token that started it, and the answer comes at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.
+// Packs the records of one data type this consumer's own list answers it with into an archive: the passports of `GET /dpps`, the products of `GET /products` or the components of `GET /components`. Each record is self-contained: a product names its components by their `@id`, a passport its product by GTIN and name. The work runs in the background under the scope of the token that started it, and the answer comes at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.
 //
 // The consumer that starts an export is the only one that can read or download it. One export runs at a time per consumer: while one is pending or running, another request answers 409 `EXPORT_IN_PROGRESS` with a hint naming the URL to poll.
 //
-// The archive carries the passports, so starting an export needs `dpp_read` as well as `export_access`. A consumer without it gets 403 `DPP_FORBIDDEN`.
+// The archive carries the records, so starting an export needs the permission that reads them as well as `export_access`: `dpp_read` for passports, `product_access` for products, `component_access` for components. A consumer without it gets 403 (`DPP_FORBIDDEN`, `PRODUCT_FORBIDDEN`, `COMPONENT_FORBIDDEN`).
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -30108,13 +30144,13 @@ func (c *ClientWithResponses) CreateExportWithBodyWithResponse(ctx context.Conte
 	return ParseCreateExportResponse(rsp)
 }
 
-// CreateExportWithResponse Start a passport export
+// CreateExportWithResponse Start an export
 //
-// Packs what this consumer's own lists answer it with into an archive: the passports of `GET /dpps`, the products of `GET /products` and the components of `GET /components`, with the brands, categories and property types they use. The work runs in the background under the scope of the token that started it, and the answer comes at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.
+// Packs the records of one data type this consumer's own list answers it with into an archive: the passports of `GET /dpps`, the products of `GET /products` or the components of `GET /components`. Each record is self-contained: a product names its components by their `@id`, a passport its product by GTIN and name. The work runs in the background under the scope of the token that started it, and the answer comes at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.
 //
 // The consumer that starts an export is the only one that can read or download it. One export runs at a time per consumer: while one is pending or running, another request answers 409 `EXPORT_IN_PROGRESS` with a hint naming the URL to poll.
 //
-// The archive carries the passports, so starting an export needs `dpp_read` as well as `export_access`. A consumer without it gets 403 `DPP_FORBIDDEN`.
+// The archive carries the records, so starting an export needs the permission that reads them as well as `export_access`: `dpp_read` for passports, `product_access` for products, `component_access` for components. A consumer without it gets 403 (`DPP_FORBIDDEN`, `PRODUCT_FORBIDDEN`, `COMPONENT_FORBIDDEN`).
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
@@ -30144,7 +30180,7 @@ func (c *ClientWithResponses) GetExportWithResponse(ctx context.Context, id Id, 
 
 // DownloadExportWithResponse Download an export archive
 //
-// The archive of a completed export as `application/gzip`. Before completion the answer is 409 `EXPORT_NOT_READY`; a failed export answers 409 `EXPORT_FAILED`; once the archive has been deleted, seven days after completion, the answer is 410 `EXPORT_EXPIRED`. The archive carries the passports, so the download needs `dpp_read` as well; a consumer without it gets 403 `DPP_FORBIDDEN`.
+// The file of a completed export, under the export's `filename`. An export of one data file comes as that file, as `application/ld+json`, `text/csv`, `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet` or `application/sql`; one with media files or sheets in several languages as `application/zip`, holding one folder named as the export. Before completion the answer is 409 `EXPORT_NOT_READY`; a failed export answers 409 `EXPORT_FAILED`; once the archive has been deleted, seven days after completion, the answer is 410 `EXPORT_EXPIRED`. The archive carries the records of its data type, so the download needs the permission that reads them as well; a consumer without it gets 403.
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -31257,7 +31293,7 @@ func (c *ClientWithResponses) GetNewProductWithResponse(ctx context.Context, req
 
 // DeleteProductWithResponse Delete a product
 //
-// Deletes a product you own. A product that variants still refer to, or that a published passport was made from, stays and answers 409 `PRODUCT_DELETE_REFUSED`; the message names the reason and the hint the next step.
+// Deletes a product you own. A product that a published passport was made from, that a lot was taken of, or that variants still refer to stays and answers 409 `PRODUCT_DELETE_REFUSED`; the message names the first of these reasons that applies, with the passport or the lot it means, and the hint, where there is one, the next step.
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -34898,6 +34934,13 @@ func ParseDownloadExportResponse(rsp *http.Response) (*DownloadExportResponse, e
 	}
 
 	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest openapi_types.File
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationldJSON200 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
 		var dest Unauthorized
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -34932,6 +34975,9 @@ func ParseDownloadExportResponse(rsp *http.Response) (*DownloadExportResponse, e
 			return nil, err
 		}
 		response.JSON410 = &dest
+
+	case rsp.StatusCode == 200:
+		// Content-type (text/csv) unsupported
 
 	}
 

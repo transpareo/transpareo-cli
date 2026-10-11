@@ -1,5 +1,5 @@
 {
-  "version": "2.27.0",
+  "version": "2.31.2",
   "instructions": "Transpareo holds a workspace's products, components and Digital\nProduct Passports. Start with me to learn what the credential\nallows. Where its workspace.publishesOnCreate is true, every\nproduct and component is published as it is created, so never\nask the person to publish anything and never mention a\nstorefront, catalogue visibility or a frontend app.\nFor a new product call product_property_types before\ncreate_product. A variant follows its parent in every value\nits inheritance does not mark pinned or parent_moved;\nrestore_product_values has a value follow again. For\npassports of an existing product call\ndpp_requirements, then validate_dpp before create_dpp. A passport\nof a batch or an item names its lot in batchIdentifier and the lot\nis created with the first passport that names it; there is no\nseparate lot step. A new lot is taken only of a product that\npasses every other required readiness check; until then the\ncreate answers DPP_BATCH_PRODUCT_NOT_READY on batch, and the\nproduct is completed first. list_lots shows the lots a product already\nhas. A run of passports goes through bulk_create_dpps with the\nlot in shared. publish_dpp\nsigns the passport and cannot be undone. Recalling a unit is a\nstatus change to suspended through append_dpp_event, not a void;\nvoid_dpp is for a unit that no longer exists. void_dpp and\nsupersede_dpp need the confirm argument with the stated phrase.\nA spreadsheet you have read goes in through import_spreadsheet as\nrows keyed by the column headers, never as base64; when it\nanswers a preview, take the suggestion of every column with a\nmatch, ask the person one short question per column with\nmatchType none, and call again with the same rows and mappings,\nusing create_new for columns that should become property types.\nSet auto where the mapping is clear: the headings are those of\nthe import template, or ones you have already seen resolve in\nthis workspace. While a column has no match, work from the preview.\nA spreadsheet the person attached in the application manager\nstays on the server and is read with read_attachment, a page of\nrows at a time under its handle. Importing what it holds is a\nseparate step the person asks for; the same handle then goes to\nimport_spreadsheet as upload.\nA run started earlier, or in another session, is found with\nlist_imports or list_exports and read with wait_for_task on its\nstatusUrl.\nA question about how a person does something in the application\nmanager is answered from the help articles: search_help for the\ntopic, then read_help for the article. The API guide describes the\ncalls a program makes; the help articles describe the screens a\nperson uses.\nWork colleagues ask of the person is a task: list_tasks answers\nwhat waits on them, and each task names in moves what the\ncredential may do with it. Reviews show there as well and are\ndecided with approve_task and reject_task.\nAnything without a tool: search_operations, then call_api. Lists\nare paged; follow nextPage. Keep every answer short: what was\ndone, what was found, the one decision that is open.",
   "tools": [
     {
@@ -5480,10 +5480,19 @@
     {
       "name": "export_catalogue",
       "title": "Export the catalogue",
-      "description": "Start an export of the passport catalogue and wait for the archive; the answer carries the downloadUrl, which a credentialed client reads. One export runs at a time per consumer. Permission: export_access, and dpp_read for the passports it packs. Data tier: authorised. Example: export_catalogue {\"format\": \"csv\"}",
+      "description": "Start an export of the passports, the products or the components and wait for the archive; the answer carries the downloadUrl, which a credentialed client reads. One export runs at a time per consumer. Permission: export_access, and the key that reads the records it packs: dpp_read, product_access or component_access. Data tier: authorised. Example: export_catalogue {\"dataType\": \"products\"}",
       "inputSchema": {
         "type": "object",
         "properties": {
+          "dataType": {
+            "type": "string",
+            "enum": [
+              "dpps",
+              "products",
+              "components"
+            ],
+            "description": "What the archive carries (default dpps)"
+          },
           "format": {
             "type": "string",
             "enum": [
@@ -5491,10 +5500,12 @@
               "csv",
               "xlsx",
               "sql"
-            ]
+            ],
+            "description": "csv and xlsx write a sheet per language; sql writes tables to load into a database"
           },
           "normalize": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Ignored; exports no longer have this option"
           },
           "includeMedia": {
             "type": "boolean"
@@ -6311,7 +6322,7 @@
               "code": "A1B2C3D4E",
               "version": 3,
               "hashValue": "9f2b1c4e8a7d6035b1e2c9f04a8d7e6152b3c4d5e6f708192a3b4c5d6e7f8091",
-              "url": "https://cdn.example.com/nordic-wear/dpp/A1B2C3D4E/v/3.jsonld.gz",
+              "url": "https://cdn.example.com/nordic-wear/dpp/A1B2C3D4E/v/3-1a2b3c4d5e6f.json",
               "publishedAt": "2026-09-08T09:12:44Z",
               "snapshot": {
                 "@context": [
@@ -8353,12 +8364,18 @@
                 },
                 "code": {
                   "type": "string",
-                  "description": "The short code the application manager lists the export under"
+                  "description": "A short code that identifies the export"
+                },
+                "filename": {
+                  "type": "string",
+                  "description": "The name the export goes by in the application manager and its archive downloads under, given when the export is started"
                 },
                 "dataType": {
                   "type": "string",
                   "enum": [
-                    "dpps"
+                    "dpps",
+                    "products",
+                    "components"
                   ]
                 },
                 "format": {
@@ -8381,13 +8398,15 @@
                 },
                 "recordCount": {
                   "type": "integer",
-                  "description": "Passports, products and components exported. On `completed`."
+                  "description": "Records of the data type exported. On `completed`."
                 },
                 "productCount": {
-                  "type": "integer"
+                  "type": "integer",
+                  "description": "Products exported. On a completed products export."
                 },
                 "componentCount": {
-                  "type": "integer"
+                  "type": "integer",
+                  "description": "Components exported. On a completed components export."
                 },
                 "archiveSize": {
                   "type": "integer",
@@ -8415,12 +8434,11 @@
               "example": {
                 "id": 42,
                 "code": "k7m2pq",
+                "filename": "dpps-20260908-091244.jsonld",
                 "dataType": "dpps",
                 "format": "jsonld",
                 "status": "completed",
                 "recordCount": 64,
-                "productCount": 12,
-                "componentCount": 40,
                 "archiveSize": 184320,
                 "completedAt": "2026-09-08T09:13:01Z",
                 "createdAt": "2026-09-08T09:12:44Z",
