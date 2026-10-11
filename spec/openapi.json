@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Transpareo API",
-    "version": "2.27.0",
+    "version": "2.31.2",
     "description": "This site runs on the [Transpareo](https://transpareo.com) product information platform. The REST API gives programs access to products, product components, brands, Digital Product Passports, categories and configuration. This reference describes version 2, which a request names with `Accept: application/vnd.api.v2+json` or `?v=2`, and which answers a request that names none; version 1 is its earlier name and is answered the same way. The guide's [Versions](/apidocs/guide#versions) section says how versions change.\n\nThe guide at [/apidocs/guide](/apidocs/guide) is the narrative companion to this reference: credentials, permissions, pagination, idempotency, the passport flows, the event feed, webhooks, rate limits and the error format. It is also served as Markdown at [/apidocs/guide.md](/apidocs/guide.md).\n\nPrograms authenticate with the OAuth 2.0 client credentials grant. Exchange the client id and secret once, then send the token on every request:\n\n```\ncurl -X POST https://<host>/api/oauth/token -d grant_type=client_credentials -d client_id=<key> -d client_secret=<secret>\n\ncurl https://<host>/api/me -H \"Authorization: Bearer <access_token>\"\n```\n\nAn assistant that speaks the Model Context Protocol connects to `/mcp` on this host and calls these operations as tools, named in the catalogue at [/apidocs/mcp-tools.json](/apidocs/mcp-tools.json) and explained by the guide's Assistants section.",
     "contact": {
       "name": "Transpareo Support",
@@ -2319,7 +2319,7 @@
       },
       "DppVersion": {
         "type": "object",
-        "description": "One registered version of a passport - the signed JSON-LD snapshot published at that point, with the integrity pair a reader verifies it against. Same shape as the entries of the per-passport manifest on the public CDN.",
+        "description": "One registered version of a passport - the signed JSON-LD snapshot published at that point, with the integrity pair a reader verifies it against. The fields of an entry in the per-passport manifest, with the file's absolute address in `url`.",
         "properties": {
           "number": {
             "type": "integer",
@@ -2349,7 +2349,7 @@
           "url": {
             "type": "string",
             "format": "uri",
-            "description": "Public URL of the signed JSON-LD snapshot"
+            "description": "Absolute URL of the signed JSON-LD snapshot on the CDN. The manifest names the same file by its root path, `/{handle}/dpp/{code}/v/{file}`."
           },
           "sizeBytes": {
             "type": "integer",
@@ -2367,7 +2367,7 @@
           "hashAlgorithm": "sha256",
           "hashCanonicalForm": "urdna2015",
           "hashValue": "9f2b1c4e8a7d6035b1e2c9f04a8d7e6152b3c4d5e6f708192a3b4c5d6e7f8091",
-          "url": "https://cdn.example.com/acme/dpp/A1B2C3D4E/v/3.jsonld.gz",
+          "url": "https://cdn.example.com/acme/dpp/A1B2C3D4E/v/3-1a2b3c4d5e6f.json",
           "sizeBytes": 8421,
           "schemaVersion": 1
         }
@@ -2406,7 +2406,7 @@
           "code": "A1B2C3D4E",
           "version": 3,
           "hashValue": "9f2b1c4e8a7d6035b1e2c9f04a8d7e6152b3c4d5e6f708192a3b4c5d6e7f8091",
-          "url": "https://cdn.example.com/nordic-wear/dpp/A1B2C3D4E/v/3.jsonld.gz",
+          "url": "https://cdn.example.com/nordic-wear/dpp/A1B2C3D4E/v/3-1a2b3c4d5e6f.json",
           "publishedAt": "2026-09-08T09:12:44Z",
           "snapshot": {
             "@context": [
@@ -2617,12 +2617,18 @@
           },
           "code": {
             "type": "string",
-            "description": "The short code the application manager lists the export under"
+            "description": "A short code that identifies the export"
+          },
+          "filename": {
+            "type": "string",
+            "description": "The name the export goes by in the application manager and its archive downloads under, given when the export is started"
           },
           "dataType": {
             "type": "string",
             "enum": [
-              "dpps"
+              "dpps",
+              "products",
+              "components"
             ]
           },
           "format": {
@@ -2633,9 +2639,6 @@
               "xlsx",
               "sql"
             ]
-          },
-          "normalize": {
-            "type": "boolean"
           },
           "includeMedia": {
             "type": "boolean"
@@ -2668,23 +2671,21 @@
             "format": "uri",
             "description": "Where to poll this export"
           },
-          "filename": {
-            "type": "string",
-            "description": "The archive's file name. On `completed`."
-          },
           "archiveSize": {
             "type": "integer",
             "description": "Archive bytes. On `completed`."
           },
           "productCount": {
-            "type": "integer"
+            "type": "integer",
+            "description": "Products exported. On a completed products export."
           },
           "componentCount": {
-            "type": "integer"
+            "type": "integer",
+            "description": "Components exported. On a completed components export."
           },
           "recordCount": {
             "type": "integer",
-            "description": "Passports, products and components exported. On `completed`."
+            "description": "Records of the data type exported. On `completed`."
           },
           "completedAt": {
             "type": "string",
@@ -2704,19 +2705,17 @@
         "example": {
           "id": 42,
           "code": "k7m2pq",
-          "dataType": "dpps",
+          "filename": "products-20260908-091244.jsonld",
+          "dataType": "products",
           "format": "jsonld",
-          "normalize": false,
           "includeMedia": false,
           "status": "completed",
           "progress": 100,
           "createdAt": "2026-09-08T09:12:44Z",
           "statusUrl": "https://example.com/api/exports/42",
-          "filename": "transpareo-export-20260908-091301.tar.gz",
           "archiveSize": 184320,
           "productCount": 12,
-          "componentCount": 40,
-          "recordCount": 64,
+          "recordCount": 12,
           "completedAt": "2026-09-08T09:13:01Z",
           "expiresAt": "2026-09-15T09:13:01Z",
           "downloadUrl": "https://example.com/api/exports/42/download"
@@ -2724,15 +2723,17 @@
       },
       "ExportInput": {
         "type": "object",
-        "description": "What to export and how. Every field is optional; the default is a JSON-LD archive of the passports and catalogue the consumer's lists answer it with.",
+        "description": "What to export and how. Every field is optional; the default is a JSON-LD file of the passports the consumer's list answers it with.",
         "properties": {
           "dataType": {
             "type": "string",
             "enum": [
-              "dpps"
+              "dpps",
+              "products",
+              "components"
             ],
             "default": "dpps",
-            "description": "The API exports passports. Payments, users and audit logs are exported from the application manager."
+            "description": "The records the archive carries, each type its own alone. Payments, users and audit logs are exported from the application manager."
           },
           "format": {
             "type": "string",
@@ -2743,22 +2744,22 @@
               "sql"
             ],
             "default": "jsonld",
-            "description": "`jsonld` packs one document per passport, product and component into a tar archive; the tabular formats flatten the catalogue into one sheet each. A variant names its parent in `parent_key` in CSV and XLSX (the GTIN of the parent, else its name, which the product import reads back), in `parent_id` in SQL and in `isVariantOf` in JSON-LD. A parent outside the archive goes unnamed"
+            "description": "`jsonld` downloads as one file, `<dataType>-<yyyymmdd-hhmmss>.jsonld`: one self-contained record per passport, product or component in the passport's vocabulary, translated texts as language maps. A variant names its parent in `isVariantOf`; a passport edited since its latest version carries `unpublishedChanges` and no version number. `csv` and `xlsx` write one sheet per language of the workspace, in the columns the spreadsheet import reads back: the one sheet of a workspace in one language as a file of its own, the sheets of several languages as a ZIP holding `<language>/<dataType>.csv` or `.xlsx`. `sql` downloads as one file of CREATE TABLE and INSERT statements in a small generic schema, translated texts in a `translations` table, that load into PostgreSQL, MySQL and SQLite."
           },
           "normalize": {
             "type": "boolean",
-            "default": false,
-            "description": "Resolve references into the exported rows instead of carrying ids"
+            "deprecated": true,
+            "description": "Accepted and ignored; exports no longer have this option"
           },
           "includeMedia": {
             "type": "boolean",
             "default": false,
-            "description": "Copy the product and component media files into the archive"
+            "description": "Copy the product images (products) or the QR codes (passports) into `media/` beside the records; the export then downloads as a ZIP"
           }
         },
         "example": {
-          "format": "csv",
-          "normalize": true
+          "dataType": "products",
+          "includeMedia": true
         }
       },
       "ExportSummary": {
@@ -2775,12 +2776,18 @@
           },
           "code": {
             "type": "string",
-            "description": "The short code the application manager lists the export under"
+            "description": "A short code that identifies the export"
+          },
+          "filename": {
+            "type": "string",
+            "description": "The name the export goes by in the application manager and its archive downloads under, given when the export is started"
           },
           "dataType": {
             "type": "string",
             "enum": [
-              "dpps"
+              "dpps",
+              "products",
+              "components"
             ]
           },
           "format": {
@@ -2803,13 +2810,15 @@
           },
           "recordCount": {
             "type": "integer",
-            "description": "Passports, products and components exported. On `completed`."
+            "description": "Records of the data type exported. On `completed`."
           },
           "productCount": {
-            "type": "integer"
+            "type": "integer",
+            "description": "Products exported. On a completed products export."
           },
           "componentCount": {
-            "type": "integer"
+            "type": "integer",
+            "description": "Components exported. On a completed components export."
           },
           "archiveSize": {
             "type": "integer",
@@ -2837,12 +2846,11 @@
         "example": {
           "id": 42,
           "code": "k7m2pq",
+          "filename": "dpps-20260908-091244.jsonld",
           "dataType": "dpps",
           "format": "jsonld",
           "status": "completed",
           "recordCount": 64,
-          "productCount": 12,
-          "componentCount": 40,
           "archiveSize": 184320,
           "completedAt": "2026-09-08T09:13:01Z",
           "createdAt": "2026-09-08T09:12:44Z",
@@ -6565,7 +6573,7 @@
           "Components"
         ],
         "summary": "Delete a component",
-        "description": "Removes the component from the catalogue. A component that products still list answers 409 `COMPONENT_IN_USE` and names those products; unpublish it instead, or remove it from the products first. A component that a published passport refers to stays as well and answers 409 `COMPONENT_DELETE_REFUSED`, with the reason in the message and the next step in the hint. The caller must own the component, or hold `component_write`.",
+        "description": "Removes the component from the catalogue. A component that products still list answers 409 `COMPONENT_IN_USE` and names those products; unpublish it instead, or remove it from the products first. A component that a published passport refers to, or that a lot holds, stays as well and answers 409 `COMPONENT_DELETE_REFUSED`; the message names the reason, with the passport or the lot it means, and the hint, where there is one, the next step. The caller must own the component, or hold `component_write`.",
         "operationId": "delete_component",
         "x-permission": [
           "component_access",
@@ -7974,7 +7982,7 @@
           "DPPs"
         ],
         "summary": "List the registered versions of a DPP",
-        "description": "Every persisted version of the passport, newest first, each with the integrity pair a reader verifies its snapshot against. Same content as the per-passport manifest on the public CDN, served from the API origin for clients that prefer one host over the other. A scope-limited partner-grant token only reaches its own passports.",
+        "description": "Every persisted version of the passport, newest first, each with the integrity pair a reader verifies its snapshot against. The versions the per-passport manifest lists, served from the API origin for clients that prefer one host over the other. The manifest names each file by its root path, resolved against the host it was read from; `url` here is the file's absolute address. A scope-limited partner-grant token only reaches its own passports.",
         "operationId": "list_dpp_versions",
         "x-permission": "dpp_read",
         "security": [
@@ -8018,7 +8026,7 @@
                       "hashAlgorithm": "sha256",
                       "hashCanonicalForm": "urdna2015",
                       "hashValue": "9f2b1c4e8a7d6035b1e2c9f04a8d7e6152b3c4d5e6f708192a3b4c5d6e7f8091",
-                      "url": "https://cdn.example.com/nordic-wear/dpp/A1B2C3D4E/v/3.jsonld.gz",
+                      "url": "https://cdn.example.com/nordic-wear/dpp/A1B2C3D4E/v/3-1a2b3c4d5e6f.json",
                       "sizeBytes": 8421,
                       "schemaVersion": 1
                     }
@@ -8717,7 +8725,7 @@
                   "version": 4,
                   "publishedAt": "2026-09-08T09:12:44Z",
                   "hashValue": "9f2b1c4e8a7d6035b1e2c9f04a8d7e6152b3c4d5e6f708192a3b4c5d6e7f8091",
-                  "url": "https://cdn.example.com/acme/dpp/A1B2C3D4E/v/4.jsonld.gz"
+                  "url": "https://cdn.example.com/acme/dpp/A1B2C3D4E/v/4-1a2b3c4d5e6f.json"
                 }
               }
             }
@@ -8856,7 +8864,7 @@
                   "version": 3,
                   "publishedAt": "2026-09-08T09:12:44Z",
                   "hashValue": "9f2b1c4e8a7d6035b1e2c9f04a8d7e6152b3c4d5e6f708192a3b4c5d6e7f8091",
-                  "url": "https://cdn.example.com/acme/dpp/A1B2C3D4E/v/3.jsonld.gz"
+                  "url": "https://cdn.example.com/acme/dpp/A1B2C3D4E/v/3-1a2b3c4d5e6f.json"
                 }
               }
             }
@@ -9140,7 +9148,7 @@
                     "type": "DataIntegrityProof",
                     "cryptosuite": "eddsa-jcs-2022",
                     "created": "2026-09-30T08:15:02Z",
-                    "verificationMethod": "https://transpareo.com/.well-known/dpp-keys/v2.pub#key-2",
+                    "verificationMethod": "did:web:transpareo.com#key-2",
                     "proofPurpose": "assertionMethod",
                     "proofValue": "z3FXQjecWg..."
                   }
@@ -9309,12 +9317,11 @@
                     {
                       "id": 42,
                       "code": "k7m2pq",
+                      "filename": "dpps-20260908-091244.jsonld",
                       "dataType": "dpps",
                       "format": "jsonld",
                       "status": "completed",
                       "recordCount": 64,
-                      "productCount": 12,
-                      "componentCount": 40,
                       "archiveSize": 184320,
                       "completedAt": "2026-09-08T09:13:01Z",
                       "createdAt": "2026-09-08T09:12:44Z",
@@ -9358,8 +9365,8 @@
         "tags": [
           "Exports"
         ],
-        "summary": "Start a passport export",
-        "description": "Packs what this consumer's own lists answer it with into an archive: the passports of `GET /dpps`, the products of `GET /products` and the components of `GET /components`, with the brands, categories and property types they use. The work runs in the background under the scope of the token that started it, and the answer comes at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.\n\nThe consumer that starts an export is the only one that can read or download it. One export runs at a time per consumer: while one is pending or running, another request answers 409 `EXPORT_IN_PROGRESS` with a hint naming the URL to poll.\n\nThe archive carries the passports, so starting an export needs `dpp_read` as well as `export_access`. A consumer without it gets 403 `DPP_FORBIDDEN`.",
+        "summary": "Start an export",
+        "description": "Packs the records of one data type this consumer's own list answers it with into an archive: the passports of `GET /dpps`, the products of `GET /products` or the components of `GET /components`. Each record is self-contained: a product names its components by their `@id`, a passport its product by GTIN and name. The work runs in the background under the scope of the token that started it, and the answer comes at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.\n\nThe consumer that starts an export is the only one that can read or download it. One export runs at a time per consumer: while one is pending or running, another request answers 409 `EXPORT_IN_PROGRESS` with a hint naming the URL to poll.\n\nThe archive carries the records, so starting an export needs the permission that reads them as well as `export_access`: `dpp_read` for passports, `product_access` for products, `component_access` for components. A consumer without it gets 403 (`DPP_FORBIDDEN`, `PRODUCT_FORBIDDEN`, `COMPONENT_FORBIDDEN`).",
         "operationId": "create_export",
         "x-permission": "export_access",
         "security": [
@@ -9386,8 +9393,8 @@
               },
               "example": {
                 "export": {
-                  "format": "csv",
-                  "normalize": true
+                  "dataType": "products",
+                  "includeMedia": true
                 }
               }
             }
@@ -9481,7 +9488,7 @@
           "Exports"
         ],
         "summary": "Download an export archive",
-        "description": "The archive of a completed export as `application/gzip`. Before completion the answer is 409 `EXPORT_NOT_READY`; a failed export answers 409 `EXPORT_FAILED`; once the archive has been deleted, seven days after completion, the answer is 410 `EXPORT_EXPIRED`. The archive carries the passports, so the download needs `dpp_read` as well; a consumer without it gets 403 `DPP_FORBIDDEN`.",
+        "description": "The file of a completed export, under the export's `filename`. An export of one data file comes as that file, as `application/ld+json`, `text/csv`, `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet` or `application/sql`; one with media files or sheets in several languages as `application/zip`, holding one folder named as the export. Before completion the answer is 409 `EXPORT_NOT_READY`; a failed export answers 409 `EXPORT_FAILED`; once the archive has been deleted, seven days after completion, the answer is 410 `EXPORT_EXPIRED`. The archive carries the records of its data type, so the download needs the permission that reads them as well; a consumer without it gets 403.",
         "operationId": "download_export",
         "x-permission": "export_access",
         "security": [
@@ -9496,9 +9503,33 @@
         ],
         "responses": {
           "200": {
-            "description": "The archive",
+            "description": "The file of the export",
             "content": {
-              "application/gzip": {
+              "application/ld+json": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "text/csv": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "application/sql": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "application/zip": {
                 "schema": {
                   "type": "string",
                   "format": "binary"
@@ -13184,7 +13215,7 @@
           "Products"
         ],
         "summary": "Delete a product",
-        "description": "Deletes a product you own. A product that variants still refer to, or that a published passport was made from, stays and answers 409 `PRODUCT_DELETE_REFUSED`; the message names the reason and the hint the next step.",
+        "description": "Deletes a product you own. A product that a published passport was made from, that a lot was taken of, or that variants still refer to stays and answers 409 `PRODUCT_DELETE_REFUSED`; the message names the first of these reasons that applies, with the passport or the lot it means, and the hint, where there is one, the next step.",
         "operationId": "delete_product",
         "x-permission": "product_access",
         "x-destructive": true,
