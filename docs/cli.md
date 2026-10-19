@@ -1,6 +1,6 @@
 # Command reference
 
-Every command of `transpareo`, generated from API specification 2.27.0. `--help` on any command prints the same example and permission key.
+Every command of `transpareo`, generated from API specification 2.33.0. `--help` on any command prints the same example and permission key.
 
 | Option on every command | What it does |
 |---|---|
@@ -425,14 +425,17 @@ transpareo components list --page <page>
 
 | Option | What it does |
 |---|---|
+| `--created-since` \<value\> | Keep the records created at this ISO 8601 time or later. A time without a zone is UTC. A value that is no time answers 422 'SINCE_FILTER_INVALID'. |
 | `--function-ids` \<value\> | Filter by function IDs (comma-separated) |
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 | `--page` \<n\> | Page number |
 | `--per-page` \<n\> | Records per page (default: 100, max: 500) |
 | `--property-category-ids` \<value\> | Filter by property category IDs (comma-separated) |
 | `--published` | For a credential, 'true' lists the published records and 'false' the drafts; left out, the list carries both. A storefront reader has no drafts to ask for, so the parameter narrows nothing for one. A value that is neither answers 422 'PUBLISHED_FILTER_INVALID'. |
+| `--sort` \<value\> | '-updated_at' lists the latest change first, '-created_at' the newest record first; ties fall to the id. Left out, the list keeps its own order. The camelCase spelling ('-updatedAt') reads the same. Any other value answers 422 'SORT_INVALID'. The guide's section "Sorting and polling" says how to poll with it. |
 | `--term` \<value\> | Full-text search query |
 | `--type-ids` \<value\> | Filter by component type IDs (comma-separated) |
+| `--updated-since` \<value\> | Keep the records changed at this ISO 8601 time or later, the time itself included, so a record at the bound comes back on the next poll. A time without a zone is UTC. A value that is no time answers 422 'SINCE_FILTER_INVALID'. |
 
 `GET /components` · operation `list_components` · no permission needed, the endpoint is public
 
@@ -737,12 +740,15 @@ transpareo dpps list --term <term>
 
 | Option | What it does |
 |---|---|
+| `--created-since` \<value\> | Keep the records created at this ISO 8601 time or later. A time without a zone is UTC. A value that is no time answers 422 'SINCE_FILTER_INVALID'. |
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 | `--page` \<n\> | Page number |
 | `--per-page` \<n\> | Records per page (default: 100, max: 500) |
 | `--product-id` \<n\> | Keep only the passports of this product |
+| `--sort` \<value\> | '-updated_at' lists the latest change first, '-created_at' the newest record first; ties fall to the id. Left out, the list keeps its own order. The camelCase spelling ('-updatedAt') reads the same. Any other value answers 422 'SORT_INVALID'. The guide's section "Sorting and polling" says how to poll with it. |
 | `--status` \<value\> | Keep only the passports in these lifecycle statuses, comma-separated: draft, manufactured, placed_on_market, in_use, repair, refurbished, collected, recycled, end_of_life, suspended |
 | `--term` \<value\> | Search DPPs by code or description |
+| `--updated-since` \<value\> | Keep the records changed at this ISO 8601 time or later, the time itself included, so a record at the bound comes back on the next poll. A time without a zone is UTC. A value that is no time answers 422 'SINCE_FILTER_INVALID'. |
 
 `GET /dpps` · operation `list_dpps` · permission `dpp_read`
 
@@ -1333,11 +1339,14 @@ transpareo lots list --product-id <product_id>
 
 | Option | What it does |
 |---|---|
+| `--created-since` \<value\> | Keep the records created at this ISO 8601 time or later. A time without a zone is UTC. A value that is no time answers 422 'SINCE_FILTER_INVALID'. |
 | `--identifier` \<value\> | Keep only the lot with this identifier, the value a passport carries as 'batchIdentifier' |
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 | `--page` \<n\> | Page number |
 | `--per-page` \<n\> | Records per page (default: 100, max: 500) |
 | `--product-id` \<n\> | Keep only the lots of this product |
+| `--sort` \<value\> | '-updated_at' lists the latest change first, '-created_at' the newest record first; ties fall to the id. Left out, the list keeps its own order. The camelCase spelling ('-updatedAt') reads the same. Any other value answers 422 'SORT_INVALID'. The guide's section "Sorting and polling" says how to poll with it. |
+| `--updated-since` \<value\> | Keep the records changed at this ISO 8601 time or later, the time itself included, so a record at the bound comes back on the next poll. A time without a zone is UTC. A value that is no time answers 422 'SINCE_FILTER_INVALID'. |
 
 `GET /lots` · operation `list_lots` · permission `dpp_read`
 
@@ -1525,6 +1534,7 @@ transpareo products list --page <page>
 |---|---|
 | `--brand-id` \<n\> | Filter by brand ID |
 | `--category-ids` \<value\> | Filter by category IDs (comma-separated). Includes all child categories. |
+| `--created-since` \<value\> | Keep the records created at this ISO 8601 time or later. A time without a zone is UTC. A value that is no time answers 422 'SINCE_FILTER_INVALID'. |
 | `--exact` | When true with 'term', match exact product name |
 | `--function-ids` \<value\> | Filter by component function IDs (comma-separated) |
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
@@ -1533,8 +1543,10 @@ transpareo products list --page <page>
 | `--property-category-ids` \<value\> | Filter by component property category IDs (comma-separated) |
 | `--published` | For a credential, 'true' lists the published records and 'false' the drafts; left out, the list carries both. A storefront reader has no drafts to ask for, so the parameter narrows nothing for one. A value that is neither answers 422 'PUBLISHED_FILTER_INVALID'. |
 | `--rating` \<value\> | Filter by rating (comma-separated values: A, B, C, D) |
+| `--sort` \<value\> | '-updated_at' lists the latest change first, '-created_at' the newest record first; ties fall to the id. Left out, the list keeps its own order. The camelCase spelling ('-updatedAt') reads the same. Any other value answers 422 'SORT_INVALID'. The guide's section "Sorting and polling" says how to poll with it. |
 | `--term` \<value\> | Full-text search query (uses Elasticsearch when provided) |
 | `--type-ids` \<value\> | Filter by component type IDs (comma-separated) |
+| `--updated-since` \<value\> | Keep the records changed at this ISO 8601 time or later, the time itself included, so a record at the bound comes back on the next poll. A time without a zone is UTC. A value that is no time answers 422 'SINCE_FILTER_INVALID'. |
 
 `GET /products` · operation `list_products` · no permission needed, the endpoint is public
 
@@ -1899,11 +1911,14 @@ transpareo tasks list --list <list>
 
 | Option | What it does |
 |---|---|
+| `--created-since` \<value\> | Keep the records created at this ISO 8601 time or later. A time without a zone is UTC. A value that is no time answers 422 'SINCE_FILTER_INVALID'. |
 | `--list` \<value\> | Which list to read |
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 | `--page` \<n\> | Page number |
 | `--per-page` \<n\> | Records per page (default: 100, max: 500) |
+| `--sort` \<value\> | '-updated_at' lists the latest change first, '-created_at' the newest record first; ties fall to the id. Left out, the list keeps its own order. The camelCase spelling ('-updatedAt') reads the same. Any other value answers 422 'SORT_INVALID'. The guide's section "Sorting and polling" says how to poll with it. |
 | `--term` \<value\> | Keep only the tasks with these words in the title |
+| `--updated-since` \<value\> | Keep the records changed at this ISO 8601 time or later, the time itself included, so a record at the bound comes back on the next poll. A time without a zone is UTC. A value that is no time answers 422 'SINCE_FILTER_INVALID'. |
 
 `GET /tasks` · operation `list_tasks` · permission `task_access`
 

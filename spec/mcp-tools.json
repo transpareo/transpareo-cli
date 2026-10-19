@@ -1,5 +1,5 @@
 {
-  "version": "2.27.0",
+  "version": "2.33.0",
   "instructions": "Transpareo holds a workspace's products, components and Digital\nProduct Passports. Start with me to learn what the credential\nallows. Where its workspace.publishesOnCreate is true, every\nproduct and component is published as it is created, so never\nask the person to publish anything and never mention a\nstorefront, catalogue visibility or a frontend app.\nFor a new product call product_property_types before\ncreate_product. A variant follows its parent in every value\nits inheritance does not mark pinned or parent_moved;\nrestore_product_values has a value follow again. For\npassports of an existing product call\ndpp_requirements, then validate_dpp before create_dpp. A passport\nof a batch or an item names its lot in batchIdentifier and the lot\nis created with the first passport that names it; there is no\nseparate lot step. A new lot is taken only of a product that\npasses every other required readiness check; until then the\ncreate answers DPP_BATCH_PRODUCT_NOT_READY on batch, and the\nproduct is completed first. list_lots shows the lots a product already\nhas. A run of passports goes through bulk_create_dpps with the\nlot in shared. publish_dpp\nsigns the passport and cannot be undone. Recalling a unit is a\nstatus change to suspended through append_dpp_event, not a void;\nvoid_dpp is for a unit that no longer exists. void_dpp and\nsupersede_dpp need the confirm argument with the stated phrase.\nA spreadsheet you have read goes in through import_spreadsheet as\nrows keyed by the column headers, never as base64; when it\nanswers a preview, take the suggestion of every column with a\nmatch, ask the person one short question per column with\nmatchType none, and call again with the same rows and mappings,\nusing create_new for columns that should become property types.\nSet auto where the mapping is clear: the headings are those of\nthe import template, or ones you have already seen resolve in\nthis workspace. While a column has no match, work from the preview.\nA spreadsheet the person attached in the application manager\nstays on the server and is read with read_attachment, a page of\nrows at a time under its handle. Importing what it holds is a\nseparate step the person asks for; the same handle then goes to\nimport_spreadsheet as upload.\nA run started earlier, or in another session, is found with\nlist_imports or list_exports and read with wait_for_task on its\nstatusUrl.\nA question about how a person does something in the application\nmanager is answered from the help articles: search_help for the\ntopic, then read_help for the article. The API guide describes the\ncalls a program makes; the help articles describe the screens a\nperson uses.\nWork colleagues ask of the person is a task: list_tasks answers\nwhat waits on them, and each task names in moves what the\ncredential may do with it. Reviews show there as well and are\ndecided with approve_task and reject_task.\nAnything without a tool: search_operations, then call_api. Lists\nare paged; follow nextPage. Keep every answer short: what was\ndone, what was found, the one decision that is open.",
   "tools": [
     {
@@ -2817,6 +2817,16 @@
             "type": "string",
             "description": "The article number (Manufacturer Part Number) the maker gives the component. Present only when set, and only for a signed-in caller or an API consumer."
           },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the component was created. Present only for a signed-in caller or an API consumer."
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the component was last saved. Present only for a signed-in caller or an API consumer."
+          },
           "templateIds": {
             "type": "array",
             "items": {
@@ -3011,6 +3021,16 @@
                   "type": "integer",
                   "nullable": true,
                   "description": "The product this one is a variant of, null on a root. Present only for a signed-in caller or an API consumer."
+                },
+                "createdAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "When the product was created. Present only for a signed-in caller or an API consumer."
+                },
+                "updatedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "When the product was last saved. Present only for a signed-in caller or an API consumer."
                 },
                 "weight": {
                   "type": "number",
@@ -3235,6 +3255,16 @@
                 "nullable": true,
                 "description": "The product this one is a variant of, null on a root. Present only for a signed-in caller or an API consumer."
               },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "When the product was created. Present only for a signed-in caller or an API consumer."
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "When the product was last saved. Present only for a signed-in caller or an API consumer."
+              },
               "weight": {
                 "type": "number",
                 "description": "Product weight, in `weightUnit` (only when present)"
@@ -3382,6 +3412,11 @@
             "type": "string",
             "format": "date-time"
           },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the passport was last saved"
+          },
           "dppComponents": {
             "type": "array",
             "description": "Linked product's components with ratings (only present when the product has components)",
@@ -3501,7 +3536,8 @@
             "type": "Product",
             "name": "Hydrating Face Cream"
           },
-          "createdAt": "2026-02-01T12:00:00Z"
+          "createdAt": "2026-02-01T12:00:00Z",
+          "updatedAt": "2026-02-03T08:30:00Z"
         }
       },
       "annotations": {
@@ -4216,12 +4252,12 @@
           "createdAt": {
             "type": "string",
             "format": "date-time",
-            "description": "Only present when the API consumer has the include_dates context flag."
+            "description": "When the product was created. Present only for a signed-in caller or an API consumer."
           },
           "updatedAt": {
             "type": "string",
             "format": "date-time",
-            "description": "Only present when the API consumer has the include_dates context flag."
+            "description": "When the product was last saved. Present only for a signed-in caller or an API consumer."
           }
         },
         "example": {
@@ -4853,7 +4889,7 @@
     {
       "name": "create_webhook",
       "title": "Create a webhook subscription",
-      "description": "Create a webhook subscription. The answer carries the signing secret, shown only here. A consumer holds at most ten subscriptions and the workspace fifty; one more answers WEBHOOK_LIMIT_REACHED, and delete_webhook frees a place.\nPermission: webhook_access. Data tier: authorised (the workspace's own catalogue).\nExample: create_webhook {\"webhook\":{\"name\":\"Order fulfilment\",\"url\":\"https://hooks.example.com/transpareo\",\"eventTypes\":[\"published\",\"voided\"]}}",
+      "description": "Create a webhook subscription. The answer carries the signing secret, shown only here. A consumer holds at most ten subscriptions and the workspace fifty; one more answers WEBHOOK_LIMIT_REACHED, and delete_webhook frees a place.\nPermission: webhook_access, and dpp_history. Data tier: authorised (the workspace's own catalogue).\nExample: create_webhook {\"webhook\":{\"name\":\"Order fulfilment\",\"url\":\"https://hooks.example.com/transpareo\",\"eventTypes\":[\"published\",\"voided\"]}}",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -4937,7 +4973,7 @@
           },
           "active": {
             "type": "boolean",
-            "description": "Switched off by hand, or by the platform after eight failed deliveries in a row. Switching it on again starts the failure count afresh."
+            "description": "Switched off by hand, by the platform after eight failed deliveries in a row, or at once when the endpoint answers a delivery with 410 Gone (see `goneAt`). Switching it on again starts the failure count afresh and clears `goneAt`."
           },
           "eventTypes": {
             "type": "array",
@@ -4978,6 +5014,11 @@
           "failureCount": {
             "type": "integer",
             "description": "Failed deliveries in a row; reset by a success"
+          },
+          "goneAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the endpoint answered a delivery with 410 Gone, which switched the subscription off; absent otherwise"
           },
           "createdAt": {
             "type": "string",
@@ -5020,6 +5061,9 @@
         "safe": false,
         "group": "webhooks",
         "kind": "write",
+        "permissionAlso": [
+          "dpp_history"
+        ],
         "sentence": "The answer carries the signing secret, shown only here. A consumer holds at most ten subscriptions and the workspace fifty; one more answers WEBHOOK_LIMIT_REACHED, and delete_webhook frees a place."
       }
     },
@@ -5480,10 +5524,19 @@
     {
       "name": "export_catalogue",
       "title": "Export the catalogue",
-      "description": "Start an export of the passport catalogue and wait for the archive; the answer carries the downloadUrl, which a credentialed client reads. One export runs at a time per consumer. Permission: export_access, and dpp_read for the passports it packs. Data tier: authorised. Example: export_catalogue {\"format\": \"csv\"}",
+      "description": "Start an export of the passports, the products or the components and wait for the archive; the answer carries the downloadUrl, which a credentialed client reads. One export runs at a time per consumer. Permission: export_access, and the key that reads the records it packs: dpp_read, product_access or component_access. Data tier: authorised. Example: export_catalogue {\"dataType\": \"products\"}",
       "inputSchema": {
         "type": "object",
         "properties": {
+          "dataType": {
+            "type": "string",
+            "enum": [
+              "dpps",
+              "products",
+              "components"
+            ],
+            "description": "What the archive carries (default dpps)"
+          },
           "format": {
             "type": "string",
             "enum": [
@@ -5491,10 +5544,12 @@
               "csv",
               "xlsx",
               "sql"
-            ]
+            ],
+            "description": "csv and xlsx write a sheet per language; sql writes tables to load into a database"
           },
           "normalize": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Ignored; exports no longer have this option"
           },
           "includeMedia": {
             "type": "boolean"
@@ -5635,6 +5690,16 @@
           "mpn": {
             "type": "string",
             "description": "The article number (Manufacturer Part Number) the maker gives the component. Present only when set, and only for a signed-in caller or an API consumer."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the component was created. Present only for a signed-in caller or an API consumer."
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the component was last saved. Present only for a signed-in caller or an API consumer."
           },
           "templateIds": {
             "type": "array",
@@ -5831,6 +5896,16 @@
                   "nullable": true,
                   "description": "The product this one is a variant of, null on a root. Present only for a signed-in caller or an API consumer."
                 },
+                "createdAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "When the product was created. Present only for a signed-in caller or an API consumer."
+                },
+                "updatedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "When the product was last saved. Present only for a signed-in caller or an API consumer."
+                },
                 "weight": {
                   "type": "number",
                   "description": "Product weight, in `weightUnit` (only when present)"
@@ -6008,6 +6083,16 @@
                     "nullable": true,
                     "description": "The product this one is a variant of, null on a root. Present only for a signed-in caller or an API consumer."
                   },
+                  "createdAt": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "When the product was created. Present only for a signed-in caller or an API consumer."
+                  },
+                  "updatedAt": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "When the product was last saved. Present only for a signed-in caller or an API consumer."
+                  },
                   "weight": {
                     "type": "number",
                     "description": "Product weight, in `weightUnit` (only when present)"
@@ -6155,6 +6240,11 @@
                 "type": "string",
                 "format": "date-time"
               },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "When the passport was last saved"
+              },
               "dppComponents": {
                 "type": "array",
                 "description": "Linked product's components with ratings (only present when the product has components)",
@@ -6274,7 +6364,8 @@
                 "type": "Product",
                 "name": "Hydrating Face Cream"
               },
-              "createdAt": "2026-02-01T12:00:00Z"
+              "createdAt": "2026-02-01T12:00:00Z",
+              "updatedAt": "2026-02-03T08:30:00Z"
             }
           },
           {
@@ -6311,7 +6402,7 @@
               "code": "A1B2C3D4E",
               "version": 3,
               "hashValue": "9f2b1c4e8a7d6035b1e2c9f04a8d7e6152b3c4d5e6f708192a3b4c5d6e7f8091",
-              "url": "https://cdn.example.com/nordic-wear/dpp/A1B2C3D4E/v/3.jsonld.gz",
+              "url": "https://cdn.example.com/nordic-wear/dpp/A1B2C3D4E/v/3-1a2b3c4d5e6f.json",
               "publishedAt": "2026-09-08T09:12:44Z",
               "snapshot": {
                 "@context": [
@@ -6407,6 +6498,11 @@
           "createdAt": {
             "type": "string",
             "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the lot was last saved"
           }
         }
       },
@@ -6983,12 +7079,12 @@
           "createdAt": {
             "type": "string",
             "format": "date-time",
-            "description": "Only present when the API consumer has the include_dates context flag."
+            "description": "When the product was created. Present only for a signed-in caller or an API consumer."
           },
           "updatedAt": {
             "type": "string",
             "format": "date-time",
-            "description": "Only present when the API consumer has the include_dates context flag."
+            "description": "When the product was last saved. Present only for a signed-in caller or an API consumer."
           }
         },
         "example": {
@@ -7777,6 +7873,26 @@
             "maximum": 500,
             "description": "Records per page (default: 100, max: 500)"
           },
+          "sort": {
+            "type": "string",
+            "enum": [
+              "-updated_at",
+              "-created_at"
+            ],
+            "description": "`-updated_at` lists the latest change first, `-created_at` the newest record first; ties fall to the id. Left out, the list keeps its own order. The camelCase spelling (`-updatedAt`) reads the same. Any other value answers 422 `SORT_INVALID`. The guide's section \"Sorting and polling\" says how to poll with it."
+          },
+          "created_since": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-10-18T09:00:00Z",
+            "description": "Keep the records created at this ISO 8601 time or later. A time without a zone is UTC. A value that is no time answers 422 `SINCE_FILTER_INVALID`."
+          },
+          "updated_since": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-10-18T09:00:00Z",
+            "description": "Keep the records changed at this ISO 8601 time or later, the time itself included, so a record at the bound comes back on the next poll. A time without a zone is UTC. A value that is no time answers 422 `SINCE_FILTER_INVALID`."
+          },
           "published": {
             "type": "boolean",
             "description": "For a credential, `true` lists the published records and `false` the drafts; left out, the list carries both. A storefront reader has no drafts to ask for, so the parameter narrows nothing for one. A value that is neither answers 422 `PUBLISHED_FILTER_INVALID`."
@@ -7844,6 +7960,16 @@
                 "mpn": {
                   "type": "string",
                   "description": "The article number (Manufacturer Part Number) the maker gives the component. Present only when set, and only for a signed-in caller or an API consumer."
+                },
+                "createdAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "When the component was created. Present only for a signed-in caller or an API consumer."
+                },
+                "updatedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "When the component was last saved. Present only for a signed-in caller or an API consumer."
                 }
               },
               "example": {
@@ -7914,6 +8040,26 @@
             "default": 100,
             "maximum": 500,
             "description": "Records per page (default: 100, max: 500)"
+          },
+          "sort": {
+            "type": "string",
+            "enum": [
+              "-updated_at",
+              "-created_at"
+            ],
+            "description": "`-updated_at` lists the latest change first, `-created_at` the newest record first; ties fall to the id. Left out, the list keeps its own order. The camelCase spelling (`-updatedAt`) reads the same. Any other value answers 422 `SORT_INVALID`. The guide's section \"Sorting and polling\" says how to poll with it."
+          },
+          "created_since": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-10-18T09:00:00Z",
+            "description": "Keep the records created at this ISO 8601 time or later. A time without a zone is UTC. A value that is no time answers 422 `SINCE_FILTER_INVALID`."
+          },
+          "updated_since": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-10-18T09:00:00Z",
+            "description": "Keep the records changed at this ISO 8601 time or later, the time itself included, so a record at the bound comes back on the next poll. A time without a zone is UTC. A value that is no time answers 422 `SINCE_FILTER_INVALID`."
           },
           "fields": {
             "type": "array",
@@ -8001,6 +8147,16 @@
                       "type": "integer",
                       "nullable": true,
                       "description": "The product this one is a variant of, null on a root. Present only for a signed-in caller or an API consumer."
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "description": "When the product was created. Present only for a signed-in caller or an API consumer."
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "description": "When the product was last saved. Present only for a signed-in caller or an API consumer."
                     },
                     "weight": {
                       "type": "number",
@@ -8149,6 +8305,11 @@
                   "type": "string",
                   "format": "date-time"
                 },
+                "updatedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "When the passport was last saved"
+                },
                 "dppComponents": {
                   "type": "array",
                   "description": "Linked product's components with ratings (only present when the product has components)",
@@ -8268,7 +8429,8 @@
                   "type": "Product",
                   "name": "Hydrating Face Cream"
                 },
-                "createdAt": "2026-02-01T12:00:00Z"
+                "createdAt": "2026-02-01T12:00:00Z",
+                "updatedAt": "2026-02-03T08:30:00Z"
               }
             }
           },
@@ -8353,12 +8515,18 @@
                 },
                 "code": {
                   "type": "string",
-                  "description": "The short code the application manager lists the export under"
+                  "description": "A short code that identifies the export"
+                },
+                "filename": {
+                  "type": "string",
+                  "description": "The name the export goes by in the application manager and its archive downloads under, given when the export is started"
                 },
                 "dataType": {
                   "type": "string",
                   "enum": [
-                    "dpps"
+                    "dpps",
+                    "products",
+                    "components"
                   ]
                 },
                 "format": {
@@ -8381,13 +8549,15 @@
                 },
                 "recordCount": {
                   "type": "integer",
-                  "description": "Passports, products and components exported. On `completed`."
+                  "description": "Records of the data type exported. On `completed`."
                 },
                 "productCount": {
-                  "type": "integer"
+                  "type": "integer",
+                  "description": "Products exported. On a completed products export."
                 },
                 "componentCount": {
-                  "type": "integer"
+                  "type": "integer",
+                  "description": "Components exported. On a completed components export."
                 },
                 "archiveSize": {
                   "type": "integer",
@@ -8415,12 +8585,11 @@
               "example": {
                 "id": 42,
                 "code": "k7m2pq",
+                "filename": "dpps-20260908-091244.jsonld",
                 "dataType": "dpps",
                 "format": "jsonld",
                 "status": "completed",
                 "recordCount": 64,
-                "productCount": 12,
-                "componentCount": 40,
                 "archiveSize": 184320,
                 "completedAt": "2026-09-08T09:13:01Z",
                 "createdAt": "2026-09-08T09:12:44Z",
@@ -8658,6 +8827,26 @@
             "maximum": 500,
             "description": "Records per page (default: 100, max: 500)"
           },
+          "sort": {
+            "type": "string",
+            "enum": [
+              "-updated_at",
+              "-created_at"
+            ],
+            "description": "`-updated_at` lists the latest change first, `-created_at` the newest record first; ties fall to the id. Left out, the list keeps its own order. The camelCase spelling (`-updatedAt`) reads the same. Any other value answers 422 `SORT_INVALID`. The guide's section \"Sorting and polling\" says how to poll with it."
+          },
+          "created_since": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-10-18T09:00:00Z",
+            "description": "Keep the records created at this ISO 8601 time or later. A time without a zone is UTC. A value that is no time answers 422 `SINCE_FILTER_INVALID`."
+          },
+          "updated_since": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-10-18T09:00:00Z",
+            "description": "Keep the records changed at this ISO 8601 time or later, the time itself included, so a record at the bound comes back on the next poll. A time without a zone is UTC. A value that is no time answers 422 `SINCE_FILTER_INVALID`."
+          },
           "fields": {
             "type": "array",
             "items": {
@@ -8708,6 +8897,11 @@
                 "createdAt": {
                   "type": "string",
                   "format": "date-time"
+                },
+                "updatedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "When the lot was last saved"
                 }
               }
             }
@@ -8850,6 +9044,26 @@
             "maximum": 500,
             "description": "Records per page (default: 100, max: 500)"
           },
+          "sort": {
+            "type": "string",
+            "enum": [
+              "-updated_at",
+              "-created_at"
+            ],
+            "description": "`-updated_at` lists the latest change first, `-created_at` the newest record first; ties fall to the id. Left out, the list keeps its own order. The camelCase spelling (`-updatedAt`) reads the same. Any other value answers 422 `SORT_INVALID`. The guide's section \"Sorting and polling\" says how to poll with it."
+          },
+          "created_since": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-10-18T09:00:00Z",
+            "description": "Keep the records created at this ISO 8601 time or later. A time without a zone is UTC. A value that is no time answers 422 `SINCE_FILTER_INVALID`."
+          },
+          "updated_since": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-10-18T09:00:00Z",
+            "description": "Keep the records changed at this ISO 8601 time or later, the time itself included, so a record at the bound comes back on the next poll. A time without a zone is UTC. A value that is no time answers 422 `SINCE_FILTER_INVALID`."
+          },
           "published": {
             "type": "boolean",
             "description": "For a credential, `true` lists the published records and `false` the drafts; left out, the list carries both. A storefront reader has no drafts to ask for, so the parameter narrows nothing for one. A value that is neither answers 422 `PUBLISHED_FILTER_INVALID`."
@@ -8948,6 +9162,16 @@
                   "type": "integer",
                   "nullable": true,
                   "description": "The product this one is a variant of, null on a root. Present only for a signed-in caller or an API consumer."
+                },
+                "createdAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "When the product was created. Present only for a signed-in caller or an API consumer."
+                },
+                "updatedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "When the product was last saved. Present only for a signed-in caller or an API consumer."
                 },
                 "weight": {
                   "type": "number",
@@ -9099,6 +9323,26 @@
             "default": 100,
             "maximum": 500,
             "description": "Records per page (default: 100, max: 500)"
+          },
+          "sort": {
+            "type": "string",
+            "enum": [
+              "-updated_at",
+              "-created_at"
+            ],
+            "description": "`-updated_at` lists the latest change first, `-created_at` the newest record first; ties fall to the id. Left out, the list keeps its own order. The camelCase spelling (`-updatedAt`) reads the same. Any other value answers 422 `SORT_INVALID`. The guide's section \"Sorting and polling\" says how to poll with it."
+          },
+          "created_since": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-10-18T09:00:00Z",
+            "description": "Keep the records created at this ISO 8601 time or later. A time without a zone is UTC. A value that is no time answers 422 `SINCE_FILTER_INVALID`."
+          },
+          "updated_since": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-10-18T09:00:00Z",
+            "description": "Keep the records changed at this ISO 8601 time or later, the time itself included, so a record at the bound comes back on the next poll. A time without a zone is UTC. A value that is no time answers 422 `SINCE_FILTER_INVALID`."
           },
           "fields": {
             "type": "array",
@@ -9675,7 +9919,7 @@
                 },
                 "active": {
                   "type": "boolean",
-                  "description": "Switched off by hand, or by the platform after eight failed deliveries in a row. Switching it on again starts the failure count afresh."
+                  "description": "Switched off by hand, by the platform after eight failed deliveries in a row, or at once when the endpoint answers a delivery with 410 Gone (see `goneAt`). Switching it on again starts the failure count afresh and clears `goneAt`."
                 },
                 "eventTypes": {
                   "type": "array",
@@ -9716,6 +9960,11 @@
                 "failureCount": {
                   "type": "integer",
                   "description": "Failed deliveries in a row; reset by a success"
+                },
+                "goneAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "When the endpoint answered a delivery with 410 Gone, which switched the subscription off; absent otherwise"
                 },
                 "createdAt": {
                   "type": "string",
@@ -9868,8 +10117,18 @@
           },
           "workspace": {
             "type": "object",
-            "description": "What the workspace itself does with what a caller writes",
+            "description": "The workspace the token belongs to, and what it does with what a caller writes",
             "properties": {
+              "name": {
+                "type": "string",
+                "nullable": true,
+                "description": "The name of the workspace, the one its consent screen shows. A workflow tool labels the connection with it."
+              },
+              "host": {
+                "type": "string",
+                "nullable": true,
+                "description": "The workspace's own host, without a scheme"
+              },
               "publishesOnCreate": {
                 "type": "boolean",
                 "description": "True where the workspace has no storefront. Every product and every component is published as it is created, the publish and unpublish operations answer 403, and the person using the workspace never sees publishing as a step, so asking them to publish something asks for a control their screens do not show. False where a storefront decides what the catalogue shows, and a record is published on demand."
@@ -9901,6 +10160,8 @@
           },
           "bulkItemsPerMinute": 5000,
           "workspace": {
+            "name": "Acme Outdoor",
+            "host": "acme.transpareo.com",
             "publishesOnCreate": true
           }
         }
@@ -10462,12 +10723,12 @@
           "createdAt": {
             "type": "string",
             "format": "date-time",
-            "description": "Only present when the API consumer has the include_dates context flag."
+            "description": "When the product was created. Present only for a signed-in caller or an API consumer."
           },
           "updatedAt": {
             "type": "string",
             "format": "date-time",
-            "description": "Only present when the API consumer has the include_dates context flag."
+            "description": "When the product was last saved. Present only for a signed-in caller or an API consumer."
           }
         },
         "example": {
@@ -11157,12 +11418,12 @@
           "createdAt": {
             "type": "string",
             "format": "date-time",
-            "description": "Only present when the API consumer has the include_dates context flag."
+            "description": "When the product was created. Present only for a signed-in caller or an API consumer."
           },
           "updatedAt": {
             "type": "string",
             "format": "date-time",
-            "description": "Only present when the API consumer has the include_dates context flag."
+            "description": "When the product was last saved. Present only for a signed-in caller or an API consumer."
           }
         },
         "example": {
@@ -11491,7 +11752,7 @@
           },
           "active": {
             "type": "boolean",
-            "description": "Switched off by hand, or by the platform after eight failed deliveries in a row. Switching it on again starts the failure count afresh."
+            "description": "Switched off by hand, by the platform after eight failed deliveries in a row, or at once when the endpoint answers a delivery with 410 Gone (see `goneAt`). Switching it on again starts the failure count afresh and clears `goneAt`."
           },
           "eventTypes": {
             "type": "array",
@@ -11532,6 +11793,11 @@
           "failureCount": {
             "type": "integer",
             "description": "Failed deliveries in a row; reset by a success"
+          },
+          "goneAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the endpoint answered a delivery with 410 Gone, which switched the subscription off; absent otherwise"
           },
           "createdAt": {
             "type": "string",
@@ -11678,6 +11944,16 @@
                 "type": "integer",
                 "nullable": true,
                 "description": "The product this one is a variant of, null on a root. Present only for a signed-in caller or an API consumer."
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "When the product was created. Present only for a signed-in caller or an API consumer."
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "When the product was last saved. Present only for a signed-in caller or an API consumer."
               },
               "weight": {
                 "type": "number",
@@ -11826,6 +12102,11 @@
             "type": "string",
             "format": "date-time"
           },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the passport was last saved"
+          },
           "dppComponents": {
             "type": "array",
             "description": "Linked product's components with ratings (only present when the product has components)",
@@ -11945,7 +12226,8 @@
             "type": "Product",
             "name": "Hydrating Face Cream"
           },
-          "createdAt": "2026-02-01T12:00:00Z"
+          "createdAt": "2026-02-01T12:00:00Z",
+          "updatedAt": "2026-02-03T08:30:00Z"
         }
       },
       "annotations": {
@@ -14085,12 +14367,12 @@
           "createdAt": {
             "type": "string",
             "format": "date-time",
-            "description": "Only present when the API consumer has the include_dates context flag."
+            "description": "When the product was created. Present only for a signed-in caller or an API consumer."
           },
           "updatedAt": {
             "type": "string",
             "format": "date-time",
-            "description": "Only present when the API consumer has the include_dates context flag."
+            "description": "When the product was last saved. Present only for a signed-in caller or an API consumer."
           }
         },
         "example": {
@@ -14505,6 +14787,16 @@
                 "nullable": true,
                 "description": "The product this one is a variant of, null on a root. Present only for a signed-in caller or an API consumer."
               },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "When the product was created. Present only for a signed-in caller or an API consumer."
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "When the product was last saved. Present only for a signed-in caller or an API consumer."
+              },
               "weight": {
                 "type": "number",
                 "description": "Product weight, in `weightUnit` (only when present)"
@@ -14652,6 +14944,11 @@
             "type": "string",
             "format": "date-time"
           },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the passport was last saved"
+          },
           "dppComponents": {
             "type": "array",
             "description": "Linked product's components with ratings (only present when the product has components)",
@@ -14771,7 +15068,8 @@
             "type": "Product",
             "name": "Hydrating Face Cream"
           },
-          "createdAt": "2026-02-01T12:00:00Z"
+          "createdAt": "2026-02-01T12:00:00Z",
+          "updatedAt": "2026-02-03T08:30:00Z"
         }
       },
       "annotations": {
@@ -15454,12 +15752,12 @@
           "createdAt": {
             "type": "string",
             "format": "date-time",
-            "description": "Only present when the API consumer has the include_dates context flag."
+            "description": "When the product was created. Present only for a signed-in caller or an API consumer."
           },
           "updatedAt": {
             "type": "string",
             "format": "date-time",
-            "description": "Only present when the API consumer has the include_dates context flag."
+            "description": "When the product was last saved. Present only for a signed-in caller or an API consumer."
           }
         },
         "example": {
@@ -15655,6 +15953,16 @@
             "type": "string",
             "description": "The article number (Manufacturer Part Number) the maker gives the component. Present only when set, and only for a signed-in caller or an API consumer."
           },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the component was created. Present only for a signed-in caller or an API consumer."
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the component was last saved. Present only for a signed-in caller or an API consumer."
+          },
           "templateIds": {
             "type": "array",
             "items": {
@@ -15849,6 +16157,16 @@
                   "type": "integer",
                   "nullable": true,
                   "description": "The product this one is a variant of, null on a root. Present only for a signed-in caller or an API consumer."
+                },
+                "createdAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "When the product was created. Present only for a signed-in caller or an API consumer."
+                },
+                "updatedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "When the product was last saved. Present only for a signed-in caller or an API consumer."
                 },
                 "weight": {
                   "type": "number",
@@ -16073,6 +16391,16 @@
                 "nullable": true,
                 "description": "The product this one is a variant of, null on a root. Present only for a signed-in caller or an API consumer."
               },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "When the product was created. Present only for a signed-in caller or an API consumer."
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "When the product was last saved. Present only for a signed-in caller or an API consumer."
+              },
               "weight": {
                 "type": "number",
                 "description": "Product weight, in `weightUnit` (only when present)"
@@ -16220,6 +16548,11 @@
             "type": "string",
             "format": "date-time"
           },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the passport was last saved"
+          },
           "dppComponents": {
             "type": "array",
             "description": "Linked product's components with ratings (only present when the product has components)",
@@ -16339,7 +16672,8 @@
             "type": "Product",
             "name": "Hydrating Face Cream"
           },
-          "createdAt": "2026-02-01T12:00:00Z"
+          "createdAt": "2026-02-01T12:00:00Z",
+          "updatedAt": "2026-02-03T08:30:00Z"
         }
       },
       "annotations": {
@@ -17037,12 +17371,12 @@
           "createdAt": {
             "type": "string",
             "format": "date-time",
-            "description": "Only present when the API consumer has the include_dates context flag."
+            "description": "When the product was created. Present only for a signed-in caller or an API consumer."
           },
           "updatedAt": {
             "type": "string",
             "format": "date-time",
-            "description": "Only present when the API consumer has the include_dates context flag."
+            "description": "When the product was last saved. Present only for a signed-in caller or an API consumer."
           }
         },
         "example": {
@@ -17512,6 +17846,16 @@
                 "nullable": true,
                 "description": "The product this one is a variant of, null on a root. Present only for a signed-in caller or an API consumer."
               },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "When the product was created. Present only for a signed-in caller or an API consumer."
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "When the product was last saved. Present only for a signed-in caller or an API consumer."
+              },
               "weight": {
                 "type": "number",
                 "description": "Product weight, in `weightUnit` (only when present)"
@@ -17659,6 +18003,11 @@
             "type": "string",
             "format": "date-time"
           },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the passport was last saved"
+          },
           "dppComponents": {
             "type": "array",
             "description": "Linked product's components with ratings (only present when the product has components)",
@@ -17778,7 +18127,8 @@
             "type": "Product",
             "name": "Hydrating Face Cream"
           },
-          "createdAt": "2026-02-01T12:00:00Z"
+          "createdAt": "2026-02-01T12:00:00Z",
+          "updatedAt": "2026-02-03T08:30:00Z"
         }
       },
       "annotations": {

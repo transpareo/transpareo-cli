@@ -701,13 +701,19 @@ func (e EventFeedEventsEventType) Valid() bool {
 
 // Defines values for ExportDataType.
 const (
-	ExportDataTypeDpps ExportDataType = "dpps"
+	ExportDataTypeComponents ExportDataType = "components"
+	ExportDataTypeDpps       ExportDataType = "dpps"
+	ExportDataTypeProducts   ExportDataType = "products"
 )
 
 // Valid indicates whether the value is a known member of the ExportDataType enum.
 func (e ExportDataType) Valid() bool {
 	switch e {
+	case ExportDataTypeComponents:
+		return true
 	case ExportDataTypeDpps:
+		return true
+	case ExportDataTypeProducts:
 		return true
 	default:
 		return false
@@ -764,13 +770,19 @@ func (e ExportStatus) Valid() bool {
 
 // Defines values for ExportInputDataType.
 const (
-	ExportInputDataTypeDpps ExportInputDataType = "dpps"
+	ExportInputDataTypeComponents ExportInputDataType = "components"
+	ExportInputDataTypeDpps       ExportInputDataType = "dpps"
+	ExportInputDataTypeProducts   ExportInputDataType = "products"
 )
 
 // Valid indicates whether the value is a known member of the ExportInputDataType enum.
 func (e ExportInputDataType) Valid() bool {
 	switch e {
+	case ExportInputDataTypeComponents:
+		return true
 	case ExportInputDataTypeDpps:
+		return true
+	case ExportInputDataTypeProducts:
 		return true
 	default:
 		return false
@@ -803,13 +815,19 @@ func (e ExportInputFormat) Valid() bool {
 
 // Defines values for ExportSummaryDataType.
 const (
-	ExportSummaryDataTypeDpps ExportSummaryDataType = "dpps"
+	ExportSummaryDataTypeComponents ExportSummaryDataType = "components"
+	ExportSummaryDataTypeDpps       ExportSummaryDataType = "dpps"
+	ExportSummaryDataTypeProducts   ExportSummaryDataType = "products"
 )
 
 // Valid indicates whether the value is a known member of the ExportSummaryDataType enum.
 func (e ExportSummaryDataType) Valid() bool {
 	switch e {
+	case ExportSummaryDataTypeComponents:
+		return true
 	case ExportSummaryDataTypeDpps:
+		return true
+	case ExportSummaryDataTypeProducts:
 		return true
 	default:
 		return false
@@ -1656,6 +1674,60 @@ func (e WebhookInputWebhookEventTypes) Valid() bool {
 	}
 }
 
+// Defines values for Sort.
+const (
+	SortMinusCreatedAt Sort = "-created_at"
+	SortMinusUpdatedAt Sort = "-updated_at"
+)
+
+// Valid indicates whether the value is a known member of the Sort enum.
+func (e Sort) Valid() bool {
+	switch e {
+	case SortMinusCreatedAt:
+		return true
+	case SortMinusUpdatedAt:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ListComponentsParamsSort.
+const (
+	ListComponentsParamsSortMinusCreatedAt ListComponentsParamsSort = "-created_at"
+	ListComponentsParamsSortMinusUpdatedAt ListComponentsParamsSort = "-updated_at"
+)
+
+// Valid indicates whether the value is a known member of the ListComponentsParamsSort enum.
+func (e ListComponentsParamsSort) Valid() bool {
+	switch e {
+	case ListComponentsParamsSortMinusCreatedAt:
+		return true
+	case ListComponentsParamsSortMinusUpdatedAt:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ListDppsParamsSort.
+const (
+	ListDppsParamsSortMinusCreatedAt ListDppsParamsSort = "-created_at"
+	ListDppsParamsSortMinusUpdatedAt ListDppsParamsSort = "-updated_at"
+)
+
+// Valid indicates whether the value is a known member of the ListDppsParamsSort enum.
+func (e ListDppsParamsSort) Valid() bool {
+	switch e {
+	case ListDppsParamsSortMinusCreatedAt:
+		return true
+	case ListDppsParamsSortMinusUpdatedAt:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for BulkCreateDppsParamsPrefer.
 const (
 	RespondAsync BulkCreateDppsParamsPrefer = "respond-async"
@@ -1854,6 +1926,24 @@ func (e GetLeadgenRequestsParamsFormat) Valid() bool {
 	}
 }
 
+// Defines values for ListLotsParamsSort.
+const (
+	ListLotsParamsSortMinusCreatedAt ListLotsParamsSort = "-created_at"
+	ListLotsParamsSortMinusUpdatedAt ListLotsParamsSort = "-updated_at"
+)
+
+// Valid indicates whether the value is a known member of the ListLotsParamsSort enum.
+func (e ListLotsParamsSort) Valid() bool {
+	switch e {
+	case ListLotsParamsSortMinusCreatedAt:
+		return true
+	case ListLotsParamsSortMinusUpdatedAt:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for AuthorizeClientParamsResponseType.
 const (
 	AuthorizeClientParamsResponseTypeCode AuthorizeClientParamsResponseType = "code"
@@ -1917,6 +2007,24 @@ func (e ExchangeTokenFormdataBodyGrantType) Valid() bool {
 	case ExchangeTokenFormdataBodyGrantTypeClientCredentials:
 		return true
 	case ExchangeTokenFormdataBodyGrantTypeRefreshToken:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ListProductsParamsSort.
+const (
+	ListProductsParamsSortMinusCreatedAt ListProductsParamsSort = "-created_at"
+	ListProductsParamsSortMinusUpdatedAt ListProductsParamsSort = "-updated_at"
+)
+
+// Valid indicates whether the value is a known member of the ListProductsParamsSort enum.
+func (e ListProductsParamsSort) Valid() bool {
+	switch e {
+	case ListProductsParamsSortMinusCreatedAt:
+		return true
+	case ListProductsParamsSortMinusUpdatedAt:
 		return true
 	default:
 		return false
@@ -1995,6 +2103,24 @@ func (e ListTasksParamsList) Valid() bool {
 	case ListTasksParamsListRequested:
 		return true
 	case ListTasksParamsListWaiting:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ListTasksParamsSort.
+const (
+	ListTasksParamsSortMinusCreatedAt ListTasksParamsSort = "-created_at"
+	ListTasksParamsSortMinusUpdatedAt ListTasksParamsSort = "-updated_at"
+)
+
+// Valid indicates whether the value is a known member of the ListTasksParamsSort enum.
+func (e ListTasksParamsSort) Valid() bool {
+	switch e {
+	case ListTasksParamsSortMinusCreatedAt:
+		return true
+	case ListTasksParamsSortMinusUpdatedAt:
 		return true
 	default:
 		return false
@@ -2262,7 +2388,9 @@ type ClientRegistrationTokenEndpointAuthMethod string
 //
 // Example: {"id":13,"name":"Shea Butter","permalink":"/components/shea-butter","publishedAt":"2026-01-10T08:00:00Z","rating":"A","type":"Component"}
 type Component struct {
-	Id *int `json:"id,omitempty"`
+	// CreatedAt When the component was created. Present only for a signed-in caller or an API consumer.
+	CreatedAt *time.Time `json:"createdAt,omitempty"`
+	Id        *int       `json:"id,omitempty"`
 
 	// Mpn The article number (Manufacturer Part Number) the maker gives the component. Present only when set, and only for a signed-in caller or an API consumer.
 	Mpn *string `json:"mpn,omitempty"`
@@ -2280,6 +2408,9 @@ type Component struct {
 
 	// Type Example: Component
 	Type *string `json:"type,omitempty"`
+
+	// UpdatedAt When the component was last saved. Present only for a signed-in caller or an API consumer.
+	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
 }
 
 // ComponentDetail Full component details (returned by show action)
@@ -2288,7 +2419,10 @@ type Component struct {
 type ComponentDetail struct {
 	// Citations Scientific citations. Only present when citations are enabled in tenant config and the user has access (citations may be protected behind login).
 	Citations *[]Citation `json:"citations,omitempty"`
-	Id        *int        `json:"id,omitempty"`
+
+	// CreatedAt When the component was created. Present only for a signed-in caller or an API consumer.
+	CreatedAt *time.Time `json:"createdAt,omitempty"`
+	Id        *int       `json:"id,omitempty"`
 
 	// Mediafiles Component images. Only present in show action.
 	Mediafiles *[]Mediafile `json:"mediafiles,omitempty"`
@@ -2328,6 +2462,9 @@ type ComponentDetail struct {
 
 	// Type Example: Component
 	Type *string `json:"type,omitempty"`
+
+	// UpdatedAt When the component was last saved. Present only for a signed-in caller or an API consumer.
+	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
 }
 
 // ComponentInput A component write. `component` carries the attributes; `properties` and `templateIds` ride beside it in the shape the application manager's form sends and are applied after the component is saved.
@@ -2434,7 +2571,7 @@ type Config struct {
 
 // ConsumerIdentity The API consumer behind a bearer token and what that token allows
 //
-// Example: {"authority":false,"bulkItemsPerMinute":5000,"expiresAt":null,"key":"3f6a9c2e-8d1b-4f7e-9a3c-5b2d8e1f4a7c","name":"ERP integration","permissions":["product_access","dpp_read","dpp_write"],"rateLimit":{"limit":1000,"used":12,"windowStartedAt":"2026-09-08T14:10:00Z"},"resourceScope":{},"scope":["dpp_read","dpp_write"],"status":"active","tokenExpiresAt":"2026-09-08T15:04:05Z","workspace":{"publishesOnCreate":true}}
+// Example: {"authority":false,"bulkItemsPerMinute":5000,"expiresAt":null,"key":"3f6a9c2e-8d1b-4f7e-9a3c-5b2d8e1f4a7c","name":"ERP integration","permissions":["product_access","dpp_read","dpp_write"],"rateLimit":{"limit":1000,"used":12,"windowStartedAt":"2026-09-08T14:10:00Z"},"resourceScope":{},"scope":["dpp_read","dpp_write"],"status":"active","tokenExpiresAt":"2026-09-08T15:04:05Z","workspace":{"host":"acme.transpareo.com","name":"Acme Outdoor","publishesOnCreate":true}}
 type ConsumerIdentity struct {
 	// Authority True for a regulator consumer issued by the platform
 	Authority          *bool `json:"authority,omitempty"`
@@ -2466,8 +2603,14 @@ type ConsumerIdentity struct {
 	Status         *ConsumerIdentityStatus `json:"status,omitempty"`
 	TokenExpiresAt *time.Time              `json:"tokenExpiresAt,omitempty"`
 
-	// Workspace What the workspace itself does with what a caller writes
+	// Workspace The workspace the token belongs to, and what it does with what a caller writes
 	Workspace *struct {
+		// Host The workspace's own host, without a scheme
+		Host *string `json:"host,omitempty"`
+
+		// Name The name of the workspace, the one its consent screen shows. A workflow tool labels the connection with it.
+		Name *string `json:"name,omitempty"`
+
 		// PublishesOnCreate True where the workspace has no storefront. Every product and every component is published as it is created, the publish and unpublish operations answer 403, and the person using the workspace never sees publishing as a step, so asking them to publish something asks for a control their screens do not show. False where a storefront decides what the catalogue shows, and a record is published on demand.
 		PublishesOnCreate *bool `json:"publishesOnCreate,omitempty"`
 	} `json:"workspace,omitempty"`
@@ -2512,7 +2655,7 @@ type Currency struct {
 
 // Dpp Digital Product Passport with QR code and linked product
 //
-// Example: {"code":"A1B2C3D4E","counter":142,"createdAt":"2026-02-01T12:00:00Z","description":"Hydrating Face Cream 50ml","id":14,"locale":"de","type":"Dpp","unlockable":{"id":11,"name":"Hydrating Face Cream","type":"Product"},"url":"https://example.com/A1B2C3D4E"}
+// Example: {"code":"A1B2C3D4E","counter":142,"createdAt":"2026-02-01T12:00:00Z","description":"Hydrating Face Cream 50ml","id":14,"locale":"de","type":"Dpp","unlockable":{"id":11,"name":"Hydrating Face Cream","type":"Product"},"updatedAt":"2026-02-03T08:30:00Z","url":"https://example.com/A1B2C3D4E"}
 type Dpp struct {
 	// AutoIssued Whether the workspace issued the passport by itself above its unit passports, a model passport answering the GTIN or a lot passport of an item workspace. Such a passport is included in the plan, is never submitted to the EU registry, and is left out of the passport list's default view. Always present.
 	AutoIssued *bool `json:"autoIssued,omitempty"`
@@ -2591,6 +2734,9 @@ type Dpp struct {
 	//
 	// Example: {"brandName":"NaturaCare","gtin":"4006381333931","id":11,"name":"Hydrating Face Cream","permalink":"/products/naturacare-hydrating-face-cream","publishedAt":"2026-01-15T10:30:00Z","rating":"A","type":"Product"}
 	Unlockable *Product `json:"unlockable,omitempty"`
+
+	// UpdatedAt When the passport was last saved
+	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
 
 	// Url Full URL that the QR code resolves to
 	Url *string `json:"url,omitempty"`
@@ -2891,9 +3037,9 @@ type DppValidationReport struct {
 	ValidatorVersion *string `json:"validatorVersion,omitempty"`
 }
 
-// DppVersion One registered version of a passport - the signed JSON-LD snapshot published at that point, with the integrity pair a reader verifies it against. Same shape as the entries of the per-passport manifest on the public CDN.
+// DppVersion One registered version of a passport - the signed JSON-LD snapshot published at that point, with the integrity pair a reader verifies it against. The fields of an entry in the per-passport manifest, with the file's absolute address in `url`.
 //
-// Example: {"hashAlgorithm":"sha256","hashCanonicalForm":"urdna2015","hashValue":"9f2b1c4e8a7d6035b1e2c9f04a8d7e6152b3c4d5e6f708192a3b4c5d6e7f8091","number":3,"publishedAt":"2026-09-08T09:12:44Z","reason":"edit","schemaVersion":1,"sizeBytes":8421,"url":"https://cdn.example.com/acme/dpp/A1B2C3D4E/v/3.jsonld.gz"}
+// Example: {"hashAlgorithm":"sha256","hashCanonicalForm":"urdna2015","hashValue":"9f2b1c4e8a7d6035b1e2c9f04a8d7e6152b3c4d5e6f708192a3b4c5d6e7f8091","number":3,"publishedAt":"2026-09-08T09:12:44Z","reason":"edit","schemaVersion":1,"sizeBytes":8421,"url":"https://cdn.example.com/acme/dpp/A1B2C3D4E/v/3-1a2b3c4d5e6f.json"}
 type DppVersion struct {
 	// HashAlgorithm Example: sha256
 	HashAlgorithm *string `json:"hashAlgorithm,omitempty"`
@@ -2919,13 +3065,13 @@ type DppVersion struct {
 	// SizeBytes Size of the published snapshot
 	SizeBytes *int `json:"sizeBytes,omitempty"`
 
-	// Url Public URL of the signed JSON-LD snapshot
+	// Url Absolute URL of the signed JSON-LD snapshot on the CDN. The manifest names the same file by its root path, `/{handle}/dpp/{code}/v/{file}`.
 	Url *string `json:"url,omitempty"`
 }
 
 // DppVersionSnapshot One published version of a passport, with the signed JSON-LD document as it was served, the hash it was signed over and the address it is kept at.
 //
-// Example: {"code":"A1B2C3D4E","hashValue":"9f2b1c4e8a7d6035b1e2c9f04a8d7e6152b3c4d5e6f708192a3b4c5d6e7f8091","publishedAt":"2026-09-08T09:12:44Z","snapshot":{"@context":["https://transpareo.com/vocab/vc/v1","https://transpareo.com/vocab/transpareo/v1"],"@id":"https://example.com/dpp/A1B2C3D4E#credential","issuer":"did:web:nordic-wear.002.fsn.transpareo.com","type":["VerifiableCredential","dpp:DigitalProductPassport"]},"url":"https://cdn.example.com/nordic-wear/dpp/A1B2C3D4E/v/3.jsonld.gz","version":3}
+// Example: {"code":"A1B2C3D4E","hashValue":"9f2b1c4e8a7d6035b1e2c9f04a8d7e6152b3c4d5e6f708192a3b4c5d6e7f8091","publishedAt":"2026-09-08T09:12:44Z","snapshot":{"@context":["https://transpareo.com/vocab/vc/v1","https://transpareo.com/vocab/transpareo/v1"],"@id":"https://example.com/dpp/A1B2C3D4E#credential","issuer":"did:web:nordic-wear.002.fsn.transpareo.com","type":["VerifiableCredential","dpp:DigitalProductPassport"]},"url":"https://cdn.example.com/nordic-wear/dpp/A1B2C3D4E/v/3-1a2b3c4d5e6f.json","version":3}
 type DppVersionSnapshot struct {
 	// Code The public code of the passport the version belongs to
 	Code *string `json:"code,omitempty"`
@@ -3058,14 +3204,16 @@ type EventFeedEventsEventType string
 
 // Export One export and where it stands. The archive fields appear once `status` is `completed`; `failure` once it is `failed`.
 //
-// Example: {"archiveSize":184320,"code":"k7m2pq","completedAt":"2026-09-08T09:13:01Z","componentCount":40,"createdAt":"2026-09-08T09:12:44Z","dataType":"dpps","downloadUrl":"https://example.com/api/exports/42/download","expiresAt":"2026-09-15T09:13:01Z","filename":"transpareo-export-20260908-091301.tar.gz","format":"jsonld","id":42,"includeMedia":false,"normalize":false,"productCount":12,"progress":100,"recordCount":64,"status":"completed","statusUrl":"https://example.com/api/exports/42"}
+// Example: {"archiveSize":184320,"code":"k7m2pq","completedAt":"2026-09-08T09:13:01Z","createdAt":"2026-09-08T09:12:44Z","dataType":"products","downloadUrl":"https://example.com/api/exports/42/download","expiresAt":"2026-09-15T09:13:01Z","filename":"products-20260908-091244.jsonld","format":"jsonld","id":42,"includeMedia":false,"productCount":12,"progress":100,"recordCount":12,"status":"completed","statusUrl":"https://example.com/api/exports/42"}
 type Export struct {
 	// ArchiveSize Archive bytes. On `completed`.
 	ArchiveSize *int `json:"archiveSize,omitempty"`
 
-	// Code The short code the application manager lists the export under
-	Code           *string         `json:"code,omitempty"`
-	CompletedAt    *time.Time      `json:"completedAt,omitempty"`
+	// Code A short code that identifies the export
+	Code        *string    `json:"code,omitempty"`
+	CompletedAt *time.Time `json:"completedAt,omitempty"`
+
+	// ComponentCount Components exported. On a completed components export.
 	ComponentCount *int            `json:"componentCount,omitempty"`
 	CreatedAt      *time.Time      `json:"createdAt,omitempty"`
 	DataType       *ExportDataType `json:"dataType,omitempty"`
@@ -3079,18 +3227,19 @@ type Export struct {
 	// Failure Why the export failed. Only on `failed`.
 	Failure *string `json:"failure,omitempty"`
 
-	// Filename The archive's file name. On `completed`.
+	// Filename The name the export goes by in the application manager and its archive downloads under, given when the export is started
 	Filename     *string       `json:"filename,omitempty"`
 	Format       *ExportFormat `json:"format,omitempty"`
 	Id           int           `json:"id"`
 	IncludeMedia *bool         `json:"includeMedia,omitempty"`
-	Normalize    *bool         `json:"normalize,omitempty"`
-	ProductCount *int          `json:"productCount,omitempty"`
+
+	// ProductCount Products exported. On a completed products export.
+	ProductCount *int `json:"productCount,omitempty"`
 
 	// Progress Percent of the work done. 100 once completed.
 	Progress *int `json:"progress,omitempty"`
 
-	// RecordCount Passports, products and components exported. On `completed`.
+	// RecordCount Records of the data type exported. On `completed`.
 	RecordCount *int         `json:"recordCount,omitempty"`
 	Status      ExportStatus `json:"status"`
 
@@ -3107,50 +3256,58 @@ type ExportFormat string
 // ExportStatus defines model for Export.Status.
 type ExportStatus string
 
-// ExportInput What to export and how. Every field is optional; the default is a JSON-LD archive of the passports and catalogue the consumer's lists answer it with.
+// ExportInput What to export and how. Every field is optional; the default is a JSON-LD file of the passports the consumer's list answers it with.
 //
-// Example: {"format":"csv","normalize":true}
+// Example: {"dataType":"products","includeMedia":true}
 type ExportInput struct {
-	// DataType The API exports passports. Payments, users and audit logs are exported from the application manager.
+	// DataType The records the archive carries, each type its own alone. Payments, users and audit logs are exported from the application manager.
 	DataType *ExportInputDataType `json:"dataType,omitempty"`
 
-	// Format `jsonld` packs one document per passport, product and component into a tar archive; the tabular formats flatten the catalogue into one sheet each. A variant names its parent in `parent_key` in CSV and XLSX (the GTIN of the parent, else its name, which the product import reads back), in `parent_id` in SQL and in `isVariantOf` in JSON-LD. A parent outside the archive goes unnamed
+	// Format `jsonld` downloads as one file, `<dataType>-<yyyymmdd-hhmmss>.jsonld`: one self-contained record per passport, product or component in the passport's vocabulary, translated texts as language maps. A variant names its parent in `isVariantOf`; a passport edited since its latest version carries `unpublishedChanges` and no version number. `csv` and `xlsx` write one sheet per language of the workspace, in the columns the spreadsheet import reads back: the one sheet of a workspace in one language as a file of its own, the sheets of several languages as a ZIP holding `<language>/<dataType>.csv` or `.xlsx`. `sql` downloads as one file of CREATE TABLE and INSERT statements in a small generic schema, translated texts in a `translations` table, that load into PostgreSQL, MySQL and SQLite.
 	Format *ExportInputFormat `json:"format,omitempty"`
 
-	// IncludeMedia Copy the product and component media files into the archive
+	// IncludeMedia Copy the product images (products) or the QR codes (passports) into `media/` beside the records; the export then downloads as a ZIP
 	IncludeMedia *bool `json:"includeMedia,omitempty"`
 
-	// Normalize Resolve references into the exported rows instead of carrying ids
+	// Normalize Accepted and ignored; exports no longer have this option
+	// Deprecated: this property has been marked as deprecated upstream, but no `x-deprecated-reason` was set
 	Normalize *bool `json:"normalize,omitempty"`
 }
 
-// ExportInputDataType The API exports passports. Payments, users and audit logs are exported from the application manager.
+// ExportInputDataType The records the archive carries, each type its own alone. Payments, users and audit logs are exported from the application manager.
 type ExportInputDataType string
 
-// ExportInputFormat `jsonld` packs one document per passport, product and component into a tar archive; the tabular formats flatten the catalogue into one sheet each. A variant names its parent in `parent_key` in CSV and XLSX (the GTIN of the parent, else its name, which the product import reads back), in `parent_id` in SQL and in `isVariantOf` in JSON-LD. A parent outside the archive goes unnamed
+// ExportInputFormat `jsonld` downloads as one file, `<dataType>-<yyyymmdd-hhmmss>.jsonld`: one self-contained record per passport, product or component in the passport's vocabulary, translated texts as language maps. A variant names its parent in `isVariantOf`; a passport edited since its latest version carries `unpublishedChanges` and no version number. `csv` and `xlsx` write one sheet per language of the workspace, in the columns the spreadsheet import reads back: the one sheet of a workspace in one language as a file of its own, the sheets of several languages as a ZIP holding `<language>/<dataType>.csv` or `.xlsx`. `sql` downloads as one file of CREATE TABLE and INSERT statements in a small generic schema, translated texts in a `translations` table, that load into PostgreSQL, MySQL and SQLite.
 type ExportInputFormat string
 
 // ExportSummary One export as a list answers it: where the run stands as the record has it, and where its archive is. The progress of a running export is read from `GET /exports/{id}`.
 //
-// Example: {"archiveSize":184320,"code":"k7m2pq","completedAt":"2026-09-08T09:13:01Z","componentCount":40,"createdAt":"2026-09-08T09:12:44Z","dataType":"dpps","downloadUrl":"https://example.com/api/exports/42/download","format":"jsonld","id":42,"productCount":12,"recordCount":64,"status":"completed","statusUrl":"https://example.com/api/exports/42"}
+// Example: {"archiveSize":184320,"code":"k7m2pq","completedAt":"2026-09-08T09:13:01Z","createdAt":"2026-09-08T09:12:44Z","dataType":"dpps","downloadUrl":"https://example.com/api/exports/42/download","filename":"dpps-20260908-091244.jsonld","format":"jsonld","id":42,"recordCount":64,"status":"completed","statusUrl":"https://example.com/api/exports/42"}
 type ExportSummary struct {
 	// ArchiveSize Archive bytes. On `completed`.
 	ArchiveSize *int `json:"archiveSize,omitempty"`
 
-	// Code The short code the application manager lists the export under
-	Code           *string                `json:"code,omitempty"`
-	CompletedAt    *time.Time             `json:"completedAt,omitempty"`
+	// Code A short code that identifies the export
+	Code        *string    `json:"code,omitempty"`
+	CompletedAt *time.Time `json:"completedAt,omitempty"`
+
+	// ComponentCount Components exported. On a completed components export.
 	ComponentCount *int                   `json:"componentCount,omitempty"`
 	CreatedAt      *time.Time             `json:"createdAt,omitempty"`
 	DataType       *ExportSummaryDataType `json:"dataType,omitempty"`
 
 	// DownloadUrl Where to fetch the archive. On `completed`.
-	DownloadUrl  *string              `json:"downloadUrl,omitempty"`
-	Format       *ExportSummaryFormat `json:"format,omitempty"`
-	Id           int                  `json:"id"`
-	ProductCount *int                 `json:"productCount,omitempty"`
+	DownloadUrl *string `json:"downloadUrl,omitempty"`
 
-	// RecordCount Passports, products and components exported. On `completed`.
+	// Filename The name the export goes by in the application manager and its archive downloads under, given when the export is started
+	Filename *string              `json:"filename,omitempty"`
+	Format   *ExportSummaryFormat `json:"format,omitempty"`
+	Id       int                  `json:"id"`
+
+	// ProductCount Products exported. On a completed products export.
+	ProductCount *int `json:"productCount,omitempty"`
+
+	// RecordCount Records of the data type exported. On `completed`.
 	RecordCount *int                `json:"recordCount,omitempty"`
 	Status      ExportSummaryStatus `json:"status"`
 
@@ -3664,6 +3821,9 @@ type Lot struct {
 
 	// Type Example: Lot
 	Type *string `json:"type,omitempty"`
+
+	// UpdatedAt When the lot was last saved
+	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
 }
 
 // Mediafile defines model for Mediafile.
@@ -3863,6 +4023,9 @@ type Product struct {
 	// Example: Nivea
 	BrandName *string `json:"brandName,omitempty"`
 
+	// CreatedAt When the product was created. Present only for a signed-in caller or an API consumer.
+	CreatedAt *time.Time `json:"createdAt,omitempty"`
+
 	// Gtin Global Trade Item Number (only when present)
 	//
 	// Example: 4005808920310
@@ -3891,6 +4054,9 @@ type Product struct {
 
 	// Type Example: Product
 	Type *string `json:"type,omitempty"`
+
+	// UpdatedAt When the product was last saved. Present only for a signed-in caller or an API consumer.
+	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
 
 	// Weight Product weight, in `weightUnit` (only when present)
 	Weight *float32 `json:"weight,omitempty"`
@@ -3944,7 +4110,7 @@ type ProductDetail struct {
 	// ComponentsIds The ids of the components the product carries. The dashboard answers these in place of the components themselves.
 	ComponentsIds *[]int `json:"componentsIds,omitempty"`
 
-	// CreatedAt Only present when the API consumer has the include_dates context flag.
+	// CreatedAt When the product was created. Present only for a signed-in caller or an API consumer.
 	CreatedAt *time.Time `json:"createdAt,omitempty"`
 
 	// Editable Whether the current user can edit this product. Only present when true.
@@ -4072,7 +4238,7 @@ type ProductDetail struct {
 	// Type Example: Product
 	Type *string `json:"type,omitempty"`
 
-	// UpdatedAt Only present when the API consumer has the include_dates context flag.
+	// UpdatedAt When the product was last saved. Present only for a signed-in caller or an API consumer.
 	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
 
 	// VariantsCount How many products are variants of this one. Present only for a signed-in caller or an API consumer.
@@ -4525,7 +4691,7 @@ type UserInput struct {
 //
 // Example: {"active":true,"createdAt":"2026-09-08T09:12:44Z","eventTypes":["published","voided"],"failureCount":0,"id":7,"name":"Order fulfilment","resourceScopeDppCodes":[],"secret":"3f9c1d2e4b5a6978c0d1e2f3a4b5c6d7e8f90a1b2c3d4e5f60718293a4b5c6d7","url":"https://hooks.example.com/transpareo"}
 type Webhook struct {
-	// Active Switched off by hand, or by the platform after eight failed deliveries in a row. Switching it on again starts the failure count afresh.
+	// Active Switched off by hand, by the platform after eight failed deliveries in a row, or at once when the endpoint answers a delivery with 410 Gone (see `goneAt`). Switching it on again starts the failure count afresh and clears `goneAt`.
 	Active    bool       `json:"active"`
 	CreatedAt *time.Time `json:"createdAt,omitempty"`
 
@@ -4533,7 +4699,10 @@ type Webhook struct {
 	EventTypes []WebhookEventTypes `json:"eventTypes"`
 
 	// FailureCount Failed deliveries in a row; reset by a success
-	FailureCount   *int       `json:"failureCount,omitempty"`
+	FailureCount *int `json:"failureCount,omitempty"`
+
+	// GoneAt When the endpoint answered a delivery with 410 Gone, which switched the subscription off; absent otherwise
+	GoneAt         *time.Time `json:"goneAt,omitempty"`
 	Id             int        `json:"id"`
 	LastDeliveryAt *time.Time `json:"lastDeliveryAt,omitempty"`
 	LastFailureAt  *time.Time `json:"lastFailureAt,omitempty"`
@@ -4593,6 +4762,9 @@ type WebhookTest struct {
 	Status *int `json:"status,omitempty"`
 }
 
+// CreatedSince Example: 2026-10-18T09:00:00Z
+type CreatedSince = time.Time
+
 // Id defines model for id.
 type Id = int
 
@@ -4607,6 +4779,12 @@ type PerPage = int
 
 // Published defines model for published.
 type Published = bool
+
+// Sort defines model for sort.
+type Sort string
+
+// UpdatedSince Example: 2026-10-18T09:00:00Z
+type UpdatedSince = time.Time
 
 // Forbidden defines model for Forbidden.
 type Forbidden = Error
@@ -4670,6 +4848,15 @@ type ListComponentsParams struct {
 	// PerPage Records per page (default: 100, max: 500)
 	PerPage *PerPage `form:"per_page,omitempty" json:"per_page,omitempty"`
 
+	// Sort `-updated_at` lists the latest change first, `-created_at` the newest record first; ties fall to the id. Left out, the list keeps its own order. The camelCase spelling (`-updatedAt`) reads the same. Any other value answers 422 `SORT_INVALID`. The guide's section "Sorting and polling" says how to poll with it.
+	Sort *ListComponentsParamsSort `form:"sort,omitempty" json:"sort,omitempty"`
+
+	// CreatedSince Keep the records created at this ISO 8601 time or later. A time without a zone is UTC. A value that is no time answers 422 `SINCE_FILTER_INVALID`.
+	CreatedSince *CreatedSince `form:"created_since,omitempty" json:"created_since,omitempty"`
+
+	// UpdatedSince Keep the records changed at this ISO 8601 time or later, the time itself included, so a record at the bound comes back on the next poll. A time without a zone is UTC. A value that is no time answers 422 `SINCE_FILTER_INVALID`.
+	UpdatedSince *UpdatedSince `form:"updated_since,omitempty" json:"updated_since,omitempty"`
+
 	// Published For a credential, `true` lists the published records and `false` the drafts; left out, the list carries both. A storefront reader has no drafts to ask for, so the parameter narrows nothing for one. A value that is neither answers 422 `PUBLISHED_FILTER_INVALID`.
 	Published *Published `form:"published,omitempty" json:"published,omitempty"`
 
@@ -4685,6 +4872,9 @@ type ListComponentsParams struct {
 	// TypeIds Filter by component type IDs (comma-separated)
 	TypeIds *string `form:"type_ids,omitempty" json:"type_ids,omitempty"`
 }
+
+// ListComponentsParamsSort defines parameters for ListComponents.
+type ListComponentsParamsSort string
 
 // CreateComponentParams defines parameters for CreateComponent.
 type CreateComponentParams struct {
@@ -4723,7 +4913,19 @@ type ListDppsParams struct {
 
 	// PerPage Records per page (default: 100, max: 500)
 	PerPage *PerPage `form:"per_page,omitempty" json:"per_page,omitempty"`
+
+	// Sort `-updated_at` lists the latest change first, `-created_at` the newest record first; ties fall to the id. Left out, the list keeps its own order. The camelCase spelling (`-updatedAt`) reads the same. Any other value answers 422 `SORT_INVALID`. The guide's section "Sorting and polling" says how to poll with it.
+	Sort *ListDppsParamsSort `form:"sort,omitempty" json:"sort,omitempty"`
+
+	// CreatedSince Keep the records created at this ISO 8601 time or later. A time without a zone is UTC. A value that is no time answers 422 `SINCE_FILTER_INVALID`.
+	CreatedSince *CreatedSince `form:"created_since,omitempty" json:"created_since,omitempty"`
+
+	// UpdatedSince Keep the records changed at this ISO 8601 time or later, the time itself included, so a record at the bound comes back on the next poll. A time without a zone is UTC. A value that is no time answers 422 `SINCE_FILTER_INVALID`.
+	UpdatedSince *UpdatedSince `form:"updated_since,omitempty" json:"updated_since,omitempty"`
 }
+
+// ListDppsParamsSort defines parameters for ListDpps.
+type ListDppsParamsSort string
 
 // CreateDppJSONBody defines parameters for CreateDpp.
 type CreateDppJSONBody struct {
@@ -4919,9 +5121,9 @@ type ListExportsParams struct {
 
 // CreateExportJSONBody defines parameters for CreateExport.
 type CreateExportJSONBody struct {
-	// Export What to export and how. Every field is optional; the default is a JSON-LD archive of the passports and catalogue the consumer's lists answer it with.
+	// Export What to export and how. Every field is optional; the default is a JSON-LD file of the passports the consumer's list answers it with.
 	//
-	// Example: {"format":"csv","normalize":true}
+	// Example: {"dataType":"products","includeMedia":true}
 	Export *ExportInput `json:"export,omitempty"`
 }
 
@@ -5111,7 +5313,19 @@ type ListLotsParams struct {
 
 	// PerPage Records per page (default: 100, max: 500)
 	PerPage *PerPage `form:"per_page,omitempty" json:"per_page,omitempty"`
+
+	// Sort `-updated_at` lists the latest change first, `-created_at` the newest record first; ties fall to the id. Left out, the list keeps its own order. The camelCase spelling (`-updatedAt`) reads the same. Any other value answers 422 `SORT_INVALID`. The guide's section "Sorting and polling" says how to poll with it.
+	Sort *ListLotsParamsSort `form:"sort,omitempty" json:"sort,omitempty"`
+
+	// CreatedSince Keep the records created at this ISO 8601 time or later. A time without a zone is UTC. A value that is no time answers 422 `SINCE_FILTER_INVALID`.
+	CreatedSince *CreatedSince `form:"created_since,omitempty" json:"created_since,omitempty"`
+
+	// UpdatedSince Keep the records changed at this ISO 8601 time or later, the time itself included, so a record at the bound comes back on the next poll. A time without a zone is UTC. A value that is no time answers 422 `SINCE_FILTER_INVALID`.
+	UpdatedSince *UpdatedSince `form:"updated_since,omitempty" json:"updated_since,omitempty"`
 }
+
+// ListLotsParamsSort defines parameters for ListLots.
+type ListLotsParamsSort string
 
 // ListMediafilesParams defines parameters for ListMediafiles.
 type ListMediafilesParams struct {
@@ -5280,6 +5494,15 @@ type ListProductsParams struct {
 	// PerPage Records per page (default: 100, max: 500)
 	PerPage *PerPage `form:"per_page,omitempty" json:"per_page,omitempty"`
 
+	// Sort `-updated_at` lists the latest change first, `-created_at` the newest record first; ties fall to the id. Left out, the list keeps its own order. The camelCase spelling (`-updatedAt`) reads the same. Any other value answers 422 `SORT_INVALID`. The guide's section "Sorting and polling" says how to poll with it.
+	Sort *ListProductsParamsSort `form:"sort,omitempty" json:"sort,omitempty"`
+
+	// CreatedSince Keep the records created at this ISO 8601 time or later. A time without a zone is UTC. A value that is no time answers 422 `SINCE_FILTER_INVALID`.
+	CreatedSince *CreatedSince `form:"created_since,omitempty" json:"created_since,omitempty"`
+
+	// UpdatedSince Keep the records changed at this ISO 8601 time or later, the time itself included, so a record at the bound comes back on the next poll. A time without a zone is UTC. A value that is no time answers 422 `SINCE_FILTER_INVALID`.
+	UpdatedSince *UpdatedSince `form:"updated_since,omitempty" json:"updated_since,omitempty"`
+
 	// Published For a credential, `true` lists the published records and `false` the drafts; left out, the list carries both. A storefront reader has no drafts to ask for, so the parameter narrows nothing for one. A value that is neither answers 422 `PUBLISHED_FILTER_INVALID`.
 	Published *Published `form:"published,omitempty" json:"published,omitempty"`
 
@@ -5307,6 +5530,9 @@ type ListProductsParams struct {
 	// Exact When true with `term`, match exact product name
 	Exact *bool `form:"exact,omitempty" json:"exact,omitempty"`
 }
+
+// ListProductsParamsSort defines parameters for ListProducts.
+type ListProductsParamsSort string
 
 // CreateProductJSONBody defines parameters for CreateProduct.
 type CreateProductJSONBody struct {
@@ -5446,10 +5672,22 @@ type ListTasksParams struct {
 
 	// PerPage Records per page (default: 100, max: 500)
 	PerPage *PerPage `form:"per_page,omitempty" json:"per_page,omitempty"`
+
+	// Sort `-updated_at` lists the latest change first, `-created_at` the newest record first; ties fall to the id. Left out, the list keeps its own order. The camelCase spelling (`-updatedAt`) reads the same. Any other value answers 422 `SORT_INVALID`. The guide's section "Sorting and polling" says how to poll with it.
+	Sort *ListTasksParamsSort `form:"sort,omitempty" json:"sort,omitempty"`
+
+	// CreatedSince Keep the records created at this ISO 8601 time or later. A time without a zone is UTC. A value that is no time answers 422 `SINCE_FILTER_INVALID`.
+	CreatedSince *CreatedSince `form:"created_since,omitempty" json:"created_since,omitempty"`
+
+	// UpdatedSince Keep the records changed at this ISO 8601 time or later, the time itself included, so a record at the bound comes back on the next poll. A time without a zone is UTC. A value that is no time answers 422 `SINCE_FILTER_INVALID`.
+	UpdatedSince *UpdatedSince `form:"updated_since,omitempty" json:"updated_since,omitempty"`
 }
 
 // ListTasksParamsList defines parameters for ListTasks.
 type ListTasksParamsList string
+
+// ListTasksParamsSort defines parameters for ListTasks.
+type ListTasksParamsSort string
 
 // CreateTaskParams defines parameters for CreateTask.
 type CreateTaskParams struct {
@@ -6084,7 +6322,7 @@ type ClientInterface interface {
 	//
 	// Returns a paginated list of components. A credential holding `component_access` or `component_write` receives every component of the workspace, drafts included; every other reader receives the published components.
 	//
-	// Supports full-text search and filtering by function, property category, type and publication.
+	// Supports full-text search and filtering by function, property category, type and publication. `sort`, `created_since` and `updated_since` order and bound the list for a poll, with or without a search term; a credential reads `createdAt` and `updatedAt` on every component.
 	//
 	// Corresponds with GET /components (the `ListComponents` operationId).
 	ListComponents(ctx context.Context, params *ListComponentsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -6113,7 +6351,7 @@ type ClientInterface interface {
 
 	// DeleteComponent Delete a component
 	//
-	// Removes the component from the catalogue. A component that products still list answers 409 `COMPONENT_IN_USE` and names those products; unpublish it instead, or remove it from the products first. A component that a published passport refers to stays as well and answers 409 `COMPONENT_DELETE_REFUSED`, with the reason in the message and the next step in the hint. The caller must own the component, or hold `component_write`.
+	// Removes the component from the catalogue. A component that products still list answers 409 `COMPONENT_IN_USE` and names those products; unpublish it instead, or remove it from the products first. A component that a published passport refers to, or that a lot holds, stays as well and answers 409 `COMPONENT_DELETE_REFUSED`; the message names the reason, with the passport or the lot it means, and the hint, where there is one, the next step. The caller must own the component, or hold `component_write`.
 	//
 	// Corresponds with DELETE /components/{id} (the `DeleteComponent` operationId).
 	DeleteComponent(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -6187,7 +6425,7 @@ type ClientInterface interface {
 
 	// ListDpps List Digital Product Passports
 	//
-	// Returns a paginated list of DPPs owned by the authenticated user, their group members, or the API consumer. Narrow it with `product_id` and `status` rather than reading the whole catalogue and matching by hand; acting on every passport of one product is what those are for.
+	// Returns a paginated list of DPPs owned by the authenticated user, their group members, or the API consumer. Narrow it with `product_id` and `status` rather than reading the whole catalogue and matching by hand; acting on every passport of one product is what those are for. The list is newest first; `sort`, `created_since` and `updated_since` order and bound it for a poll.
 	//
 	// Corresponds with GET /dpps (the `ListDpps` operationId).
 	ListDpps(ctx context.Context, params *ListDppsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -6481,7 +6719,7 @@ type ClientInterface interface {
 
 	// ListDppVersions List the registered versions of a DPP
 	//
-	// Every persisted version of the passport, newest first, each with the integrity pair a reader verifies its snapshot against. Same content as the per-passport manifest on the public CDN, served from the API origin for clients that prefer one host over the other. A scope-limited partner-grant token only reaches its own passports.
+	// Every persisted version of the passport, newest first, each with the integrity pair a reader verifies its snapshot against. The versions the per-passport manifest lists, served from the API origin for clients that prefer one host over the other. The manifest names each file by its root path, resolved against the host it was read from; `url` here is the file's absolute address. A scope-limited partner-grant token only reaches its own passports.
 	//
 	// Corresponds with GET /dpps/{id}/versions (the `ListDppVersions` operationId).
 	ListDppVersions(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -6526,26 +6764,26 @@ type ClientInterface interface {
 	// Corresponds with GET /exports (the `ListExports` operationId).
 	ListExports(ctx context.Context, params *ListExportsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// CreateExportWithBody Start a passport export
+	// CreateExportWithBody Start an export
 	//
-	// Packs what this consumer's own lists answer it with into an archive: the passports of `GET /dpps`, the products of `GET /products` and the components of `GET /components`, with the brands, categories and property types they use. The work runs in the background under the scope of the token that started it, and the answer comes at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.
+	// Packs the records of one data type this consumer's own list answers it with into an archive: the passports of `GET /dpps`, the products of `GET /products` or the components of `GET /components`. Each record is self-contained: a product names its components by their `@id`, a passport its product by GTIN and name. The work runs in the background under the scope of the token that started it, and the answer comes at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.
 	//
 	// The consumer that starts an export is the only one that can read or download it. One export runs at a time per consumer: while one is pending or running, another request answers 409 `EXPORT_IN_PROGRESS` with a hint naming the URL to poll.
 	//
-	// The archive carries the passports, so starting an export needs `dpp_read` as well as `export_access`. A consumer without it gets 403 `DPP_FORBIDDEN`.
+	// The archive carries the records, so starting an export needs the permission that reads them as well as `export_access`: `dpp_read` for passports, `product_access` for products, `component_access` for components. A consumer without it gets 403 (`DPP_FORBIDDEN`, `PRODUCT_FORBIDDEN`, `COMPONENT_FORBIDDEN`).
 	//
 	// Takes any type of body and a specified content type.
 	//
 	// Corresponds with POST /exports (the `CreateExport` operationId).
 	CreateExportWithBody(ctx context.Context, params *CreateExportParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// CreateExport Start a passport export
+	// CreateExport Start an export
 	//
-	// Packs what this consumer's own lists answer it with into an archive: the passports of `GET /dpps`, the products of `GET /products` and the components of `GET /components`, with the brands, categories and property types they use. The work runs in the background under the scope of the token that started it, and the answer comes at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.
+	// Packs the records of one data type this consumer's own list answers it with into an archive: the passports of `GET /dpps`, the products of `GET /products` or the components of `GET /components`. Each record is self-contained: a product names its components by their `@id`, a passport its product by GTIN and name. The work runs in the background under the scope of the token that started it, and the answer comes at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.
 	//
 	// The consumer that starts an export is the only one that can read or download it. One export runs at a time per consumer: while one is pending or running, another request answers 409 `EXPORT_IN_PROGRESS` with a hint naming the URL to poll.
 	//
-	// The archive carries the passports, so starting an export needs `dpp_read` as well as `export_access`. A consumer without it gets 403 `DPP_FORBIDDEN`.
+	// The archive carries the records, so starting an export needs the permission that reads them as well as `export_access`: `dpp_read` for passports, `product_access` for products, `component_access` for components. A consumer without it gets 403 (`DPP_FORBIDDEN`, `PRODUCT_FORBIDDEN`, `COMPONENT_FORBIDDEN`).
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -6561,7 +6799,7 @@ type ClientInterface interface {
 
 	// DownloadExport Download an export archive
 	//
-	// The archive of a completed export as `application/gzip`. Before completion the answer is 409 `EXPORT_NOT_READY`; a failed export answers 409 `EXPORT_FAILED`; once the archive has been deleted, seven days after completion, the answer is 410 `EXPORT_EXPIRED`. The archive carries the passports, so the download needs `dpp_read` as well; a consumer without it gets 403 `DPP_FORBIDDEN`.
+	// The file of a completed export, under the export's `filename`. An export of one data file comes as that file, as `application/ld+json`, `text/csv`, `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet` or `application/sql`; one with media files or sheets in several languages as `application/zip`, holding one folder named as the export. Before completion the answer is 409 `EXPORT_NOT_READY`; a failed export answers 409 `EXPORT_FAILED`; once the archive has been deleted, seven days after completion, the answer is 410 `EXPORT_EXPIRED`. The archive carries the records of its data type, so the download needs the permission that reads them as well; a consumer without it gets 403.
 	//
 	// Corresponds with GET /exports/{id}/download (the `DownloadExport` operationId).
 	DownloadExport(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -6864,7 +7102,7 @@ type ClientInterface interface {
 	//
 	// The lots batch and item passports freeze from, newest first. A lot is created with the first passport that names its identifier and reused by every later passport of the same lot, so there is nothing to create here: to issue a passport of a new lot, name the lot in `batchIdentifier` on `POST /dpps` or in the shared line of a bulk create. A new lot is taken only of a product that passes every other required readiness check; until then that create answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, and `GET /dpps/requirements` shows what the product still lacks.
 	//
-	// Narrow the list with `product_id` to see which lots a product already has, or with `identifier` to find the lot a passport names.
+	// Narrow the list with `product_id` to see which lots a product already has, or with `identifier` to find the lot a passport names. `sort`, `created_since` and `updated_since` order and bound it for a poll.
 	//
 	// Corresponds with GET /lots (the `ListLots` operationId).
 	ListLots(ctx context.Context, params *ListLotsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -7134,6 +7372,8 @@ type ClientInterface interface {
 	//
 	// Supports full-text search via the `term` parameter and filtering by brand, category, component function, property category, component type, rating and publication. Reads are open, so no permission key gates them.
 	//
+	// `sort`, `created_since` and `updated_since` order and bound the list for a poll, with or without a search term. A credential reads `createdAt` and `updatedAt` on every product.
+	//
 	// Corresponds with GET /products (the `ListProducts` operationId).
 	ListProducts(ctx context.Context, params *ListProductsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -7192,7 +7432,7 @@ type ClientInterface interface {
 
 	// DeleteProduct Delete a product
 	//
-	// Deletes a product you own. A product that variants still refer to, or that a published passport was made from, stays and answers 409 `PRODUCT_DELETE_REFUSED`; the message names the reason and the hint the next step.
+	// Deletes a product you own. A product that a published passport was made from, that a lot was taken of, or that variants still refer to stays and answers 409 `PRODUCT_DELETE_REFUSED`; the message names the first of these reasons that applies, with the passport or the lot it means, and the hint, where there is one, the next step.
 	//
 	// Corresponds with DELETE /products/{id} (the `DeleteProduct` operationId).
 	DeleteProduct(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -7374,7 +7614,7 @@ type ClientInterface interface {
 	// - `all`: every task the caller takes part in; every task for an admin.
 	// - `groups`: retired, read as `mine` until the next release.
 	//
-	// A list the caller may not read answers 422 `TASK_LIST_INVALID`, naming the ones it may.
+	// A list the caller may not read answers 422 `TASK_LIST_INVALID`, naming the ones it may. `sort`, `created_since` and `updated_since` order and bound a list for a poll.
 	//
 	// Corresponds with GET /tasks (the `ListTasks` operationId).
 	ListTasks(ctx context.Context, params *ListTasksParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -7626,6 +7866,8 @@ type ClientInterface interface {
 	//
 	// Subscribes an https endpoint to the versioned passport events of the workspace, all of them or the `eventTypes` named, for every passport or the `resourceScopeDppCodes` named. The answer carries the signing `secret` once; store it, every delivery is signed with it.
 	//
+	// A delivery carries what `GET /events` answers the same credential: it needs `dpp_history`, covers only the passports the credential reaches, and stops while the credential is suspended, revoked or expired.
+	//
 	// A consumer holds at most ten subscriptions and the workspace fifty. Send a test delivery with `POST /webhooks/{id}/test` to see what the endpoint answers before relying on it.
 	//
 	// Takes any type of body and a specified content type.
@@ -7636,6 +7878,8 @@ type ClientInterface interface {
 	// CreateWebhook Create a webhook subscription
 	//
 	// Subscribes an https endpoint to the versioned passport events of the workspace, all of them or the `eventTypes` named, for every passport or the `resourceScopeDppCodes` named. The answer carries the signing `secret` once; store it, every delivery is signed with it.
+	//
+	// A delivery carries what `GET /events` answers the same credential: it needs `dpp_history`, covers only the passports the credential reaches, and stops while the credential is suspended, revoked or expired.
 	//
 	// A consumer holds at most ten subscriptions and the workspace fifty. Send a test delivery with `POST /webhooks/{id}/test` to see what the endpoint answers before relying on it.
 	//
@@ -7896,7 +8140,7 @@ func (c *Client) ListComponentTypes(ctx context.Context, reqEditors ...RequestEd
 //
 // Returns a paginated list of components. A credential holding `component_access` or `component_write` receives every component of the workspace, drafts included; every other reader receives the published components.
 //
-// Supports full-text search and filtering by function, property category, type and publication.
+// Supports full-text search and filtering by function, property category, type and publication. `sort`, `created_since` and `updated_since` order and bound the list for a poll, with or without a search term; a credential reads `createdAt` and `updatedAt` on every component.
 //
 // Corresponds with GET /components (the `ListComponents` operationId).
 func (c *Client) ListComponents(ctx context.Context, params *ListComponentsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -7955,7 +8199,7 @@ func (c *Client) CreateComponent(ctx context.Context, params *CreateComponentPar
 
 // DeleteComponent Delete a component
 //
-// Removes the component from the catalogue. A component that products still list answers 409 `COMPONENT_IN_USE` and names those products; unpublish it instead, or remove it from the products first. A component that a published passport refers to stays as well and answers 409 `COMPONENT_DELETE_REFUSED`, with the reason in the message and the next step in the hint. The caller must own the component, or hold `component_write`.
+// Removes the component from the catalogue. A component that products still list answers 409 `COMPONENT_IN_USE` and names those products; unpublish it instead, or remove it from the products first. A component that a published passport refers to, or that a lot holds, stays as well and answers 409 `COMPONENT_DELETE_REFUSED`; the message names the reason, with the passport or the lot it means, and the hint, where there is one, the next step. The caller must own the component, or hold `component_write`.
 //
 // Corresponds with DELETE /components/{id} (the `DeleteComponent` operationId).
 func (c *Client) DeleteComponent(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -8129,7 +8373,7 @@ func (c *Client) LookupCoupon(ctx context.Context, params *LookupCouponParams, r
 
 // ListDpps List Digital Product Passports
 //
-// Returns a paginated list of DPPs owned by the authenticated user, their group members, or the API consumer. Narrow it with `product_id` and `status` rather than reading the whole catalogue and matching by hand; acting on every passport of one product is what those are for.
+// Returns a paginated list of DPPs owned by the authenticated user, their group members, or the API consumer. Narrow it with `product_id` and `status` rather than reading the whole catalogue and matching by hand; acting on every passport of one product is what those are for. The list is newest first; `sort`, `created_since` and `updated_since` order and bound it for a poll.
 //
 // Corresponds with GET /dpps (the `ListDpps` operationId).
 func (c *Client) ListDpps(ctx context.Context, params *ListDppsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -8723,7 +8967,7 @@ func (c *Client) SupersedeDpp(ctx context.Context, id Id, params *SupersedeDppPa
 
 // ListDppVersions List the registered versions of a DPP
 //
-// Every persisted version of the passport, newest first, each with the integrity pair a reader verifies its snapshot against. Same content as the per-passport manifest on the public CDN, served from the API origin for clients that prefer one host over the other. A scope-limited partner-grant token only reaches its own passports.
+// Every persisted version of the passport, newest first, each with the integrity pair a reader verifies its snapshot against. The versions the per-passport manifest lists, served from the API origin for clients that prefer one host over the other. The manifest names each file by its root path, resolved against the host it was read from; `url` here is the file's absolute address. A scope-limited partner-grant token only reaches its own passports.
 //
 // Corresponds with GET /dpps/{id}/versions (the `ListDppVersions` operationId).
 func (c *Client) ListDppVersions(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -8818,13 +9062,13 @@ func (c *Client) ListExports(ctx context.Context, params *ListExportsParams, req
 	return c.Client.Do(req)
 }
 
-// CreateExportWithBody Start a passport export
+// CreateExportWithBody Start an export
 //
-// Packs what this consumer's own lists answer it with into an archive: the passports of `GET /dpps`, the products of `GET /products` and the components of `GET /components`, with the brands, categories and property types they use. The work runs in the background under the scope of the token that started it, and the answer comes at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.
+// Packs the records of one data type this consumer's own list answers it with into an archive: the passports of `GET /dpps`, the products of `GET /products` or the components of `GET /components`. Each record is self-contained: a product names its components by their `@id`, a passport its product by GTIN and name. The work runs in the background under the scope of the token that started it, and the answer comes at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.
 //
 // The consumer that starts an export is the only one that can read or download it. One export runs at a time per consumer: while one is pending or running, another request answers 409 `EXPORT_IN_PROGRESS` with a hint naming the URL to poll.
 //
-// The archive carries the passports, so starting an export needs `dpp_read` as well as `export_access`. A consumer without it gets 403 `DPP_FORBIDDEN`.
+// The archive carries the records, so starting an export needs the permission that reads them as well as `export_access`: `dpp_read` for passports, `product_access` for products, `component_access` for components. A consumer without it gets 403 (`DPP_FORBIDDEN`, `PRODUCT_FORBIDDEN`, `COMPONENT_FORBIDDEN`).
 //
 // Takes any type of body and a specified content type.
 //
@@ -8841,13 +9085,13 @@ func (c *Client) CreateExportWithBody(ctx context.Context, params *CreateExportP
 	return c.Client.Do(req)
 }
 
-// CreateExport Start a passport export
+// CreateExport Start an export
 //
-// Packs what this consumer's own lists answer it with into an archive: the passports of `GET /dpps`, the products of `GET /products` and the components of `GET /components`, with the brands, categories and property types they use. The work runs in the background under the scope of the token that started it, and the answer comes at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.
+// Packs the records of one data type this consumer's own list answers it with into an archive: the passports of `GET /dpps`, the products of `GET /products` or the components of `GET /components`. Each record is self-contained: a product names its components by their `@id`, a passport its product by GTIN and name. The work runs in the background under the scope of the token that started it, and the answer comes at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.
 //
 // The consumer that starts an export is the only one that can read or download it. One export runs at a time per consumer: while one is pending or running, another request answers 409 `EXPORT_IN_PROGRESS` with a hint naming the URL to poll.
 //
-// The archive carries the passports, so starting an export needs `dpp_read` as well as `export_access`. A consumer without it gets 403 `DPP_FORBIDDEN`.
+// The archive carries the records, so starting an export needs the permission that reads them as well as `export_access`: `dpp_read` for passports, `product_access` for products, `component_access` for components. A consumer without it gets 403 (`DPP_FORBIDDEN`, `PRODUCT_FORBIDDEN`, `COMPONENT_FORBIDDEN`).
 //
 // Takes a body of the `application/json` content type.
 //
@@ -8883,7 +9127,7 @@ func (c *Client) GetExport(ctx context.Context, id Id, reqEditors ...RequestEdit
 
 // DownloadExport Download an export archive
 //
-// The archive of a completed export as `application/gzip`. Before completion the answer is 409 `EXPORT_NOT_READY`; a failed export answers 409 `EXPORT_FAILED`; once the archive has been deleted, seven days after completion, the answer is 410 `EXPORT_EXPIRED`. The archive carries the passports, so the download needs `dpp_read` as well; a consumer without it gets 403 `DPP_FORBIDDEN`.
+// The file of a completed export, under the export's `filename`. An export of one data file comes as that file, as `application/ld+json`, `text/csv`, `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet` or `application/sql`; one with media files or sheets in several languages as `application/zip`, holding one folder named as the export. Before completion the answer is 409 `EXPORT_NOT_READY`; a failed export answers 409 `EXPORT_FAILED`; once the archive has been deleted, seven days after completion, the answer is 410 `EXPORT_EXPIRED`. The archive carries the records of its data type, so the download needs the permission that reads them as well; a consumer without it gets 403.
 //
 // Corresponds with GET /exports/{id}/download (the `DownloadExport` operationId).
 func (c *Client) DownloadExport(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -9536,7 +9780,7 @@ func (c *Client) GetLocalization(ctx context.Context, reqEditors ...RequestEdito
 //
 // The lots batch and item passports freeze from, newest first. A lot is created with the first passport that names its identifier and reused by every later passport of the same lot, so there is nothing to create here: to issue a passport of a new lot, name the lot in `batchIdentifier` on `POST /dpps` or in the shared line of a bulk create. A new lot is taken only of a product that passes every other required readiness check; until then that create answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, and `GET /dpps/requirements` shows what the product still lacks.
 //
-// Narrow the list with `product_id` to see which lots a product already has, or with `identifier` to find the lot a passport names.
+// Narrow the list with `product_id` to see which lots a product already has, or with `identifier` to find the lot a passport names. `sort`, `created_since` and `updated_since` order and bound it for a poll.
 //
 // Corresponds with GET /lots (the `ListLots` operationId).
 func (c *Client) ListLots(ctx context.Context, params *ListLotsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -10086,6 +10330,8 @@ func (c *Client) ListProductProperties(ctx context.Context, params *ListProductP
 //
 // Supports full-text search via the `term` parameter and filtering by brand, category, component function, property category, component type, rating and publication. Reads are open, so no permission key gates them.
 //
+// `sort`, `created_since` and `updated_since` order and bound the list for a poll, with or without a search term. A credential reads `createdAt` and `updatedAt` on every product.
+//
 // Corresponds with GET /products (the `ListProducts` operationId).
 func (c *Client) ListProducts(ctx context.Context, params *ListProductsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewListProductsRequest(c.Server, params)
@@ -10204,7 +10450,7 @@ func (c *Client) GetNewProduct(ctx context.Context, reqEditors ...RequestEditorF
 
 // DeleteProduct Delete a product
 //
-// Deletes a product you own. A product that variants still refer to, or that a published passport was made from, stays and answers 409 `PRODUCT_DELETE_REFUSED`; the message names the reason and the hint the next step.
+// Deletes a product you own. A product that a published passport was made from, that a lot was taken of, or that variants still refer to stays and answers 409 `PRODUCT_DELETE_REFUSED`; the message names the first of these reasons that applies, with the passport or the lot it means, and the hint, where there is one, the next step.
 //
 // Corresponds with DELETE /products/{id} (the `DeleteProduct` operationId).
 func (c *Client) DeleteProduct(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -10576,7 +10822,7 @@ func (c *Client) RefreshSession(ctx context.Context, reqEditors ...RequestEditor
 // - `all`: every task the caller takes part in; every task for an admin.
 // - `groups`: retired, read as `mine` until the next release.
 //
-// A list the caller may not read answers 422 `TASK_LIST_INVALID`, naming the ones it may.
+// A list the caller may not read answers 422 `TASK_LIST_INVALID`, naming the ones it may. `sort`, `created_since` and `updated_since` order and bound a list for a poll.
 //
 // Corresponds with GET /tasks (the `ListTasks` operationId).
 func (c *Client) ListTasks(ctx context.Context, params *ListTasksParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -11128,6 +11374,8 @@ func (c *Client) ListWebhooks(ctx context.Context, params *ListWebhooksParams, r
 //
 // Subscribes an https endpoint to the versioned passport events of the workspace, all of them or the `eventTypes` named, for every passport or the `resourceScopeDppCodes` named. The answer carries the signing `secret` once; store it, every delivery is signed with it.
 //
+// A delivery carries what `GET /events` answers the same credential: it needs `dpp_history`, covers only the passports the credential reaches, and stops while the credential is suspended, revoked or expired.
+//
 // A consumer holds at most ten subscriptions and the workspace fifty. Send a test delivery with `POST /webhooks/{id}/test` to see what the endpoint answers before relying on it.
 //
 // Takes any type of body and a specified content type.
@@ -11148,6 +11396,8 @@ func (c *Client) CreateWebhookWithBody(ctx context.Context, params *CreateWebhoo
 // CreateWebhook Create a webhook subscription
 //
 // Subscribes an https endpoint to the versioned passport events of the workspace, all of them or the `eventTypes` named, for every passport or the `resourceScopeDppCodes` named. The answer carries the signing `secret` once; store it, every delivery is signed with it.
+//
+// A delivery carries what `GET /events` answers the same credential: it needs `dpp_history`, covers only the passports the credential reaches, and stops while the credential is suspended, revoked or expired.
 //
 // A consumer holds at most ten subscriptions and the workspace fifty. Send a test delivery with `POST /webhooks/{id}/test` to see what the endpoint answers before relying on it.
 //
@@ -11733,6 +11983,42 @@ func NewListComponentsRequest(server string, params *ListComponentsParams) (*htt
 
 		}
 
+		if params.Sort != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "sort", *params.Sort, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.CreatedSince != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "created_since", *params.CreatedSince, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: "date-time"}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.UpdatedSince != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "updated_since", *params.UpdatedSince, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: "date-time"}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
 		if params.Published != nil {
 
 			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "published", *params.Published, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "boolean", Format: ""}); err != nil {
@@ -12290,6 +12576,42 @@ func NewListDppsRequest(server string, params *ListDppsParams) (*http.Request, e
 		if params.PerPage != nil {
 
 			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "per_page", *params.PerPage, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Sort != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "sort", *params.Sort, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.CreatedSince != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "created_since", *params.CreatedSince, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: "date-time"}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.UpdatedSince != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "updated_since", *params.UpdatedSince, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: "date-time"}); err != nil {
 				return nil, err
 			} else {
 				for _, qp := range strings.Split(queryFrag, "&") {
@@ -14937,6 +15259,42 @@ func NewListLotsRequest(server string, params *ListLotsParams) (*http.Request, e
 
 		}
 
+		if params.Sort != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "sort", *params.Sort, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.CreatedSince != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "created_since", *params.CreatedSince, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: "date-time"}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.UpdatedSince != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "updated_since", *params.UpdatedSince, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: "date-time"}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
 		if encoded := queryValues.Encode(); encoded != "" {
 			rawQueryFragments = append(rawQueryFragments, encoded)
 		}
@@ -15987,6 +16345,42 @@ func NewListProductsRequest(server string, params *ListProductsParams) (*http.Re
 
 		}
 
+		if params.Sort != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "sort", *params.Sort, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.CreatedSince != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "created_since", *params.CreatedSince, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: "date-time"}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.UpdatedSince != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "updated_since", *params.UpdatedSince, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: "date-time"}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
 		if params.Published != nil {
 
 			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "published", *params.Published, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "boolean", Format: ""}); err != nil {
@@ -16878,6 +17272,42 @@ func NewListTasksRequest(server string, params *ListTasksParams) (*http.Request,
 		if params.PerPage != nil {
 
 			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "per_page", *params.PerPage, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Sort != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "sort", *params.Sort, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.CreatedSince != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "created_since", *params.CreatedSince, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: "date-time"}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.UpdatedSince != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "updated_since", *params.UpdatedSince, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: "date-time"}); err != nil {
 				return nil, err
 			} else {
 				for _, qp := range strings.Split(queryFrag, "&") {
@@ -18214,7 +18644,7 @@ type ClientWithResponsesInterface interface {
 	//
 	// Returns a paginated list of components. A credential holding `component_access` or `component_write` receives every component of the workspace, drafts included; every other reader receives the published components.
 	//
-	// Supports full-text search and filtering by function, property category, type and publication.
+	// Supports full-text search and filtering by function, property category, type and publication. `sort`, `created_since` and `updated_since` order and bound the list for a poll, with or without a search term; a credential reads `createdAt` and `updatedAt` on every component.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
@@ -18245,7 +18675,7 @@ type ClientWithResponsesInterface interface {
 
 	// DeleteComponentWithResponse Delete a component
 	//
-	// Removes the component from the catalogue. A component that products still list answers 409 `COMPONENT_IN_USE` and names those products; unpublish it instead, or remove it from the products first. A component that a published passport refers to stays as well and answers 409 `COMPONENT_DELETE_REFUSED`, with the reason in the message and the next step in the hint. The caller must own the component, or hold `component_write`.
+	// Removes the component from the catalogue. A component that products still list answers 409 `COMPONENT_IN_USE` and names those products; unpublish it instead, or remove it from the products first. A component that a published passport refers to, or that a lot holds, stays as well and answers 409 `COMPONENT_DELETE_REFUSED`; the message names the reason, with the passport or the lot it means, and the hint, where there is one, the next step. The caller must own the component, or hold `component_write`.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
@@ -18335,7 +18765,7 @@ type ClientWithResponsesInterface interface {
 
 	// ListDppsWithResponse List Digital Product Passports
 	//
-	// Returns a paginated list of DPPs owned by the authenticated user, their group members, or the API consumer. Narrow it with `product_id` and `status` rather than reading the whole catalogue and matching by hand; acting on every passport of one product is what those are for.
+	// Returns a paginated list of DPPs owned by the authenticated user, their group members, or the API consumer. Narrow it with `product_id` and `status` rather than reading the whole catalogue and matching by hand; acting on every passport of one product is what those are for. The list is newest first; `sort`, `created_since` and `updated_since` order and bound it for a poll.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
@@ -18649,7 +19079,7 @@ type ClientWithResponsesInterface interface {
 
 	// ListDppVersionsWithResponse List the registered versions of a DPP
 	//
-	// Every persisted version of the passport, newest first, each with the integrity pair a reader verifies its snapshot against. Same content as the per-passport manifest on the public CDN, served from the API origin for clients that prefer one host over the other. A scope-limited partner-grant token only reaches its own passports.
+	// Every persisted version of the passport, newest first, each with the integrity pair a reader verifies its snapshot against. The versions the per-passport manifest lists, served from the API origin for clients that prefer one host over the other. The manifest names each file by its root path, resolved against the host it was read from; `url` here is the file's absolute address. A scope-limited partner-grant token only reaches its own passports.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
@@ -18700,26 +19130,26 @@ type ClientWithResponsesInterface interface {
 	// Corresponds with GET /exports (the `ListExports` operationId).
 	ListExportsWithResponse(ctx context.Context, params *ListExportsParams, reqEditors ...RequestEditorFn) (*ListExportsResponse, error)
 
-	// CreateExportWithBodyWithResponse Start a passport export
+	// CreateExportWithBodyWithResponse Start an export
 	//
-	// Packs what this consumer's own lists answer it with into an archive: the passports of `GET /dpps`, the products of `GET /products` and the components of `GET /components`, with the brands, categories and property types they use. The work runs in the background under the scope of the token that started it, and the answer comes at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.
+	// Packs the records of one data type this consumer's own list answers it with into an archive: the passports of `GET /dpps`, the products of `GET /products` or the components of `GET /components`. Each record is self-contained: a product names its components by their `@id`, a passport its product by GTIN and name. The work runs in the background under the scope of the token that started it, and the answer comes at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.
 	//
 	// The consumer that starts an export is the only one that can read or download it. One export runs at a time per consumer: while one is pending or running, another request answers 409 `EXPORT_IN_PROGRESS` with a hint naming the URL to poll.
 	//
-	// The archive carries the passports, so starting an export needs `dpp_read` as well as `export_access`. A consumer without it gets 403 `DPP_FORBIDDEN`.
+	// The archive carries the records, so starting an export needs the permission that reads them as well as `export_access`: `dpp_read` for passports, `product_access` for products, `component_access` for components. A consumer without it gets 403 (`DPP_FORBIDDEN`, `PRODUCT_FORBIDDEN`, `COMPONENT_FORBIDDEN`).
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with POST /exports (the `CreateExport` operationId).
 	CreateExportWithBodyWithResponse(ctx context.Context, params *CreateExportParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateExportResponse, error)
 
-	// CreateExportWithResponse Start a passport export
+	// CreateExportWithResponse Start an export
 	//
-	// Packs what this consumer's own lists answer it with into an archive: the passports of `GET /dpps`, the products of `GET /products` and the components of `GET /components`, with the brands, categories and property types they use. The work runs in the background under the scope of the token that started it, and the answer comes at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.
+	// Packs the records of one data type this consumer's own list answers it with into an archive: the passports of `GET /dpps`, the products of `GET /products` or the components of `GET /components`. Each record is self-contained: a product names its components by their `@id`, a passport its product by GTIN and name. The work runs in the background under the scope of the token that started it, and the answer comes at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.
 	//
 	// The consumer that starts an export is the only one that can read or download it. One export runs at a time per consumer: while one is pending or running, another request answers 409 `EXPORT_IN_PROGRESS` with a hint naming the URL to poll.
 	//
-	// The archive carries the passports, so starting an export needs `dpp_read` as well as `export_access`. A consumer without it gets 403 `DPP_FORBIDDEN`.
+	// The archive carries the records, so starting an export needs the permission that reads them as well as `export_access`: `dpp_read` for passports, `product_access` for products, `component_access` for components. A consumer without it gets 403 (`DPP_FORBIDDEN`, `PRODUCT_FORBIDDEN`, `COMPONENT_FORBIDDEN`).
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -18737,7 +19167,7 @@ type ClientWithResponsesInterface interface {
 
 	// DownloadExportWithResponse Download an export archive
 	//
-	// The archive of a completed export as `application/gzip`. Before completion the answer is 409 `EXPORT_NOT_READY`; a failed export answers 409 `EXPORT_FAILED`; once the archive has been deleted, seven days after completion, the answer is 410 `EXPORT_EXPIRED`. The archive carries the passports, so the download needs `dpp_read` as well; a consumer without it gets 403 `DPP_FORBIDDEN`.
+	// The file of a completed export, under the export's `filename`. An export of one data file comes as that file, as `application/ld+json`, `text/csv`, `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet` or `application/sql`; one with media files or sheets in several languages as `application/zip`, holding one folder named as the export. Before completion the answer is 409 `EXPORT_NOT_READY`; a failed export answers 409 `EXPORT_FAILED`; once the archive has been deleted, seven days after completion, the answer is 410 `EXPORT_EXPIRED`. The archive carries the records of its data type, so the download needs the permission that reads them as well; a consumer without it gets 403.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
@@ -19072,7 +19502,7 @@ type ClientWithResponsesInterface interface {
 	//
 	// The lots batch and item passports freeze from, newest first. A lot is created with the first passport that names its identifier and reused by every later passport of the same lot, so there is nothing to create here: to issue a passport of a new lot, name the lot in `batchIdentifier` on `POST /dpps` or in the shared line of a bulk create. A new lot is taken only of a product that passes every other required readiness check; until then that create answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, and `GET /dpps/requirements` shows what the product still lacks.
 	//
-	// Narrow the list with `product_id` to see which lots a product already has, or with `identifier` to find the lot a passport names.
+	// Narrow the list with `product_id` to see which lots a product already has, or with `identifier` to find the lot a passport names. `sort`, `created_since` and `updated_since` order and bound it for a poll.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
@@ -19374,6 +19804,8 @@ type ClientWithResponsesInterface interface {
 	//
 	// Supports full-text search via the `term` parameter and filtering by brand, category, component function, property category, component type, rating and publication. Reads are open, so no permission key gates them.
 	//
+	// `sort`, `created_since` and `updated_since` order and bound the list for a poll, with or without a search term. A credential reads `createdAt` and `updatedAt` on every product.
+	//
 	// Returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with GET /products (the `ListProducts` operationId).
@@ -19436,7 +19868,7 @@ type ClientWithResponsesInterface interface {
 
 	// DeleteProductWithResponse Delete a product
 	//
-	// Deletes a product you own. A product that variants still refer to, or that a published passport was made from, stays and answers 409 `PRODUCT_DELETE_REFUSED`; the message names the reason and the hint the next step.
+	// Deletes a product you own. A product that a published passport was made from, that a lot was taken of, or that variants still refer to stays and answers 409 `PRODUCT_DELETE_REFUSED`; the message names the first of these reasons that applies, with the passport or the lot it means, and the hint, where there is one, the next step.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
@@ -19632,7 +20064,7 @@ type ClientWithResponsesInterface interface {
 	// - `all`: every task the caller takes part in; every task for an admin.
 	// - `groups`: retired, read as `mine` until the next release.
 	//
-	// A list the caller may not read answers 422 `TASK_LIST_INVALID`, naming the ones it may.
+	// A list the caller may not read answers 422 `TASK_LIST_INVALID`, naming the ones it may. `sort`, `created_since` and `updated_since` order and bound a list for a poll.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
@@ -19912,6 +20344,8 @@ type ClientWithResponsesInterface interface {
 	//
 	// Subscribes an https endpoint to the versioned passport events of the workspace, all of them or the `eventTypes` named, for every passport or the `resourceScopeDppCodes` named. The answer carries the signing `secret` once; store it, every delivery is signed with it.
 	//
+	// A delivery carries what `GET /events` answers the same credential: it needs `dpp_history`, covers only the passports the credential reaches, and stops while the credential is suspended, revoked or expired.
+	//
 	// A consumer holds at most ten subscriptions and the workspace fifty. Send a test delivery with `POST /webhooks/{id}/test` to see what the endpoint answers before relying on it.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
@@ -19922,6 +20356,8 @@ type ClientWithResponsesInterface interface {
 	// CreateWebhookWithResponse Create a webhook subscription
 	//
 	// Subscribes an https endpoint to the versioned passport events of the workspace, all of them or the `eventTypes` named, for every passport or the `resourceScopeDppCodes` named. The answer carries the signing `secret` once; store it, every delivery is signed with it.
+	//
+	// A delivery carries what `GET /events` answers the same credential: it needs `dpp_history`, covers only the passports the credential reaches, and stops while the credential is suspended, revoked or expired.
 	//
 	// A consumer holds at most ten subscriptions and the workspace fifty. Send a test delivery with `POST /webhooks/{id}/test` to see what the endpoint answers before relying on it.
 	//
@@ -21187,6 +21623,10 @@ type ListDppsResponse struct {
 	JSON401 *Unauthorized
 	// JSON402 the response for an HTTP 402 `application/json` response
 	JSON402 *MembershipExpired
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
+	// JSON422 the response for an HTTP 422 `application/json` response
+	JSON422 *ValidationError
 	// Headers200 the parsed response headers for an HTTP 200 response
 	Headers200 *ListDppsResponse200Headers
 }
@@ -21206,6 +21646,16 @@ func (r ListDppsResponse) GetJSON401() *Unauthorized {
 // GetJSON402 returns the response for an HTTP 402 `application/json` response
 func (r ListDppsResponse) GetJSON402() *MembershipExpired {
 	return r.JSON402
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r ListDppsResponse) GetJSON403() *Forbidden {
+	return r.JSON403
+}
+
+// GetJSON422 returns the response for an HTTP 422 `application/json` response
+func (r ListDppsResponse) GetJSON422() *ValidationError {
+	return r.JSON422
 }
 
 // GetBody returns the raw response body bytes
@@ -23183,6 +23633,8 @@ func (r GetExportResponse) ContentType() string {
 type DownloadExportResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
+	// ApplicationldJSON200 the response for an HTTP 200 `application/ld+json` response
+	ApplicationldJSON200 *openapi_types.File
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
 	// JSON403 the response for an HTTP 403 `application/json` response
@@ -23193,6 +23645,11 @@ type DownloadExportResponse struct {
 	JSON409 *Error
 	// JSON410 the response for an HTTP 410 `application/json` response
 	JSON410 *Error
+}
+
+// GetApplicationldJSON200 returns the response for an HTTP 200 `application/ld+json` response
+func (r DownloadExportResponse) GetApplicationldJSON200() *openapi_types.File {
+	return r.ApplicationldJSON200
 }
 
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
@@ -24872,6 +25329,8 @@ type ListLotsResponse struct {
 	JSON401 *Unauthorized
 	// JSON403 the response for an HTTP 403 `application/json` response
 	JSON403 *Forbidden
+	// JSON422 the response for an HTTP 422 `application/json` response
+	JSON422 *ValidationError
 	// Headers200 the parsed response headers for an HTTP 200 response
 	Headers200 *ListLotsResponse200Headers
 }
@@ -24891,6 +25350,11 @@ func (r ListLotsResponse) GetJSON401() *Unauthorized {
 // GetJSON403 returns the response for an HTTP 403 `application/json` response
 func (r ListLotsResponse) GetJSON403() *Forbidden {
 	return r.JSON403
+}
+
+// GetJSON422 returns the response for an HTTP 422 `application/json` response
+func (r ListLotsResponse) GetJSON422() *ValidationError {
+	return r.JSON422
 }
 
 // GetBody returns the raw response body bytes
@@ -29315,7 +29779,7 @@ func (c *ClientWithResponses) ListComponentTypesWithResponse(ctx context.Context
 //
 // Returns a paginated list of components. A credential holding `component_access` or `component_write` receives every component of the workspace, drafts included; every other reader receives the published components.
 //
-// Supports full-text search and filtering by function, property category, type and publication.
+// Supports full-text search and filtering by function, property category, type and publication. `sort`, `created_since` and `updated_since` order and bound the list for a poll, with or without a search term; a credential reads `createdAt` and `updatedAt` on every component.
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -29364,7 +29828,7 @@ func (c *ClientWithResponses) CreateComponentWithResponse(ctx context.Context, p
 
 // DeleteComponentWithResponse Delete a component
 //
-// Removes the component from the catalogue. A component that products still list answers 409 `COMPONENT_IN_USE` and names those products; unpublish it instead, or remove it from the products first. A component that a published passport refers to stays as well and answers 409 `COMPONENT_DELETE_REFUSED`, with the reason in the message and the next step in the hint. The caller must own the component, or hold `component_write`.
+// Removes the component from the catalogue. A component that products still list answers 409 `COMPONENT_IN_USE` and names those products; unpublish it instead, or remove it from the products first. A component that a published passport refers to, or that a lot holds, stays as well and answers 409 `COMPONENT_DELETE_REFUSED`; the message names the reason, with the passport or the lot it means, and the hint, where there is one, the next step. The caller must own the component, or hold `component_write`.
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -29514,7 +29978,7 @@ func (c *ClientWithResponses) LookupCouponWithResponse(ctx context.Context, para
 
 // ListDppsWithResponse List Digital Product Passports
 //
-// Returns a paginated list of DPPs owned by the authenticated user, their group members, or the API consumer. Narrow it with `product_id` and `status` rather than reading the whole catalogue and matching by hand; acting on every passport of one product is what those are for.
+// Returns a paginated list of DPPs owned by the authenticated user, their group members, or the API consumer. Narrow it with `product_id` and `status` rather than reading the whole catalogue and matching by hand; acting on every passport of one product is what those are for. The list is newest first; `sort`, `created_since` and `updated_since` order and bound it for a poll.
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -30008,7 +30472,7 @@ func (c *ClientWithResponses) SupersedeDppWithResponse(ctx context.Context, id I
 
 // ListDppVersionsWithResponse List the registered versions of a DPP
 //
-// Every persisted version of the passport, newest first, each with the integrity pair a reader verifies its snapshot against. Same content as the per-passport manifest on the public CDN, served from the API origin for clients that prefer one host over the other. A scope-limited partner-grant token only reaches its own passports.
+// Every persisted version of the passport, newest first, each with the integrity pair a reader verifies its snapshot against. The versions the per-passport manifest lists, served from the API origin for clients that prefer one host over the other. The manifest names each file by its root path, resolved against the host it was read from; `url` here is the file's absolute address. A scope-limited partner-grant token only reaches its own passports.
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -30089,13 +30553,13 @@ func (c *ClientWithResponses) ListExportsWithResponse(ctx context.Context, param
 	return ParseListExportsResponse(rsp)
 }
 
-// CreateExportWithBodyWithResponse Start a passport export
+// CreateExportWithBodyWithResponse Start an export
 //
-// Packs what this consumer's own lists answer it with into an archive: the passports of `GET /dpps`, the products of `GET /products` and the components of `GET /components`, with the brands, categories and property types they use. The work runs in the background under the scope of the token that started it, and the answer comes at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.
+// Packs the records of one data type this consumer's own list answers it with into an archive: the passports of `GET /dpps`, the products of `GET /products` or the components of `GET /components`. Each record is self-contained: a product names its components by their `@id`, a passport its product by GTIN and name. The work runs in the background under the scope of the token that started it, and the answer comes at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.
 //
 // The consumer that starts an export is the only one that can read or download it. One export runs at a time per consumer: while one is pending or running, another request answers 409 `EXPORT_IN_PROGRESS` with a hint naming the URL to poll.
 //
-// The archive carries the passports, so starting an export needs `dpp_read` as well as `export_access`. A consumer without it gets 403 `DPP_FORBIDDEN`.
+// The archive carries the records, so starting an export needs the permission that reads them as well as `export_access`: `dpp_read` for passports, `product_access` for products, `component_access` for components. A consumer without it gets 403 (`DPP_FORBIDDEN`, `PRODUCT_FORBIDDEN`, `COMPONENT_FORBIDDEN`).
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -30108,13 +30572,13 @@ func (c *ClientWithResponses) CreateExportWithBodyWithResponse(ctx context.Conte
 	return ParseCreateExportResponse(rsp)
 }
 
-// CreateExportWithResponse Start a passport export
+// CreateExportWithResponse Start an export
 //
-// Packs what this consumer's own lists answer it with into an archive: the passports of `GET /dpps`, the products of `GET /products` and the components of `GET /components`, with the brands, categories and property types they use. The work runs in the background under the scope of the token that started it, and the answer comes at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.
+// Packs the records of one data type this consumer's own list answers it with into an archive: the passports of `GET /dpps`, the products of `GET /products` or the components of `GET /components`. Each record is self-contained: a product names its components by their `@id`, a passport its product by GTIN and name. The work runs in the background under the scope of the token that started it, and the answer comes at once with the export and its `statusUrl`. Poll that URL until `status` is `completed`, then fetch the `downloadUrl` it names. The archive is kept for seven days after completion.
 //
 // The consumer that starts an export is the only one that can read or download it. One export runs at a time per consumer: while one is pending or running, another request answers 409 `EXPORT_IN_PROGRESS` with a hint naming the URL to poll.
 //
-// The archive carries the passports, so starting an export needs `dpp_read` as well as `export_access`. A consumer without it gets 403 `DPP_FORBIDDEN`.
+// The archive carries the records, so starting an export needs the permission that reads them as well as `export_access`: `dpp_read` for passports, `product_access` for products, `component_access` for components. A consumer without it gets 403 (`DPP_FORBIDDEN`, `PRODUCT_FORBIDDEN`, `COMPONENT_FORBIDDEN`).
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
@@ -30144,7 +30608,7 @@ func (c *ClientWithResponses) GetExportWithResponse(ctx context.Context, id Id, 
 
 // DownloadExportWithResponse Download an export archive
 //
-// The archive of a completed export as `application/gzip`. Before completion the answer is 409 `EXPORT_NOT_READY`; a failed export answers 409 `EXPORT_FAILED`; once the archive has been deleted, seven days after completion, the answer is 410 `EXPORT_EXPIRED`. The archive carries the passports, so the download needs `dpp_read` as well; a consumer without it gets 403 `DPP_FORBIDDEN`.
+// The file of a completed export, under the export's `filename`. An export of one data file comes as that file, as `application/ld+json`, `text/csv`, `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet` or `application/sql`; one with media files or sheets in several languages as `application/zip`, holding one folder named as the export. Before completion the answer is 409 `EXPORT_NOT_READY`; a failed export answers 409 `EXPORT_FAILED`; once the archive has been deleted, seven days after completion, the answer is 410 `EXPORT_EXPIRED`. The archive carries the records of its data type, so the download needs the permission that reads them as well; a consumer without it gets 403.
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -30689,7 +31153,7 @@ func (c *ClientWithResponses) GetLocalizationWithResponse(ctx context.Context, r
 //
 // The lots batch and item passports freeze from, newest first. A lot is created with the first passport that names its identifier and reused by every later passport of the same lot, so there is nothing to create here: to issue a passport of a new lot, name the lot in `batchIdentifier` on `POST /dpps` or in the shared line of a bulk create. A new lot is taken only of a product that passes every other required readiness check; until then that create answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, and `GET /dpps/requirements` shows what the product still lacks.
 //
-// Narrow the list with `product_id` to see which lots a product already has, or with `identifier` to find the lot a passport names.
+// Narrow the list with `product_id` to see which lots a product already has, or with `identifier` to find the lot a passport names. `sort`, `created_since` and `updated_since` order and bound it for a poll.
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -31159,6 +31623,8 @@ func (c *ClientWithResponses) ListProductPropertiesWithResponse(ctx context.Cont
 //
 // Supports full-text search via the `term` parameter and filtering by brand, category, component function, property category, component type, rating and publication. Reads are open, so no permission key gates them.
 //
+// `sort`, `created_since` and `updated_since` order and bound the list for a poll, with or without a search term. A credential reads `createdAt` and `updatedAt` on every product.
+//
 // Returns a wrapper object for the known response body format(s).
 //
 // Corresponds with GET /products (the `ListProducts` operationId).
@@ -31257,7 +31723,7 @@ func (c *ClientWithResponses) GetNewProductWithResponse(ctx context.Context, req
 
 // DeleteProductWithResponse Delete a product
 //
-// Deletes a product you own. A product that variants still refer to, or that a published passport was made from, stays and answers 409 `PRODUCT_DELETE_REFUSED`; the message names the reason and the hint the next step.
+// Deletes a product you own. A product that a published passport was made from, that a lot was taken of, or that variants still refer to stays and answers 409 `PRODUCT_DELETE_REFUSED`; the message names the first of these reasons that applies, with the passport or the lot it means, and the hint, where there is one, the next step.
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -31567,7 +32033,7 @@ func (c *ClientWithResponses) RefreshSessionWithResponse(ctx context.Context, re
 // - `all`: every task the caller takes part in; every task for an admin.
 // - `groups`: retired, read as `mine` until the next release.
 //
-// A list the caller may not read answers 422 `TASK_LIST_INVALID`, naming the ones it may.
+// A list the caller may not read answers 422 `TASK_LIST_INVALID`, naming the ones it may. `sort`, `created_since` and `updated_since` order and bound a list for a poll.
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -32027,6 +32493,8 @@ func (c *ClientWithResponses) ListWebhooksWithResponse(ctx context.Context, para
 //
 // Subscribes an https endpoint to the versioned passport events of the workspace, all of them or the `eventTypes` named, for every passport or the `resourceScopeDppCodes` named. The answer carries the signing `secret` once; store it, every delivery is signed with it.
 //
+// A delivery carries what `GET /events` answers the same credential: it needs `dpp_history`, covers only the passports the credential reaches, and stops while the credential is suspended, revoked or expired.
+//
 // A consumer holds at most ten subscriptions and the workspace fifty. Send a test delivery with `POST /webhooks/{id}/test` to see what the endpoint answers before relying on it.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
@@ -32043,6 +32511,8 @@ func (c *ClientWithResponses) CreateWebhookWithBodyWithResponse(ctx context.Cont
 // CreateWebhookWithResponse Create a webhook subscription
 //
 // Subscribes an https endpoint to the versioned passport events of the workspace, all of them or the `eventTypes` named, for every passport or the `resourceScopeDppCodes` named. The answer carries the signing `secret` once; store it, every delivery is signed with it.
+//
+// A delivery carries what `GET /events` answers the same credential: it needs `dpp_history`, covers only the passports the credential reaches, and stops while the credential is suspended, revoked or expired.
 //
 // A consumer holds at most ten subscriptions and the workspace fifty. Send a test delivery with `POST /webhooks/{id}/test` to see what the endpoint answers before relying on it.
 //
@@ -33193,6 +33663,20 @@ func ParseListDppsResponse(rsp *http.Response) (*ListDppsResponse, error) {
 			return nil, err
 		}
 		response.JSON402 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest ValidationError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
 
 	}
 
@@ -34898,6 +35382,13 @@ func ParseDownloadExportResponse(rsp *http.Response) (*DownloadExportResponse, e
 	}
 
 	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest openapi_types.File
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationldJSON200 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
 		var dest Unauthorized
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -34932,6 +35423,9 @@ func ParseDownloadExportResponse(rsp *http.Response) (*DownloadExportResponse, e
 			return nil, err
 		}
 		response.JSON410 = &dest
+
+	case rsp.StatusCode == 200:
+		// Content-type (text/csv) unsupported
 
 	}
 
@@ -36282,6 +36776,13 @@ func ParseListLotsResponse(rsp *http.Response) (*ListLotsResponse, error) {
 			return nil, err
 		}
 		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest ValidationError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
 
 	}
 

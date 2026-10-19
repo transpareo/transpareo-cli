@@ -149,14 +149,17 @@
   {
     "path": "transpareo components list",
     "flags": [
+      "created-since",
       "function-ids",
       "output",
       "page",
       "per-page",
       "property-category-ids",
       "published",
+      "sort",
       "term",
-      "type-ids"
+      "type-ids",
+      "updated-since"
     ],
     "operationId": "list_components"
   },
@@ -322,12 +325,15 @@
   {
     "path": "transpareo dpps list",
     "flags": [
+      "created-since",
       "output",
       "page",
       "per-page",
       "product-id",
+      "sort",
       "status",
-      "term"
+      "term",
+      "updated-since"
     ],
     "operationId": "list_dpps"
   },
@@ -643,11 +649,14 @@
   {
     "path": "transpareo lots list",
     "flags": [
+      "created-since",
       "identifier",
       "output",
       "page",
       "per-page",
-      "product-id"
+      "product-id",
+      "sort",
+      "updated-since"
     ],
     "operationId": "list_lots"
   },
@@ -753,6 +762,7 @@
     "flags": [
       "brand-id",
       "category-ids",
+      "created-since",
       "exact",
       "function-ids",
       "output",
@@ -761,8 +771,10 @@
       "property-category-ids",
       "published",
       "rating",
+      "sort",
       "term",
-      "type-ids"
+      "type-ids",
+      "updated-since"
     ],
     "operationId": "list_products"
   },
@@ -997,11 +1009,14 @@
   {
     "path": "transpareo tasks list",
     "flags": [
+      "created-since",
       "list",
       "output",
       "page",
       "per-page",
-      "term"
+      "sort",
+      "term",
+      "updated-since"
     ],
     "operationId": "list_tasks"
   },
