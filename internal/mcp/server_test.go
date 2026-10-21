@@ -598,7 +598,7 @@ func TestDataTools(t *testing.T) {
 		}
 		writeJSON(w, 200, map[string]any{"id": 42, "status": status,
 			"progress":    50 * polls,
-			"filename":    "x.tar.gz",
+			"filename":    "x.csv",
 			"downloadUrl": host.URL + "/api/exports/42/download"})
 	})
 	mux.HandleFunc("POST /api/exports", func(w http.ResponseWriter,

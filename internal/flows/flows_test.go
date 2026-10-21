@@ -440,14 +440,14 @@ func TestExportStartWaitAndDownload(t *testing.T) {
 			return
 		}
 		writeJSON(w, 200, map[string]any{"id": 42, "status": "completed",
-			"filename":    "export.tar.gz",
+			"filename":    "export.csv",
 			"downloadUrl": h.URL + "/api/exports/42/download"})
 	})
 	h.mux.HandleFunc("GET /api/exports/42/download", func(w http.ResponseWriter,
 		r *http.Request) {
 		h.record(r)
-		w.Header().Set("Content-Type", "application/gzip")
-		w.Write([]byte("GZIP-BYTES"))
+		w.Header().Set("Content-Type", "text/csv")
+		w.Write([]byte("code,name\n"))
 	})
 	normalize := true
 	exp, err := StartExport(context.Background(), c,
@@ -460,13 +460,13 @@ func TestExportStartWaitAndDownload(t *testing.T) {
 	if body != `{"export":{"format":"csv","normalize":true}}` {
 		t.Errorf("body = %s", body)
 	}
-	if exp.Status != "completed" || exp.Filename != "export.tar.gz" ||
-		exp.Summary() != "export 42 completed (export.tar.gz)" {
+	if exp.Status != "completed" || exp.Filename != "export.csv" ||
+		exp.Summary() != "export 42 completed (export.csv)" {
 		t.Errorf("export = %+v", exp)
 	}
 	var out strings.Builder
 	n, err := Download(context.Background(), c, exp, &out)
-	if err != nil || n != 10 || out.String() != "GZIP-BYTES" {
+	if err != nil || n != 10 || out.String() != "code,name\n" {
 		t.Errorf("download = %d %q %v", n, out.String(), err)
 	}
 	req, _ := h.last()

@@ -583,11 +583,33 @@ func TestExportCreateAndDownload(t *testing.T) {
 	}
 	var buf bytes.Buffer
 	n, err := flows.Download(ctx, c, exp, &buf)
-	if err != nil || n == 0 ||
-		!bytes.HasPrefix(buf.Bytes(), []byte{0x1f, 0x8b}) {
-		t.Errorf("download: %d bytes, err %v, gzip header %v", n, err,
+	if err != nil || n == 0 {
+		t.Fatalf("download: %d bytes, err %v", n, err)
+	}
+	if problem := exportMismatch(exp.Filename, buf.Bytes()); problem != "" {
+		t.Errorf("download of %q: %s, starts %q", exp.Filename, problem,
 			buf.Bytes()[:min(2, buf.Len())])
 	}
+}
+
+// exportMismatch says how the downloaded bytes disagree with the file
+// name the export reports, or "" when they match. One data file comes
+// as itself and anything more as a ZIP; the transport has already
+// undone any compression of the transfer.
+func exportMismatch(name string, data []byte) string {
+	switch filepath.Ext(name) {
+	case ".jsonld":
+		if !json.Valid(data) {
+			return "not JSON"
+		}
+	case ".zip":
+		if !bytes.HasPrefix(data, []byte("PK")) {
+			return "not a ZIP"
+		}
+	default:
+		return "a name a JSON-LD export never has"
+	}
+	return ""
 }
 
 func TestWebhookCreateTestDelete(t *testing.T) {

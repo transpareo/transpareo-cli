@@ -995,7 +995,7 @@ Start a passport export, wait for it and download the archive.
 ```sh
 transpareo exports create [--format jsonld|csv|xlsx|sql] [--wait] [--download <path>]
 transpareo exports create --format jsonld --wait \
-    --download catalogue.tar.gz
+    --download catalogue.jsonld
 transpareo exports create --format csv --normalize
 ```
 
