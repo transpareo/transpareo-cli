@@ -206,7 +206,7 @@ any of them shows an example and the permission it needs;
 - `transpareo products create`: Create a product (product_access)
 - `transpareo products delete <id>`: Delete a product (product_access)
 - `transpareo products featured list`: List featured products
-- `transpareo products get <id>`: Get a product
+- `transpareo products get <id>`: Get a product (product_access)
 - `transpareo products list`: List products
 - `transpareo products mediafiles update <id>`: Update product mediafile assignments (product_access)
 - `transpareo products new`: Get new product template

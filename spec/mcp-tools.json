@@ -1,5 +1,5 @@
 {
-  "version": "2.27.0",
+  "version": "2.41.1",
   "instructions": "Transpareo holds a workspace's products, components and Digital\nProduct Passports. Start with me to learn what the credential\nallows. Where its workspace.publishesOnCreate is true, every\nproduct and component is published as it is created, so never\nask the person to publish anything and never mention a\nstorefront, catalogue visibility or a frontend app.\nFor a new product call product_property_types before\ncreate_product. A variant follows its parent in every value\nits inheritance does not mark pinned or parent_moved;\nrestore_product_values has a value follow again. For\npassports of an existing product call\ndpp_requirements, then validate_dpp before create_dpp. A passport\nof a batch or an item names its lot in batchIdentifier and the lot\nis created with the first passport that names it; there is no\nseparate lot step. A new lot is taken only of a product that\npasses every other required readiness check; until then the\ncreate answers DPP_BATCH_PRODUCT_NOT_READY on batch, and the\nproduct is completed first. list_lots shows the lots a product already\nhas. A run of passports goes through bulk_create_dpps with the\nlot in shared. publish_dpp\nsigns the passport and cannot be undone. Recalling a unit is a\nstatus change to suspended through append_dpp_event, not a void;\nvoid_dpp is for a unit that no longer exists. void_dpp and\nsupersede_dpp need the confirm argument with the stated phrase.\nA spreadsheet you have read goes in through import_spreadsheet as\nrows keyed by the column headers, never as base64; when it\nanswers a preview, take the suggestion of every column with a\nmatch, ask the person one short question per column with\nmatchType none, and call again with the same rows and mappings,\nusing create_new for columns that should become property types.\nSet auto where the mapping is clear: the headings are those of\nthe import template, or ones you have already seen resolve in\nthis workspace. While a column has no match, work from the preview.\nA spreadsheet the person attached in the application manager\nstays on the server and is read with read_attachment, a page of\nrows at a time under its handle. Importing what it holds is a\nseparate step the person asks for; the same handle then goes to\nimport_spreadsheet as upload.\nA run started earlier, or in another session, is found with\nlist_imports or list_exports and read with wait_for_task on its\nstatusUrl.\nA question about how a person does something in the application\nmanager is answered from the help articles: search_help for the\ntopic, then read_help for the article. The API guide describes the\ncalls a program makes; the help articles describe the screens a\nperson uses.\nWork colleagues ask of the person is a task: list_tasks answers\nwhat waits on them, and each task names in moves what the\ncredential may do with it. Reviews show there as well and are\ndecided with approve_task and reject_task.\nAnything without a tool: search_operations, then call_api. Lists\nare paged; follow nextPage. Keep every answer short: what was\ndone, what was found, the one decision that is open.",
   "tools": [
     {
@@ -910,7 +910,7 @@
                 "validatorVersion": {
                   "type": "string",
                   "description": "The rule set that produced this report",
-                  "example": "shacl-v1"
+                  "example": "shacl-v2"
                 },
                 "must": {
                   "type": "array",
@@ -978,7 +978,7 @@
                 }
               },
               "example": {
-                "validatorVersion": "shacl-v1",
+                "validatorVersion": "shacl-v2",
                 "must": [
                   {
                     "path": "issuer.name",
@@ -2817,6 +2817,16 @@
             "type": "string",
             "description": "The article number (Manufacturer Part Number) the maker gives the component. Present only when set, and only for a signed-in caller or an API consumer."
           },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the component was created. Present only for a signed-in caller or an API consumer."
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the component was last saved. Present only for a signed-in caller or an API consumer."
+          },
           "templateIds": {
             "type": "array",
             "items": {
@@ -3003,6 +3013,16 @@
                   "example": "4005808920310",
                   "description": "Global Trade Item Number (only when present)"
                 },
+                "mpn": {
+                  "type": "string",
+                  "example": "NC-50",
+                  "description": "Manufacturer part number (only when present)"
+                },
+                "hsCode": {
+                  "type": "string",
+                  "example": "33049900",
+                  "description": "Customs tariff number, the 8-digit CN code or the 6-digit HS code (only when present)"
+                },
                 "token": {
                   "type": "string",
                   "description": "Claim token for unclaimed products (only when present)"
@@ -3011,6 +3031,16 @@
                   "type": "integer",
                   "nullable": true,
                   "description": "The product this one is a variant of, null on a root. Present only for a signed-in caller or an API consumer."
+                },
+                "createdAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "When the product was created. Present only for a signed-in caller or an API consumer."
+                },
+                "updatedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "When the product was last saved. Present only for a signed-in caller or an API consumer."
                 },
                 "weight": {
                   "type": "number",
@@ -3149,7 +3179,7 @@
                 "items": {
                   "type": "string"
                 },
-                "description": "Property type IDs to display on the DPP page"
+                "description": "The product property types the passport carries, by id; left out or empty, it carries every one. `GET /dpps/requirements` lists a product's under `inheritedProperties`. An id naming no product property type refuses the write with 422 `DPP_PROPERTY_TYPES_REFUSED`."
               }
             }
           },
@@ -3226,6 +3256,16 @@
                 "example": "4005808920310",
                 "description": "Global Trade Item Number (only when present)"
               },
+              "mpn": {
+                "type": "string",
+                "example": "NC-50",
+                "description": "Manufacturer part number (only when present)"
+              },
+              "hsCode": {
+                "type": "string",
+                "example": "33049900",
+                "description": "Customs tariff number, the 8-digit CN code or the 6-digit HS code (only when present)"
+              },
               "token": {
                 "type": "string",
                 "description": "Claim token for unclaimed products (only when present)"
@@ -3234,6 +3274,16 @@
                 "type": "integer",
                 "nullable": true,
                 "description": "The product this one is a variant of, null on a root. Present only for a signed-in caller or an API consumer."
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "When the product was created. Present only for a signed-in caller or an API consumer."
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "When the product was last saved. Present only for a signed-in caller or an API consumer."
               },
               "weight": {
                 "type": "number",
@@ -3382,6 +3432,11 @@
             "type": "string",
             "format": "date-time"
           },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the passport was last saved"
+          },
           "dppComponents": {
             "type": "array",
             "description": "Linked product's components with ratings (only present when the product has components)",
@@ -3403,7 +3458,7 @@
               "validatorVersion": {
                 "type": "string",
                 "description": "The rule set that produced this report",
-                "example": "shacl-v1"
+                "example": "shacl-v2"
               },
               "must": {
                 "type": "array",
@@ -3471,7 +3526,7 @@
               }
             },
             "example": {
-              "validatorVersion": "shacl-v1",
+              "validatorVersion": "shacl-v2",
               "must": [
                 {
                   "path": "issuer.name",
@@ -3501,7 +3556,8 @@
             "type": "Product",
             "name": "Hydrating Face Cream"
           },
-          "createdAt": "2026-02-01T12:00:00Z"
+          "createdAt": "2026-02-01T12:00:00Z",
+          "updatedAt": "2026-02-03T08:30:00Z"
         }
       },
       "annotations": {
@@ -3612,6 +3668,16 @@
               "gtin": {
                 "type": "string"
               },
+              "mpn": {
+                "type": "string",
+                "description": "The manufacturer part number, the model identifier a passport carries where the product has no GTIN. A workspace that asks every product for a model identifier refuses one with neither, with 422 naming `mpn`. An empty string clears it.",
+                "example": "NC-50"
+              },
+              "hsCode": {
+                "type": "string",
+                "description": "The customs tariff number, the 8-digit CN code or, until the CN subheading is known, the 6-digit HS code. Spaces and dots between the digits are dropped (`6109 10 00` is stored as `61091000`); any other shape is refused with 422 naming `hsCode`. A passport publishes the first six digits as its HS code and all eight as its CN code. On a variant it is a value taken from the parent, so a number that differs becomes the variant's own. An empty string clears it.",
+                "example": "61091000"
+              },
               "parentId": {
                 "type": "integer",
                 "description": "On a create, the product the new one is a variant of. It starts as a copy of that product and takes its later changes, and the other fields of the body become its own where they differ. An update leaves it out or names the parent the product has."
@@ -3654,7 +3720,7 @@
               },
               "propertiesInput": {
                 "type": "object",
-                "description": "Property values keyed by property type id, as GET /products/new lists them. An entry is a bare value, an object with value plus an optional percentage and compositionRows, or a list of either for a type that takes several values. A type named here is replaced by what the entry carries; a type left out keeps the values it has. On a variant, a value the product already holds stays as it is, so a value it inherits goes on following its parent; a value that differs becomes the variant's own, and the parent's later changes to that value no longer reach it. A type sent with no value keeps the parent's values for it out of the variant.",
+                "description": "Property values keyed by property type id, as GET /products/new lists them. An entry is a bare value, an object with value plus an optional percentage and compositionRows, or a list of either for a type that takes several values. A type named here is replaced by what the entry carries; a type left out keeps the values it has. On a variant, a value the product already holds stays as it is, so a value it inherits goes on following its parent; a value that differs becomes the variant's own, and the parent's later changes to that value no longer reach it. A type sent with no value keeps the parent's values for it out of the variant. A key naming no property type, or, for a credential, a type only the members of a plan edit, or a type of an access group the credential is not in, refuses the whole write with 422 `PRODUCT_PROPERTIES_REFUSED`; `GET /products/new` lists the types a credential may write.",
                 "additionalProperties": true,
                 "example": {
                   "1": "https://example.com/documents/technical-documentation.pdf",
@@ -3757,6 +3823,14 @@
           "gtin": {
             "type": "string",
             "description": "Global Trade Item Number. Only present when the product has a GTIN assigned."
+          },
+          "mpn": {
+            "type": "string",
+            "description": "Manufacturer part number. Only present when the product has one."
+          },
+          "hsCode": {
+            "type": "string",
+            "description": "Customs tariff number, the 8-digit CN code or the 6-digit HS code. Only present when the product has one; a variant takes it from its parent, and `inheritance.hsCode` says whether it follows."
           },
           "token": {
             "type": "string",
@@ -4022,10 +4096,11 @@
                   "items": {
                     "type": "string"
                   },
-                  "description": "The closed set of values a templated property type accepts (battery chemistries, for example). Only present when the type carries one; a value outside the set is refused."
+                  "description": "The closed set of values a property type accepts, the battery chemistries of a templated type for example, or the classes of a rating class, best first. Only present when the type carries one; a value outside the set is refused."
                 },
                 "inputType": {
-                  "type": "string"
+                  "type": "string",
+                  "description": "The kind of value the type takes. `grade` is a rating class, a class on a lettered scale such as the EU energy label classes A to G, listed under `allowedValues` best first. It is a plain value and never feeds a rating; a passport publishes the class as it is."
                 },
                 "inputLimit": {
                   "type": "integer",
@@ -4216,12 +4291,12 @@
           "createdAt": {
             "type": "string",
             "format": "date-time",
-            "description": "Only present when the API consumer has the include_dates context flag."
+            "description": "When the product was created. Present only for a signed-in caller or an API consumer."
           },
           "updatedAt": {
             "type": "string",
             "format": "date-time",
-            "description": "Only present when the API consumer has the include_dates context flag."
+            "description": "When the product was last saved. Present only for a signed-in caller or an API consumer."
           }
         },
         "example": {
@@ -4232,6 +4307,7 @@
           "publishedAt": "2026-01-15T10:30:00Z",
           "rating": "A",
           "gtin": "4006381333931",
+          "hsCode": "33049900",
           "parentId": 4,
           "variantsCount": 0,
           "inheritance": {
@@ -4853,7 +4929,7 @@
     {
       "name": "create_webhook",
       "title": "Create a webhook subscription",
-      "description": "Create a webhook subscription. The answer carries the signing secret, shown only here. A consumer holds at most ten subscriptions and the workspace fifty; one more answers WEBHOOK_LIMIT_REACHED, and delete_webhook frees a place.\nPermission: webhook_access. Data tier: authorised (the workspace's own catalogue).\nExample: create_webhook {\"webhook\":{\"name\":\"Order fulfilment\",\"url\":\"https://hooks.example.com/transpareo\",\"eventTypes\":[\"published\",\"voided\"]}}",
+      "description": "Create a webhook subscription. The answer carries the signing secret, shown only here. A consumer holds at most ten subscriptions and the workspace fifty; one more answers WEBHOOK_LIMIT_REACHED, and delete_webhook frees a place.\nPermission: webhook_access, and dpp_history. Data tier: authorised (the workspace's own catalogue).\nExample: create_webhook {\"webhook\":{\"name\":\"Order fulfilment\",\"url\":\"https://hooks.example.com/transpareo\",\"eventTypes\":[\"published\",\"voided\"]}}",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -4937,7 +5013,7 @@
           },
           "active": {
             "type": "boolean",
-            "description": "Switched off by hand, or by the platform after eight failed deliveries in a row. Switching it on again starts the failure count afresh."
+            "description": "Switched off by hand, by the platform after eight failed deliveries in a row, or at once when the endpoint answers a delivery with 410 Gone (see `goneAt`). Switching it on again starts the failure count afresh and clears `goneAt`."
           },
           "eventTypes": {
             "type": "array",
@@ -4978,6 +5054,11 @@
           "failureCount": {
             "type": "integer",
             "description": "Failed deliveries in a row; reset by a success"
+          },
+          "goneAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the endpoint answered a delivery with 410 Gone, which switched the subscription off; absent otherwise"
           },
           "createdAt": {
             "type": "string",
@@ -5020,6 +5101,9 @@
         "safe": false,
         "group": "webhooks",
         "kind": "write",
+        "permissionAlso": [
+          "dpp_history"
+        ],
         "sentence": "The answer carries the signing secret, shown only here. A consumer holds at most ten subscriptions and the workspace fifty; one more answers WEBHOOK_LIMIT_REACHED, and delete_webhook frees a place."
       }
     },
@@ -5076,7 +5160,7 @@
     {
       "name": "dpp_requirements",
       "title": "What a passport of a product needs",
-      "description": "What a passport of a product needs. The answer carries a body ready to fill for validate_dpp and create_dpp.\nPermission: dpp_read. Data tier: authorised (the workspace's own catalogue).\nExample: dpp_requirements {\"productId\":\"<productId>\"}",
+      "description": "What a passport of a product needs. The answer carries a body ready to fill for validate_dpp and create_dpp, and under missing what the product still lacks, each entry with the product field that answers it and, under operation, the tool that takes it.\nPermission: dpp_read. Data tier: authorised (the workspace's own catalogue).\nExample: dpp_requirements {\"productId\":\"<productId>\"}",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -5337,6 +5421,74 @@
               }
             }
           },
+          "ready": {
+            "type": "boolean",
+            "description": "Whether a passport of this product at `granularity` is written and published as the product stands, read off the same check a new lot is refused by (`DPP_BATCH_PRODUCT_NOT_READY`). True when `missing` holds no required entry. The lot a batch or item passport names is no entry, since the create brings it."
+          },
+          "missing": {
+            "type": "array",
+            "description": "What the product still lacks, one entry per open check, required ones first, in a shape a workflow loops over. An entry stays under the same `check` while it is open and leaves the list once its answer is stored.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "check": {
+                  "type": "string",
+                  "description": "The name of the check, the same on every call while it stays open, such as `modelIdentifier`, `propertiesInput.804` or a validator rule"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "What is missing, in the reader's language"
+                },
+                "required": {
+                  "type": "boolean",
+                  "description": "True where a create or a publish waits on it, false for a recommendation"
+                },
+                "granularity": {
+                  "type": "string",
+                  "description": "The granularity that asks for it, where a granularity does (the model identifier of a batch or item passport)"
+                },
+                "rule": {
+                  "type": "string",
+                  "description": "The validator rule that failed, `<shape>.<path>`"
+                },
+                "message": {
+                  "type": "string",
+                  "description": "The validator's own message"
+                },
+                "target": {
+                  "type": "string",
+                  "description": "Where the answer is sent. `product` is a write of the product, which `operation` names, and `fields` names the field; `workspace` is a setting or a property type the workspace adds in the application manager first, which no product write answers. A workspace without product images answers the pictures there too.",
+                  "enum": [
+                    "product",
+                    "workspace"
+                  ]
+                },
+                "fields": {
+                  "type": "array",
+                  "description": "The body keys of the write `operation` names that answer it, any one of them. For `update_product` they are keys of `product`, except `brand`, the object beside it; `propertiesInput` takes the value keyed by `propertyTypeId`. For `update_product_mediafiles` the key is `mediafileIds`, the files `POST /mediafiles` stored. A batch or item passport may name its own `modelIdentifier` in place of the product's GTIN or MPN. Empty where no write answers it, such as a parent the product names that no longer exists.",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "operation": {
+                  "type": "string",
+                  "description": "The operation that takes `fields`, by its operationId, which is also the name of the assistant's tool for it. Present where `target` is `product` and `fields` names a key.",
+                  "enum": [
+                    "update_product",
+                    "update_product_mediafiles"
+                  ]
+                },
+                "propertyTypeId": {
+                  "type": "integer",
+                  "description": "The property type whose value is missing"
+                },
+                "namespace": {
+                  "type": "string",
+                  "description": "The vocabulary term the rule reads, on a rule over a property"
+                }
+              }
+            }
+          },
           "templates": {
             "type": "object",
             "description": "Bodies ready to fill, with the blanks the caller supplies left empty",
@@ -5429,10 +5581,52 @@
             }
           ],
           "outlook": {
-            "must": [],
-            "should": [],
-            "publishBlocked": false
+            "must": [
+              {
+                "path": "properties",
+                "field": "Properties",
+                "message": "Rated capacity is missing",
+                "constraint": "mandatory"
+              }
+            ],
+            "should": [
+              {
+                "path": "product.images",
+                "field": "Images",
+                "message": "product.images requires at least 1 value(s), got 0",
+                "constraint": "min_count"
+              }
+            ],
+            "publishBlocked": true
           },
+          "ready": false,
+          "missing": [
+            {
+              "check": "propertiesInput.806",
+              "name": "Rated capacity",
+              "required": true,
+              "rule": "Product.properties",
+              "message": "Rated capacity is missing",
+              "target": "product",
+              "fields": [
+                "propertiesInput"
+              ],
+              "propertyTypeId": 806,
+              "operation": "update_product"
+            },
+            {
+              "check": "DppBase.product.images",
+              "name": "Images",
+              "required": false,
+              "rule": "DppBase.product.images",
+              "message": "product.images requires at least 1 value(s), got 0",
+              "target": "product",
+              "fields": [
+                "mediafileIds"
+              ],
+              "operation": "update_product_mediafiles"
+            }
+          ],
           "templates": {
             "create": {
               "dpp": {
@@ -5474,16 +5668,25 @@
         "safe": true,
         "group": "dpps",
         "kind": "get",
-        "sentence": "The answer carries a body ready to fill for validate_dpp and create_dpp."
+        "sentence": "The answer carries a body ready to fill for validate_dpp and create_dpp, and under missing what the product still lacks, each entry with the product field that answers it and, under operation, the tool that takes it."
       }
     },
     {
       "name": "export_catalogue",
       "title": "Export the catalogue",
-      "description": "Start an export of the passport catalogue and wait for the archive; the answer carries the downloadUrl, which a credentialed client reads. One export runs at a time per consumer. Permission: export_access, and dpp_read for the passports it packs. Data tier: authorised. Example: export_catalogue {\"format\": \"csv\"}",
+      "description": "Start an export of the passports, the products or the components and wait for the archive; the answer carries the downloadUrl, which a credentialed client reads. One export runs at a time per consumer. Permission: export_access, and the key that reads the records it packs: dpp_read, product_access or component_access. Data tier: authorised. Example: export_catalogue {\"dataType\": \"products\"}",
       "inputSchema": {
         "type": "object",
         "properties": {
+          "dataType": {
+            "type": "string",
+            "enum": [
+              "dpps",
+              "products",
+              "components"
+            ],
+            "description": "What the archive carries (default dpps)"
+          },
           "format": {
             "type": "string",
             "enum": [
@@ -5491,10 +5694,12 @@
               "csv",
               "xlsx",
               "sql"
-            ]
+            ],
+            "description": "csv and xlsx write a sheet per language; sql writes tables to load into a database"
           },
           "normalize": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Ignored; exports no longer have this option"
           },
           "includeMedia": {
             "type": "boolean"
@@ -5635,6 +5840,16 @@
           "mpn": {
             "type": "string",
             "description": "The article number (Manufacturer Part Number) the maker gives the component. Present only when set, and only for a signed-in caller or an API consumer."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the component was created. Present only for a signed-in caller or an API consumer."
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the component was last saved. Present only for a signed-in caller or an API consumer."
           },
           "templateIds": {
             "type": "array",
@@ -5822,6 +6037,16 @@
                   "example": "4005808920310",
                   "description": "Global Trade Item Number (only when present)"
                 },
+                "mpn": {
+                  "type": "string",
+                  "example": "NC-50",
+                  "description": "Manufacturer part number (only when present)"
+                },
+                "hsCode": {
+                  "type": "string",
+                  "example": "33049900",
+                  "description": "Customs tariff number, the 8-digit CN code or the 6-digit HS code (only when present)"
+                },
                 "token": {
                   "type": "string",
                   "description": "Claim token for unclaimed products (only when present)"
@@ -5830,6 +6055,16 @@
                   "type": "integer",
                   "nullable": true,
                   "description": "The product this one is a variant of, null on a root. Present only for a signed-in caller or an API consumer."
+                },
+                "createdAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "When the product was created. Present only for a signed-in caller or an API consumer."
+                },
+                "updatedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "When the product was last saved. Present only for a signed-in caller or an API consumer."
                 },
                 "weight": {
                   "type": "number",
@@ -5999,6 +6234,16 @@
                     "example": "4005808920310",
                     "description": "Global Trade Item Number (only when present)"
                   },
+                  "mpn": {
+                    "type": "string",
+                    "example": "NC-50",
+                    "description": "Manufacturer part number (only when present)"
+                  },
+                  "hsCode": {
+                    "type": "string",
+                    "example": "33049900",
+                    "description": "Customs tariff number, the 8-digit CN code or the 6-digit HS code (only when present)"
+                  },
                   "token": {
                     "type": "string",
                     "description": "Claim token for unclaimed products (only when present)"
@@ -6007,6 +6252,16 @@
                     "type": "integer",
                     "nullable": true,
                     "description": "The product this one is a variant of, null on a root. Present only for a signed-in caller or an API consumer."
+                  },
+                  "createdAt": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "When the product was created. Present only for a signed-in caller or an API consumer."
+                  },
+                  "updatedAt": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "When the product was last saved. Present only for a signed-in caller or an API consumer."
                   },
                   "weight": {
                     "type": "number",
@@ -6155,6 +6410,11 @@
                 "type": "string",
                 "format": "date-time"
               },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "When the passport was last saved"
+              },
               "dppComponents": {
                 "type": "array",
                 "description": "Linked product's components with ratings (only present when the product has components)",
@@ -6176,7 +6436,7 @@
                   "validatorVersion": {
                     "type": "string",
                     "description": "The rule set that produced this report",
-                    "example": "shacl-v1"
+                    "example": "shacl-v2"
                   },
                   "must": {
                     "type": "array",
@@ -6244,7 +6504,7 @@
                   }
                 },
                 "example": {
-                  "validatorVersion": "shacl-v1",
+                  "validatorVersion": "shacl-v2",
                   "must": [
                     {
                       "path": "issuer.name",
@@ -6274,7 +6534,8 @@
                 "type": "Product",
                 "name": "Hydrating Face Cream"
               },
-              "createdAt": "2026-02-01T12:00:00Z"
+              "createdAt": "2026-02-01T12:00:00Z",
+              "updatedAt": "2026-02-03T08:30:00Z"
             }
           },
           {
@@ -6311,7 +6572,7 @@
               "code": "A1B2C3D4E",
               "version": 3,
               "hashValue": "9f2b1c4e8a7d6035b1e2c9f04a8d7e6152b3c4d5e6f708192a3b4c5d6e7f8091",
-              "url": "https://cdn.example.com/nordic-wear/dpp/A1B2C3D4E/v/3.jsonld.gz",
+              "url": "https://cdn.example.com/nordic-wear/dpp/A1B2C3D4E/v/3-1a2b3c4d5e6f.json",
               "publishedAt": "2026-09-08T09:12:44Z",
               "snapshot": {
                 "@context": [
@@ -6407,6 +6668,11 @@
           "createdAt": {
             "type": "string",
             "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the lot was last saved"
           }
         }
       },
@@ -6432,7 +6698,7 @@
     {
       "name": "get_product",
       "title": "Get a product",
-      "description": "Get a product\nPermission: none, the endpoint is public. Data tier: public.\nExample: get_product {\"id\":\"<id>\"}",
+      "description": "Get a product\nPermission: product_access. Data tier: authorised (the workspace's own catalogue).\nExample: get_product {\"id\":\"<id>\"}",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -6524,6 +6790,14 @@
           "gtin": {
             "type": "string",
             "description": "Global Trade Item Number. Only present when the product has a GTIN assigned."
+          },
+          "mpn": {
+            "type": "string",
+            "description": "Manufacturer part number. Only present when the product has one."
+          },
+          "hsCode": {
+            "type": "string",
+            "description": "Customs tariff number, the 8-digit CN code or the 6-digit HS code. Only present when the product has one; a variant takes it from its parent, and `inheritance.hsCode` says whether it follows."
           },
           "token": {
             "type": "string",
@@ -6789,10 +7063,11 @@
                   "items": {
                     "type": "string"
                   },
-                  "description": "The closed set of values a templated property type accepts (battery chemistries, for example). Only present when the type carries one; a value outside the set is refused."
+                  "description": "The closed set of values a property type accepts, the battery chemistries of a templated type for example, or the classes of a rating class, best first. Only present when the type carries one; a value outside the set is refused."
                 },
                 "inputType": {
-                  "type": "string"
+                  "type": "string",
+                  "description": "The kind of value the type takes. `grade` is a rating class, a class on a lettered scale such as the EU energy label classes A to G, listed under `allowedValues` best first. It is a plain value and never feeds a rating; a passport publishes the class as it is."
                 },
                 "inputLimit": {
                   "type": "integer",
@@ -6983,12 +7258,12 @@
           "createdAt": {
             "type": "string",
             "format": "date-time",
-            "description": "Only present when the API consumer has the include_dates context flag."
+            "description": "When the product was created. Present only for a signed-in caller or an API consumer."
           },
           "updatedAt": {
             "type": "string",
             "format": "date-time",
-            "description": "Only present when the API consumer has the include_dates context flag."
+            "description": "When the product was last saved. Present only for a signed-in caller or an API consumer."
           }
         },
         "example": {
@@ -6999,6 +7274,7 @@
           "publishedAt": "2026-01-15T10:30:00Z",
           "rating": "A",
           "gtin": "4006381333931",
+          "hsCode": "33049900",
           "parentId": 4,
           "variantsCount": 0,
           "inheritance": {
@@ -7061,7 +7337,9 @@
         "operationId": "get_product",
         "method": "GET",
         "path": "/products/{id}",
-        "permission": [],
+        "permission": [
+          "product_access"
+        ],
         "destructive": false,
         "safe": true,
         "group": "products",
@@ -7777,6 +8055,26 @@
             "maximum": 500,
             "description": "Records per page (default: 100, max: 500)"
           },
+          "sort": {
+            "type": "string",
+            "enum": [
+              "-updated_at",
+              "-created_at"
+            ],
+            "description": "`-updated_at` lists the latest change first, `-created_at` the newest record first; ties fall to the id. Left out, the list keeps its own order. The camelCase spelling (`-updatedAt`) reads the same. Any other value answers 422 `SORT_INVALID`. The guide's section \"Sorting and polling\" says how to poll with it."
+          },
+          "created_since": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-10-18T09:00:00Z",
+            "description": "Keep the records created at this ISO 8601 time or later. A time without a zone is UTC. A value that is no time answers 422 `SINCE_FILTER_INVALID`."
+          },
+          "updated_since": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-10-18T09:00:00Z",
+            "description": "Keep the records changed at this ISO 8601 time or later, the time itself included, so a record at the bound comes back on the next poll. A time without a zone is UTC. A value that is no time answers 422 `SINCE_FILTER_INVALID`."
+          },
           "published": {
             "type": "boolean",
             "description": "For a credential, `true` lists the published records and `false` the drafts; left out, the list carries both. A storefront reader has no drafts to ask for, so the parameter narrows nothing for one. A value that is neither answers 422 `PUBLISHED_FILTER_INVALID`."
@@ -7844,6 +8142,16 @@
                 "mpn": {
                   "type": "string",
                   "description": "The article number (Manufacturer Part Number) the maker gives the component. Present only when set, and only for a signed-in caller or an API consumer."
+                },
+                "createdAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "When the component was created. Present only for a signed-in caller or an API consumer."
+                },
+                "updatedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "When the component was last saved. Present only for a signed-in caller or an API consumer."
                 }
               },
               "example": {
@@ -7914,6 +8222,26 @@
             "default": 100,
             "maximum": 500,
             "description": "Records per page (default: 100, max: 500)"
+          },
+          "sort": {
+            "type": "string",
+            "enum": [
+              "-updated_at",
+              "-created_at"
+            ],
+            "description": "`-updated_at` lists the latest change first, `-created_at` the newest record first; ties fall to the id. Left out, the list keeps its own order. The camelCase spelling (`-updatedAt`) reads the same. Any other value answers 422 `SORT_INVALID`. The guide's section \"Sorting and polling\" says how to poll with it."
+          },
+          "created_since": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-10-18T09:00:00Z",
+            "description": "Keep the records created at this ISO 8601 time or later. A time without a zone is UTC. A value that is no time answers 422 `SINCE_FILTER_INVALID`."
+          },
+          "updated_since": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-10-18T09:00:00Z",
+            "description": "Keep the records changed at this ISO 8601 time or later, the time itself included, so a record at the bound comes back on the next poll. A time without a zone is UTC. A value that is no time answers 422 `SINCE_FILTER_INVALID`."
           },
           "fields": {
             "type": "array",
@@ -7993,6 +8321,16 @@
                       "example": "4005808920310",
                       "description": "Global Trade Item Number (only when present)"
                     },
+                    "mpn": {
+                      "type": "string",
+                      "example": "NC-50",
+                      "description": "Manufacturer part number (only when present)"
+                    },
+                    "hsCode": {
+                      "type": "string",
+                      "example": "33049900",
+                      "description": "Customs tariff number, the 8-digit CN code or the 6-digit HS code (only when present)"
+                    },
                     "token": {
                       "type": "string",
                       "description": "Claim token for unclaimed products (only when present)"
@@ -8001,6 +8339,16 @@
                       "type": "integer",
                       "nullable": true,
                       "description": "The product this one is a variant of, null on a root. Present only for a signed-in caller or an API consumer."
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "description": "When the product was created. Present only for a signed-in caller or an API consumer."
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "description": "When the product was last saved. Present only for a signed-in caller or an API consumer."
                     },
                     "weight": {
                       "type": "number",
@@ -8149,6 +8497,11 @@
                   "type": "string",
                   "format": "date-time"
                 },
+                "updatedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "When the passport was last saved"
+                },
                 "dppComponents": {
                   "type": "array",
                   "description": "Linked product's components with ratings (only present when the product has components)",
@@ -8170,7 +8523,7 @@
                     "validatorVersion": {
                       "type": "string",
                       "description": "The rule set that produced this report",
-                      "example": "shacl-v1"
+                      "example": "shacl-v2"
                     },
                     "must": {
                       "type": "array",
@@ -8238,7 +8591,7 @@
                     }
                   },
                   "example": {
-                    "validatorVersion": "shacl-v1",
+                    "validatorVersion": "shacl-v2",
                     "must": [
                       {
                         "path": "issuer.name",
@@ -8268,7 +8621,8 @@
                   "type": "Product",
                   "name": "Hydrating Face Cream"
                 },
-                "createdAt": "2026-02-01T12:00:00Z"
+                "createdAt": "2026-02-01T12:00:00Z",
+                "updatedAt": "2026-02-03T08:30:00Z"
               }
             }
           },
@@ -8353,12 +8707,18 @@
                 },
                 "code": {
                   "type": "string",
-                  "description": "The short code the application manager lists the export under"
+                  "description": "A short code that identifies the export"
+                },
+                "filename": {
+                  "type": "string",
+                  "description": "The name the export goes by in the application manager and its archive downloads under, given when the export is started"
                 },
                 "dataType": {
                   "type": "string",
                   "enum": [
-                    "dpps"
+                    "dpps",
+                    "products",
+                    "components"
                   ]
                 },
                 "format": {
@@ -8381,13 +8741,15 @@
                 },
                 "recordCount": {
                   "type": "integer",
-                  "description": "Passports, products and components exported. On `completed`."
+                  "description": "Records of the data type exported. On `completed`."
                 },
                 "productCount": {
-                  "type": "integer"
+                  "type": "integer",
+                  "description": "Products exported. On a completed products export."
                 },
                 "componentCount": {
-                  "type": "integer"
+                  "type": "integer",
+                  "description": "Components exported. On a completed components export."
                 },
                 "archiveSize": {
                   "type": "integer",
@@ -8415,12 +8777,11 @@
               "example": {
                 "id": 42,
                 "code": "k7m2pq",
+                "filename": "dpps-20260908-091244.jsonld",
                 "dataType": "dpps",
                 "format": "jsonld",
                 "status": "completed",
                 "recordCount": 64,
-                "productCount": 12,
-                "componentCount": 40,
                 "archiveSize": 184320,
                 "completedAt": "2026-09-08T09:13:01Z",
                 "createdAt": "2026-09-08T09:12:44Z",
@@ -8658,6 +9019,26 @@
             "maximum": 500,
             "description": "Records per page (default: 100, max: 500)"
           },
+          "sort": {
+            "type": "string",
+            "enum": [
+              "-updated_at",
+              "-created_at"
+            ],
+            "description": "`-updated_at` lists the latest change first, `-created_at` the newest record first; ties fall to the id. Left out, the list keeps its own order. The camelCase spelling (`-updatedAt`) reads the same. Any other value answers 422 `SORT_INVALID`. The guide's section \"Sorting and polling\" says how to poll with it."
+          },
+          "created_since": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-10-18T09:00:00Z",
+            "description": "Keep the records created at this ISO 8601 time or later. A time without a zone is UTC. A value that is no time answers 422 `SINCE_FILTER_INVALID`."
+          },
+          "updated_since": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-10-18T09:00:00Z",
+            "description": "Keep the records changed at this ISO 8601 time or later, the time itself included, so a record at the bound comes back on the next poll. A time without a zone is UTC. A value that is no time answers 422 `SINCE_FILTER_INVALID`."
+          },
           "fields": {
             "type": "array",
             "items": {
@@ -8708,6 +9089,11 @@
                 "createdAt": {
                   "type": "string",
                   "format": "date-time"
+                },
+                "updatedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "When the lot was last saved"
                 }
               }
             }
@@ -8850,6 +9236,26 @@
             "maximum": 500,
             "description": "Records per page (default: 100, max: 500)"
           },
+          "sort": {
+            "type": "string",
+            "enum": [
+              "-updated_at",
+              "-created_at"
+            ],
+            "description": "`-updated_at` lists the latest change first, `-created_at` the newest record first; ties fall to the id. Left out, the list keeps its own order. The camelCase spelling (`-updatedAt`) reads the same. Any other value answers 422 `SORT_INVALID`. The guide's section \"Sorting and polling\" says how to poll with it."
+          },
+          "created_since": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-10-18T09:00:00Z",
+            "description": "Keep the records created at this ISO 8601 time or later. A time without a zone is UTC. A value that is no time answers 422 `SINCE_FILTER_INVALID`."
+          },
+          "updated_since": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-10-18T09:00:00Z",
+            "description": "Keep the records changed at this ISO 8601 time or later, the time itself included, so a record at the bound comes back on the next poll. A time without a zone is UTC. A value that is no time answers 422 `SINCE_FILTER_INVALID`."
+          },
           "published": {
             "type": "boolean",
             "description": "For a credential, `true` lists the published records and `false` the drafts; left out, the list carries both. A storefront reader has no drafts to ask for, so the parameter narrows nothing for one. A value that is neither answers 422 `PUBLISHED_FILTER_INVALID`."
@@ -8940,6 +9346,16 @@
                   "example": "4005808920310",
                   "description": "Global Trade Item Number (only when present)"
                 },
+                "mpn": {
+                  "type": "string",
+                  "example": "NC-50",
+                  "description": "Manufacturer part number (only when present)"
+                },
+                "hsCode": {
+                  "type": "string",
+                  "example": "33049900",
+                  "description": "Customs tariff number, the 8-digit CN code or the 6-digit HS code (only when present)"
+                },
                 "token": {
                   "type": "string",
                   "description": "Claim token for unclaimed products (only when present)"
@@ -8948,6 +9364,16 @@
                   "type": "integer",
                   "nullable": true,
                   "description": "The product this one is a variant of, null on a root. Present only for a signed-in caller or an API consumer."
+                },
+                "createdAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "When the product was created. Present only for a signed-in caller or an API consumer."
+                },
+                "updatedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "When the product was last saved. Present only for a signed-in caller or an API consumer."
                 },
                 "weight": {
                   "type": "number",
@@ -9099,6 +9525,26 @@
             "default": 100,
             "maximum": 500,
             "description": "Records per page (default: 100, max: 500)"
+          },
+          "sort": {
+            "type": "string",
+            "enum": [
+              "-updated_at",
+              "-created_at"
+            ],
+            "description": "`-updated_at` lists the latest change first, `-created_at` the newest record first; ties fall to the id. Left out, the list keeps its own order. The camelCase spelling (`-updatedAt`) reads the same. Any other value answers 422 `SORT_INVALID`. The guide's section \"Sorting and polling\" says how to poll with it."
+          },
+          "created_since": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-10-18T09:00:00Z",
+            "description": "Keep the records created at this ISO 8601 time or later. A time without a zone is UTC. A value that is no time answers 422 `SINCE_FILTER_INVALID`."
+          },
+          "updated_since": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-10-18T09:00:00Z",
+            "description": "Keep the records changed at this ISO 8601 time or later, the time itself included, so a record at the bound comes back on the next poll. A time without a zone is UTC. A value that is no time answers 422 `SINCE_FILTER_INVALID`."
           },
           "fields": {
             "type": "array",
@@ -9675,7 +10121,7 @@
                 },
                 "active": {
                   "type": "boolean",
-                  "description": "Switched off by hand, or by the platform after eight failed deliveries in a row. Switching it on again starts the failure count afresh."
+                  "description": "Switched off by hand, by the platform after eight failed deliveries in a row, or at once when the endpoint answers a delivery with 410 Gone (see `goneAt`). Switching it on again starts the failure count afresh and clears `goneAt`."
                 },
                 "eventTypes": {
                   "type": "array",
@@ -9716,6 +10162,11 @@
                 "failureCount": {
                   "type": "integer",
                   "description": "Failed deliveries in a row; reset by a success"
+                },
+                "goneAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "When the endpoint answered a delivery with 410 Gone, which switched the subscription off; absent otherwise"
                 },
                 "createdAt": {
                   "type": "string",
@@ -9823,7 +10274,14 @@
             "items": {
               "type": "string"
             },
-            "description": "The permission keys this token carries, among those the consumer still holds"
+            "description": "The permission keys this token may use now. A token issued without `scope` follows the consumer's permissions, so a right granted after it was issued shows here at once; a token issued with `scope` keeps to those keys, among those the consumer still holds."
+          },
+          "inactiveAccessGroups": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "The names of the switched-off access groups the consumer is a member of. They grant nothing until they are switched on in the application manager, so this says why `scope` is empty where it is."
           },
           "resourceScope": {
             "type": "object",
@@ -9868,8 +10326,18 @@
           },
           "workspace": {
             "type": "object",
-            "description": "What the workspace itself does with what a caller writes",
+            "description": "The workspace the token belongs to, and what it does with what a caller writes",
             "properties": {
+              "name": {
+                "type": "string",
+                "nullable": true,
+                "description": "The name of the workspace, the one its consent screen shows. A workflow tool labels the connection with it."
+              },
+              "host": {
+                "type": "string",
+                "nullable": true,
+                "description": "The workspace's own host, without a scheme"
+              },
               "publishesOnCreate": {
                 "type": "boolean",
                 "description": "True where the workspace has no storefront. Every product and every component is published as it is created, the publish and unpublish operations answer 403, and the person using the workspace never sees publishing as a step, so asking them to publish something asks for a control their screens do not show. False where a storefront decides what the catalogue shows, and a record is published on demand."
@@ -9891,6 +10359,7 @@
             "dpp_read",
             "dpp_write"
           ],
+          "inactiveAccessGroups": [],
           "resourceScope": {},
           "expiresAt": null,
           "tokenExpiresAt": "2026-09-08T15:04:05Z",
@@ -9901,6 +10370,8 @@
           },
           "bulkItemsPerMinute": 5000,
           "workspace": {
+            "name": "Acme Outdoor",
+            "host": "acme.transpareo.com",
             "publishesOnCreate": true
           }
         }
@@ -10003,6 +10474,14 @@
           "gtin": {
             "type": "string",
             "description": "Global Trade Item Number. Only present when the product has a GTIN assigned."
+          },
+          "mpn": {
+            "type": "string",
+            "description": "Manufacturer part number. Only present when the product has one."
+          },
+          "hsCode": {
+            "type": "string",
+            "description": "Customs tariff number, the 8-digit CN code or the 6-digit HS code. Only present when the product has one; a variant takes it from its parent, and `inheritance.hsCode` says whether it follows."
           },
           "token": {
             "type": "string",
@@ -10268,10 +10747,11 @@
                   "items": {
                     "type": "string"
                   },
-                  "description": "The closed set of values a templated property type accepts (battery chemistries, for example). Only present when the type carries one; a value outside the set is refused."
+                  "description": "The closed set of values a property type accepts, the battery chemistries of a templated type for example, or the classes of a rating class, best first. Only present when the type carries one; a value outside the set is refused."
                 },
                 "inputType": {
-                  "type": "string"
+                  "type": "string",
+                  "description": "The kind of value the type takes. `grade` is a rating class, a class on a lettered scale such as the EU energy label classes A to G, listed under `allowedValues` best first. It is a plain value and never feeds a rating; a passport publishes the class as it is."
                 },
                 "inputLimit": {
                   "type": "integer",
@@ -10462,12 +10942,12 @@
           "createdAt": {
             "type": "string",
             "format": "date-time",
-            "description": "Only present when the API consumer has the include_dates context flag."
+            "description": "When the product was created. Present only for a signed-in caller or an API consumer."
           },
           "updatedAt": {
             "type": "string",
             "format": "date-time",
-            "description": "Only present when the API consumer has the include_dates context flag."
+            "description": "When the product was last saved. Present only for a signed-in caller or an API consumer."
           }
         },
         "example": {
@@ -10478,6 +10958,7 @@
           "publishedAt": "2026-01-15T10:30:00Z",
           "rating": "A",
           "gtin": "4006381333931",
+          "hsCode": "33049900",
           "parentId": 4,
           "variantsCount": 0,
           "inheritance": {
@@ -10699,6 +11180,14 @@
             "type": "string",
             "description": "Global Trade Item Number. Only present when the product has a GTIN assigned."
           },
+          "mpn": {
+            "type": "string",
+            "description": "Manufacturer part number. Only present when the product has one."
+          },
+          "hsCode": {
+            "type": "string",
+            "description": "Customs tariff number, the 8-digit CN code or the 6-digit HS code. Only present when the product has one; a variant takes it from its parent, and `inheritance.hsCode` says whether it follows."
+          },
           "token": {
             "type": "string",
             "description": "Claim token for unclaimed products. Only present when the product has an unresolved token."
@@ -10963,10 +11452,11 @@
                   "items": {
                     "type": "string"
                   },
-                  "description": "The closed set of values a templated property type accepts (battery chemistries, for example). Only present when the type carries one; a value outside the set is refused."
+                  "description": "The closed set of values a property type accepts, the battery chemistries of a templated type for example, or the classes of a rating class, best first. Only present when the type carries one; a value outside the set is refused."
                 },
                 "inputType": {
-                  "type": "string"
+                  "type": "string",
+                  "description": "The kind of value the type takes. `grade` is a rating class, a class on a lettered scale such as the EU energy label classes A to G, listed under `allowedValues` best first. It is a plain value and never feeds a rating; a passport publishes the class as it is."
                 },
                 "inputLimit": {
                   "type": "integer",
@@ -11157,12 +11647,12 @@
           "createdAt": {
             "type": "string",
             "format": "date-time",
-            "description": "Only present when the API consumer has the include_dates context flag."
+            "description": "When the product was created. Present only for a signed-in caller or an API consumer."
           },
           "updatedAt": {
             "type": "string",
             "format": "date-time",
-            "description": "Only present when the API consumer has the include_dates context flag."
+            "description": "When the product was last saved. Present only for a signed-in caller or an API consumer."
           }
         },
         "example": {
@@ -11173,6 +11663,7 @@
           "publishedAt": "2026-01-15T10:30:00Z",
           "rating": "A",
           "gtin": "4006381333931",
+          "hsCode": "33049900",
           "parentId": 4,
           "variantsCount": 0,
           "inheritance": {
@@ -11491,7 +11982,7 @@
           },
           "active": {
             "type": "boolean",
-            "description": "Switched off by hand, or by the platform after eight failed deliveries in a row. Switching it on again starts the failure count afresh."
+            "description": "Switched off by hand, by the platform after eight failed deliveries in a row, or at once when the endpoint answers a delivery with 410 Gone (see `goneAt`). Switching it on again starts the failure count afresh and clears `goneAt`."
           },
           "eventTypes": {
             "type": "array",
@@ -11532,6 +12023,11 @@
           "failureCount": {
             "type": "integer",
             "description": "Failed deliveries in a row; reset by a success"
+          },
+          "goneAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the endpoint answered a delivery with 410 Gone, which switched the subscription off; absent otherwise"
           },
           "createdAt": {
             "type": "string",
@@ -11670,6 +12166,16 @@
                 "example": "4005808920310",
                 "description": "Global Trade Item Number (only when present)"
               },
+              "mpn": {
+                "type": "string",
+                "example": "NC-50",
+                "description": "Manufacturer part number (only when present)"
+              },
+              "hsCode": {
+                "type": "string",
+                "example": "33049900",
+                "description": "Customs tariff number, the 8-digit CN code or the 6-digit HS code (only when present)"
+              },
               "token": {
                 "type": "string",
                 "description": "Claim token for unclaimed products (only when present)"
@@ -11678,6 +12184,16 @@
                 "type": "integer",
                 "nullable": true,
                 "description": "The product this one is a variant of, null on a root. Present only for a signed-in caller or an API consumer."
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "When the product was created. Present only for a signed-in caller or an API consumer."
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "When the product was last saved. Present only for a signed-in caller or an API consumer."
               },
               "weight": {
                 "type": "number",
@@ -11826,6 +12342,11 @@
             "type": "string",
             "format": "date-time"
           },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the passport was last saved"
+          },
           "dppComponents": {
             "type": "array",
             "description": "Linked product's components with ratings (only present when the product has components)",
@@ -11847,7 +12368,7 @@
               "validatorVersion": {
                 "type": "string",
                 "description": "The rule set that produced this report",
-                "example": "shacl-v1"
+                "example": "shacl-v2"
               },
               "must": {
                 "type": "array",
@@ -11915,7 +12436,7 @@
               }
             },
             "example": {
-              "validatorVersion": "shacl-v1",
+              "validatorVersion": "shacl-v2",
               "must": [
                 {
                   "path": "issuer.name",
@@ -11945,7 +12466,8 @@
             "type": "Product",
             "name": "Hydrating Face Cream"
           },
-          "createdAt": "2026-02-01T12:00:00Z"
+          "createdAt": "2026-02-01T12:00:00Z",
+          "updatedAt": "2026-02-03T08:30:00Z"
         }
       },
       "annotations": {
@@ -13627,6 +14149,14 @@
             "type": "string",
             "description": "Global Trade Item Number. Only present when the product has a GTIN assigned."
           },
+          "mpn": {
+            "type": "string",
+            "description": "Manufacturer part number. Only present when the product has one."
+          },
+          "hsCode": {
+            "type": "string",
+            "description": "Customs tariff number, the 8-digit CN code or the 6-digit HS code. Only present when the product has one; a variant takes it from its parent, and `inheritance.hsCode` says whether it follows."
+          },
           "token": {
             "type": "string",
             "description": "Claim token for unclaimed products. Only present when the product has an unresolved token."
@@ -13891,10 +14421,11 @@
                   "items": {
                     "type": "string"
                   },
-                  "description": "The closed set of values a templated property type accepts (battery chemistries, for example). Only present when the type carries one; a value outside the set is refused."
+                  "description": "The closed set of values a property type accepts, the battery chemistries of a templated type for example, or the classes of a rating class, best first. Only present when the type carries one; a value outside the set is refused."
                 },
                 "inputType": {
-                  "type": "string"
+                  "type": "string",
+                  "description": "The kind of value the type takes. `grade` is a rating class, a class on a lettered scale such as the EU energy label classes A to G, listed under `allowedValues` best first. It is a plain value and never feeds a rating; a passport publishes the class as it is."
                 },
                 "inputLimit": {
                   "type": "integer",
@@ -14085,12 +14616,12 @@
           "createdAt": {
             "type": "string",
             "format": "date-time",
-            "description": "Only present when the API consumer has the include_dates context flag."
+            "description": "When the product was created. Present only for a signed-in caller or an API consumer."
           },
           "updatedAt": {
             "type": "string",
             "format": "date-time",
-            "description": "Only present when the API consumer has the include_dates context flag."
+            "description": "When the product was last saved. Present only for a signed-in caller or an API consumer."
           }
         },
         "example": {
@@ -14101,6 +14632,7 @@
           "publishedAt": "2026-01-15T10:30:00Z",
           "rating": "A",
           "gtin": "4006381333931",
+          "hsCode": "33049900",
           "parentId": 4,
           "variantsCount": 0,
           "inheritance": {
@@ -14496,6 +15028,16 @@
                 "example": "4005808920310",
                 "description": "Global Trade Item Number (only when present)"
               },
+              "mpn": {
+                "type": "string",
+                "example": "NC-50",
+                "description": "Manufacturer part number (only when present)"
+              },
+              "hsCode": {
+                "type": "string",
+                "example": "33049900",
+                "description": "Customs tariff number, the 8-digit CN code or the 6-digit HS code (only when present)"
+              },
               "token": {
                 "type": "string",
                 "description": "Claim token for unclaimed products (only when present)"
@@ -14504,6 +15046,16 @@
                 "type": "integer",
                 "nullable": true,
                 "description": "The product this one is a variant of, null on a root. Present only for a signed-in caller or an API consumer."
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "When the product was created. Present only for a signed-in caller or an API consumer."
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "When the product was last saved. Present only for a signed-in caller or an API consumer."
               },
               "weight": {
                 "type": "number",
@@ -14652,6 +15204,11 @@
             "type": "string",
             "format": "date-time"
           },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the passport was last saved"
+          },
           "dppComponents": {
             "type": "array",
             "description": "Linked product's components with ratings (only present when the product has components)",
@@ -14673,7 +15230,7 @@
               "validatorVersion": {
                 "type": "string",
                 "description": "The rule set that produced this report",
-                "example": "shacl-v1"
+                "example": "shacl-v2"
               },
               "must": {
                 "type": "array",
@@ -14741,7 +15298,7 @@
               }
             },
             "example": {
-              "validatorVersion": "shacl-v1",
+              "validatorVersion": "shacl-v2",
               "must": [
                 {
                   "path": "issuer.name",
@@ -14771,7 +15328,8 @@
             "type": "Product",
             "name": "Hydrating Face Cream"
           },
-          "createdAt": "2026-02-01T12:00:00Z"
+          "createdAt": "2026-02-01T12:00:00Z",
+          "updatedAt": "2026-02-03T08:30:00Z"
         }
       },
       "annotations": {
@@ -14996,6 +15554,14 @@
             "type": "string",
             "description": "Global Trade Item Number. Only present when the product has a GTIN assigned."
           },
+          "mpn": {
+            "type": "string",
+            "description": "Manufacturer part number. Only present when the product has one."
+          },
+          "hsCode": {
+            "type": "string",
+            "description": "Customs tariff number, the 8-digit CN code or the 6-digit HS code. Only present when the product has one; a variant takes it from its parent, and `inheritance.hsCode` says whether it follows."
+          },
           "token": {
             "type": "string",
             "description": "Claim token for unclaimed products. Only present when the product has an unresolved token."
@@ -15260,10 +15826,11 @@
                   "items": {
                     "type": "string"
                   },
-                  "description": "The closed set of values a templated property type accepts (battery chemistries, for example). Only present when the type carries one; a value outside the set is refused."
+                  "description": "The closed set of values a property type accepts, the battery chemistries of a templated type for example, or the classes of a rating class, best first. Only present when the type carries one; a value outside the set is refused."
                 },
                 "inputType": {
-                  "type": "string"
+                  "type": "string",
+                  "description": "The kind of value the type takes. `grade` is a rating class, a class on a lettered scale such as the EU energy label classes A to G, listed under `allowedValues` best first. It is a plain value and never feeds a rating; a passport publishes the class as it is."
                 },
                 "inputLimit": {
                   "type": "integer",
@@ -15454,12 +16021,12 @@
           "createdAt": {
             "type": "string",
             "format": "date-time",
-            "description": "Only present when the API consumer has the include_dates context flag."
+            "description": "When the product was created. Present only for a signed-in caller or an API consumer."
           },
           "updatedAt": {
             "type": "string",
             "format": "date-time",
-            "description": "Only present when the API consumer has the include_dates context flag."
+            "description": "When the product was last saved. Present only for a signed-in caller or an API consumer."
           }
         },
         "example": {
@@ -15470,6 +16037,7 @@
           "publishedAt": "2026-01-15T10:30:00Z",
           "rating": "A",
           "gtin": "4006381333931",
+          "hsCode": "33049900",
           "parentId": 4,
           "variantsCount": 0,
           "inheritance": {
@@ -15654,6 +16222,16 @@
           "mpn": {
             "type": "string",
             "description": "The article number (Manufacturer Part Number) the maker gives the component. Present only when set, and only for a signed-in caller or an API consumer."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the component was created. Present only for a signed-in caller or an API consumer."
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the component was last saved. Present only for a signed-in caller or an API consumer."
           },
           "templateIds": {
             "type": "array",
@@ -15841,6 +16419,16 @@
                   "example": "4005808920310",
                   "description": "Global Trade Item Number (only when present)"
                 },
+                "mpn": {
+                  "type": "string",
+                  "example": "NC-50",
+                  "description": "Manufacturer part number (only when present)"
+                },
+                "hsCode": {
+                  "type": "string",
+                  "example": "33049900",
+                  "description": "Customs tariff number, the 8-digit CN code or the 6-digit HS code (only when present)"
+                },
                 "token": {
                   "type": "string",
                   "description": "Claim token for unclaimed products (only when present)"
@@ -15849,6 +16437,16 @@
                   "type": "integer",
                   "nullable": true,
                   "description": "The product this one is a variant of, null on a root. Present only for a signed-in caller or an API consumer."
+                },
+                "createdAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "When the product was created. Present only for a signed-in caller or an API consumer."
+                },
+                "updatedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "When the product was last saved. Present only for a signed-in caller or an API consumer."
                 },
                 "weight": {
                   "type": "number",
@@ -15991,7 +16589,7 @@
                 "items": {
                   "type": "string"
                 },
-                "description": "Property type IDs to display on the DPP page"
+                "description": "The product property types the passport carries, by id; left out or empty, it carries every one. `GET /dpps/requirements` lists a product's under `inheritedProperties`. An id naming no product property type refuses the write with 422 `DPP_PROPERTY_TYPES_REFUSED`."
               }
             }
           }
@@ -16064,6 +16662,16 @@
                 "example": "4005808920310",
                 "description": "Global Trade Item Number (only when present)"
               },
+              "mpn": {
+                "type": "string",
+                "example": "NC-50",
+                "description": "Manufacturer part number (only when present)"
+              },
+              "hsCode": {
+                "type": "string",
+                "example": "33049900",
+                "description": "Customs tariff number, the 8-digit CN code or the 6-digit HS code (only when present)"
+              },
               "token": {
                 "type": "string",
                 "description": "Claim token for unclaimed products (only when present)"
@@ -16072,6 +16680,16 @@
                 "type": "integer",
                 "nullable": true,
                 "description": "The product this one is a variant of, null on a root. Present only for a signed-in caller or an API consumer."
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "When the product was created. Present only for a signed-in caller or an API consumer."
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "When the product was last saved. Present only for a signed-in caller or an API consumer."
               },
               "weight": {
                 "type": "number",
@@ -16220,6 +16838,11 @@
             "type": "string",
             "format": "date-time"
           },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the passport was last saved"
+          },
           "dppComponents": {
             "type": "array",
             "description": "Linked product's components with ratings (only present when the product has components)",
@@ -16241,7 +16864,7 @@
               "validatorVersion": {
                 "type": "string",
                 "description": "The rule set that produced this report",
-                "example": "shacl-v1"
+                "example": "shacl-v2"
               },
               "must": {
                 "type": "array",
@@ -16309,7 +16932,7 @@
               }
             },
             "example": {
-              "validatorVersion": "shacl-v1",
+              "validatorVersion": "shacl-v2",
               "must": [
                 {
                   "path": "issuer.name",
@@ -16339,7 +16962,8 @@
             "type": "Product",
             "name": "Hydrating Face Cream"
           },
-          "createdAt": "2026-02-01T12:00:00Z"
+          "createdAt": "2026-02-01T12:00:00Z",
+          "updatedAt": "2026-02-03T08:30:00Z"
         }
       },
       "annotations": {
@@ -16442,6 +17066,16 @@
               "gtin": {
                 "type": "string"
               },
+              "mpn": {
+                "type": "string",
+                "description": "The manufacturer part number, the model identifier a passport carries where the product has no GTIN. A workspace that asks every product for a model identifier refuses one with neither, with 422 naming `mpn`. An empty string clears it.",
+                "example": "NC-50"
+              },
+              "hsCode": {
+                "type": "string",
+                "description": "The customs tariff number, the 8-digit CN code or, until the CN subheading is known, the 6-digit HS code. Spaces and dots between the digits are dropped (`6109 10 00` is stored as `61091000`); any other shape is refused with 422 naming `hsCode`. A passport publishes the first six digits as its HS code and all eight as its CN code. On a variant it is a value taken from the parent, so a number that differs becomes the variant's own. An empty string clears it.",
+                "example": "61091000"
+              },
               "parentId": {
                 "type": "integer",
                 "description": "On a create, the product the new one is a variant of. It starts as a copy of that product and takes its later changes, and the other fields of the body become its own where they differ. An update leaves it out or names the parent the product has."
@@ -16484,7 +17118,7 @@
               },
               "propertiesInput": {
                 "type": "object",
-                "description": "Property values keyed by property type id, as GET /products/new lists them. An entry is a bare value, an object with value plus an optional percentage and compositionRows, or a list of either for a type that takes several values. A type named here is replaced by what the entry carries; a type left out keeps the values it has. On a variant, a value the product already holds stays as it is, so a value it inherits goes on following its parent; a value that differs becomes the variant's own, and the parent's later changes to that value no longer reach it. A type sent with no value keeps the parent's values for it out of the variant.",
+                "description": "Property values keyed by property type id, as GET /products/new lists them. An entry is a bare value, an object with value plus an optional percentage and compositionRows, or a list of either for a type that takes several values. A type named here is replaced by what the entry carries; a type left out keeps the values it has. On a variant, a value the product already holds stays as it is, so a value it inherits goes on following its parent; a value that differs becomes the variant's own, and the parent's later changes to that value no longer reach it. A type sent with no value keeps the parent's values for it out of the variant. A key naming no property type, or, for a credential, a type only the members of a plan edit, or a type of an access group the credential is not in, refuses the whole write with 422 `PRODUCT_PROPERTIES_REFUSED`; `GET /products/new` lists the types a credential may write.",
                 "additionalProperties": true,
                 "example": {
                   "1": "https://example.com/documents/technical-documentation.pdf",
@@ -16578,6 +17212,14 @@
           "gtin": {
             "type": "string",
             "description": "Global Trade Item Number. Only present when the product has a GTIN assigned."
+          },
+          "mpn": {
+            "type": "string",
+            "description": "Manufacturer part number. Only present when the product has one."
+          },
+          "hsCode": {
+            "type": "string",
+            "description": "Customs tariff number, the 8-digit CN code or the 6-digit HS code. Only present when the product has one; a variant takes it from its parent, and `inheritance.hsCode` says whether it follows."
           },
           "token": {
             "type": "string",
@@ -16843,10 +17485,11 @@
                   "items": {
                     "type": "string"
                   },
-                  "description": "The closed set of values a templated property type accepts (battery chemistries, for example). Only present when the type carries one; a value outside the set is refused."
+                  "description": "The closed set of values a property type accepts, the battery chemistries of a templated type for example, or the classes of a rating class, best first. Only present when the type carries one; a value outside the set is refused."
                 },
                 "inputType": {
-                  "type": "string"
+                  "type": "string",
+                  "description": "The kind of value the type takes. `grade` is a rating class, a class on a lettered scale such as the EU energy label classes A to G, listed under `allowedValues` best first. It is a plain value and never feeds a rating; a passport publishes the class as it is."
                 },
                 "inputLimit": {
                   "type": "integer",
@@ -17037,12 +17680,12 @@
           "createdAt": {
             "type": "string",
             "format": "date-time",
-            "description": "Only present when the API consumer has the include_dates context flag."
+            "description": "When the product was created. Present only for a signed-in caller or an API consumer."
           },
           "updatedAt": {
             "type": "string",
             "format": "date-time",
-            "description": "Only present when the API consumer has the include_dates context flag."
+            "description": "When the product was last saved. Present only for a signed-in caller or an API consumer."
           }
         },
         "example": {
@@ -17053,6 +17696,7 @@
           "publishedAt": "2026-01-15T10:30:00Z",
           "rating": "A",
           "gtin": "4006381333931",
+          "hsCode": "33049900",
           "parentId": 4,
           "variantsCount": 0,
           "inheritance": {
@@ -17234,7 +17878,7 @@
                 "items": {
                   "type": "string"
                 },
-                "description": "Property type IDs to display on the DPP page"
+                "description": "The product property types the passport carries, by id; left out or empty, it carries every one. `GET /dpps/requirements` lists a product's under `inheritedProperties`. An id naming no product property type refuses the write with 422 `DPP_PROPERTY_TYPES_REFUSED`."
               }
             }
           }
@@ -17276,7 +17920,7 @@
               "validatorVersion": {
                 "type": "string",
                 "description": "The rule set that produced this report",
-                "example": "shacl-v1"
+                "example": "shacl-v2"
               },
               "must": {
                 "type": "array",
@@ -17344,7 +17988,7 @@
               }
             },
             "example": {
-              "validatorVersion": "shacl-v1",
+              "validatorVersion": "shacl-v2",
               "must": [
                 {
                   "path": "issuer.name",
@@ -17365,7 +18009,7 @@
           "valid": false,
           "fields": {},
           "validation": {
-            "validatorVersion": "shacl-v1",
+            "validatorVersion": "shacl-v2",
             "must": [
               {
                 "path": "issuer.name",
@@ -17503,6 +18147,16 @@
                 "example": "4005808920310",
                 "description": "Global Trade Item Number (only when present)"
               },
+              "mpn": {
+                "type": "string",
+                "example": "NC-50",
+                "description": "Manufacturer part number (only when present)"
+              },
+              "hsCode": {
+                "type": "string",
+                "example": "33049900",
+                "description": "Customs tariff number, the 8-digit CN code or the 6-digit HS code (only when present)"
+              },
               "token": {
                 "type": "string",
                 "description": "Claim token for unclaimed products (only when present)"
@@ -17511,6 +18165,16 @@
                 "type": "integer",
                 "nullable": true,
                 "description": "The product this one is a variant of, null on a root. Present only for a signed-in caller or an API consumer."
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "When the product was created. Present only for a signed-in caller or an API consumer."
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "When the product was last saved. Present only for a signed-in caller or an API consumer."
               },
               "weight": {
                 "type": "number",
@@ -17659,6 +18323,11 @@
             "type": "string",
             "format": "date-time"
           },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the passport was last saved"
+          },
           "dppComponents": {
             "type": "array",
             "description": "Linked product's components with ratings (only present when the product has components)",
@@ -17680,7 +18349,7 @@
               "validatorVersion": {
                 "type": "string",
                 "description": "The rule set that produced this report",
-                "example": "shacl-v1"
+                "example": "shacl-v2"
               },
               "must": {
                 "type": "array",
@@ -17748,7 +18417,7 @@
               }
             },
             "example": {
-              "validatorVersion": "shacl-v1",
+              "validatorVersion": "shacl-v2",
               "must": [
                 {
                   "path": "issuer.name",
@@ -17778,7 +18447,8 @@
             "type": "Product",
             "name": "Hydrating Face Cream"
           },
-          "createdAt": "2026-02-01T12:00:00Z"
+          "createdAt": "2026-02-01T12:00:00Z",
+          "updatedAt": "2026-02-03T08:30:00Z"
         }
       },
       "annotations": {
