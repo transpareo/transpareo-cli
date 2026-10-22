@@ -36,10 +36,14 @@ jobs:
       - name: Check out the repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
+      # Without check-latest, setup-go takes whatever patch release of
+      # the minor the runner image has cached, which can be one without
+      # the latest security fixes.
       - name: Set up Go
         uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
           go-version: ${{ matrix.go }}
+          check-latest: true
           cache: true
 
       - name: Download modules

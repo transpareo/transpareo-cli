@@ -99,13 +99,13 @@ func compositeHarness(t *testing.T) *harness {
 	mux.HandleFunc("GET /api/exports/42", func(w http.ResponseWriter,
 		r *http.Request) {
 		writeJSON(w, 200, map[string]any{"id": 42, "status": "completed",
-			"filename":    "x.tar.gz",
+			"filename":    "x.csv",
 			"downloadUrl": h.server.URL + "/api/exports/42/download"})
 	})
 	mux.HandleFunc("GET /api/exports/42/download", func(w http.ResponseWriter,
 		r *http.Request) {
-		w.Header().Set("Content-Type", "application/gzip")
-		w.Write([]byte("GZ"))
+		w.Header().Set("Content-Type", "text/csv")
+		w.Write([]byte("id"))
 	})
 	mux.HandleFunc("GET /api/events", func(w http.ResponseWriter,
 		r *http.Request) {
@@ -326,7 +326,7 @@ func (t headerTransport) RoundTrip(r *http.Request) (*http.Response, error) {
 func TestExportsCreateWaitsAndDownloads(t *testing.T) {
 	h := compositeHarness(t)
 	h.login()
-	target := filepath.Join(t.TempDir(), "catalogue.tar.gz")
+	target := filepath.Join(t.TempDir(), "catalogue.csv")
 	out, errOut, code := h.run("exports", "create", "--format", "csv",
 		"--normalize",
 		"--download", target)
@@ -338,7 +338,7 @@ func TestExportsCreateWaitsAndDownloads(t *testing.T) {
 		t.Errorf("body = %s", body)
 	}
 	data, _ := os.ReadFile(target)
-	if string(data) != "GZ" || !strings.Contains(errOut, "Wrote 2 bytes") {
+	if string(data) != "id" || !strings.Contains(errOut, "Wrote 2 bytes") {
 		t.Errorf("download = %q, stderr = %q", data, errOut)
 	}
 	var exp map[string]any

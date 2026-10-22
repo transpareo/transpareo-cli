@@ -178,6 +178,7 @@ jobs:
         uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
           go-version: "1.27.x"
+          check-latest: true
           cache: true
 
       # The tests may fail on a new specification, for example when a
@@ -280,6 +281,7 @@ jobs:
         uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
           go-version: "1.27.x"
+          check-latest: true
           cache: true
 
       - name: Run the end-to-end suite

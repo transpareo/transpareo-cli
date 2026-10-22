@@ -252,7 +252,7 @@ A few commands span several calls:
 ```
 transpareo imports run --file catalogue.xlsx --type products --accept-suggestions
 transpareo imports map 12 --map "Farbe=new:Colour" --map "Intern=skip"
-transpareo exports create --format jsonld --wait --download catalogue.tar.gz
+transpareo exports create --format jsonld --wait --download catalogue.jsonld
 transpareo events tail --follow
 ```
 

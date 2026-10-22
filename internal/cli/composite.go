@@ -341,7 +341,7 @@ polls until the archive is ready and prints the finished export;
 with --download it also writes the archive to the path. One
 export runs at a time per consumer.`,
 		Example: `  transpareo exports create --format jsonld --wait \
-      --download catalogue.tar.gz
+      --download catalogue.jsonld
   transpareo exports create --format csv --normalize`,
 		Args:        cobra.NoArgs,
 		Annotations: map[string]string{annotationOperation: "create_export"},
