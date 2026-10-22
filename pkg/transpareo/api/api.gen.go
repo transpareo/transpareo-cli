@@ -1287,6 +1287,30 @@ func (e ProductDetailWeightUnit) Valid() bool {
 	}
 }
 
+// Defines values for ProductInputWeightUnit.
+const (
+	ProductInputWeightUnitG  ProductInputWeightUnit = "g"
+	ProductInputWeightUnitKg ProductInputWeightUnit = "kg"
+	ProductInputWeightUnitMg ProductInputWeightUnit = "mg"
+	ProductInputWeightUnitT  ProductInputWeightUnit = "t"
+)
+
+// Valid indicates whether the value is a known member of the ProductInputWeightUnit enum.
+func (e ProductInputWeightUnit) Valid() bool {
+	switch e {
+	case ProductInputWeightUnitG:
+		return true
+	case ProductInputWeightUnitKg:
+		return true
+	case ProductInputWeightUnitMg:
+		return true
+	case ProductInputWeightUnitT:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for RegisteredClientTokenEndpointAuthMethod.
 const (
 	RegisteredClientTokenEndpointAuthMethodClientSecretBasic RegisteredClientTokenEndpointAuthMethod = "client_secret_basic"
@@ -2818,7 +2842,7 @@ type DppBulkRowInput struct {
 	Locale          *string `json:"locale,omitempty"`
 	ModelIdentifier *string `json:"modelIdentifier,omitempty"`
 
-	// PropertyTypeIds The product property types the passport carries, by id, as on the single create. A row naming one that does not exist comes back as `error` with `DPP_PROPERTY_TYPES_REFUSED`.
+	// PropertyTypeIds The product property types the passport carries, by id, as on the single create. A row naming one that does not exist comes back as `error` with `DPP_PROPERTY_TYPES_REFUSED`, one sending the selection as no list with `DPP_KEYS_REFUSED`; a selection in `shared` reaches every row it merges into, and each answers for itself.
 	PropertyTypeIds  *[]string `json:"propertyTypeIds,omitempty"`
 	SerialIdentifier *string   `json:"serialIdentifier,omitempty"`
 
@@ -2910,7 +2934,7 @@ type DppInput struct {
 	// ModelIdentifier Falls back to what the product supplies - its GTIN, else its manufacturer part number
 	ModelIdentifier *string `json:"modelIdentifier,omitempty"`
 
-	// PropertyTypeIds The product property types the passport carries, by id; left out or empty, it carries every one. `GET /dpps/requirements` lists a product's under `inheritedProperties`. An id naming no product property type refuses the write with 422 `DPP_PROPERTY_TYPES_REFUSED`.
+	// PropertyTypeIds The product property types the passport carries, by id; left out or empty, it carries every one. `GET /dpps/requirements` lists a product's under `inheritedProperties`. An id naming no product property type refuses the write with 422 `DPP_PROPERTY_TYPES_REFUSED`; a selection sent as no list, a single id among them, with 422 `DPP_KEYS_REFUSED`, `fields.propertyTypeIds.error` `DPP_KEY_LIST_REQUIRED`.
 	PropertyTypeIds *[]string `json:"propertyTypeIds,omitempty"`
 
 	// SerialIdentifier Required at item granularity
@@ -4358,11 +4382,11 @@ type ProductDetail struct {
 // ProductDetailWeightUnit The unit of `weight`. Present with the weight.
 type ProductDetailWeightUnit string
 
-// ProductInput The fields of a product write. A create needs `name` and `componentsInput`, which the create operation says, and `name` alone where it names `parentId`; an update carries only what it means to change, because every field it names is written.
+// ProductInput The fields of a product write. A create needs `name` and `componentsInput`, which the create operation says, and `name` alone where it names `parentId`; an update carries only what it means to change, because every field it names is written. A key of the read (Product, ProductDetail) may come back with the write and passes while it holds what the read holds; changed, it refuses the write with 422 `PRODUCT_KEYS_REFUSED`, its field naming what writes it (`categories` categoryIds, `components` componentsInput, `properties` propertiesInput, `brand` and `brandName` brand.name beside product, `mediafiles` `PUT /products/{id}/mediafiles`, `published` `PUT /products/{id}/publish` or `unpublish`) or saying no call writes it (`permalink`, `publishedAt`, `updatedAt` and the other keys the server works out). A create compares them with what `GET /products/new` answers and passes any `id`. Any other key, here, inside a `componentsInput` entry or beside `product` and `brand`, refuses the write the same way, naming each; so does a list or an object sent as something else.
 type ProductInput struct {
 	CategoryIds *[]string `json:"categoryIds,omitempty"`
 
-	// ComponentsInput The product's components in order, as a list of names or a list of objects naming an existing component by componentId or a new one by name. Naming it replaces the whole list, so on an update send the components the product is to have from then on, not the ones being added; leaving it out keeps the list as it is.
+	// ComponentsInput The product's components in order, as a list of names, of objects naming an existing component by componentId or a new one by name, or of both. An object's `percentage` is the component's share of the product; an entry naming it replaces the share, null clearing it, and an entry leaving it out keeps the share the component has. A share outside 0 to 100 refuses the write with 422 naming `componentsInput`. Naming the list replaces the whole list, so on an update send the components the product is to have from then on, not the ones being added; leaving it out keeps the list as it is.
 	ComponentsInput *ProductInput_ComponentsInput `json:"componentsInput,omitempty"`
 	Gtin            *string                       `json:"gtin,omitempty"`
 
@@ -4386,6 +4410,16 @@ type ProductInput struct {
 	//
 	// Example: {"1":"https://example.com/documents/technical-documentation.pdf","12":["Red","Blue"],"5":"100% organic cotton","9":{"percentage":95,"value":"Cotton"}}
 	PropertiesInput *map[string]interface{} `json:"propertiesInput,omitempty"`
+
+	// Weight The product's weight in `weightUnit`. A value that is no number is refused with 422 naming `weight`; null or an empty string clears it, and its unit with it. On a variant it is a value taken from the parent, with its unit.
+	//
+	// Example: 50
+	Weight *float32 `json:"weight,omitempty"`
+
+	// WeightUnit The unit of `weight`. A weight written without one keeps the unit the product has, and a weight the product had none for is in kilograms.
+	//
+	// Example: g
+	WeightUnit *ProductInputWeightUnit `json:"weightUnit,omitempty"`
 }
 
 // ProductInputComponentsInput0 Example: ["Aqua","Glycerin","Cetearyl Alcohol"]
@@ -4393,14 +4427,20 @@ type ProductInputComponentsInput0 = []string
 
 // ProductInputComponentsInput1 defines model for ProductInput.ComponentsInput.1.
 type ProductInputComponentsInput1 = []struct {
-	ComponentId *int    `json:"componentId,omitempty"`
-	Name        *string `json:"name,omitempty"`
+	ComponentId *int     `json:"componentId,omitempty"`
+	Name        *string  `json:"name,omitempty"`
+	Percentage  *float32 `json:"percentage,omitempty"`
 }
 
-// ProductInput_ComponentsInput The product's components in order, as a list of names or a list of objects naming an existing component by componentId or a new one by name. Naming it replaces the whole list, so on an update send the components the product is to have from then on, not the ones being added; leaving it out keeps the list as it is.
+// ProductInput_ComponentsInput The product's components in order, as a list of names, of objects naming an existing component by componentId or a new one by name, or of both. An object's `percentage` is the component's share of the product; an entry naming it replaces the share, null clearing it, and an entry leaving it out keeps the share the component has. A share outside 0 to 100 refuses the write with 422 naming `componentsInput`. Naming the list replaces the whole list, so on an update send the components the product is to have from then on, not the ones being added; leaving it out keeps the list as it is.
 type ProductInput_ComponentsInput struct {
 	union json.RawMessage
 }
+
+// ProductInputWeightUnit The unit of `weight`. A weight written without one keeps the unit the product has, and a weight the product had none for is in kilograms.
+//
+// Example: g
+type ProductInputWeightUnit string
 
 // Property defines model for Property.
 type Property struct {
@@ -5659,7 +5699,7 @@ type CreateProductJSONBody struct {
 		Name string `json:"name"`
 	} `json:"brand,omitempty"`
 
-	// Product The fields of a product write. A create needs `name` and `componentsInput`, which the create operation says, and `name` alone where it names `parentId`; an update carries only what it means to change, because every field it names is written.
+	// Product The fields of a product write. A create needs `name` and `componentsInput`, which the create operation says, and `name` alone where it names `parentId`; an update carries only what it means to change, because every field it names is written. A key of the read (Product, ProductDetail) may come back with the write and passes while it holds what the read holds; changed, it refuses the write with 422 `PRODUCT_KEYS_REFUSED`, its field naming what writes it (`categories` categoryIds, `components` componentsInput, `properties` propertiesInput, `brand` and `brandName` brand.name beside product, `mediafiles` `PUT /products/{id}/mediafiles`, `published` `PUT /products/{id}/publish` or `unpublish`) or saying no call writes it (`permalink`, `publishedAt`, `updatedAt` and the other keys the server works out). A create compares them with what `GET /products/new` answers and passes any `id`. Any other key, here, inside a `componentsInput` entry or beside `product` and `brand`, refuses the write the same way, naming each; so does a list or an object sent as something else.
 	Product ProductInput `json:"product"`
 }
 
@@ -5690,7 +5730,7 @@ type UpdateProductJSONBody struct {
 		Name *string `json:"name,omitempty"`
 	} `json:"brand,omitempty"`
 
-	// Product The fields of a product write. A create needs `name` and `componentsInput`, which the create operation says, and `name` alone where it names `parentId`; an update carries only what it means to change, because every field it names is written.
+	// Product The fields of a product write. A create needs `name` and `componentsInput`, which the create operation says, and `name` alone where it names `parentId`; an update carries only what it means to change, because every field it names is written. A key of the read (Product, ProductDetail) may come back with the write and passes while it holds what the read holds; changed, it refuses the write with 422 `PRODUCT_KEYS_REFUSED`, its field naming what writes it (`categories` categoryIds, `components` componentsInput, `properties` propertiesInput, `brand` and `brandName` brand.name beside product, `mediafiles` `PUT /products/{id}/mediafiles`, `published` `PUT /products/{id}/publish` or `unpublish`) or saying no call writes it (`permalink`, `publishedAt`, `updatedAt` and the other keys the server works out). A create compares them with what `GET /products/new` answers and passes any `id`. Any other key, here, inside a `componentsInput` entry or beside `product` and `brand`, refuses the write the same way, naming each; so does a list or an object sent as something else.
 	Product *ProductInput `json:"product,omitempty"`
 }
 
@@ -6557,11 +6597,11 @@ type ClientInterface interface {
 	//
 	// `granularity` says which unit the passport stands for and therefore which identifiers it needs: `model` needs none of its own, `batch` needs a `batchIdentifier`, `item` needs a `serialIdentifier` as well. The lot is created from the product as it stands the first time its identifier is used and reused by every later passport of the same lot. A new lot is taken only of a product that passes every other required readiness check; until then the create answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`.
 	//
-	// A lot takes one `batch` passport and a unit one `item` passport. A second one is refused with 422 `DPP_BATCH_TAKEN` on `batch`, or `DPP_SERIAL_IDENTIFIER_TAKEN` on `serialIdentifier` for a serial the lot has already, and the message names the passport that stands for it. A voided or superseded passport still stands for its lot, and so does a draft, which is published instead. Item passports of a lot and its `batch` passport do not count against each other.
+	// A product takes one `model` passport, a lot one `batch` passport and a unit one `item` passport. A second one is refused with 422 `DPP_UNLOCKABLE_ID_TAKEN` on `unlockableId`, `DPP_BATCH_TAKEN` on `batch`, or `DPP_SERIAL_IDENTIFIER_TAKEN` on `serialIdentifier` for a serial the lot has already, and the message names the passport that stands for it. A voided or superseded passport still stands for its product, lot or unit, and so does a draft, which is published instead, and a model passport the workspace issued by itself. Passports at different granularities do not count against each other.
 	//
 	// The answer carries `validation` and `publishBlocked` alongside the passport: the same report `POST /dpps/validate` produces, over the record that was just written, so a caller that skipped the dry run still sees what a publish would refuse or warn about.
 	//
-	// `propertyTypeIds` names the property types the passport carries, and it carries those alone. An entry naming no product property type refuses the whole write with 422 `DPP_PROPERTY_TYPES_REFUSED`, and no passport is created; the message names each, `fields.propertyTypeIds.unknown` lists them as sent.
+	// `propertyTypeIds` names the property types the passport carries, and it carries those alone. An entry naming no product property type refuses the whole write with 422 `DPP_PROPERTY_TYPES_REFUSED`, and no passport is created; the message names each, `fields.propertyTypeIds.unknown` lists them as sent. A selection sent as no list, a single id among them, would carry every type, so it is refused with 422 `DPP_KEYS_REFUSED` and `fields.propertyTypeIds.error` `DPP_KEY_LIST_REQUIRED`.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -6574,11 +6614,11 @@ type ClientInterface interface {
 	//
 	// `granularity` says which unit the passport stands for and therefore which identifiers it needs: `model` needs none of its own, `batch` needs a `batchIdentifier`, `item` needs a `serialIdentifier` as well. The lot is created from the product as it stands the first time its identifier is used and reused by every later passport of the same lot. A new lot is taken only of a product that passes every other required readiness check; until then the create answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`.
 	//
-	// A lot takes one `batch` passport and a unit one `item` passport. A second one is refused with 422 `DPP_BATCH_TAKEN` on `batch`, or `DPP_SERIAL_IDENTIFIER_TAKEN` on `serialIdentifier` for a serial the lot has already, and the message names the passport that stands for it. A voided or superseded passport still stands for its lot, and so does a draft, which is published instead. Item passports of a lot and its `batch` passport do not count against each other.
+	// A product takes one `model` passport, a lot one `batch` passport and a unit one `item` passport. A second one is refused with 422 `DPP_UNLOCKABLE_ID_TAKEN` on `unlockableId`, `DPP_BATCH_TAKEN` on `batch`, or `DPP_SERIAL_IDENTIFIER_TAKEN` on `serialIdentifier` for a serial the lot has already, and the message names the passport that stands for it. A voided or superseded passport still stands for its product, lot or unit, and so does a draft, which is published instead, and a model passport the workspace issued by itself. Passports at different granularities do not count against each other.
 	//
 	// The answer carries `validation` and `publishBlocked` alongside the passport: the same report `POST /dpps/validate` produces, over the record that was just written, so a caller that skipped the dry run still sees what a publish would refuse or warn about.
 	//
-	// `propertyTypeIds` names the property types the passport carries, and it carries those alone. An entry naming no product property type refuses the whole write with 422 `DPP_PROPERTY_TYPES_REFUSED`, and no passport is created; the message names each, `fields.propertyTypeIds.unknown` lists them as sent.
+	// `propertyTypeIds` names the property types the passport carries, and it carries those alone. An entry naming no product property type refuses the whole write with 422 `DPP_PROPERTY_TYPES_REFUSED`, and no passport is created; the message names each, `fields.propertyTypeIds.unknown` lists them as sent. A selection sent as no list, a single id among them, would carry every type, so it is refused with 422 `DPP_KEYS_REFUSED` and `fields.propertyTypeIds.error` `DPP_KEY_LIST_REQUIRED`.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -6589,11 +6629,11 @@ type ClientInterface interface {
 	//
 	// Streams passports in as newline-delimited JSON, one passport per line, so a line of production writes one request instead of thousands. Each row is created and its first version published at the workspace's publish stage, as `POST /dpps/{code}/publish` signs a draft; the response reports one result line per input row.
 	//
-	// An optional first line `{"shared": {...}}` carries batch-wide defaults that each following row deep-merges over (a nested `"__replace__": true` opts a sub-tree out of the merge). An unsupported `shared.granularity` is rejected before any row is processed; per-row problems never abort the batch. A new row whose `propertyTypeIds` names no product property type comes back as `error` with `DPP_PROPERTY_TYPES_REFUSED`, the message naming each and `fields.propertyTypeIds.unknown` listing them, and nothing is created for it.
+	// An optional first line `{"shared": {...}}` carries batch-wide defaults that each following row deep-merges over (a nested `"__replace__": true` opts a sub-tree out of the merge). An unsupported `shared.granularity` is rejected before any row is processed; per-row problems never abort the batch. A new row whose `propertyTypeIds` names no product property type comes back as `error` with `DPP_PROPERTY_TYPES_REFUSED`, the message naming each and `fields.propertyTypeIds.unknown` listing them, and nothing is created for it. A new row whose `propertyTypeIds` is no list comes back as `error` with `DPP_KEYS_REFUSED`; one in `shared` reaches every row it merges into, and each answers for itself.
 	//
 	// Row keys may be written in camelCase (`unlockableId`, `modelIdentifier`, `serialIdentifier`) or as the snake_case attribute names; `tenantData` is an alias for `dynamicData`. The keys inside `dynamicData` are left as they are.
 	//
-	// Resubmission is safe. Rows are deduplicated by natural key rather than by `Idempotency-Key`: at `model` granularity that is `modelIdentifier`, at `batch` it adds `batchIdentifier`, at `item` it adds `serialIdentifier`. A key that already maps to a published passport comes back as `duplicate`; one that maps to a passport that never published is resumed and published, so a retry after a partial failure finishes the job instead of duplicating it. A row whose key misses a passport its lot or unit already has (a row naming no `modelIdentifier`) is refused as `POST /dpps` refuses it, with `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`.
+	// Resubmission is safe. Rows are deduplicated by natural key rather than by `Idempotency-Key`: at `model` granularity that is `modelIdentifier`, at `batch` it adds `batchIdentifier`, at `item` it adds `serialIdentifier`. A key that already maps to a published passport comes back as `duplicate`; one that maps to a passport that never published is resumed and published, so a retry after a partial failure finishes the job instead of duplicating it. A row whose key misses a passport its product, lot or unit already has (a row naming no `modelIdentifier`, or no `granularity` in itself or in `shared`) is refused as `POST /dpps` refuses it, with `DPP_UNLOCKABLE_ID_TAKEN`, `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`.
 	//
 	// Synchronous by default, capped at 500 rows and 5 MB. Send `Prefer: respond-async` to have the body persisted and processed by a background task instead: the response is `202` with a polling URL, and the caps rise to 50000 rows and 25 MB. Beyond that, batch across requests.
 	//
@@ -6637,7 +6677,7 @@ type ClientInterface interface {
 
 	// ValidateDppWithBody Validate a DPP payload
 	//
-	// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot; a lot or a unit that has a passport already shows as `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`, and a new lot its product may not have yet as `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, beside the report that names the checks the product still fails. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.
+	// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot; a product that has its model passport already shows as `DPP_UNLOCKABLE_ID_TAKEN`, a lot or a unit that has its passport as `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`, and a new lot its product may not have yet as `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, beside the report that names the checks the product still fails. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.
 	//
 	// A payload the platform would refuse is a plain `200` with `valid: false` - the request succeeded, the passport would not. Only a missing permission, a missing `dpp` object, an unreadable body, a granularity the workspace does not issue and a `propertyTypeIds` entry naming no property type answer with an error status, the last two as the create answers them.
 	//
@@ -6648,7 +6688,7 @@ type ClientInterface interface {
 
 	// ValidateDpp Validate a DPP payload
 	//
-	// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot; a lot or a unit that has a passport already shows as `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`, and a new lot its product may not have yet as `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, beside the report that names the checks the product still fails. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.
+	// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot; a product that has its model passport already shows as `DPP_UNLOCKABLE_ID_TAKEN`, a lot or a unit that has its passport as `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`, and a new lot its product may not have yet as `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, beside the report that names the checks the product still fails. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.
 	//
 	// A payload the platform would refuse is a plain `200` with `valid: false` - the request succeeded, the passport would not. Only a missing permission, a missing `dpp` object, an unreadable body, a granularity the workspace does not issue and a `propertyTypeIds` entry naming no property type answer with an error status, the last two as the create answers them.
 	//
@@ -6666,7 +6706,7 @@ type ClientInterface interface {
 
 	// GetDppPrivateProperties Read the private properties of several versions
 	//
-	// The reader-derived confidential rows for several versions of one passport in a single round-trip. Name the versions with `?versions=1,3,7`; at most 50 are derived per request. A version is left out when it carries no confidential rows or the reader may see none of them, so the answer only contains versions where the reader gains rows beyond the public passport. An unauthenticated request answers 401 with the `X-Auth-Fields` challenge the passport page uses to sign a reader in.
+	// The reader-derived confidential rows for several versions of one passport in a single round-trip. Name the versions with `?versions=1,3,7`; at most 50 are derived per request. A version is left out when it carries no confidential rows, the workspace keeps no copy of them, or the reader may see none of them, so the answer only contains versions where the reader gains rows beyond the public passport. An unauthenticated request answers 401 with the `X-Auth-Fields` challenge the passport page uses to sign a reader in.
 	//
 	// Corresponds with GET /dpps/{code}/private_properties (the `GetDppPrivateProperties` operationId).
 	GetDppPrivateProperties(ctx context.Context, code string, params *GetDppPrivatePropertiesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -6716,7 +6756,7 @@ type ClientInterface interface {
 	//
 	// The answer carries `validation` and `publishBlocked` alongside the passport: the same report `POST /dpps/validate` produces, over the record as it now stands, so an update that would block the next publish says so at once.
 	//
-	// A `propertyTypeIds` entry naming no product property type refuses the whole update with 422 `DPP_PROPERTY_TYPES_REFUSED`, and the passport keeps the types it had.
+	// A `propertyTypeIds` entry naming no product property type refuses the whole update with 422 `DPP_PROPERTY_TYPES_REFUSED`, and the passport keeps the types it had; a selection sent as no list with 422 `DPP_KEYS_REFUSED`.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -6729,7 +6769,7 @@ type ClientInterface interface {
 	//
 	// The answer carries `validation` and `publishBlocked` alongside the passport: the same report `POST /dpps/validate` produces, over the record as it now stands, so an update that would block the next publish says so at once.
 	//
-	// A `propertyTypeIds` entry naming no product property type refuses the whole update with 422 `DPP_PROPERTY_TYPES_REFUSED`, and the passport keeps the types it had.
+	// A `propertyTypeIds` entry naming no product property type refuses the whole update with 422 `DPP_PROPERTY_TYPES_REFUSED`, and the passport keeps the types it had; a selection sent as no list with 422 `DPP_KEYS_REFUSED`.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -6754,7 +6794,7 @@ type ClientInterface interface {
 	// Corresponds with POST /dpps/{id}/correct (the `CorrectDpp` operationId).
 	CorrectDpp(ctx context.Context, id Id, params *CorrectDppParams, body CorrectDppJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// UpdateDppDynamicDataWithBody Update dynamic data
+	// UpdateDppDynamicDataWithBody Update changing values (e.g. battery health)
 	//
 	// Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none). A key naming a published legitimate-interest type is served to the readers its access groups admit by `GET /dpps/{code}/private_dynamic_data`; every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.
 	//
@@ -6763,7 +6803,7 @@ type ClientInterface interface {
 	// Corresponds with PATCH /dpps/{id}/dynamic_data (the `UpdateDppDynamicData` operationId).
 	UpdateDppDynamicDataWithBody(ctx context.Context, id Id, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// UpdateDppDynamicData Update dynamic data
+	// UpdateDppDynamicData Update changing values (e.g. battery health)
 	//
 	// Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none). A key naming a published legitimate-interest type is served to the readers its access groups admit by `GET /dpps/{code}/private_dynamic_data`; every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.
 	//
@@ -6836,7 +6876,7 @@ type ClientInterface interface {
 
 	// SupersedeDppWithBody Supersede a DPP
 	//
-	// Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. Superseding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
+	// Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. A product, a lot or a unit takes one passport at each granularity (see `POST /dpps`), so the successor stands for another product, lot or unit. Superseding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -6845,7 +6885,7 @@ type ClientInterface interface {
 
 	// SupersedeDpp Supersede a DPP
 	//
-	// Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. Superseding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
+	// Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. A product, a lot or a unit takes one passport at each granularity (see `POST /dpps`), so the successor stands for another product, lot or unit. Superseding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -6861,7 +6901,7 @@ type ClientInterface interface {
 
 	// VoidDppWithBody Void a DPP
 	//
-	// Marks the passport as voided - the unit it stands for no longer exists: it was destroyed, never shipped, or scrapped after a recall. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. This is not how a unit is recalled: a unit still out there is moved to `suspended` through a status change, so its passport goes on answering a scan with the recall. Voiding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
+	// Marks the passport as voided - the unit it stands for no longer exists: it was destroyed, never shipped, or scrapped after a recall. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. This is not how a unit is recalled: a unit still out there is moved to `suspended` through a status change, so its passport goes on answering a scan with the recall. Voiding cannot be undone, and a voided passport still stands for its product, lot or unit, which never takes another passport at its granularity (see `POST /dpps`). A consumer also needs write access to the passport itself (`dpp_write`).
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -6870,7 +6910,7 @@ type ClientInterface interface {
 
 	// VoidDpp Void a DPP
 	//
-	// Marks the passport as voided - the unit it stands for no longer exists: it was destroyed, never shipped, or scrapped after a recall. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. This is not how a unit is recalled: a unit still out there is moved to `suspended` through a status change, so its passport goes on answering a scan with the recall. Voiding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
+	// Marks the passport as voided - the unit it stands for no longer exists: it was destroyed, never shipped, or scrapped after a recall. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. This is not how a unit is recalled: a unit still out there is moved to `suspended` through a status change, so its passport goes on answering a scan with the recall. Voiding cannot be undone, and a voided passport still stands for its product, lot or unit, which never takes another passport at its granularity (see `POST /dpps`). A consumer also needs write access to the passport itself (`dpp_write`).
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -7581,7 +7621,7 @@ type ClientInterface interface {
 
 	// UpdateProductWithBody Update a product
 	//
-	// Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are. A brand name no brand carries creates the brand, which asks a consumer for `brand_access` (403 `BRAND_FORBIDDEN` without it); a credential acting for a person names only what that person reads, as on create. On a variant, a value the body changes becomes the variant's own and a value it sends as it was read goes on following the parent. `parentId` is left out or names the parent the product has; any other answers 422 `PRODUCT_PARENT_READ_ONLY`, since a variant moves to another parent through a spreadsheet import only. A `propertiesInput` key naming no property type, or, for a credential, a type only the members of a plan edit, or a type of an access group the credential (or the person it acts for) is not in, refuses the whole write with 422 `PRODUCT_PROPERTIES_REFUSED`, whose message names each and why; `fields.propertiesInput.unknown`, `fields.propertiesInput.planGated` and `fields.propertiesInput.groupGated` list the keys as sent.
+	// Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are. A brand name no brand carries creates the brand, which asks a consumer for `brand_access` (403 `BRAND_FORBIDDEN` without it); a credential acting for a person names only what that person reads, as on create. On a variant, a value the body changes becomes the variant's own and a value it sends as it was read goes on following the parent. `parentId` is left out or names the parent the product has; any other answers 422 `PRODUCT_PARENT_READ_ONLY`, since a variant moves to another parent through a spreadsheet import only. A `propertiesInput` key naming no property type, or, for a credential, a type only the members of a plan edit, or a type of an access group the credential (or the person it acts for) is not in, refuses the whole write with 422 `PRODUCT_PROPERTIES_REFUSED`, whose message names each and why; `fields.propertiesInput.unknown`, `fields.propertiesInput.planGated` and `fields.propertiesInput.groupGated` list the keys as sent. The product's read sent back under `product` passes as it was read; a key of it that differs from the product as it stands, a key the write takes nowhere, or a list or an object sent as something else refuses the whole write with 422 `PRODUCT_KEYS_REFUSED`, one field per key as on create, so a body read before another write changed the product names what moved.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -7590,7 +7630,7 @@ type ClientInterface interface {
 
 	// UpdateProduct Update a product
 	//
-	// Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are. A brand name no brand carries creates the brand, which asks a consumer for `brand_access` (403 `BRAND_FORBIDDEN` without it); a credential acting for a person names only what that person reads, as on create. On a variant, a value the body changes becomes the variant's own and a value it sends as it was read goes on following the parent. `parentId` is left out or names the parent the product has; any other answers 422 `PRODUCT_PARENT_READ_ONLY`, since a variant moves to another parent through a spreadsheet import only. A `propertiesInput` key naming no property type, or, for a credential, a type only the members of a plan edit, or a type of an access group the credential (or the person it acts for) is not in, refuses the whole write with 422 `PRODUCT_PROPERTIES_REFUSED`, whose message names each and why; `fields.propertiesInput.unknown`, `fields.propertiesInput.planGated` and `fields.propertiesInput.groupGated` list the keys as sent.
+	// Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are. A brand name no brand carries creates the brand, which asks a consumer for `brand_access` (403 `BRAND_FORBIDDEN` without it); a credential acting for a person names only what that person reads, as on create. On a variant, a value the body changes becomes the variant's own and a value it sends as it was read goes on following the parent. `parentId` is left out or names the parent the product has; any other answers 422 `PRODUCT_PARENT_READ_ONLY`, since a variant moves to another parent through a spreadsheet import only. A `propertiesInput` key naming no property type, or, for a credential, a type only the members of a plan edit, or a type of an access group the credential (or the person it acts for) is not in, refuses the whole write with 422 `PRODUCT_PROPERTIES_REFUSED`, whose message names each and why; `fields.propertiesInput.unknown`, `fields.propertiesInput.planGated` and `fields.propertiesInput.groupGated` list the keys as sent. The product's read sent back under `product` passes as it was read; a key of it that differs from the product as it stands, a key the write takes nowhere, or a list or an object sent as something else refuses the whole write with 422 `PRODUCT_KEYS_REFUSED`, one field per key as on create, so a body read before another write changed the product names what moved.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -8533,11 +8573,11 @@ func (c *Client) ListDpps(ctx context.Context, params *ListDppsParams, reqEditor
 //
 // `granularity` says which unit the passport stands for and therefore which identifiers it needs: `model` needs none of its own, `batch` needs a `batchIdentifier`, `item` needs a `serialIdentifier` as well. The lot is created from the product as it stands the first time its identifier is used and reused by every later passport of the same lot. A new lot is taken only of a product that passes every other required readiness check; until then the create answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`.
 //
-// A lot takes one `batch` passport and a unit one `item` passport. A second one is refused with 422 `DPP_BATCH_TAKEN` on `batch`, or `DPP_SERIAL_IDENTIFIER_TAKEN` on `serialIdentifier` for a serial the lot has already, and the message names the passport that stands for it. A voided or superseded passport still stands for its lot, and so does a draft, which is published instead. Item passports of a lot and its `batch` passport do not count against each other.
+// A product takes one `model` passport, a lot one `batch` passport and a unit one `item` passport. A second one is refused with 422 `DPP_UNLOCKABLE_ID_TAKEN` on `unlockableId`, `DPP_BATCH_TAKEN` on `batch`, or `DPP_SERIAL_IDENTIFIER_TAKEN` on `serialIdentifier` for a serial the lot has already, and the message names the passport that stands for it. A voided or superseded passport still stands for its product, lot or unit, and so does a draft, which is published instead, and a model passport the workspace issued by itself. Passports at different granularities do not count against each other.
 //
 // The answer carries `validation` and `publishBlocked` alongside the passport: the same report `POST /dpps/validate` produces, over the record that was just written, so a caller that skipped the dry run still sees what a publish would refuse or warn about.
 //
-// `propertyTypeIds` names the property types the passport carries, and it carries those alone. An entry naming no product property type refuses the whole write with 422 `DPP_PROPERTY_TYPES_REFUSED`, and no passport is created; the message names each, `fields.propertyTypeIds.unknown` lists them as sent.
+// `propertyTypeIds` names the property types the passport carries, and it carries those alone. An entry naming no product property type refuses the whole write with 422 `DPP_PROPERTY_TYPES_REFUSED`, and no passport is created; the message names each, `fields.propertyTypeIds.unknown` lists them as sent. A selection sent as no list, a single id among them, would carry every type, so it is refused with 422 `DPP_KEYS_REFUSED` and `fields.propertyTypeIds.error` `DPP_KEY_LIST_REQUIRED`.
 //
 // Takes any type of body and a specified content type.
 //
@@ -8560,11 +8600,11 @@ func (c *Client) CreateDppWithBody(ctx context.Context, params *CreateDppParams,
 //
 // `granularity` says which unit the passport stands for and therefore which identifiers it needs: `model` needs none of its own, `batch` needs a `batchIdentifier`, `item` needs a `serialIdentifier` as well. The lot is created from the product as it stands the first time its identifier is used and reused by every later passport of the same lot. A new lot is taken only of a product that passes every other required readiness check; until then the create answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`.
 //
-// A lot takes one `batch` passport and a unit one `item` passport. A second one is refused with 422 `DPP_BATCH_TAKEN` on `batch`, or `DPP_SERIAL_IDENTIFIER_TAKEN` on `serialIdentifier` for a serial the lot has already, and the message names the passport that stands for it. A voided or superseded passport still stands for its lot, and so does a draft, which is published instead. Item passports of a lot and its `batch` passport do not count against each other.
+// A product takes one `model` passport, a lot one `batch` passport and a unit one `item` passport. A second one is refused with 422 `DPP_UNLOCKABLE_ID_TAKEN` on `unlockableId`, `DPP_BATCH_TAKEN` on `batch`, or `DPP_SERIAL_IDENTIFIER_TAKEN` on `serialIdentifier` for a serial the lot has already, and the message names the passport that stands for it. A voided or superseded passport still stands for its product, lot or unit, and so does a draft, which is published instead, and a model passport the workspace issued by itself. Passports at different granularities do not count against each other.
 //
 // The answer carries `validation` and `publishBlocked` alongside the passport: the same report `POST /dpps/validate` produces, over the record that was just written, so a caller that skipped the dry run still sees what a publish would refuse or warn about.
 //
-// `propertyTypeIds` names the property types the passport carries, and it carries those alone. An entry naming no product property type refuses the whole write with 422 `DPP_PROPERTY_TYPES_REFUSED`, and no passport is created; the message names each, `fields.propertyTypeIds.unknown` lists them as sent.
+// `propertyTypeIds` names the property types the passport carries, and it carries those alone. An entry naming no product property type refuses the whole write with 422 `DPP_PROPERTY_TYPES_REFUSED`, and no passport is created; the message names each, `fields.propertyTypeIds.unknown` lists them as sent. A selection sent as no list, a single id among them, would carry every type, so it is refused with 422 `DPP_KEYS_REFUSED` and `fields.propertyTypeIds.error` `DPP_KEY_LIST_REQUIRED`.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -8585,11 +8625,11 @@ func (c *Client) CreateDpp(ctx context.Context, params *CreateDppParams, body Cr
 //
 // Streams passports in as newline-delimited JSON, one passport per line, so a line of production writes one request instead of thousands. Each row is created and its first version published at the workspace's publish stage, as `POST /dpps/{code}/publish` signs a draft; the response reports one result line per input row.
 //
-// An optional first line `{"shared": {...}}` carries batch-wide defaults that each following row deep-merges over (a nested `"__replace__": true` opts a sub-tree out of the merge). An unsupported `shared.granularity` is rejected before any row is processed; per-row problems never abort the batch. A new row whose `propertyTypeIds` names no product property type comes back as `error` with `DPP_PROPERTY_TYPES_REFUSED`, the message naming each and `fields.propertyTypeIds.unknown` listing them, and nothing is created for it.
+// An optional first line `{"shared": {...}}` carries batch-wide defaults that each following row deep-merges over (a nested `"__replace__": true` opts a sub-tree out of the merge). An unsupported `shared.granularity` is rejected before any row is processed; per-row problems never abort the batch. A new row whose `propertyTypeIds` names no product property type comes back as `error` with `DPP_PROPERTY_TYPES_REFUSED`, the message naming each and `fields.propertyTypeIds.unknown` listing them, and nothing is created for it. A new row whose `propertyTypeIds` is no list comes back as `error` with `DPP_KEYS_REFUSED`; one in `shared` reaches every row it merges into, and each answers for itself.
 //
 // Row keys may be written in camelCase (`unlockableId`, `modelIdentifier`, `serialIdentifier`) or as the snake_case attribute names; `tenantData` is an alias for `dynamicData`. The keys inside `dynamicData` are left as they are.
 //
-// Resubmission is safe. Rows are deduplicated by natural key rather than by `Idempotency-Key`: at `model` granularity that is `modelIdentifier`, at `batch` it adds `batchIdentifier`, at `item` it adds `serialIdentifier`. A key that already maps to a published passport comes back as `duplicate`; one that maps to a passport that never published is resumed and published, so a retry after a partial failure finishes the job instead of duplicating it. A row whose key misses a passport its lot or unit already has (a row naming no `modelIdentifier`) is refused as `POST /dpps` refuses it, with `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`.
+// Resubmission is safe. Rows are deduplicated by natural key rather than by `Idempotency-Key`: at `model` granularity that is `modelIdentifier`, at `batch` it adds `batchIdentifier`, at `item` it adds `serialIdentifier`. A key that already maps to a published passport comes back as `duplicate`; one that maps to a passport that never published is resumed and published, so a retry after a partial failure finishes the job instead of duplicating it. A row whose key misses a passport its product, lot or unit already has (a row naming no `modelIdentifier`, or no `granularity` in itself or in `shared`) is refused as `POST /dpps` refuses it, with `DPP_UNLOCKABLE_ID_TAKEN`, `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`.
 //
 // Synchronous by default, capped at 500 rows and 5 MB. Send `Prefer: respond-async` to have the body persisted and processed by a background task instead: the response is `202` with a polling URL, and the caps rise to 50000 rows and 25 MB. Beyond that, batch across requests.
 //
@@ -8673,7 +8713,7 @@ func (c *Client) GetDppRequirements(ctx context.Context, params *GetDppRequireme
 
 // ValidateDppWithBody Validate a DPP payload
 //
-// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot; a lot or a unit that has a passport already shows as `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`, and a new lot its product may not have yet as `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, beside the report that names the checks the product still fails. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.
+// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot; a product that has its model passport already shows as `DPP_UNLOCKABLE_ID_TAKEN`, a lot or a unit that has its passport as `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`, and a new lot its product may not have yet as `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, beside the report that names the checks the product still fails. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.
 //
 // A payload the platform would refuse is a plain `200` with `valid: false` - the request succeeded, the passport would not. Only a missing permission, a missing `dpp` object, an unreadable body, a granularity the workspace does not issue and a `propertyTypeIds` entry naming no property type answer with an error status, the last two as the create answers them.
 //
@@ -8694,7 +8734,7 @@ func (c *Client) ValidateDppWithBody(ctx context.Context, contentType string, bo
 
 // ValidateDpp Validate a DPP payload
 //
-// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot; a lot or a unit that has a passport already shows as `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`, and a new lot its product may not have yet as `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, beside the report that names the checks the product still fails. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.
+// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot; a product that has its model passport already shows as `DPP_UNLOCKABLE_ID_TAKEN`, a lot or a unit that has its passport as `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`, and a new lot its product may not have yet as `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, beside the report that names the checks the product still fails. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.
 //
 // A payload the platform would refuse is a plain `200` with `valid: false` - the request succeeded, the passport would not. Only a missing permission, a missing `dpp` object, an unreadable body, a granularity the workspace does not issue and a `propertyTypeIds` entry naming no property type answer with an error status, the last two as the create answers them.
 //
@@ -8732,7 +8772,7 @@ func (c *Client) GetDppPrivateDynamicData(ctx context.Context, code string, reqE
 
 // GetDppPrivateProperties Read the private properties of several versions
 //
-// The reader-derived confidential rows for several versions of one passport in a single round-trip. Name the versions with `?versions=1,3,7`; at most 50 are derived per request. A version is left out when it carries no confidential rows or the reader may see none of them, so the answer only contains versions where the reader gains rows beyond the public passport. An unauthenticated request answers 401 with the `X-Auth-Fields` challenge the passport page uses to sign a reader in.
+// The reader-derived confidential rows for several versions of one passport in a single round-trip. Name the versions with `?versions=1,3,7`; at most 50 are derived per request. A version is left out when it carries no confidential rows, the workspace keeps no copy of them, or the reader may see none of them, so the answer only contains versions where the reader gains rows beyond the public passport. An unauthenticated request answers 401 with the `X-Auth-Fields` challenge the passport page uses to sign a reader in.
 //
 // Corresponds with GET /dpps/{code}/private_properties (the `GetDppPrivateProperties` operationId).
 func (c *Client) GetDppPrivateProperties(ctx context.Context, code string, params *GetDppPrivatePropertiesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -8842,7 +8882,7 @@ func (c *Client) GetDpp(ctx context.Context, id Id, params *GetDppParams, reqEdi
 //
 // The answer carries `validation` and `publishBlocked` alongside the passport: the same report `POST /dpps/validate` produces, over the record as it now stands, so an update that would block the next publish says so at once.
 //
-// A `propertyTypeIds` entry naming no product property type refuses the whole update with 422 `DPP_PROPERTY_TYPES_REFUSED`, and the passport keeps the types it had.
+// A `propertyTypeIds` entry naming no product property type refuses the whole update with 422 `DPP_PROPERTY_TYPES_REFUSED`, and the passport keeps the types it had; a selection sent as no list with 422 `DPP_KEYS_REFUSED`.
 //
 // Takes any type of body and a specified content type.
 //
@@ -8865,7 +8905,7 @@ func (c *Client) UpdateDppWithBody(ctx context.Context, id Id, contentType strin
 //
 // The answer carries `validation` and `publishBlocked` alongside the passport: the same report `POST /dpps/validate` produces, over the record as it now stands, so an update that would block the next publish says so at once.
 //
-// A `propertyTypeIds` entry naming no product property type refuses the whole update with 422 `DPP_PROPERTY_TYPES_REFUSED`, and the passport keeps the types it had.
+// A `propertyTypeIds` entry naming no product property type refuses the whole update with 422 `DPP_PROPERTY_TYPES_REFUSED`, and the passport keeps the types it had; a selection sent as no list with 422 `DPP_KEYS_REFUSED`.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -8920,7 +8960,7 @@ func (c *Client) CorrectDpp(ctx context.Context, id Id, params *CorrectDppParams
 	return c.Client.Do(req)
 }
 
-// UpdateDppDynamicDataWithBody Update dynamic data
+// UpdateDppDynamicDataWithBody Update changing values (e.g. battery health)
 //
 // Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none). A key naming a published legitimate-interest type is served to the readers its access groups admit by `GET /dpps/{code}/private_dynamic_data`; every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.
 //
@@ -8939,7 +8979,7 @@ func (c *Client) UpdateDppDynamicDataWithBody(ctx context.Context, id Id, conten
 	return c.Client.Do(req)
 }
 
-// UpdateDppDynamicData Update dynamic data
+// UpdateDppDynamicData Update changing values (e.g. battery health)
 //
 // Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none). A key naming a published legitimate-interest type is served to the readers its access groups admit by `GET /dpps/{code}/private_dynamic_data`; every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.
 //
@@ -9082,7 +9122,7 @@ func (c *Client) GetDppStats(ctx context.Context, id Id, params *GetDppStatsPara
 
 // SupersedeDppWithBody Supersede a DPP
 //
-// Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. Superseding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
+// Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. A product, a lot or a unit takes one passport at each granularity (see `POST /dpps`), so the successor stands for another product, lot or unit. Superseding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
 //
 // Takes any type of body and a specified content type.
 //
@@ -9101,7 +9141,7 @@ func (c *Client) SupersedeDppWithBody(ctx context.Context, id Id, params *Supers
 
 // SupersedeDpp Supersede a DPP
 //
-// Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. Superseding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
+// Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. A product, a lot or a unit takes one passport at each granularity (see `POST /dpps`), so the successor stands for another product, lot or unit. Superseding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
 //
 // Takes a body of the `application/json` content type.
 //
@@ -9137,7 +9177,7 @@ func (c *Client) ListDppVersions(ctx context.Context, id Id, reqEditors ...Reque
 
 // VoidDppWithBody Void a DPP
 //
-// Marks the passport as voided - the unit it stands for no longer exists: it was destroyed, never shipped, or scrapped after a recall. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. This is not how a unit is recalled: a unit still out there is moved to `suspended` through a status change, so its passport goes on answering a scan with the recall. Voiding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
+// Marks the passport as voided - the unit it stands for no longer exists: it was destroyed, never shipped, or scrapped after a recall. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. This is not how a unit is recalled: a unit still out there is moved to `suspended` through a status change, so its passport goes on answering a scan with the recall. Voiding cannot be undone, and a voided passport still stands for its product, lot or unit, which never takes another passport at its granularity (see `POST /dpps`). A consumer also needs write access to the passport itself (`dpp_write`).
 //
 // Takes any type of body and a specified content type.
 //
@@ -9156,7 +9196,7 @@ func (c *Client) VoidDppWithBody(ctx context.Context, id Id, params *VoidDppPara
 
 // VoidDpp Void a DPP
 //
-// Marks the passport as voided - the unit it stands for no longer exists: it was destroyed, never shipped, or scrapped after a recall. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. This is not how a unit is recalled: a unit still out there is moved to `suspended` through a status change, so its passport goes on answering a scan with the recall. Voiding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
+// Marks the passport as voided - the unit it stands for no longer exists: it was destroyed, never shipped, or scrapped after a recall. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. This is not how a unit is recalled: a unit still out there is moved to `suspended` through a status change, so its passport goes on answering a scan with the recall. Voiding cannot be undone, and a voided passport still stands for its product, lot or unit, which never takes another passport at its granularity (see `POST /dpps`). A consumer also needs write access to the passport itself (`dpp_write`).
 //
 // Takes a body of the `application/json` content type.
 //
@@ -10637,7 +10677,7 @@ func (c *Client) GetProduct(ctx context.Context, id Id, params *GetProductParams
 
 // UpdateProductWithBody Update a product
 //
-// Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are. A brand name no brand carries creates the brand, which asks a consumer for `brand_access` (403 `BRAND_FORBIDDEN` without it); a credential acting for a person names only what that person reads, as on create. On a variant, a value the body changes becomes the variant's own and a value it sends as it was read goes on following the parent. `parentId` is left out or names the parent the product has; any other answers 422 `PRODUCT_PARENT_READ_ONLY`, since a variant moves to another parent through a spreadsheet import only. A `propertiesInput` key naming no property type, or, for a credential, a type only the members of a plan edit, or a type of an access group the credential (or the person it acts for) is not in, refuses the whole write with 422 `PRODUCT_PROPERTIES_REFUSED`, whose message names each and why; `fields.propertiesInput.unknown`, `fields.propertiesInput.planGated` and `fields.propertiesInput.groupGated` list the keys as sent.
+// Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are. A brand name no brand carries creates the brand, which asks a consumer for `brand_access` (403 `BRAND_FORBIDDEN` without it); a credential acting for a person names only what that person reads, as on create. On a variant, a value the body changes becomes the variant's own and a value it sends as it was read goes on following the parent. `parentId` is left out or names the parent the product has; any other answers 422 `PRODUCT_PARENT_READ_ONLY`, since a variant moves to another parent through a spreadsheet import only. A `propertiesInput` key naming no property type, or, for a credential, a type only the members of a plan edit, or a type of an access group the credential (or the person it acts for) is not in, refuses the whole write with 422 `PRODUCT_PROPERTIES_REFUSED`, whose message names each and why; `fields.propertiesInput.unknown`, `fields.propertiesInput.planGated` and `fields.propertiesInput.groupGated` list the keys as sent. The product's read sent back under `product` passes as it was read; a key of it that differs from the product as it stands, a key the write takes nowhere, or a list or an object sent as something else refuses the whole write with 422 `PRODUCT_KEYS_REFUSED`, one field per key as on create, so a body read before another write changed the product names what moved.
 //
 // Takes any type of body and a specified content type.
 //
@@ -10656,7 +10696,7 @@ func (c *Client) UpdateProductWithBody(ctx context.Context, id Id, contentType s
 
 // UpdateProduct Update a product
 //
-// Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are. A brand name no brand carries creates the brand, which asks a consumer for `brand_access` (403 `BRAND_FORBIDDEN` without it); a credential acting for a person names only what that person reads, as on create. On a variant, a value the body changes becomes the variant's own and a value it sends as it was read goes on following the parent. `parentId` is left out or names the parent the product has; any other answers 422 `PRODUCT_PARENT_READ_ONLY`, since a variant moves to another parent through a spreadsheet import only. A `propertiesInput` key naming no property type, or, for a credential, a type only the members of a plan edit, or a type of an access group the credential (or the person it acts for) is not in, refuses the whole write with 422 `PRODUCT_PROPERTIES_REFUSED`, whose message names each and why; `fields.propertiesInput.unknown`, `fields.propertiesInput.planGated` and `fields.propertiesInput.groupGated` list the keys as sent.
+// Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are. A brand name no brand carries creates the brand, which asks a consumer for `brand_access` (403 `BRAND_FORBIDDEN` without it); a credential acting for a person names only what that person reads, as on create. On a variant, a value the body changes becomes the variant's own and a value it sends as it was read goes on following the parent. `parentId` is left out or names the parent the product has; any other answers 422 `PRODUCT_PARENT_READ_ONLY`, since a variant moves to another parent through a spreadsheet import only. A `propertiesInput` key naming no property type, or, for a credential, a type only the members of a plan edit, or a type of an access group the credential (or the person it acts for) is not in, refuses the whole write with 422 `PRODUCT_PROPERTIES_REFUSED`, whose message names each and why; `fields.propertiesInput.unknown`, `fields.propertiesInput.planGated` and `fields.propertiesInput.groupGated` list the keys as sent. The product's read sent back under `product` passes as it was read; a key of it that differs from the product as it stands, a key the write takes nowhere, or a list or an object sent as something else refuses the whole write with 422 `PRODUCT_KEYS_REFUSED`, one field per key as on create, so a body read before another write changed the product names what moved.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -18935,11 +18975,11 @@ type ClientWithResponsesInterface interface {
 	//
 	// `granularity` says which unit the passport stands for and therefore which identifiers it needs: `model` needs none of its own, `batch` needs a `batchIdentifier`, `item` needs a `serialIdentifier` as well. The lot is created from the product as it stands the first time its identifier is used and reused by every later passport of the same lot. A new lot is taken only of a product that passes every other required readiness check; until then the create answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`.
 	//
-	// A lot takes one `batch` passport and a unit one `item` passport. A second one is refused with 422 `DPP_BATCH_TAKEN` on `batch`, or `DPP_SERIAL_IDENTIFIER_TAKEN` on `serialIdentifier` for a serial the lot has already, and the message names the passport that stands for it. A voided or superseded passport still stands for its lot, and so does a draft, which is published instead. Item passports of a lot and its `batch` passport do not count against each other.
+	// A product takes one `model` passport, a lot one `batch` passport and a unit one `item` passport. A second one is refused with 422 `DPP_UNLOCKABLE_ID_TAKEN` on `unlockableId`, `DPP_BATCH_TAKEN` on `batch`, or `DPP_SERIAL_IDENTIFIER_TAKEN` on `serialIdentifier` for a serial the lot has already, and the message names the passport that stands for it. A voided or superseded passport still stands for its product, lot or unit, and so does a draft, which is published instead, and a model passport the workspace issued by itself. Passports at different granularities do not count against each other.
 	//
 	// The answer carries `validation` and `publishBlocked` alongside the passport: the same report `POST /dpps/validate` produces, over the record that was just written, so a caller that skipped the dry run still sees what a publish would refuse or warn about.
 	//
-	// `propertyTypeIds` names the property types the passport carries, and it carries those alone. An entry naming no product property type refuses the whole write with 422 `DPP_PROPERTY_TYPES_REFUSED`, and no passport is created; the message names each, `fields.propertyTypeIds.unknown` lists them as sent.
+	// `propertyTypeIds` names the property types the passport carries, and it carries those alone. An entry naming no product property type refuses the whole write with 422 `DPP_PROPERTY_TYPES_REFUSED`, and no passport is created; the message names each, `fields.propertyTypeIds.unknown` lists them as sent. A selection sent as no list, a single id among them, would carry every type, so it is refused with 422 `DPP_KEYS_REFUSED` and `fields.propertyTypeIds.error` `DPP_KEY_LIST_REQUIRED`.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -18952,11 +18992,11 @@ type ClientWithResponsesInterface interface {
 	//
 	// `granularity` says which unit the passport stands for and therefore which identifiers it needs: `model` needs none of its own, `batch` needs a `batchIdentifier`, `item` needs a `serialIdentifier` as well. The lot is created from the product as it stands the first time its identifier is used and reused by every later passport of the same lot. A new lot is taken only of a product that passes every other required readiness check; until then the create answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`.
 	//
-	// A lot takes one `batch` passport and a unit one `item` passport. A second one is refused with 422 `DPP_BATCH_TAKEN` on `batch`, or `DPP_SERIAL_IDENTIFIER_TAKEN` on `serialIdentifier` for a serial the lot has already, and the message names the passport that stands for it. A voided or superseded passport still stands for its lot, and so does a draft, which is published instead. Item passports of a lot and its `batch` passport do not count against each other.
+	// A product takes one `model` passport, a lot one `batch` passport and a unit one `item` passport. A second one is refused with 422 `DPP_UNLOCKABLE_ID_TAKEN` on `unlockableId`, `DPP_BATCH_TAKEN` on `batch`, or `DPP_SERIAL_IDENTIFIER_TAKEN` on `serialIdentifier` for a serial the lot has already, and the message names the passport that stands for it. A voided or superseded passport still stands for its product, lot or unit, and so does a draft, which is published instead, and a model passport the workspace issued by itself. Passports at different granularities do not count against each other.
 	//
 	// The answer carries `validation` and `publishBlocked` alongside the passport: the same report `POST /dpps/validate` produces, over the record that was just written, so a caller that skipped the dry run still sees what a publish would refuse or warn about.
 	//
-	// `propertyTypeIds` names the property types the passport carries, and it carries those alone. An entry naming no product property type refuses the whole write with 422 `DPP_PROPERTY_TYPES_REFUSED`, and no passport is created; the message names each, `fields.propertyTypeIds.unknown` lists them as sent.
+	// `propertyTypeIds` names the property types the passport carries, and it carries those alone. An entry naming no product property type refuses the whole write with 422 `DPP_PROPERTY_TYPES_REFUSED`, and no passport is created; the message names each, `fields.propertyTypeIds.unknown` lists them as sent. A selection sent as no list, a single id among them, would carry every type, so it is refused with 422 `DPP_KEYS_REFUSED` and `fields.propertyTypeIds.error` `DPP_KEY_LIST_REQUIRED`.
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -18967,11 +19007,11 @@ type ClientWithResponsesInterface interface {
 	//
 	// Streams passports in as newline-delimited JSON, one passport per line, so a line of production writes one request instead of thousands. Each row is created and its first version published at the workspace's publish stage, as `POST /dpps/{code}/publish` signs a draft; the response reports one result line per input row.
 	//
-	// An optional first line `{"shared": {...}}` carries batch-wide defaults that each following row deep-merges over (a nested `"__replace__": true` opts a sub-tree out of the merge). An unsupported `shared.granularity` is rejected before any row is processed; per-row problems never abort the batch. A new row whose `propertyTypeIds` names no product property type comes back as `error` with `DPP_PROPERTY_TYPES_REFUSED`, the message naming each and `fields.propertyTypeIds.unknown` listing them, and nothing is created for it.
+	// An optional first line `{"shared": {...}}` carries batch-wide defaults that each following row deep-merges over (a nested `"__replace__": true` opts a sub-tree out of the merge). An unsupported `shared.granularity` is rejected before any row is processed; per-row problems never abort the batch. A new row whose `propertyTypeIds` names no product property type comes back as `error` with `DPP_PROPERTY_TYPES_REFUSED`, the message naming each and `fields.propertyTypeIds.unknown` listing them, and nothing is created for it. A new row whose `propertyTypeIds` is no list comes back as `error` with `DPP_KEYS_REFUSED`; one in `shared` reaches every row it merges into, and each answers for itself.
 	//
 	// Row keys may be written in camelCase (`unlockableId`, `modelIdentifier`, `serialIdentifier`) or as the snake_case attribute names; `tenantData` is an alias for `dynamicData`. The keys inside `dynamicData` are left as they are.
 	//
-	// Resubmission is safe. Rows are deduplicated by natural key rather than by `Idempotency-Key`: at `model` granularity that is `modelIdentifier`, at `batch` it adds `batchIdentifier`, at `item` it adds `serialIdentifier`. A key that already maps to a published passport comes back as `duplicate`; one that maps to a passport that never published is resumed and published, so a retry after a partial failure finishes the job instead of duplicating it. A row whose key misses a passport its lot or unit already has (a row naming no `modelIdentifier`) is refused as `POST /dpps` refuses it, with `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`.
+	// Resubmission is safe. Rows are deduplicated by natural key rather than by `Idempotency-Key`: at `model` granularity that is `modelIdentifier`, at `batch` it adds `batchIdentifier`, at `item` it adds `serialIdentifier`. A key that already maps to a published passport comes back as `duplicate`; one that maps to a passport that never published is resumed and published, so a retry after a partial failure finishes the job instead of duplicating it. A row whose key misses a passport its product, lot or unit already has (a row naming no `modelIdentifier`, or no `granularity` in itself or in `shared`) is refused as `POST /dpps` refuses it, with `DPP_UNLOCKABLE_ID_TAKEN`, `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`.
 	//
 	// Synchronous by default, capped at 500 rows and 5 MB. Send `Prefer: respond-async` to have the body persisted and processed by a background task instead: the response is `202` with a polling URL, and the caps rise to 50000 rows and 25 MB. Beyond that, batch across requests.
 	//
@@ -19019,7 +19059,7 @@ type ClientWithResponsesInterface interface {
 
 	// ValidateDppWithBodyWithResponse Validate a DPP payload
 	//
-	// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot; a lot or a unit that has a passport already shows as `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`, and a new lot its product may not have yet as `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, beside the report that names the checks the product still fails. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.
+	// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot; a product that has its model passport already shows as `DPP_UNLOCKABLE_ID_TAKEN`, a lot or a unit that has its passport as `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`, and a new lot its product may not have yet as `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, beside the report that names the checks the product still fails. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.
 	//
 	// A payload the platform would refuse is a plain `200` with `valid: false` - the request succeeded, the passport would not. Only a missing permission, a missing `dpp` object, an unreadable body, a granularity the workspace does not issue and a `propertyTypeIds` entry naming no property type answer with an error status, the last two as the create answers them.
 	//
@@ -19030,7 +19070,7 @@ type ClientWithResponsesInterface interface {
 
 	// ValidateDppWithResponse Validate a DPP payload
 	//
-	// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot; a lot or a unit that has a passport already shows as `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`, and a new lot its product may not have yet as `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, beside the report that names the checks the product still fails. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.
+	// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot; a product that has its model passport already shows as `DPP_UNLOCKABLE_ID_TAKEN`, a lot or a unit that has its passport as `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`, and a new lot its product may not have yet as `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, beside the report that names the checks the product still fails. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.
 	//
 	// A payload the platform would refuse is a plain `200` with `valid: false` - the request succeeded, the passport would not. Only a missing permission, a missing `dpp` object, an unreadable body, a granularity the workspace does not issue and a `propertyTypeIds` entry naming no property type answer with an error status, the last two as the create answers them.
 	//
@@ -19050,7 +19090,7 @@ type ClientWithResponsesInterface interface {
 
 	// GetDppPrivatePropertiesWithResponse Read the private properties of several versions
 	//
-	// The reader-derived confidential rows for several versions of one passport in a single round-trip. Name the versions with `?versions=1,3,7`; at most 50 are derived per request. A version is left out when it carries no confidential rows or the reader may see none of them, so the answer only contains versions where the reader gains rows beyond the public passport. An unauthenticated request answers 401 with the `X-Auth-Fields` challenge the passport page uses to sign a reader in.
+	// The reader-derived confidential rows for several versions of one passport in a single round-trip. Name the versions with `?versions=1,3,7`; at most 50 are derived per request. A version is left out when it carries no confidential rows, the workspace keeps no copy of them, or the reader may see none of them, so the answer only contains versions where the reader gains rows beyond the public passport. An unauthenticated request answers 401 with the `X-Auth-Fields` challenge the passport page uses to sign a reader in.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
@@ -19108,7 +19148,7 @@ type ClientWithResponsesInterface interface {
 	//
 	// The answer carries `validation` and `publishBlocked` alongside the passport: the same report `POST /dpps/validate` produces, over the record as it now stands, so an update that would block the next publish says so at once.
 	//
-	// A `propertyTypeIds` entry naming no product property type refuses the whole update with 422 `DPP_PROPERTY_TYPES_REFUSED`, and the passport keeps the types it had.
+	// A `propertyTypeIds` entry naming no product property type refuses the whole update with 422 `DPP_PROPERTY_TYPES_REFUSED`, and the passport keeps the types it had; a selection sent as no list with 422 `DPP_KEYS_REFUSED`.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -19121,7 +19161,7 @@ type ClientWithResponsesInterface interface {
 	//
 	// The answer carries `validation` and `publishBlocked` alongside the passport: the same report `POST /dpps/validate` produces, over the record as it now stands, so an update that would block the next publish says so at once.
 	//
-	// A `propertyTypeIds` entry naming no product property type refuses the whole update with 422 `DPP_PROPERTY_TYPES_REFUSED`, and the passport keeps the types it had.
+	// A `propertyTypeIds` entry naming no product property type refuses the whole update with 422 `DPP_PROPERTY_TYPES_REFUSED`, and the passport keeps the types it had; a selection sent as no list with 422 `DPP_KEYS_REFUSED`.
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -19146,7 +19186,7 @@ type ClientWithResponsesInterface interface {
 	// Corresponds with POST /dpps/{id}/correct (the `CorrectDpp` operationId).
 	CorrectDppWithResponse(ctx context.Context, id Id, params *CorrectDppParams, body CorrectDppJSONRequestBody, reqEditors ...RequestEditorFn) (*CorrectDppResponse, error)
 
-	// UpdateDppDynamicDataWithBodyWithResponse Update dynamic data
+	// UpdateDppDynamicDataWithBodyWithResponse Update changing values (e.g. battery health)
 	//
 	// Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none). A key naming a published legitimate-interest type is served to the readers its access groups admit by `GET /dpps/{code}/private_dynamic_data`; every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.
 	//
@@ -19155,7 +19195,7 @@ type ClientWithResponsesInterface interface {
 	// Corresponds with PATCH /dpps/{id}/dynamic_data (the `UpdateDppDynamicData` operationId).
 	UpdateDppDynamicDataWithBodyWithResponse(ctx context.Context, id Id, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateDppDynamicDataResponse, error)
 
-	// UpdateDppDynamicDataWithResponse Update dynamic data
+	// UpdateDppDynamicDataWithResponse Update changing values (e.g. battery health)
 	//
 	// Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none). A key naming a published legitimate-interest type is served to the readers its access groups admit by `GET /dpps/{code}/private_dynamic_data`; every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.
 	//
@@ -19232,7 +19272,7 @@ type ClientWithResponsesInterface interface {
 
 	// SupersedeDppWithBodyWithResponse Supersede a DPP
 	//
-	// Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. Superseding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
+	// Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. A product, a lot or a unit takes one passport at each granularity (see `POST /dpps`), so the successor stands for another product, lot or unit. Superseding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -19241,7 +19281,7 @@ type ClientWithResponsesInterface interface {
 
 	// SupersedeDppWithResponse Supersede a DPP
 	//
-	// Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. Superseding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
+	// Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. A product, a lot or a unit takes one passport at each granularity (see `POST /dpps`), so the successor stands for another product, lot or unit. Superseding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -19259,7 +19299,7 @@ type ClientWithResponsesInterface interface {
 
 	// VoidDppWithBodyWithResponse Void a DPP
 	//
-	// Marks the passport as voided - the unit it stands for no longer exists: it was destroyed, never shipped, or scrapped after a recall. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. This is not how a unit is recalled: a unit still out there is moved to `suspended` through a status change, so its passport goes on answering a scan with the recall. Voiding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
+	// Marks the passport as voided - the unit it stands for no longer exists: it was destroyed, never shipped, or scrapped after a recall. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. This is not how a unit is recalled: a unit still out there is moved to `suspended` through a status change, so its passport goes on answering a scan with the recall. Voiding cannot be undone, and a voided passport still stands for its product, lot or unit, which never takes another passport at its granularity (see `POST /dpps`). A consumer also needs write access to the passport itself (`dpp_write`).
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -19268,7 +19308,7 @@ type ClientWithResponsesInterface interface {
 
 	// VoidDppWithResponse Void a DPP
 	//
-	// Marks the passport as voided - the unit it stands for no longer exists: it was destroyed, never shipped, or scrapped after a recall. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. This is not how a unit is recalled: a unit still out there is moved to `suspended` through a status change, so its passport goes on answering a scan with the recall. Voiding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
+	// Marks the passport as voided - the unit it stands for no longer exists: it was destroyed, never shipped, or scrapped after a recall. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. This is not how a unit is recalled: a unit still out there is moved to `suspended` through a status change, so its passport goes on answering a scan with the recall. Voiding cannot be undone, and a voided passport still stands for its product, lot or unit, which never takes another passport at its granularity (see `POST /dpps`). A consumer also needs write access to the passport itself (`dpp_write`).
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -20057,7 +20097,7 @@ type ClientWithResponsesInterface interface {
 
 	// UpdateProductWithBodyWithResponse Update a product
 	//
-	// Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are. A brand name no brand carries creates the brand, which asks a consumer for `brand_access` (403 `BRAND_FORBIDDEN` without it); a credential acting for a person names only what that person reads, as on create. On a variant, a value the body changes becomes the variant's own and a value it sends as it was read goes on following the parent. `parentId` is left out or names the parent the product has; any other answers 422 `PRODUCT_PARENT_READ_ONLY`, since a variant moves to another parent through a spreadsheet import only. A `propertiesInput` key naming no property type, or, for a credential, a type only the members of a plan edit, or a type of an access group the credential (or the person it acts for) is not in, refuses the whole write with 422 `PRODUCT_PROPERTIES_REFUSED`, whose message names each and why; `fields.propertiesInput.unknown`, `fields.propertiesInput.planGated` and `fields.propertiesInput.groupGated` list the keys as sent.
+	// Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are. A brand name no brand carries creates the brand, which asks a consumer for `brand_access` (403 `BRAND_FORBIDDEN` without it); a credential acting for a person names only what that person reads, as on create. On a variant, a value the body changes becomes the variant's own and a value it sends as it was read goes on following the parent. `parentId` is left out or names the parent the product has; any other answers 422 `PRODUCT_PARENT_READ_ONLY`, since a variant moves to another parent through a spreadsheet import only. A `propertiesInput` key naming no property type, or, for a credential, a type only the members of a plan edit, or a type of an access group the credential (or the person it acts for) is not in, refuses the whole write with 422 `PRODUCT_PROPERTIES_REFUSED`, whose message names each and why; `fields.propertiesInput.unknown`, `fields.propertiesInput.planGated` and `fields.propertiesInput.groupGated` list the keys as sent. The product's read sent back under `product` passes as it was read; a key of it that differs from the product as it stands, a key the write takes nowhere, or a list or an object sent as something else refuses the whole write with 422 `PRODUCT_KEYS_REFUSED`, one field per key as on create, so a body read before another write changed the product names what moved.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -20066,7 +20106,7 @@ type ClientWithResponsesInterface interface {
 
 	// UpdateProductWithResponse Update a product
 	//
-	// Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are. A brand name no brand carries creates the brand, which asks a consumer for `brand_access` (403 `BRAND_FORBIDDEN` without it); a credential acting for a person names only what that person reads, as on create. On a variant, a value the body changes becomes the variant's own and a value it sends as it was read goes on following the parent. `parentId` is left out or names the parent the product has; any other answers 422 `PRODUCT_PARENT_READ_ONLY`, since a variant moves to another parent through a spreadsheet import only. A `propertiesInput` key naming no property type, or, for a credential, a type only the members of a plan edit, or a type of an access group the credential (or the person it acts for) is not in, refuses the whole write with 422 `PRODUCT_PROPERTIES_REFUSED`, whose message names each and why; `fields.propertiesInput.unknown`, `fields.propertiesInput.planGated` and `fields.propertiesInput.groupGated` list the keys as sent.
+	// Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are. A brand name no brand carries creates the brand, which asks a consumer for `brand_access` (403 `BRAND_FORBIDDEN` without it); a credential acting for a person names only what that person reads, as on create. On a variant, a value the body changes becomes the variant's own and a value it sends as it was read goes on following the parent. `parentId` is left out or names the parent the product has; any other answers 422 `PRODUCT_PARENT_READ_ONLY`, since a variant moves to another parent through a spreadsheet import only. A `propertiesInput` key naming no property type, or, for a credential, a type only the members of a plan edit, or a type of an access group the credential (or the person it acts for) is not in, refuses the whole write with 422 `PRODUCT_PROPERTIES_REFUSED`, whose message names each and why; `fields.propertiesInput.unknown`, `fields.propertiesInput.planGated` and `fields.propertiesInput.groupGated` list the keys as sent. The product's read sent back under `product` passes as it was read; a key of it that differs from the product as it stands, a key the write takes nowhere, or a list or an object sent as something else refuses the whole write with 422 `PRODUCT_KEYS_REFUSED`, one field per key as on create, so a body read before another write changed the product names what moved.
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -22479,7 +22519,7 @@ type GetDppVersionPrivatePropertiesResponse struct {
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *PrivateProperties
 	// JSON404 the response for an HTTP 404 `application/json` response
-	JSON404 *NotFound
+	JSON404 *Error
 	// Headers200 the parsed response headers for an HTTP 200 response
 	Headers200 *GetDppVersionPrivatePropertiesResponse200Headers
 }
@@ -22490,7 +22530,7 @@ func (r GetDppVersionPrivatePropertiesResponse) GetJSON200() *PrivateProperties 
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
-func (r GetDppVersionPrivatePropertiesResponse) GetJSON404() *NotFound {
+func (r GetDppVersionPrivatePropertiesResponse) GetJSON404() *Error {
 	return r.JSON404
 }
 
@@ -30221,11 +30261,11 @@ func (c *ClientWithResponses) ListDppsWithResponse(ctx context.Context, params *
 //
 // `granularity` says which unit the passport stands for and therefore which identifiers it needs: `model` needs none of its own, `batch` needs a `batchIdentifier`, `item` needs a `serialIdentifier` as well. The lot is created from the product as it stands the first time its identifier is used and reused by every later passport of the same lot. A new lot is taken only of a product that passes every other required readiness check; until then the create answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`.
 //
-// A lot takes one `batch` passport and a unit one `item` passport. A second one is refused with 422 `DPP_BATCH_TAKEN` on `batch`, or `DPP_SERIAL_IDENTIFIER_TAKEN` on `serialIdentifier` for a serial the lot has already, and the message names the passport that stands for it. A voided or superseded passport still stands for its lot, and so does a draft, which is published instead. Item passports of a lot and its `batch` passport do not count against each other.
+// A product takes one `model` passport, a lot one `batch` passport and a unit one `item` passport. A second one is refused with 422 `DPP_UNLOCKABLE_ID_TAKEN` on `unlockableId`, `DPP_BATCH_TAKEN` on `batch`, or `DPP_SERIAL_IDENTIFIER_TAKEN` on `serialIdentifier` for a serial the lot has already, and the message names the passport that stands for it. A voided or superseded passport still stands for its product, lot or unit, and so does a draft, which is published instead, and a model passport the workspace issued by itself. Passports at different granularities do not count against each other.
 //
 // The answer carries `validation` and `publishBlocked` alongside the passport: the same report `POST /dpps/validate` produces, over the record that was just written, so a caller that skipped the dry run still sees what a publish would refuse or warn about.
 //
-// `propertyTypeIds` names the property types the passport carries, and it carries those alone. An entry naming no product property type refuses the whole write with 422 `DPP_PROPERTY_TYPES_REFUSED`, and no passport is created; the message names each, `fields.propertyTypeIds.unknown` lists them as sent.
+// `propertyTypeIds` names the property types the passport carries, and it carries those alone. An entry naming no product property type refuses the whole write with 422 `DPP_PROPERTY_TYPES_REFUSED`, and no passport is created; the message names each, `fields.propertyTypeIds.unknown` lists them as sent. A selection sent as no list, a single id among them, would carry every type, so it is refused with 422 `DPP_KEYS_REFUSED` and `fields.propertyTypeIds.error` `DPP_KEY_LIST_REQUIRED`.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -30244,11 +30284,11 @@ func (c *ClientWithResponses) CreateDppWithBodyWithResponse(ctx context.Context,
 //
 // `granularity` says which unit the passport stands for and therefore which identifiers it needs: `model` needs none of its own, `batch` needs a `batchIdentifier`, `item` needs a `serialIdentifier` as well. The lot is created from the product as it stands the first time its identifier is used and reused by every later passport of the same lot. A new lot is taken only of a product that passes every other required readiness check; until then the create answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`.
 //
-// A lot takes one `batch` passport and a unit one `item` passport. A second one is refused with 422 `DPP_BATCH_TAKEN` on `batch`, or `DPP_SERIAL_IDENTIFIER_TAKEN` on `serialIdentifier` for a serial the lot has already, and the message names the passport that stands for it. A voided or superseded passport still stands for its lot, and so does a draft, which is published instead. Item passports of a lot and its `batch` passport do not count against each other.
+// A product takes one `model` passport, a lot one `batch` passport and a unit one `item` passport. A second one is refused with 422 `DPP_UNLOCKABLE_ID_TAKEN` on `unlockableId`, `DPP_BATCH_TAKEN` on `batch`, or `DPP_SERIAL_IDENTIFIER_TAKEN` on `serialIdentifier` for a serial the lot has already, and the message names the passport that stands for it. A voided or superseded passport still stands for its product, lot or unit, and so does a draft, which is published instead, and a model passport the workspace issued by itself. Passports at different granularities do not count against each other.
 //
 // The answer carries `validation` and `publishBlocked` alongside the passport: the same report `POST /dpps/validate` produces, over the record that was just written, so a caller that skipped the dry run still sees what a publish would refuse or warn about.
 //
-// `propertyTypeIds` names the property types the passport carries, and it carries those alone. An entry naming no product property type refuses the whole write with 422 `DPP_PROPERTY_TYPES_REFUSED`, and no passport is created; the message names each, `fields.propertyTypeIds.unknown` lists them as sent.
+// `propertyTypeIds` names the property types the passport carries, and it carries those alone. An entry naming no product property type refuses the whole write with 422 `DPP_PROPERTY_TYPES_REFUSED`, and no passport is created; the message names each, `fields.propertyTypeIds.unknown` lists them as sent. A selection sent as no list, a single id among them, would carry every type, so it is refused with 422 `DPP_KEYS_REFUSED` and `fields.propertyTypeIds.error` `DPP_KEY_LIST_REQUIRED`.
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
@@ -30265,11 +30305,11 @@ func (c *ClientWithResponses) CreateDppWithResponse(ctx context.Context, params 
 //
 // Streams passports in as newline-delimited JSON, one passport per line, so a line of production writes one request instead of thousands. Each row is created and its first version published at the workspace's publish stage, as `POST /dpps/{code}/publish` signs a draft; the response reports one result line per input row.
 //
-// An optional first line `{"shared": {...}}` carries batch-wide defaults that each following row deep-merges over (a nested `"__replace__": true` opts a sub-tree out of the merge). An unsupported `shared.granularity` is rejected before any row is processed; per-row problems never abort the batch. A new row whose `propertyTypeIds` names no product property type comes back as `error` with `DPP_PROPERTY_TYPES_REFUSED`, the message naming each and `fields.propertyTypeIds.unknown` listing them, and nothing is created for it.
+// An optional first line `{"shared": {...}}` carries batch-wide defaults that each following row deep-merges over (a nested `"__replace__": true` opts a sub-tree out of the merge). An unsupported `shared.granularity` is rejected before any row is processed; per-row problems never abort the batch. A new row whose `propertyTypeIds` names no product property type comes back as `error` with `DPP_PROPERTY_TYPES_REFUSED`, the message naming each and `fields.propertyTypeIds.unknown` listing them, and nothing is created for it. A new row whose `propertyTypeIds` is no list comes back as `error` with `DPP_KEYS_REFUSED`; one in `shared` reaches every row it merges into, and each answers for itself.
 //
 // Row keys may be written in camelCase (`unlockableId`, `modelIdentifier`, `serialIdentifier`) or as the snake_case attribute names; `tenantData` is an alias for `dynamicData`. The keys inside `dynamicData` are left as they are.
 //
-// Resubmission is safe. Rows are deduplicated by natural key rather than by `Idempotency-Key`: at `model` granularity that is `modelIdentifier`, at `batch` it adds `batchIdentifier`, at `item` it adds `serialIdentifier`. A key that already maps to a published passport comes back as `duplicate`; one that maps to a passport that never published is resumed and published, so a retry after a partial failure finishes the job instead of duplicating it. A row whose key misses a passport its lot or unit already has (a row naming no `modelIdentifier`) is refused as `POST /dpps` refuses it, with `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`.
+// Resubmission is safe. Rows are deduplicated by natural key rather than by `Idempotency-Key`: at `model` granularity that is `modelIdentifier`, at `batch` it adds `batchIdentifier`, at `item` it adds `serialIdentifier`. A key that already maps to a published passport comes back as `duplicate`; one that maps to a passport that never published is resumed and published, so a retry after a partial failure finishes the job instead of duplicating it. A row whose key misses a passport its product, lot or unit already has (a row naming no `modelIdentifier`, or no `granularity` in itself or in `shared`) is refused as `POST /dpps` refuses it, with `DPP_UNLOCKABLE_ID_TAKEN`, `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`.
 //
 // Synchronous by default, capped at 500 rows and 5 MB. Send `Prefer: respond-async` to have the body persisted and processed by a background task instead: the response is `202` with a polling URL, and the caps rise to 50000 rows and 25 MB. Beyond that, batch across requests.
 //
@@ -30341,7 +30381,7 @@ func (c *ClientWithResponses) GetDppRequirementsWithResponse(ctx context.Context
 
 // ValidateDppWithBodyWithResponse Validate a DPP payload
 //
-// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot; a lot or a unit that has a passport already shows as `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`, and a new lot its product may not have yet as `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, beside the report that names the checks the product still fails. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.
+// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot; a product that has its model passport already shows as `DPP_UNLOCKABLE_ID_TAKEN`, a lot or a unit that has its passport as `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`, and a new lot its product may not have yet as `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, beside the report that names the checks the product still fails. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.
 //
 // A payload the platform would refuse is a plain `200` with `valid: false` - the request succeeded, the passport would not. Only a missing permission, a missing `dpp` object, an unreadable body, a granularity the workspace does not issue and a `propertyTypeIds` entry naming no property type answer with an error status, the last two as the create answers them.
 //
@@ -30358,7 +30398,7 @@ func (c *ClientWithResponses) ValidateDppWithBodyWithResponse(ctx context.Contex
 
 // ValidateDppWithResponse Validate a DPP payload
 //
-// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot; a lot or a unit that has a passport already shows as `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`, and a new lot its product may not have yet as `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, beside the report that names the checks the product still fails. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.
+// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot; a product that has its model passport already shows as `DPP_UNLOCKABLE_ID_TAKEN`, a lot or a unit that has its passport as `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`, and a new lot its product may not have yet as `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, beside the report that names the checks the product still fails. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.
 //
 // A payload the platform would refuse is a plain `200` with `valid: false` - the request succeeded, the passport would not. Only a missing permission, a missing `dpp` object, an unreadable body, a granularity the workspace does not issue and a `propertyTypeIds` entry naming no property type answer with an error status, the last two as the create answers them.
 //
@@ -30390,7 +30430,7 @@ func (c *ClientWithResponses) GetDppPrivateDynamicDataWithResponse(ctx context.C
 
 // GetDppPrivatePropertiesWithResponse Read the private properties of several versions
 //
-// The reader-derived confidential rows for several versions of one passport in a single round-trip. Name the versions with `?versions=1,3,7`; at most 50 are derived per request. A version is left out when it carries no confidential rows or the reader may see none of them, so the answer only contains versions where the reader gains rows beyond the public passport. An unauthenticated request answers 401 with the `X-Auth-Fields` challenge the passport page uses to sign a reader in.
+// The reader-derived confidential rows for several versions of one passport in a single round-trip. Name the versions with `?versions=1,3,7`; at most 50 are derived per request. A version is left out when it carries no confidential rows, the workspace keeps no copy of them, or the reader may see none of them, so the answer only contains versions where the reader gains rows beyond the public passport. An unauthenticated request answers 401 with the `X-Auth-Fields` challenge the passport page uses to sign a reader in.
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -30484,7 +30524,7 @@ func (c *ClientWithResponses) GetDppWithResponse(ctx context.Context, id Id, par
 //
 // The answer carries `validation` and `publishBlocked` alongside the passport: the same report `POST /dpps/validate` produces, over the record as it now stands, so an update that would block the next publish says so at once.
 //
-// A `propertyTypeIds` entry naming no product property type refuses the whole update with 422 `DPP_PROPERTY_TYPES_REFUSED`, and the passport keeps the types it had.
+// A `propertyTypeIds` entry naming no product property type refuses the whole update with 422 `DPP_PROPERTY_TYPES_REFUSED`, and the passport keeps the types it had; a selection sent as no list with 422 `DPP_KEYS_REFUSED`.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -30503,7 +30543,7 @@ func (c *ClientWithResponses) UpdateDppWithBodyWithResponse(ctx context.Context,
 //
 // The answer carries `validation` and `publishBlocked` alongside the passport: the same report `POST /dpps/validate` produces, over the record as it now stands, so an update that would block the next publish says so at once.
 //
-// A `propertyTypeIds` entry naming no product property type refuses the whole update with 422 `DPP_PROPERTY_TYPES_REFUSED`, and the passport keeps the types it had.
+// A `propertyTypeIds` entry naming no product property type refuses the whole update with 422 `DPP_PROPERTY_TYPES_REFUSED`, and the passport keeps the types it had; a selection sent as no list with 422 `DPP_KEYS_REFUSED`.
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
@@ -30546,7 +30586,7 @@ func (c *ClientWithResponses) CorrectDppWithResponse(ctx context.Context, id Id,
 	return ParseCorrectDppResponse(rsp)
 }
 
-// UpdateDppDynamicDataWithBodyWithResponse Update dynamic data
+// UpdateDppDynamicDataWithBodyWithResponse Update changing values (e.g. battery health)
 //
 // Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none). A key naming a published legitimate-interest type is served to the readers its access groups admit by `GET /dpps/{code}/private_dynamic_data`; every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.
 //
@@ -30561,7 +30601,7 @@ func (c *ClientWithResponses) UpdateDppDynamicDataWithBodyWithResponse(ctx conte
 	return ParseUpdateDppDynamicDataResponse(rsp)
 }
 
-// UpdateDppDynamicDataWithResponse Update dynamic data
+// UpdateDppDynamicDataWithResponse Update changing values (e.g. battery health)
 //
 // Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none). A key naming a published legitimate-interest type is served to the readers its access groups admit by `GET /dpps/{code}/private_dynamic_data`; every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.
 //
@@ -30680,7 +30720,7 @@ func (c *ClientWithResponses) GetDppStatsWithResponse(ctx context.Context, id Id
 
 // SupersedeDppWithBodyWithResponse Supersede a DPP
 //
-// Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. Superseding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
+// Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. A product, a lot or a unit takes one passport at each granularity (see `POST /dpps`), so the successor stands for another product, lot or unit. Superseding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -30695,7 +30735,7 @@ func (c *ClientWithResponses) SupersedeDppWithBodyWithResponse(ctx context.Conte
 
 // SupersedeDppWithResponse Supersede a DPP
 //
-// Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. Superseding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
+// Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. A product, a lot or a unit takes one passport at each granularity (see `POST /dpps`), so the successor stands for another product, lot or unit. Superseding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
@@ -30725,7 +30765,7 @@ func (c *ClientWithResponses) ListDppVersionsWithResponse(ctx context.Context, i
 
 // VoidDppWithBodyWithResponse Void a DPP
 //
-// Marks the passport as voided - the unit it stands for no longer exists: it was destroyed, never shipped, or scrapped after a recall. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. This is not how a unit is recalled: a unit still out there is moved to `suspended` through a status change, so its passport goes on answering a scan with the recall. Voiding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
+// Marks the passport as voided - the unit it stands for no longer exists: it was destroyed, never shipped, or scrapped after a recall. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. This is not how a unit is recalled: a unit still out there is moved to `suspended` through a status change, so its passport goes on answering a scan with the recall. Voiding cannot be undone, and a voided passport still stands for its product, lot or unit, which never takes another passport at its granularity (see `POST /dpps`). A consumer also needs write access to the passport itself (`dpp_write`).
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -30740,7 +30780,7 @@ func (c *ClientWithResponses) VoidDppWithBodyWithResponse(ctx context.Context, i
 
 // VoidDppWithResponse Void a DPP
 //
-// Marks the passport as voided - the unit it stands for no longer exists: it was destroyed, never shipped, or scrapped after a recall. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. This is not how a unit is recalled: a unit still out there is moved to `suspended` through a status change, so its passport goes on answering a scan with the recall. Voiding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
+// Marks the passport as voided - the unit it stands for no longer exists: it was destroyed, never shipped, or scrapped after a recall. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. This is not how a unit is recalled: a unit still out there is moved to `suspended` through a status change, so its passport goes on answering a scan with the recall. Voiding cannot be undone, and a voided passport still stands for its product, lot or unit, which never takes another passport at its granularity (see `POST /dpps`). A consumer also needs write access to the passport itself (`dpp_write`).
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
@@ -31991,7 +32031,7 @@ func (c *ClientWithResponses) GetProductWithResponse(ctx context.Context, id Id,
 
 // UpdateProductWithBodyWithResponse Update a product
 //
-// Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are. A brand name no brand carries creates the brand, which asks a consumer for `brand_access` (403 `BRAND_FORBIDDEN` without it); a credential acting for a person names only what that person reads, as on create. On a variant, a value the body changes becomes the variant's own and a value it sends as it was read goes on following the parent. `parentId` is left out or names the parent the product has; any other answers 422 `PRODUCT_PARENT_READ_ONLY`, since a variant moves to another parent through a spreadsheet import only. A `propertiesInput` key naming no property type, or, for a credential, a type only the members of a plan edit, or a type of an access group the credential (or the person it acts for) is not in, refuses the whole write with 422 `PRODUCT_PROPERTIES_REFUSED`, whose message names each and why; `fields.propertiesInput.unknown`, `fields.propertiesInput.planGated` and `fields.propertiesInput.groupGated` list the keys as sent.
+// Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are. A brand name no brand carries creates the brand, which asks a consumer for `brand_access` (403 `BRAND_FORBIDDEN` without it); a credential acting for a person names only what that person reads, as on create. On a variant, a value the body changes becomes the variant's own and a value it sends as it was read goes on following the parent. `parentId` is left out or names the parent the product has; any other answers 422 `PRODUCT_PARENT_READ_ONLY`, since a variant moves to another parent through a spreadsheet import only. A `propertiesInput` key naming no property type, or, for a credential, a type only the members of a plan edit, or a type of an access group the credential (or the person it acts for) is not in, refuses the whole write with 422 `PRODUCT_PROPERTIES_REFUSED`, whose message names each and why; `fields.propertiesInput.unknown`, `fields.propertiesInput.planGated` and `fields.propertiesInput.groupGated` list the keys as sent. The product's read sent back under `product` passes as it was read; a key of it that differs from the product as it stands, a key the write takes nowhere, or a list or an object sent as something else refuses the whole write with 422 `PRODUCT_KEYS_REFUSED`, one field per key as on create, so a body read before another write changed the product names what moved.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -32006,7 +32046,7 @@ func (c *ClientWithResponses) UpdateProductWithBodyWithResponse(ctx context.Cont
 
 // UpdateProductWithResponse Update a product
 //
-// Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are. A brand name no brand carries creates the brand, which asks a consumer for `brand_access` (403 `BRAND_FORBIDDEN` without it); a credential acting for a person names only what that person reads, as on create. On a variant, a value the body changes becomes the variant's own and a value it sends as it was read goes on following the parent. `parentId` is left out or names the parent the product has; any other answers 422 `PRODUCT_PARENT_READ_ONLY`, since a variant moves to another parent through a spreadsheet import only. A `propertiesInput` key naming no property type, or, for a credential, a type only the members of a plan edit, or a type of an access group the credential (or the person it acts for) is not in, refuses the whole write with 422 `PRODUCT_PROPERTIES_REFUSED`, whose message names each and why; `fields.propertiesInput.unknown`, `fields.propertiesInput.planGated` and `fields.propertiesInput.groupGated` list the keys as sent.
+// Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are. A brand name no brand carries creates the brand, which asks a consumer for `brand_access` (403 `BRAND_FORBIDDEN` without it); a credential acting for a person names only what that person reads, as on create. On a variant, a value the body changes becomes the variant's own and a value it sends as it was read goes on following the parent. `parentId` is left out or names the parent the product has; any other answers 422 `PRODUCT_PARENT_READ_ONLY`, since a variant moves to another parent through a spreadsheet import only. A `propertiesInput` key naming no property type, or, for a credential, a type only the members of a plan edit, or a type of an access group the credential (or the person it acts for) is not in, refuses the whole write with 422 `PRODUCT_PROPERTIES_REFUSED`, whose message names each and why; `fields.propertiesInput.unknown`, `fields.propertiesInput.planGated` and `fields.propertiesInput.groupGated` list the keys as sent. The product's read sent back under `product` passes as it was read; a key of it that differs from the product as it stands, a key the write takes nowhere, or a list or an object sent as something else refuses the whole write with 422 `PRODUCT_KEYS_REFUSED`, one field per key as on create, so a body read before another write changed the product names what moved.
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
@@ -34525,7 +34565,7 @@ func ParseGetDppVersionPrivatePropertiesResponse(rsp *http.Response) (*GetDppVer
 		break // No content-type
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
-		var dest NotFound
+		var dest Error
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
