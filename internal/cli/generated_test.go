@@ -30,12 +30,12 @@ func generatedHarness(t *testing.T) *harness {
 		writeJSON(w, 200, map[string]any{"code": r.PathValue("code"),
 			"status": "draft"})
 	})
-	mux.HandleFunc("GET /api/exports/{id}/download", func(w http.ResponseWriter,
-		r *http.Request) {
-		record(r)
-		w.Header().Set("Content-Type", "application/gzip")
-		w.Write([]byte("GZ-BYTES"))
-	})
+	mux.HandleFunc("GET /api/tasks/{id}/attachments/{attachmentId}",
+		func(w http.ResponseWriter, r *http.Request) {
+			record(r)
+			w.Header().Set("Content-Type", "application/octet-stream")
+			w.Write([]byte("FILE-BYTES"))
+		})
 	mux.HandleFunc("POST /api/dpps/{code}/void", func(w http.ResponseWriter,
 		r *http.Request) {
 		record(r)
@@ -153,17 +153,29 @@ func TestGeneratedGetWithPathParamAndBinaryOutput(t *testing.T) {
 	if h.lastRequest().URL.Path != "/api/dpps/A1B2" {
 		t.Errorf("path = %q", h.lastRequest().URL.Path)
 	}
-	file := filepath.Join(t.TempDir(), "export.tar.gz")
-	_, _, code = h.run("exports", "download", "42", "--output", file)
+
+	// The task file is the example because its one answer is binary;
+	// a download that may answer JSON keeps the version Accept.
+	const binary = "application/octet-stream"
+	op := registry.Default().Find("get_task_attachment")
+	if op == nil || op.ResponseContentType != binary {
+		t.Fatalf("get_task_attachment no longer answers %s; pick another "+
+			"binary operation for this test", binary)
+	}
+	file := filepath.Join(t.TempDir(), "file.bin")
+	_, _, code = h.run("tasks", "attachment", "7", "3", "--output", file)
 	if code != 0 {
 		t.Fatalf("code = %d", code)
 	}
 	data, _ := os.ReadFile(file)
-	if string(data) != "GZ-BYTES" {
+	if string(data) != "FILE-BYTES" {
 		t.Errorf("file = %q", data)
 	}
-	if h.lastRequest().Header.Get("Accept") != "application/gzip" {
-		t.Errorf("accept = %q", h.lastRequest().Header.Get("Accept"))
+	if h.lastRequest().URL.Path != "/api/tasks/7/attachments/3" {
+		t.Errorf("path = %q", h.lastRequest().URL.Path)
+	}
+	if accept := h.lastRequest().Header.Get("Accept"); accept != binary {
+		t.Errorf("accept = %q, want %q", accept, binary)
 	}
 }
 

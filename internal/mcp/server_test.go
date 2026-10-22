@@ -796,6 +796,9 @@ func TestSearchReportsEveryBody(t *testing.T) {
 // TestDescriptionDoesNotCallAuthenticatedToolsPublic keeps the
 // permission line honest: an operation with no permission key
 // still needs a credential unless the document marks it public.
+// A public operation that names a key, get_product among them,
+// reads without a credential but needs the key with one, so its
+// line names the key, as the hosted catalogue does.
 func TestDescriptionDoesNotCallAuthenticatedToolsPublic(t *testing.T) {
 	reg := registry.Default()
 	for _, tool := range curated {
@@ -805,9 +808,11 @@ func TestDescriptionDoesNotCallAuthenticatedToolsPublic(t *testing.T) {
 		}
 		said := tool.describe(op)
 		public := strings.Contains(said, "the endpoint is public")
-		if public != op.Public {
-			t.Errorf("%s: described public %v, document says %v", tool.Name,
-				public, op.Public)
+		want := op.Public && len(op.Permission) == 0
+		if public != want {
+			t.Errorf("%s: described public %v, want %v (document: public "+
+				"%v, permission %v)", tool.Name, public, want, op.Public,
+				op.Permission)
 		}
 	}
 }

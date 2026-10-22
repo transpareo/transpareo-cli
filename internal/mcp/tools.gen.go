@@ -168,7 +168,7 @@ var curated = []Tool{
 		Group:       GroupDpps,
 		Operation:   "get_dpp_requirements",
 		Kind:        kindGet,
-		Description: `The answer carries a body ready to fill for validate_dpp and create_dpp.`,
+		Description: `The answer carries a body ready to fill for validate_dpp and create_dpp, and under missing what the product still lacks, each entry with the product field that answers it and, under operation, the tool that takes it.`,
 	},
 	{
 		Name:      "get_component",
