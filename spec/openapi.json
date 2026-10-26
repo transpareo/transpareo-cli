@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Transpareo API",
-    "version": "2.41.1",
+    "version": "2.47.0",
     "description": "This site runs on the [Transpareo](https://transpareo.com) product information platform. The REST API gives programs access to products, product components, brands, Digital Product Passports, categories and configuration. This reference describes version 2, which a request names with `Accept: application/vnd.api.v2+json` or `?v=2`, and which answers a request that names none; version 1 is its earlier name and is answered the same way. The guide's [Versions](/apidocs/guide#versions) section says how versions change.\n\nThe guide at [/apidocs/guide](/apidocs/guide) is the narrative companion to this reference: credentials, permissions, pagination, idempotency, the passport flows, the event feed, webhooks, rate limits and the error format. It is also served as Markdown at [/apidocs/guide.md](/apidocs/guide.md).\n\nPrograms authenticate with the OAuth 2.0 client credentials grant. Exchange the client id and secret once, then send the token on every request:\n\n```\ncurl -X POST https://<host>/api/oauth/token -d grant_type=client_credentials -d client_id=<key> -d client_secret=<secret>\n\ncurl https://<host>/api/me -H \"Authorization: Bearer <access_token>\"\n```\n\nAn assistant that speaks the Model Context Protocol connects to `/mcp` on this host and calls these operations as tools, named in the catalogue at [/apidocs/mcp-tools.json](/apidocs/mcp-tools.json) and explained by the guide's Assistants section.",
     "contact": {
       "name": "Transpareo Support",
@@ -138,7 +138,7 @@
     "securitySchemes": {
       "oauth2": {
         "type": "oauth2",
-        "description": "OAuth 2.0 for programs, in two flows. The client credentials grant is for a credential an operator provisioned in the application manager: its key is the client id and its secret the client secret. Exchange them at the token endpoint, as form fields or as HTTP Basic credentials, and send the returned token as `Authorization: Bearer <access_token>`.\n\nThe authorization code grant with PKCE is for an application that asks a person for access instead of holding a credential of its own. It registers itself at `POST /api/oauth/register`, sends the person to `/api/oauth/authorize`, and exchanges the code they approved for a token at the same token endpoint. A refresh token keeps that connection alive without asking again and rotates on every use; `POST /api/oauth/revoke` ends it. Its scopes are the ones a person may grant; private properties and registry callbacks are not among them.\n\nA token lives one hour and is bound to the host that issued it. `scope` narrows a token to a subset of the consumer's permission keys; without it the token follows the consumer's permissions on every request, so a right granted in the application manager works on the next call.\n\nA token is verified on every endpoint it is sent to, the public ones included. An endpoint that answers without credentials still refuses a token that is malformed, unknown, expired or issued to a consumer that is no longer in good standing, with `TOKEN_INVALID`, `TOKEN_EXPIRED` or `CONSUMER_INACTIVE`, so a broken credential surfaces at the first call instead of looking like a public read that worked.",
+        "description": "OAuth 2.0 for programs, in two flows. The client credentials grant is for a credential an operator provisioned in the application manager: its key is the client id and its secret the client secret. Exchange them at the token endpoint, as form fields or as HTTP Basic credentials, and send the returned token as `Authorization: Bearer <access_token>`.\n\nThe authorization code grant with PKCE is for an application that asks a person for access instead of holding a credential of its own. It registers itself at `POST /api/oauth/register`, sends the person to `/api/oauth/authorize`, and exchanges the code they approved for a token at the same token endpoint. A refresh token keeps that connection alive without asking again and rotates on every use; `POST /api/oauth/revoke` ends it. Its scopes are those of the client credentials grant, as far as the person holds them.\n\nA token lives one hour and is bound to the host that issued it. `scope` narrows a token to a subset of the consumer's permission keys; without it the token follows the consumer's permissions on every request, so a right granted in the application manager works on the next call.\n\nA token is verified on every endpoint it is sent to, the public ones included. An endpoint that answers without credentials still refuses a token that is malformed, unknown, expired or issued to a consumer that is no longer in good standing, with `TOKEN_INVALID`, `TOKEN_EXPIRED` or `CONSUMER_INACTIVE`, so a broken credential surfaces at the first call instead of looking like a public read that worked.",
         "flows": {
           "authorizationCode": {
             "authorizationUrl": "/api/oauth/authorize",
@@ -185,9 +185,7 @@
               "dpp_dynamic": "Update the dynamic data of passports",
               "dpp_history": "Read the events and versions of passports",
               "dpp_bulk_write": "Create passports in bulk",
-              "dpp_vault_read": "Read private properties",
-              "dpp_lifecycle": "Void, supersede and reissue passports",
-              "registry_callback": "Reserved for registry callbacks"
+              "dpp_lifecycle": "Void, supersede and reissue passports"
             }
           }
         }
@@ -371,7 +369,7 @@
         }
       },
       "WriteForbidden": {
-        "description": "Not authorized to write here. A credential whose access group grants this resource's line at **View** reads it and writes nothing; the message and the hint name the line and **Edit**, the tier writing takes, by the labels of the access group page. Any other refusal names the key the credential lacks, or says it may not touch this record.",
+        "description": "Not authorized to write here. A credential whose access group grants this resource's line at **View only** reads it and writes nothing; the message and the hint name the line and **Full access**, the tier writing takes, by the labels of the access group page. Any other refusal names the key the credential lacks, or says it may not touch this record.",
         "content": {
           "application/json": {
             "schema": {
@@ -379,8 +377,8 @@
             },
             "example": {
               "error": "PRODUCT_FORBIDDEN",
-              "message": "Writing takes \"Edit\" on the \"Products\" line of the access group; this credential holds that line at \"View\".",
-              "hint": "In the application manager, set the \"Products\" line of the API consumer's access group to \"Edit\"."
+              "message": "Writing takes \"Full access\" on the \"Products\" line of the access group; this credential holds that line at \"View only\".",
+              "hint": "In the application manager, set the \"Products\" line of the API consumer's access group to \"Full access\"."
             }
           }
         }
@@ -1783,7 +1781,7 @@
             "items": {
               "type": "string"
             },
-            "description": "The product property types the passport carries, by id, as on the single create. A row naming one that does not exist comes back as `error` with `DPP_PROPERTY_TYPES_REFUSED`."
+            "description": "The product property types the passport carries, by id, as on the single create. A row naming one that does not exist comes back as `error` with `DPP_PROPERTY_TYPES_REFUSED`, one sending the selection as no list with `DPP_KEYS_REFUSED`; a selection in `shared` reaches every row it merges into, and each answers for itself."
           },
           "dynamicData": {
             "type": "object",
@@ -1984,7 +1982,7 @@
             "items": {
               "type": "string"
             },
-            "description": "The product property types the passport carries, by id; left out or empty, it carries every one. `GET /dpps/requirements` lists a product's under `inheritedProperties`. An id naming no product property type refuses the write with 422 `DPP_PROPERTY_TYPES_REFUSED`."
+            "description": "The product property types the passport carries, by id; left out or empty, it carries every one. `GET /dpps/requirements` lists a product's under `inheritedProperties`. An id naming no product property type refuses the write with 422 `DPP_PROPERTY_TYPES_REFUSED`; a selection sent as no list, a single id among them, with 422 `DPP_KEYS_REFUSED`, `fields.propertyTypeIds.error` `DPP_KEY_LIST_REQUIRED`."
           }
         }
       },
@@ -3267,12 +3265,6 @@
             "description": "The language this article was served in, which can differ from the one asked for when the article has no copy in it",
             "example": "de"
           },
-          "tags": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
           "url": {
             "type": "string",
             "description": "The page a person opens this article at in the application manager",
@@ -3887,7 +3879,7 @@
       },
       "Leadgen": {
         "type": "object",
-        "description": "Lead generation campaign with overlay and form",
+        "description": "A lead generator on passports, with the button on the passport and its action window, which shows a headline, an introduction and a link button or a form. Its form may serve other lead generators and pages too.",
         "properties": {
           "id": {
             "type": "integer"
@@ -3902,7 +3894,9 @@
             "type": "boolean"
           },
           "locale": {
-            "type": "string"
+            "type": "string",
+            "deprecated": true,
+            "description": "The workspace's default language, in which the request mails go out; a lead generator's texts carry a value per language"
           },
           "createdAt": {
             "type": "string",
@@ -3910,30 +3904,53 @@
           },
           "headline": {
             "type": "string",
-            "description": "Overlay headline"
+            "description": "Headline of the action window"
           },
           "body": {
             "type": "string",
-            "description": "Overlay body text"
+            "description": "Introduction of the action window, in Markdown"
           },
           "popup": {
             "type": "boolean",
-            "description": "Whether the overlay is a popup"
+            "description": "Whether the action window opens by itself on the passport; the button stays"
           },
           "link": {
             "type": "string",
-            "description": "Overlay link URL"
+            "description": "Label of the button on the passport that opens the action window"
           },
           "dpps": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Dpp"
             },
-            "description": "DPPs associated with this overlay"
+            "description": "DPPs whose pages show the lead generator"
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "form",
+              "link"
+            ],
+            "description": "What the visitor does in the action window"
+          },
+          "linkUrl": {
+            "type": "string",
+            "nullable": true,
+            "description": "Address of the link button, for the link action; without one the action window shows headline and text only"
+          },
+          "linkLabel": {
+            "type": "string",
+            "nullable": true,
+            "description": "Label of the link button in the action window, for the link action"
+          },
+          "formId": {
+            "type": "integer",
+            "nullable": true,
+            "description": "The form the lead generator uses, for the form action"
           },
           "code": {
             "type": "string",
-            "description": "Form code identifier"
+            "description": "Code of the form"
           },
           "message": {
             "type": "string",
@@ -3955,7 +3972,7 @@
           },
           "requestsCount": {
             "type": "integer",
-            "description": "Number of form submissions"
+            "description": "Number of requests sent through this lead generator"
           }
         },
         "example": {
@@ -3968,8 +3985,12 @@
           "headline": "Register your product",
           "body": "Two minutes, and the warranty runs for three years.",
           "popup": true,
-          "link": "https://example.com/register",
+          "link": "Register now",
           "dpps": [],
+          "action": "form",
+          "linkUrl": null,
+          "linkLabel": null,
+          "formId": 12,
           "code": "autumn-2026",
           "message": "Thank you, the registration is in.",
           "submitButtonLabel": "Register",
@@ -3995,7 +4016,9 @@
             "type": "boolean"
           },
           "locale": {
-            "type": "string"
+            "type": "string",
+            "deprecated": true,
+            "description": "Accepted and ignored; a lead generator's texts carry a value per language"
           },
           "headline": {
             "type": "string"
@@ -4007,13 +4030,34 @@
             "type": "boolean"
           },
           "link": {
-            "type": "string"
+            "type": "string",
+            "description": "Label of the button on the passport that opens the action window; a popup without one takes its headline"
           },
           "dppIds": {
             "type": "array",
             "items": {
               "type": "string"
             }
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "form",
+              "link"
+            ],
+            "description": "What the visitor does in the action window; form by default"
+          },
+          "linkUrl": {
+            "type": "string",
+            "description": "Address of the link button, http or https, for the link action"
+          },
+          "linkLabel": {
+            "type": "string",
+            "description": "Label of the link button in the action window; required with linkUrl"
+          },
+          "formId": {
+            "type": "integer",
+            "description": "A form you hold to use; without it a new lead generator gets a new form with name, email and message inputs. The form fields below apply to the lead generator's form, which other lead generators and pages may use too."
           },
           "message": {
             "type": "string"
@@ -4037,7 +4081,14 @@
                 },
                 "typ": {
                   "type": "string",
-                  "description": "Input type (text, email, textarea, etc.)"
+                  "enum": [
+                    "country",
+                    "email",
+                    "input",
+                    "select",
+                    "text"
+                  ],
+                  "description": "Input type; text is a multi-line field"
                 },
                 "required": {
                   "type": "boolean"
@@ -4050,7 +4101,7 @@
                 },
                 "options": {
                   "type": "string",
-                  "description": "Comma-separated options for select inputs"
+                  "description": "Options of a select input, separated by a pipe, for example S|M|L"
                 }
               }
             }
@@ -4166,7 +4217,8 @@
       },
       "Overlay": {
         "type": "object",
-        "description": "DPP overlay content displayed on scan",
+        "description": "The passport's lead generator in the shape it had as an overlay. The id is the lead generator's, link its button label, and body the text with the form as HTML.",
+        "deprecated": true,
         "properties": {
           "id": {
             "type": "integer"
@@ -4509,7 +4561,7 @@
       },
       "PrivateProperties": {
         "type": "object",
-        "description": "The confidential rows of one passport version, as an ecdsa-sd-2023 derived Verifiable Credential. The Vault holds the full credential; what comes back here is the view this reader is entitled to - the mandatory public statements plus the restricted rows the reader may see. `legitimateInterest` rows survive only while the reader's access-group membership admits them, `onDemand` rows go to any authenticated reader, and `authorities` rows are never served here. The derived proof is the filter, so the response stays verifiable against the issuer keys and no confidential statement is signed away. JSON-LD keys (`@context`, `@type`) pass through unchanged.",
+        "description": "The confidential rows of one passport version, as an ecdsa-sd-2023 derived Verifiable Credential. The workspace keeps the full signed credential; what comes back here is the view this reader is entitled to - the mandatory public statements plus the restricted rows the reader may see. `legitimateInterest` rows survive only while the reader's access-group membership admits them, `onDemand` rows go to any authenticated reader, and `authorities` rows are never served here. The derived proof is the filter, so the response stays verifiable against the issuer keys and no confidential statement is signed away. JSON-LD keys (`@context`, `@type`) pass through unchanged.",
         "properties": {
           "@context": {
             "type": "array",
@@ -4989,7 +5041,7 @@
           },
           "overlay": {
             "$ref": "#/components/schemas/Overlay",
-            "description": "Lead generation overlay. Only present when accessed via DPP unlock key and the DPP has an associated overlay."
+            "description": "The lead generator on the passport, in its earlier overlay shape. Only present when accessed via DPP unlock key and a published lead generator stands on the DPP. Deprecated, read the lead generators instead."
           },
           "ratingRange": {
             "type": "object",
@@ -5084,7 +5136,7 @@
       },
       "ProductInput": {
         "type": "object",
-        "description": "The fields of a product write. A create needs `name` and `componentsInput`, which the create operation says, and `name` alone where it names `parentId`; an update carries only what it means to change, because every field it names is written.",
+        "description": "The fields of a product write. A create needs `name` and `componentsInput`, which the create operation says, and `name` alone where it names `parentId`; an update carries only what it means to change, because every field it names is written. A key of the read (Product, ProductDetail) may come back with the write and passes while it holds what the read holds; changed, it refuses the write with 422 `PRODUCT_KEYS_REFUSED`, its field naming what writes it (`categories` categoryIds, `components` componentsInput, `properties` propertiesInput, `brand` and `brandName` brand.name beside product, `mediafiles` `PUT /products/{id}/mediafiles`, `published` `PUT /products/{id}/publish` or `unpublish`) or saying no call writes it (`permalink`, `publishedAt`, `updatedAt` and the other keys the server works out). A create compares them with what `GET /products/new` answers and passes any `id`. Any other key, here, inside a `componentsInput` entry or beside `product` and `brand`, refuses the write the same way, naming each; so does a list or an object sent as something else.",
         "properties": {
           "name": {
             "type": "string",
@@ -5103,12 +5155,29 @@
             "description": "The customs tariff number, the 8-digit CN code or, until the CN subheading is known, the 6-digit HS code. Spaces and dots between the digits are dropped (`6109 10 00` is stored as `61091000`); any other shape is refused with 422 naming `hsCode`. A passport publishes the first six digits as its HS code and all eight as its CN code. On a variant it is a value taken from the parent, so a number that differs becomes the variant's own. An empty string clears it.",
             "example": "61091000"
           },
+          "weight": {
+            "type": "number",
+            "nullable": true,
+            "description": "The product's weight in `weightUnit`. A value that is no number is refused with 422 naming `weight`; null or an empty string clears it, and its unit with it. On a variant it is a value taken from the parent, with its unit.",
+            "example": 50
+          },
+          "weightUnit": {
+            "type": "string",
+            "enum": [
+              "kg",
+              "g",
+              "mg",
+              "t"
+            ],
+            "description": "The unit of `weight`. A weight written without one keeps the unit the product has, and a weight the product had none for is in kilograms.",
+            "example": "g"
+          },
           "parentId": {
             "type": "integer",
             "description": "On a create, the product the new one is a variant of. It starts as a copy of that product and takes its later changes, and the other fields of the body become its own where they differ. An update leaves it out or names the parent the product has."
           },
           "componentsInput": {
-            "description": "The product's components in order, as a list of names or a list of objects naming an existing component by componentId or a new one by name. Naming it replaces the whole list, so on an update send the components the product is to have from then on, not the ones being added; leaving it out keeps the list as it is.",
+            "description": "The product's components in order, as a list of names, of objects naming an existing component by componentId or a new one by name, or of both. An object's `percentage` is the component's share of the product; an entry naming it replaces the share, null clearing it, and an entry leaving it out keeps the share the component has. A share outside 0 to 100 refuses the write with 422 naming `componentsInput`. Naming the list replaces the whole list, so on an update send the components the product is to have from then on, not the ones being added; leaving it out keeps the list as it is.",
             "oneOf": [
               {
                 "type": "array",
@@ -5131,6 +5200,12 @@
                     },
                     "componentId": {
                       "type": "integer"
+                    },
+                    "percentage": {
+                      "type": "number",
+                      "nullable": true,
+                      "minimum": 0,
+                      "maximum": 100
                     }
                   }
                 }
@@ -7420,7 +7495,7 @@
           "DPPs"
         ],
         "summary": "Create a DPP",
-        "description": "Creates a new Digital Product Passport linked to a product. Generates a unique short code and QR code.\n\n`granularity` says which unit the passport stands for and therefore which identifiers it needs: `model` needs none of its own, `batch` needs a `batchIdentifier`, `item` needs a `serialIdentifier` as well. The lot is created from the product as it stands the first time its identifier is used and reused by every later passport of the same lot. A new lot is taken only of a product that passes every other required readiness check; until then the create answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`.\n\nA lot takes one `batch` passport and a unit one `item` passport. A second one is refused with 422 `DPP_BATCH_TAKEN` on `batch`, or `DPP_SERIAL_IDENTIFIER_TAKEN` on `serialIdentifier` for a serial the lot has already, and the message names the passport that stands for it. A voided or superseded passport still stands for its lot, and so does a draft, which is published instead. Item passports of a lot and its `batch` passport do not count against each other.\n\nThe answer carries `validation` and `publishBlocked` alongside the passport: the same report `POST /dpps/validate` produces, over the record that was just written, so a caller that skipped the dry run still sees what a publish would refuse or warn about.\n\n`propertyTypeIds` names the property types the passport carries, and it carries those alone. An entry naming no product property type refuses the whole write with 422 `DPP_PROPERTY_TYPES_REFUSED`, and no passport is created; the message names each, `fields.propertyTypeIds.unknown` lists them as sent.",
+        "description": "Creates a new Digital Product Passport linked to a product. Generates a unique short code and QR code.\n\n`granularity` says which unit the passport stands for and therefore which identifiers it needs: `model` needs none of its own, `batch` needs a `batchIdentifier`, `item` needs a `serialIdentifier` as well. The lot is created from the product as it stands the first time its identifier is used and reused by every later passport of the same lot. A new lot is taken only of a product that passes every other required readiness check; until then the create answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`.\n\nA product takes one `model` passport, a lot one `batch` passport and a unit one `item` passport. A second one is refused with 422 `DPP_UNLOCKABLE_ID_TAKEN` on `unlockableId`, `DPP_BATCH_TAKEN` on `batch`, or `DPP_SERIAL_IDENTIFIER_TAKEN` on `serialIdentifier` for a serial the lot has already, and the message names the passport that stands for it. A voided or superseded passport still stands for its product, lot or unit, and so does a draft, which is published instead, and a model passport the workspace issued by itself. Passports at different granularities do not count against each other.\n\nThe answer carries `validation` and `publishBlocked` alongside the passport: the same report `POST /dpps/validate` produces, over the record that was just written, so a caller that skipped the dry run still sees what a publish would refuse or warn about.\n\n`propertyTypeIds` names the property types the passport carries, and it carries those alone. An entry naming no product property type refuses the whole write with 422 `DPP_PROPERTY_TYPES_REFUSED`, and no passport is created; the message names each, `fields.propertyTypeIds.unknown` lists them as sent. A selection sent as no list, a single id among them, would carry every type, so it is refused with 422 `DPP_KEYS_REFUSED` and `fields.propertyTypeIds.error` `DPP_KEY_LIST_REQUIRED`.",
         "operationId": "create_dpp",
         "x-permission": "dpp_write",
         "security": [
@@ -7497,7 +7572,7 @@
           "DPPs"
         ],
         "summary": "Validate a DPP payload",
-        "description": "The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot; a lot or a unit that has a passport already shows as `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`, and a new lot its product may not have yet as `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, beside the report that names the checks the product still fails. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.\n\nA payload the platform would refuse is a plain `200` with `valid: false` - the request succeeded, the passport would not. Only a missing permission, a missing `dpp` object, an unreadable body, a granularity the workspace does not issue and a `propertyTypeIds` entry naming no property type answer with an error status, the last two as the create answers them.",
+        "description": "The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot; a product that has its model passport already shows as `DPP_UNLOCKABLE_ID_TAKEN`, a lot or a unit that has its passport as `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`, and a new lot its product may not have yet as `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, beside the report that names the checks the product still fails. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.\n\nA payload the platform would refuse is a plain `200` with `valid: false` - the request succeeded, the passport would not. Only a missing permission, a missing `dpp` object, an unreadable body, a granularity the workspace does not issue and a `propertyTypeIds` entry naming no property type answer with an error status, the last two as the create answers them.",
         "operationId": "validate_dpp",
         "x-permission": "dpp_write",
         "x-safe": true,
@@ -7579,7 +7654,7 @@
           "DPPs"
         ],
         "summary": "Create DPPs in bulk",
-        "description": "Streams passports in as newline-delimited JSON, one passport per line, so a line of production writes one request instead of thousands. Each row is created and its first version published at the workspace's publish stage, as `POST /dpps/{code}/publish` signs a draft; the response reports one result line per input row.\n\nAn optional first line `{\"shared\": {...}}` carries batch-wide defaults that each following row deep-merges over (a nested `\"__replace__\": true` opts a sub-tree out of the merge). An unsupported `shared.granularity` is rejected before any row is processed; per-row problems never abort the batch. A new row whose `propertyTypeIds` names no product property type comes back as `error` with `DPP_PROPERTY_TYPES_REFUSED`, the message naming each and `fields.propertyTypeIds.unknown` listing them, and nothing is created for it.\n\nRow keys may be written in camelCase (`unlockableId`, `modelIdentifier`, `serialIdentifier`) or as the snake_case attribute names; `tenantData` is an alias for `dynamicData`. The keys inside `dynamicData` are left as they are.\n\nResubmission is safe. Rows are deduplicated by natural key rather than by `Idempotency-Key`: at `model` granularity that is `modelIdentifier`, at `batch` it adds `batchIdentifier`, at `item` it adds `serialIdentifier`. A key that already maps to a published passport comes back as `duplicate`; one that maps to a passport that never published is resumed and published, so a retry after a partial failure finishes the job instead of duplicating it. A row whose key misses a passport its lot or unit already has (a row naming no `modelIdentifier`) is refused as `POST /dpps` refuses it, with `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`.\n\nSynchronous by default, capped at 500 rows and 5 MB. Send `Prefer: respond-async` to have the body persisted and processed by a background task instead: the response is `202` with a polling URL, and the caps rise to 50000 rows and 25 MB. Beyond that, batch across requests.\n\nEvery row it creates is signed, so the call needs `dpp_publish` as well; without it the answer is 403 and nothing is created. Where the workspace reviews every publish through a review flow, the answer is 409 `DPP_REVIEW_REQUIRED` and nothing is created.",
+        "description": "Streams passports in as newline-delimited JSON, one passport per line, so a line of production writes one request instead of thousands. Each row is created and its first version published at the workspace's publish stage, as `POST /dpps/{code}/publish` signs a draft; the response reports one result line per input row.\n\nAn optional first line `{\"shared\": {...}}` carries batch-wide defaults that each following row deep-merges over (a nested `\"__replace__\": true` opts a sub-tree out of the merge). An unsupported `shared.granularity` is rejected before any row is processed; per-row problems never abort the batch. A new row whose `propertyTypeIds` names no product property type comes back as `error` with `DPP_PROPERTY_TYPES_REFUSED`, the message naming each and `fields.propertyTypeIds.unknown` listing them, and nothing is created for it. A new row whose `propertyTypeIds` is no list comes back as `error` with `DPP_KEYS_REFUSED`; one in `shared` reaches every row it merges into, and each answers for itself.\n\nRow keys may be written in camelCase (`unlockableId`, `modelIdentifier`, `serialIdentifier`) or as the snake_case attribute names; `tenantData` is an alias for `dynamicData`. The keys inside `dynamicData` are left as they are.\n\nResubmission is safe. Rows are deduplicated by natural key rather than by `Idempotency-Key`: at `model` granularity that is `modelIdentifier`, at `batch` it adds `batchIdentifier`, at `item` it adds `serialIdentifier`. A key that already maps to a published passport comes back as `duplicate`; one that maps to a passport that never published is resumed and published, so a retry after a partial failure finishes the job instead of duplicating it. A row whose key misses a passport its product, lot or unit already has (a row naming no `modelIdentifier`, or no `granularity` in itself or in `shared`) is refused as `POST /dpps` refuses it, with `DPP_UNLOCKABLE_ID_TAKEN`, `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`.\n\nSynchronous by default, capped at 500 rows and 5 MB. Send `Prefer: respond-async` to have the body persisted and processed by a background task instead: the response is `202` with a polling URL, and the caps rise to 50000 rows and 25 MB. Beyond that, batch across requests.\n\nEvery row it creates is signed, so the call needs `dpp_publish` as well; without it the answer is 403 and nothing is created. Where the workspace reviews every publish through a review flow, the answer is 409 `DPP_REVIEW_REQUIRED` and nothing is created.",
         "operationId": "bulk_create_dpps",
         "x-permission": "dpp_bulk_write",
         "x-permission-also": "dpp_publish",
@@ -8080,7 +8155,7 @@
           "DPPs"
         ],
         "summary": "Update a DPP",
-        "description": "Updates a DPP you own. Admins can update any DPP.\n\nThe answer carries `validation` and `publishBlocked` alongside the passport: the same report `POST /dpps/validate` produces, over the record as it now stands, so an update that would block the next publish says so at once.\n\nA `propertyTypeIds` entry naming no product property type refuses the whole update with 422 `DPP_PROPERTY_TYPES_REFUSED`, and the passport keeps the types it had.",
+        "description": "Updates a DPP you own. Admins can update any DPP.\n\nThe answer carries `validation` and `publishBlocked` alongside the passport: the same report `POST /dpps/validate` produces, over the record as it now stands, so an update that would block the next publish says so at once.\n\nA `propertyTypeIds` entry naming no product property type refuses the whole update with 422 `DPP_PROPERTY_TYPES_REFUSED`, and the passport keeps the types it had; a selection sent as no list with 422 `DPP_KEYS_REFUSED`.",
         "operationId": "update_dpp",
         "x-permission": "dpp_write",
         "security": [
@@ -8592,7 +8667,7 @@
         "tags": [
           "DPPs"
         ],
-        "summary": "Update dynamic data",
+        "summary": "Update changing values (e.g. battery health)",
         "description": "Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none). A key naming a published legitimate-interest type is served to the readers its access groups admit by `GET /dpps/{code}/private_dynamic_data`; every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.",
         "operationId": "update_dpp_dynamic_data",
         "x-permission": "dpp_dynamic",
@@ -8691,7 +8766,7 @@
           "DPPs"
         ],
         "summary": "Void a DPP",
-        "description": "Marks the passport as voided - the unit it stands for no longer exists: it was destroyed, never shipped, or scrapped after a recall. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. This is not how a unit is recalled: a unit still out there is moved to `suspended` through a status change, so its passport goes on answering a scan with the recall. Voiding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).",
+        "description": "Marks the passport as voided - the unit it stands for no longer exists: it was destroyed, never shipped, or scrapped after a recall. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. This is not how a unit is recalled: a unit still out there is moved to `suspended` through a status change, so its passport goes on answering a scan with the recall. Voiding cannot be undone, and a voided passport still stands for its product, lot or unit, which never takes another passport at its granularity (see `POST /dpps`). A consumer also needs write access to the passport itself (`dpp_write`).",
         "operationId": "void_dpp",
         "x-permission": "dpp_lifecycle",
         "x-destructive": true,
@@ -8790,7 +8865,7 @@
           "DPPs"
         ],
         "summary": "Supersede a DPP",
-        "description": "Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. Superseding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).",
+        "description": "Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. A product, a lot or a unit takes one passport at each granularity (see `POST /dpps`), so the successor stands for another product, lot or unit. Superseding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).",
         "operationId": "supersede_dpp",
         "x-permission": "dpp_lifecycle",
         "x-destructive": true,
@@ -9256,7 +9331,7 @@
           "DPPs"
         ],
         "summary": "Read the private properties of several versions",
-        "description": "The reader-derived confidential rows for several versions of one passport in a single round-trip. Name the versions with `?versions=1,3,7`; at most 50 are derived per request. A version is left out when it carries no confidential rows or the reader may see none of them, so the answer only contains versions where the reader gains rows beyond the public passport. An unauthenticated request answers 401 with the `X-Auth-Fields` challenge the passport page uses to sign a reader in.",
+        "description": "The reader-derived confidential rows for several versions of one passport in a single round-trip. Name the versions with `?versions=1,3,7`; at most 50 are derived per request. A version is left out when it carries no legitimate-interest or on-demand rows, the workspace keeps no copy of them, or the reader may see none of them, so the answer only contains versions where the reader gains rows beyond the public passport. An unauthenticated request answers 401 with the `X-Auth-Fields` challenge the passport page uses to sign a reader in.",
         "operationId": "get_dpp_private_properties",
         "x-permission": "dpp_read",
         "security": [
@@ -9418,7 +9493,18 @@
             "description": "No authenticated reader. Carries the `X-Auth-Fields` challenge."
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
+            "description": "No such passport or version, or the version carries no legitimate-interest or on-demand rows, the two tiers this endpoint serves. A version whose confidential rows the workspace keeps no copy of answers `PRIVATE_PROPERTIES_UNAVAILABLE`, to every caller and before any sign-in is asked for, since no reader can be served them.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "PRIVATE_PROPERTIES_UNAVAILABLE",
+                  "message": "The workspace keeps no copy of the confidential properties of this passport version, so they cannot be read."
+                }
+              }
+            }
           }
         }
       }
@@ -10448,7 +10534,6 @@
                       "category": "data_import",
                       "categoryTitle": "Import & export",
                       "locale": "en",
-                      "tags": [],
                       "url": "https://<host>/admin/help/data_export"
                     }
                   ]
@@ -10534,7 +10619,6 @@
                   "category": "data_import",
                   "categoryTitle": "Import & export",
                   "locale": "en",
-                  "tags": [],
                   "url": "https://<host>/admin/help/data_export",
                   "body": "## Starting an export\n\nOpen the export page and choose a format.\n",
                   "bodyFormat": "markdown",
@@ -11089,7 +11173,7 @@
             "$ref": "#/components/responses/Unauthorized"
           },
           "403": {
-            "description": "Missing `import_access`, or the write permission of the data type (`IMPORT_FORBIDDEN`, the hint names it). Where the access group holds that line, `import_access` or `product_access`, at **View**, the message and the hint name the line and **Edit**, the tier a run takes.",
+            "description": "Missing `import_access`, or the write permission of the data type (`IMPORT_FORBIDDEN`, the hint names it). Where the access group holds that line, `import_access` or `product_access`, at **View only**, the message and the hint name the line and **Full access**, the tier a run takes.",
             "content": {
               "application/json": {
                 "schema": {
@@ -11296,7 +11380,7 @@
           "Leadgens"
         ],
         "summary": "Create a leadgen campaign",
-        "description": "Creates a new lead generation campaign with an overlay and form.",
+        "description": "Creates a new lead generation campaign with its copy and, for the form action, a form it names by formId or a new one.",
         "operationId": "create_leadgen",
         "security": [
           {
@@ -13265,7 +13349,7 @@
             "$ref": "#/components/responses/WriteForbidden"
           },
           "422": {
-            "description": "Validation failed. When mandatory property types have no value, `fields.properties.missing` names the ones still needed and `hint` repeats them in prose. `GET /products/new` lists every property type with its `mandatory` flag.\n\nA `propertiesInput` key naming no property type, or, for a credential, a type only the members of a plan edit, or a type of an access group the credential (or the person it acts for) is not in, refuses the write before anything is stored (`PRODUCT_PROPERTIES_REFUSED`). The message names each and why, a type of such a group by its key alone; `fields.propertiesInput.unknown`, `fields.propertiesInput.planGated` and `fields.propertiesInput.groupGated` list the keys as sent.",
+            "description": "Validation failed. When mandatory property types have no value, `fields.properties.missing` names the ones still needed and `hint` repeats them in prose. `GET /products/new` lists every property type with its `mandatory` flag.\n\nA `propertiesInput` key naming no property type, or, for a credential, a type only the members of a plan edit, or a type of an access group the credential (or the person it acts for) is not in, refuses the write before anything is stored (`PRODUCT_PROPERTIES_REFUSED`). The message names each and why, a type of such a group by its key alone; `fields.propertiesInput.unknown`, `fields.propertiesInput.planGated` and `fields.propertiesInput.groupGated` list the keys as sent.\n\nA key the write takes nowhere, a key of the read that differs from what `GET /products/new` answers, or a list or an object sent as something else refuses the write before anything is stored (`PRODUCT_KEYS_REFUSED`, ProductInput says which). The message names each key and why; `fields` carries one entry per key as sent (`componentsInput[0].share` for a key inside a component entry), coded `PRODUCT_KEY_UNKNOWN`, `PRODUCT_KEY_MISPLACED` (a product field sent beside `product`), `PRODUCT_KEY_WRITTEN_ELSEWHERE` (with `field`, the body key that writes it, and `operation`), `PRODUCT_KEY_READ_ONLY`, `PRODUCT_KEY_LIST_REQUIRED` or `PRODUCT_KEY_OBJECT_REQUIRED`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -13524,7 +13608,7 @@
           "Products"
         ],
         "summary": "Update a product",
-        "description": "Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are. A brand name no brand carries creates the brand, which asks a consumer for `brand_access` (403 `BRAND_FORBIDDEN` without it); a credential acting for a person names only what that person reads, as on create. On a variant, a value the body changes becomes the variant's own and a value it sends as it was read goes on following the parent. `parentId` is left out or names the parent the product has; any other answers 422 `PRODUCT_PARENT_READ_ONLY`, since a variant moves to another parent through a spreadsheet import only. A `propertiesInput` key naming no property type, or, for a credential, a type only the members of a plan edit, or a type of an access group the credential (or the person it acts for) is not in, refuses the whole write with 422 `PRODUCT_PROPERTIES_REFUSED`, whose message names each and why; `fields.propertiesInput.unknown`, `fields.propertiesInput.planGated` and `fields.propertiesInput.groupGated` list the keys as sent.",
+        "description": "Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are. A brand name no brand carries creates the brand, which asks a consumer for `brand_access` (403 `BRAND_FORBIDDEN` without it); a credential acting for a person names only what that person reads, as on create. On a variant, a value the body changes becomes the variant's own and a value it sends as it was read goes on following the parent. `parentId` is left out or names the parent the product has; any other answers 422 `PRODUCT_PARENT_READ_ONLY`, since a variant moves to another parent through a spreadsheet import only. A `propertiesInput` key naming no property type, or, for a credential, a type only the members of a plan edit, or a type of an access group the credential (or the person it acts for) is not in, refuses the whole write with 422 `PRODUCT_PROPERTIES_REFUSED`, whose message names each and why; `fields.propertiesInput.unknown`, `fields.propertiesInput.planGated` and `fields.propertiesInput.groupGated` list the keys as sent. The product's read sent back under `product` passes as it was read; a key of it that differs from the product as it stands, a key the write takes nowhere, or a list or an object sent as something else refuses the whole write with 422 `PRODUCT_KEYS_REFUSED`, one field per key as on create, so a body read before another write changed the product names what moved.",
         "operationId": "update_product",
         "x-permission": "product_access",
         "security": [
