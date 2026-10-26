@@ -1,6 +1,6 @@
 # Command reference
 
-Every command of `transpareo`, generated from API specification 2.41.1. `--help` on any command prints the same example and permission key.
+Every command of `transpareo`, generated from API specification 2.47.0. `--help` on any command prints the same example and permission key.
 
 | Option on every command | What it does |
 |---|---|
@@ -666,7 +666,7 @@ transpareo dpps delete <id> --yes
 
 ### transpareo dpps dynamic-data update
 
-Update dynamic data.
+Update changing values (e.g. battery health).
 
 ```sh
 transpareo dpps dynamic-data update <id>

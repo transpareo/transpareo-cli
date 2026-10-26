@@ -1,5 +1,5 @@
 {
-  "version": "2.41.1",
+  "version": "2.47.0",
   "instructions": "Transpareo holds a workspace's products, components and Digital\nProduct Passports. Start with me to learn what the credential\nallows. Where its workspace.publishesOnCreate is true, every\nproduct and component is published as it is created, so never\nask the person to publish anything and never mention a\nstorefront, catalogue visibility or a frontend app.\nFor a new product call product_property_types before\ncreate_product. A variant follows its parent in every value\nits inheritance does not mark pinned or parent_moved;\nrestore_product_values has a value follow again. For\npassports of an existing product call\ndpp_requirements, then validate_dpp before create_dpp. A passport\nof a batch or an item names its lot in batchIdentifier and the lot\nis created with the first passport that names it; there is no\nseparate lot step. A new lot is taken only of a product that\npasses every other required readiness check; until then the\ncreate answers DPP_BATCH_PRODUCT_NOT_READY on batch, and the\nproduct is completed first. list_lots shows the lots a product already\nhas. A run of passports goes through bulk_create_dpps with the\nlot in shared. publish_dpp\nsigns the passport and cannot be undone. Recalling a unit is a\nstatus change to suspended through append_dpp_event, not a void;\nvoid_dpp is for a unit that no longer exists. void_dpp and\nsupersede_dpp need the confirm argument with the stated phrase.\nA spreadsheet you have read goes in through import_spreadsheet as\nrows keyed by the column headers, never as base64; when it\nanswers a preview, take the suggestion of every column with a\nmatch, ask the person one short question per column with\nmatchType none, and call again with the same rows and mappings,\nusing create_new for columns that should become property types.\nSet auto where the mapping is clear: the headings are those of\nthe import template, or ones you have already seen resolve in\nthis workspace. While a column has no match, work from the preview.\nA spreadsheet the person attached in the application manager\nstays on the server and is read with read_attachment, a page of\nrows at a time under its handle. Importing what it holds is a\nseparate step the person asks for; the same handle then goes to\nimport_spreadsheet as upload.\nA run started earlier, or in another session, is found with\nlist_imports or list_exports and read with wait_for_task on its\nstatusUrl.\nA question about how a person does something in the application\nmanager is answered from the help articles: search_help for the\ntopic, then read_help for the article. The API guide describes the\ncalls a program makes; the help articles describe the screens a\nperson uses.\nWork colleagues ask of the person is a task: list_tasks answers\nwhat waits on them, and each task names in moves what the\ncredential may do with it. Reviews show there as well and are\ndecided with approve_task and reject_task.\nAnything without a tool: search_operations, then call_api. Lists\nare paged; follow nextPage. Keep every answer short: what was\ndone, what was found, the one decision that is open.",
   "tools": [
     {
@@ -3179,7 +3179,7 @@
                 "items": {
                   "type": "string"
                 },
-                "description": "The product property types the passport carries, by id; left out or empty, it carries every one. `GET /dpps/requirements` lists a product's under `inheritedProperties`. An id naming no product property type refuses the write with 422 `DPP_PROPERTY_TYPES_REFUSED`."
+                "description": "The product property types the passport carries, by id; left out or empty, it carries every one. `GET /dpps/requirements` lists a product's under `inheritedProperties`. An id naming no product property type refuses the write with 422 `DPP_PROPERTY_TYPES_REFUSED`; a selection sent as no list, a single id among them, with 422 `DPP_KEYS_REFUSED`, `fields.propertyTypeIds.error` `DPP_KEY_LIST_REQUIRED`."
               }
             }
           },
@@ -3659,7 +3659,7 @@
         "properties": {
           "product": {
             "type": "object",
-            "description": "The fields of a product write. A create needs `name` and `componentsInput`, which the create operation says, and `name` alone where it names `parentId`; an update carries only what it means to change, because every field it names is written.",
+            "description": "The fields of a product write. A create needs `name` and `componentsInput`, which the create operation says, and `name` alone where it names `parentId`; an update carries only what it means to change, because every field it names is written. A key of the read (Product, ProductDetail) may come back with the write and passes while it holds what the read holds; changed, it refuses the write with 422 `PRODUCT_KEYS_REFUSED`, its field naming what writes it (`categories` categoryIds, `components` componentsInput, `properties` propertiesInput, `brand` and `brandName` brand.name beside product, `mediafiles` `PUT /products/{id}/mediafiles`, `published` `PUT /products/{id}/publish` or `unpublish`) or saying no call writes it (`permalink`, `publishedAt`, `updatedAt` and the other keys the server works out). A create compares them with what `GET /products/new` answers and passes any `id`. Any other key, here, inside a `componentsInput` entry or beside `product` and `brand`, refuses the write the same way, naming each; so does a list or an object sent as something else.",
             "properties": {
               "name": {
                 "type": "string",
@@ -3678,12 +3678,29 @@
                 "description": "The customs tariff number, the 8-digit CN code or, until the CN subheading is known, the 6-digit HS code. Spaces and dots between the digits are dropped (`6109 10 00` is stored as `61091000`); any other shape is refused with 422 naming `hsCode`. A passport publishes the first six digits as its HS code and all eight as its CN code. On a variant it is a value taken from the parent, so a number that differs becomes the variant's own. An empty string clears it.",
                 "example": "61091000"
               },
+              "weight": {
+                "type": "number",
+                "nullable": true,
+                "description": "The product's weight in `weightUnit`. A value that is no number is refused with 422 naming `weight`; null or an empty string clears it, and its unit with it. On a variant it is a value taken from the parent, with its unit.",
+                "example": 50
+              },
+              "weightUnit": {
+                "type": "string",
+                "enum": [
+                  "kg",
+                  "g",
+                  "mg",
+                  "t"
+                ],
+                "description": "The unit of `weight`. A weight written without one keeps the unit the product has, and a weight the product had none for is in kilograms.",
+                "example": "g"
+              },
               "parentId": {
                 "type": "integer",
                 "description": "On a create, the product the new one is a variant of. It starts as a copy of that product and takes its later changes, and the other fields of the body become its own where they differ. An update leaves it out or names the parent the product has."
               },
               "componentsInput": {
-                "description": "The product's components in order, as a list of names or a list of objects naming an existing component by componentId or a new one by name. Naming it replaces the whole list, so on an update send the components the product is to have from then on, not the ones being added; leaving it out keeps the list as it is.",
+                "description": "The product's components in order, as a list of names, of objects naming an existing component by componentId or a new one by name, or of both. An object's `percentage` is the component's share of the product; an entry naming it replaces the share, null clearing it, and an entry leaving it out keeps the share the component has. A share outside 0 to 100 refuses the write with 422 naming `componentsInput`. Naming the list replaces the whole list, so on an update send the components the product is to have from then on, not the ones being added; leaving it out keeps the list as it is.",
                 "oneOf": [
                   {
                     "type": "array",
@@ -3706,6 +3723,12 @@
                         },
                         "componentId": {
                           "type": "integer"
+                        },
+                        "percentage": {
+                          "type": "number",
+                          "nullable": true,
+                          "minimum": 0,
+                          "maximum": 100
                         }
                       }
                     }
@@ -4249,7 +4272,8 @@
           },
           "overlay": {
             "type": "object",
-            "description": "DPP overlay content displayed on scan",
+            "description": "The passport's lead generator in the shape it had as an overlay. The id is the lead generator's, link its button label, and body the text with the form as HTML.",
+            "deprecated": true,
             "properties": {
               "id": {
                 "type": "integer"
@@ -7216,7 +7240,8 @@
           },
           "overlay": {
             "type": "object",
-            "description": "DPP overlay content displayed on scan",
+            "description": "The passport's lead generator in the shape it had as an overlay. The id is the lead generator's, link its button label, and body the text with the form as HTML.",
+            "deprecated": true,
             "properties": {
               "id": {
                 "type": "integer"
@@ -10900,7 +10925,8 @@
           },
           "overlay": {
             "type": "object",
-            "description": "DPP overlay content displayed on scan",
+            "description": "The passport's lead generator in the shape it had as an overlay. The id is the lead generator's, link its button label, and body the text with the form as HTML.",
+            "deprecated": true,
             "properties": {
               "id": {
                 "type": "integer"
@@ -11605,7 +11631,8 @@
           },
           "overlay": {
             "type": "object",
-            "description": "DPP overlay content displayed on scan",
+            "description": "The passport's lead generator in the shape it had as an overlay. The id is the lead generator's, link its button label, and body the text with the form as HTML.",
+            "deprecated": true,
             "properties": {
               "id": {
                 "type": "integer"
@@ -11868,12 +11895,6 @@
                 "type": "string",
                 "description": "The language this article was served in, which can differ from the one asked for when the article has no copy in it",
                 "example": "de"
-              },
-              "tags": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
               },
               "url": {
                 "type": "string",
@@ -14574,7 +14595,8 @@
           },
           "overlay": {
             "type": "object",
-            "description": "DPP overlay content displayed on scan",
+            "description": "The passport's lead generator in the shape it had as an overlay. The id is the lead generator's, link its button label, and body the text with the form as HTML.",
+            "deprecated": true,
             "properties": {
               "id": {
                 "type": "integer"
@@ -14846,12 +14868,6 @@
                   "type": "string",
                   "description": "The language this article was served in, which can differ from the one asked for when the article has no copy in it",
                   "example": "de"
-                },
-                "tags": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
                 },
                 "url": {
                   "type": "string",
@@ -15979,7 +15995,8 @@
           },
           "overlay": {
             "type": "object",
-            "description": "DPP overlay content displayed on scan",
+            "description": "The passport's lead generator in the shape it had as an overlay. The id is the lead generator's, link its button label, and body the text with the form as HTML.",
+            "deprecated": true,
             "properties": {
               "id": {
                 "type": "integer"
@@ -16589,7 +16606,7 @@
                 "items": {
                   "type": "string"
                 },
-                "description": "The product property types the passport carries, by id; left out or empty, it carries every one. `GET /dpps/requirements` lists a product's under `inheritedProperties`. An id naming no product property type refuses the write with 422 `DPP_PROPERTY_TYPES_REFUSED`."
+                "description": "The product property types the passport carries, by id; left out or empty, it carries every one. `GET /dpps/requirements` lists a product's under `inheritedProperties`. An id naming no product property type refuses the write with 422 `DPP_PROPERTY_TYPES_REFUSED`; a selection sent as no list, a single id among them, with 422 `DPP_KEYS_REFUSED`, `fields.propertyTypeIds.error` `DPP_KEY_LIST_REQUIRED`."
               }
             }
           }
@@ -16987,8 +17004,8 @@
     },
     {
       "name": "update_dynamic_data",
-      "title": "Update dynamic data",
-      "description": "Update dynamic data\nPermission: dpp_dynamic. Data tier: authorised (the workspace's own catalogue).\nExample: update_dynamic_data {\"dynamicData\":{\"stateOfHealth\":87.3,\"cycleCount\":412,\"retiredReason\":null},\"id\":\"<id>\"}",
+      "title": "Update changing values (e.g. battery health)",
+      "description": "Update changing values (e.g. battery health)\nPermission: dpp_dynamic. Data tier: authorised (the workspace's own catalogue).\nExample: update_dynamic_data {\"dynamicData\":{\"stateOfHealth\":87.3,\"cycleCount\":412,\"retiredReason\":null},\"id\":\"<id>\"}",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -17057,7 +17074,7 @@
           },
           "product": {
             "type": "object",
-            "description": "The fields of a product write. A create needs `name` and `componentsInput`, which the create operation says, and `name` alone where it names `parentId`; an update carries only what it means to change, because every field it names is written.",
+            "description": "The fields of a product write. A create needs `name` and `componentsInput`, which the create operation says, and `name` alone where it names `parentId`; an update carries only what it means to change, because every field it names is written. A key of the read (Product, ProductDetail) may come back with the write and passes while it holds what the read holds; changed, it refuses the write with 422 `PRODUCT_KEYS_REFUSED`, its field naming what writes it (`categories` categoryIds, `components` componentsInput, `properties` propertiesInput, `brand` and `brandName` brand.name beside product, `mediafiles` `PUT /products/{id}/mediafiles`, `published` `PUT /products/{id}/publish` or `unpublish`) or saying no call writes it (`permalink`, `publishedAt`, `updatedAt` and the other keys the server works out). A create compares them with what `GET /products/new` answers and passes any `id`. Any other key, here, inside a `componentsInput` entry or beside `product` and `brand`, refuses the write the same way, naming each; so does a list or an object sent as something else.",
             "properties": {
               "name": {
                 "type": "string",
@@ -17076,12 +17093,29 @@
                 "description": "The customs tariff number, the 8-digit CN code or, until the CN subheading is known, the 6-digit HS code. Spaces and dots between the digits are dropped (`6109 10 00` is stored as `61091000`); any other shape is refused with 422 naming `hsCode`. A passport publishes the first six digits as its HS code and all eight as its CN code. On a variant it is a value taken from the parent, so a number that differs becomes the variant's own. An empty string clears it.",
                 "example": "61091000"
               },
+              "weight": {
+                "type": "number",
+                "nullable": true,
+                "description": "The product's weight in `weightUnit`. A value that is no number is refused with 422 naming `weight`; null or an empty string clears it, and its unit with it. On a variant it is a value taken from the parent, with its unit.",
+                "example": 50
+              },
+              "weightUnit": {
+                "type": "string",
+                "enum": [
+                  "kg",
+                  "g",
+                  "mg",
+                  "t"
+                ],
+                "description": "The unit of `weight`. A weight written without one keeps the unit the product has, and a weight the product had none for is in kilograms.",
+                "example": "g"
+              },
               "parentId": {
                 "type": "integer",
                 "description": "On a create, the product the new one is a variant of. It starts as a copy of that product and takes its later changes, and the other fields of the body become its own where they differ. An update leaves it out or names the parent the product has."
               },
               "componentsInput": {
-                "description": "The product's components in order, as a list of names or a list of objects naming an existing component by componentId or a new one by name. Naming it replaces the whole list, so on an update send the components the product is to have from then on, not the ones being added; leaving it out keeps the list as it is.",
+                "description": "The product's components in order, as a list of names, of objects naming an existing component by componentId or a new one by name, or of both. An object's `percentage` is the component's share of the product; an entry naming it replaces the share, null clearing it, and an entry leaving it out keeps the share the component has. A share outside 0 to 100 refuses the write with 422 naming `componentsInput`. Naming the list replaces the whole list, so on an update send the components the product is to have from then on, not the ones being added; leaving it out keeps the list as it is.",
                 "oneOf": [
                   {
                     "type": "array",
@@ -17104,6 +17138,12 @@
                         },
                         "componentId": {
                           "type": "integer"
+                        },
+                        "percentage": {
+                          "type": "number",
+                          "nullable": true,
+                          "minimum": 0,
+                          "maximum": 100
                         }
                       }
                     }
@@ -17638,7 +17678,8 @@
           },
           "overlay": {
             "type": "object",
-            "description": "DPP overlay content displayed on scan",
+            "description": "The passport's lead generator in the shape it had as an overlay. The id is the lead generator's, link its button label, and body the text with the form as HTML.",
+            "deprecated": true,
             "properties": {
               "id": {
                 "type": "integer"
@@ -17878,7 +17919,7 @@
                 "items": {
                   "type": "string"
                 },
-                "description": "The product property types the passport carries, by id; left out or empty, it carries every one. `GET /dpps/requirements` lists a product's under `inheritedProperties`. An id naming no product property type refuses the write with 422 `DPP_PROPERTY_TYPES_REFUSED`."
+                "description": "The product property types the passport carries, by id; left out or empty, it carries every one. `GET /dpps/requirements` lists a product's under `inheritedProperties`. An id naming no product property type refuses the write with 422 `DPP_PROPERTY_TYPES_REFUSED`; a selection sent as no list, a single id among them, with 422 `DPP_KEYS_REFUSED`, `fields.propertyTypeIds.error` `DPP_KEY_LIST_REQUIRED`."
               }
             }
           }
