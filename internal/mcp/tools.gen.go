@@ -20,7 +20,10 @@ is created with the first passport that names it; there is no
 separate lot step. A new lot is taken only of a product that
 passes every other required readiness check; until then the
 create answers DPP_BATCH_PRODUCT_NOT_READY on batch, and the
-product is completed first. list_lots shows the lots a product already
+product is completed first. A product with variants gets no
+passport of its own; create_dpp answers
+DPP_UNLOCKABLE_ID_HAS_VARIANTS, and the passport goes to a variant
+that has no variants itself. list_lots shows the lots a product already
 has. A run of passports goes through bulk_create_dpps with the
 lot in shared. publish_dpp
 signs the passport and cannot be undone. Recalling a unit is a
