@@ -1,6 +1,6 @@
 {
-  "version": "2.41.1",
-  "instructions": "Transpareo holds a workspace's products, components and Digital\nProduct Passports. Start with me to learn what the credential\nallows. Where its workspace.publishesOnCreate is true, every\nproduct and component is published as it is created, so never\nask the person to publish anything and never mention a\nstorefront, catalogue visibility or a frontend app.\nFor a new product call product_property_types before\ncreate_product. A variant follows its parent in every value\nits inheritance does not mark pinned or parent_moved;\nrestore_product_values has a value follow again. For\npassports of an existing product call\ndpp_requirements, then validate_dpp before create_dpp. A passport\nof a batch or an item names its lot in batchIdentifier and the lot\nis created with the first passport that names it; there is no\nseparate lot step. A new lot is taken only of a product that\npasses every other required readiness check; until then the\ncreate answers DPP_BATCH_PRODUCT_NOT_READY on batch, and the\nproduct is completed first. list_lots shows the lots a product already\nhas. A run of passports goes through bulk_create_dpps with the\nlot in shared. publish_dpp\nsigns the passport and cannot be undone. Recalling a unit is a\nstatus change to suspended through append_dpp_event, not a void;\nvoid_dpp is for a unit that no longer exists. void_dpp and\nsupersede_dpp need the confirm argument with the stated phrase.\nA spreadsheet you have read goes in through import_spreadsheet as\nrows keyed by the column headers, never as base64; when it\nanswers a preview, take the suggestion of every column with a\nmatch, ask the person one short question per column with\nmatchType none, and call again with the same rows and mappings,\nusing create_new for columns that should become property types.\nSet auto where the mapping is clear: the headings are those of\nthe import template, or ones you have already seen resolve in\nthis workspace. While a column has no match, work from the preview.\nA spreadsheet the person attached in the application manager\nstays on the server and is read with read_attachment, a page of\nrows at a time under its handle. Importing what it holds is a\nseparate step the person asks for; the same handle then goes to\nimport_spreadsheet as upload.\nA run started earlier, or in another session, is found with\nlist_imports or list_exports and read with wait_for_task on its\nstatusUrl.\nA question about how a person does something in the application\nmanager is answered from the help articles: search_help for the\ntopic, then read_help for the article. The API guide describes the\ncalls a program makes; the help articles describe the screens a\nperson uses.\nWork colleagues ask of the person is a task: list_tasks answers\nwhat waits on them, and each task names in moves what the\ncredential may do with it. Reviews show there as well and are\ndecided with approve_task and reject_task.\nAnything without a tool: search_operations, then call_api. Lists\nare paged; follow nextPage. Keep every answer short: what was\ndone, what was found, the one decision that is open.",
+  "version": "2.57.0",
+  "instructions": "Transpareo holds a workspace's products, components and Digital\nProduct Passports. Start with me to learn what the credential\nallows. Where its workspace.publishesOnCreate is true, every\nproduct and component is published as it is created, so never\nask the person to publish anything and never mention a\nstorefront, catalogue visibility or a frontend app.\nFor a new product call product_property_types before\ncreate_product. A variant follows its parent in every value\nits inheritance does not mark pinned or parent_moved;\nrestore_product_values has a value follow again. For\npassports of an existing product call\ndpp_requirements, then validate_dpp before create_dpp. A passport\nof a batch or an item names its lot in batchIdentifier and the lot\nis created with the first passport that names it; there is no\nseparate lot step. A new lot is taken only of a product that\npasses every other required readiness check; until then the\ncreate answers DPP_BATCH_PRODUCT_NOT_READY on batch, and the\nproduct is completed first. A product with variants gets no\npassport of its own; create_dpp answers\nDPP_UNLOCKABLE_ID_HAS_VARIANTS, and the passport goes to a variant\nthat has no variants itself. list_lots shows the lots a product already\nhas. A run of passports goes through bulk_create_dpps with the\nlot in shared. publish_dpp\nsigns the passport and cannot be undone. Recalling a unit is a\nstatus change to suspended through append_dpp_event, not a void;\nvoid_dpp is for a unit that no longer exists. void_dpp and\nsupersede_dpp need the confirm argument with the stated phrase.\nA spreadsheet you have read goes in through import_spreadsheet as\nrows keyed by the column headers, never as base64; when it\nanswers a preview, take the suggestion of every column with a\nmatch, ask the person one short question per column with\nmatchType none, and call again with the same rows and mappings,\nusing create_new for columns that should become property types.\nSet auto where the mapping is clear: the headings are those of\nthe import template, or ones you have already seen resolve in\nthis workspace. While a column has no match, work from the preview.\nA spreadsheet the person attached in the application manager\nstays on the server and is read with read_attachment, a page of\nrows at a time under its handle. Importing what it holds is a\nseparate step the person asks for; the same handle then goes to\nimport_spreadsheet as upload.\nA run started earlier, or in another session, is found with\nlist_imports or list_exports and read with wait_for_task on its\nstatusUrl.\nA question about how a person does something in the application\nmanager is answered from the help articles: search_help for the\ntopic, then read_help for the article. The API guide describes the\ncalls a program makes; the help articles describe the screens a\nperson uses.\nWork colleagues ask of the person is a task: list_tasks answers\nwhat waits on them, and each task names in moves what the\ncredential may do with it. Reviews show there as well and are\ndecided with approve_task and reject_task.\nAnything without a tool: search_operations, then call_api. Lists\nare paged; follow nextPage. Keep every answer short: what was\ndone, what was found, the one decision that is open.",
   "tools": [
     {
       "name": "append_dpp_event",
@@ -774,11 +774,12 @@
             },
             "error": {
               "type": "string",
-              "description": "On `error` only: `DPP_INVALID_LINE` (the line is not a JSON object), `DPP_INVALID` (the passport failed validation, see `fields`) or `DPP_PUBLISH_FAILED` (the passport row was kept unpublished; resubmit the same row to resume it).",
+              "description": "On `error` only: `DPP_INVALID_LINE` (the line is not a JSON object), `DPP_INVALID` (the passport failed validation, see `fields`), `DPP_PUBLISH_FAILED` (the passport row was kept unpublished; resubmit the same row to resume it) or `DPP_FORBIDDEN` (the natural key names an unpublished passport the caller does not write, which stays as it is).",
               "enum": [
                 "DPP_INVALID_LINE",
                 "DPP_INVALID",
-                "DPP_PUBLISH_FAILED"
+                "DPP_PUBLISH_FAILED",
+                "DPP_FORBIDDEN"
               ]
             },
             "message": {
@@ -787,7 +788,7 @@
             },
             "fields": {
               "type": "object",
-              "description": "On `DPP_INVALID`: the failing attribute names mapped to their error. A row naming a new lot of a product that fails another required readiness check answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, and the rest of the run goes on.",
+              "description": "On `DPP_INVALID`: the failing attribute names mapped to their error. A row naming a new lot of a product that fails another required readiness check answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, and a row naming a product with variants `DPP_UNLOCKABLE_ID_HAS_VARIANTS` on `unlockableId`; the rest of the run goes on.",
               "additionalProperties": {
                 "type": "object",
                 "properties": {
@@ -1015,9 +1016,10 @@
             },
             "error": {
               "type": "string",
-              "description": "On `error` only: the line is not a JSON object.",
+              "description": "On `error` only: `DPP_INVALID_LINE` (the line is not a JSON object) or `DPP_FORBIDDEN` (the natural key names an unpublished passport the caller does not write).",
               "enum": [
-                "DPP_INVALID_LINE"
+                "DPP_INVALID_LINE",
+                "DPP_FORBIDDEN"
               ]
             },
             "message": {
@@ -3140,7 +3142,7 @@
               },
               "unlockableId": {
                 "type": "integer",
-                "description": "The id of the product this passport is for, as `list_products` and `get_product` answer it"
+                "description": "The id of the product this passport is for, as `list_products` and `get_product` answer it. A product with variants gets no passport of its own (`DPP_UNLOCKABLE_ID_HAS_VARIANTS`); name one of its variants that has no variants itself."
               },
               "description": {
                 "type": "string"
@@ -3179,7 +3181,7 @@
                 "items": {
                   "type": "string"
                 },
-                "description": "The product property types the passport carries, by id; left out or empty, it carries every one. `GET /dpps/requirements` lists a product's under `inheritedProperties`. An id naming no product property type refuses the write with 422 `DPP_PROPERTY_TYPES_REFUSED`."
+                "description": "The product property types the passport carries, by id; left out or empty, it carries every one. `GET /dpps/requirements` lists a product's under `inheritedProperties`. An id naming no product property type refuses the write with 422 `DPP_PROPERTY_TYPES_REFUSED`; a selection sent as no list, a single id among them, with 422 `DPP_KEYS_REFUSED`, `fields.propertyTypeIds.error` `DPP_KEY_LIST_REQUIRED`."
               }
             }
           },
@@ -3338,7 +3340,7 @@
           },
           "autoIssued": {
             "type": "boolean",
-            "description": "Whether the workspace issued the passport by itself above its unit passports, a model passport answering the GTIN or a lot passport of an item workspace. Such a passport is included in the plan, is never submitted to the EU registry, and is left out of the passport list's default view. Always present."
+            "description": "Whether the workspace issued the passport by itself above its unit passports, a model passport of the product or a lot passport of an item workspace. A workspace issues no such passport today, and no GS1 Digital Link leads to one; one issued earlier stays signed and readable by its code. Such a passport is included in the plan, is never submitted to the EU registry, and is listed only when the passport list asks for the auto-issued passports. Always present."
           },
           "status": {
             "type": "string",
@@ -3367,6 +3369,30 @@
           "serialIdentifier": {
             "type": "string",
             "description": "Only present when set. Carried at item granularity."
+          },
+          "epc": {
+            "type": "object",
+            "description": "The EPC a UHF RFID tag of the unit carries, in the GS1 EPC Tag Data Standard. Only present on a passport with a serial of up to 20 characters of the GS1 serial character set, whose GTIN starts with one of the workspace's GS1 company prefixes. The URN opens the passport at `/epc/{urn}` on the passport host.",
+            "properties": {
+              "scheme": {
+                "type": "string",
+                "description": "`SGTIN-96` for a serial of digits without a leading zero below 2^38, `SGTIN-198` for any other serial.",
+                "enum": [
+                  "SGTIN-96",
+                  "SGTIN-198"
+                ]
+              },
+              "urn": {
+                "type": "string",
+                "description": "The pure-identity URN, `urn:epc:id:sgtin:{company prefix}.{indicator and item reference}.{serial}`.",
+                "example": "urn:epc:id:sgtin:4012345.067890.1001"
+              },
+              "hex": {
+                "type": "string",
+                "description": "The binary encoding an RFID encoder writes to the tag's EPC memory, in hex, with filter value 1 (point-of-sale trade item), padded to whole 16-bit words.",
+                "example": "3034F4E4E4424C80000003E9"
+              }
+            }
           },
           "passportStatus": {
             "type": "string",
@@ -3659,7 +3685,7 @@
         "properties": {
           "product": {
             "type": "object",
-            "description": "The fields of a product write. A create needs `name` and `componentsInput`, which the create operation says, and `name` alone where it names `parentId`; an update carries only what it means to change, because every field it names is written.",
+            "description": "The fields of a product write. A create needs `name` and `componentsInput`, which the create operation says, and `name` alone where it names `parentId`; an update carries only what it means to change, because every field it names is written. A key of the read (Product, ProductDetail) may come back with the write and passes while it holds what the read holds; changed, it refuses the write with 422 `PRODUCT_KEYS_REFUSED`, its field naming what writes it (`categories` categoryIds, `components` componentsInput, `properties` propertiesInput, `brand` and `brandName` brand.name beside product, `mediafiles` `PUT /products/{id}/mediafiles`, `published` `PUT /products/{id}/publish` or `unpublish`) or saying no call writes it (`permalink`, `publishedAt`, `updatedAt` and the other keys the server works out). A create compares them with what `GET /products/new` answers and passes any `id`. Any other key, here, inside a `componentsInput` entry or beside `product` and `brand`, refuses the write the same way, naming each; so does a list or an object sent as something else.",
             "properties": {
               "name": {
                 "type": "string",
@@ -3678,12 +3704,29 @@
                 "description": "The customs tariff number, the 8-digit CN code or, until the CN subheading is known, the 6-digit HS code. Spaces and dots between the digits are dropped (`6109 10 00` is stored as `61091000`); any other shape is refused with 422 naming `hsCode`. A passport publishes the first six digits as its HS code and all eight as its CN code. On a variant it is a value taken from the parent, so a number that differs becomes the variant's own. An empty string clears it.",
                 "example": "61091000"
               },
+              "weight": {
+                "type": "number",
+                "nullable": true,
+                "description": "The product's weight in `weightUnit`. A value that is no number is refused with 422 naming `weight`; null or an empty string clears it, and its unit with it. On a variant it is a value taken from the parent, with its unit.",
+                "example": 50
+              },
+              "weightUnit": {
+                "type": "string",
+                "enum": [
+                  "kg",
+                  "g",
+                  "mg",
+                  "t"
+                ],
+                "description": "The unit of `weight`. A weight written without one keeps the unit the product has, and a weight the product had none for is in kilograms.",
+                "example": "g"
+              },
               "parentId": {
                 "type": "integer",
                 "description": "On a create, the product the new one is a variant of. It starts as a copy of that product and takes its later changes, and the other fields of the body become its own where they differ. An update leaves it out or names the parent the product has."
               },
               "componentsInput": {
-                "description": "The product's components in order, as a list of names or a list of objects naming an existing component by componentId or a new one by name. Naming it replaces the whole list, so on an update send the components the product is to have from then on, not the ones being added; leaving it out keeps the list as it is.",
+                "description": "The product's components in order, as a list of names, of objects naming an existing component by componentId or a new one by name, or of both. An object's `percentage` is the component's share of the product; an entry naming it replaces the share, null clearing it, and an entry leaving it out keeps the share the component has. A share outside 0 to 100 refuses the write with 422 naming `componentsInput`. Naming the list replaces the whole list, so on an update send the components the product is to have from then on, not the ones being added; leaving it out keeps the list as it is.",
                 "oneOf": [
                   {
                     "type": "array",
@@ -3706,6 +3749,12 @@
                         },
                         "componentId": {
                           "type": "integer"
+                        },
+                        "percentage": {
+                          "type": "number",
+                          "nullable": true,
+                          "minimum": 0,
+                          "maximum": 100
                         }
                       }
                     }
@@ -4249,7 +4298,8 @@
           },
           "overlay": {
             "type": "object",
-            "description": "DPP overlay content displayed on scan",
+            "description": "The passport's lead generator in the shape it had as an overlay. The id is the lead generator's, link its button label, and body the text with the form as HTML.",
+            "deprecated": true,
             "properties": {
               "id": {
                 "type": "integer"
@@ -5160,7 +5210,7 @@
     {
       "name": "dpp_requirements",
       "title": "What a passport of a product needs",
-      "description": "What a passport of a product needs. The answer carries a body ready to fill for validate_dpp and create_dpp, and under missing what the product still lacks, each entry with the product field that answers it and, under operation, the tool that takes it.\nPermission: dpp_read. Data tier: authorised (the workspace's own catalogue).\nExample: dpp_requirements {\"productId\":\"<productId>\"}",
+      "description": "What a passport of a product needs. The answer carries a body ready to fill for validate_dpp and create_dpp, and under missing what the product still lacks, each entry with the product field that answers it and, under operation, the tool that takes it. A product with variants is never ready: its one entry, error DPP_UNLOCKABLE_ID_HAS_VARIANTS, names under productIds the variants that take its passports.\nPermission: dpp_read. Data tier: authorised (the workspace's own catalogue).\nExample: dpp_requirements {\"productId\":\"<productId>\"}",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -5423,11 +5473,11 @@
           },
           "ready": {
             "type": "boolean",
-            "description": "Whether a passport of this product at `granularity` is written and published as the product stands, read off the same check a new lot is refused by (`DPP_BATCH_PRODUCT_NOT_READY`). True when `missing` holds no required entry. The lot a batch or item passport names is no entry, since the create brings it."
+            "description": "Whether a passport of this product at `granularity` is written and published as the product stands, read off the same check a new lot is refused by (`DPP_BATCH_PRODUCT_NOT_READY`). True when `missing` holds no required entry. The lot a batch or item passport names is no entry, since the create brings it. Never true for a product with variants, which gets no passport of its own."
           },
           "missing": {
             "type": "array",
-            "description": "What the product still lacks, one entry per open check, required ones first, in a shape a workflow loops over. An entry stays under the same `check` while it is open and leaves the list once its answer is stored.",
+            "description": "What the product still lacks, one entry per open check, required ones first, in a shape a workflow loops over. An entry stays under the same `check` while it is open and leaves the list once its answer is stored. A product with variants answers one entry alone, `dpp.unlockable_id` with `error` `DPP_UNLOCKABLE_ID_HAS_VARIANTS` and `target` `variants`, whose `productIds` take its passports.",
             "items": {
               "type": "object",
               "properties": {
@@ -5451,17 +5501,29 @@
                   "type": "string",
                   "description": "The validator rule that failed, `<shape>.<path>`"
                 },
+                "error": {
+                  "type": "string",
+                  "description": "The field code a create of this passport answers, where the entry stands for a refusal of the create, such as `DPP_UNLOCKABLE_ID_HAS_VARIANTS`"
+                },
                 "message": {
                   "type": "string",
-                  "description": "The validator's own message"
+                  "description": "The validator's own message, or the create's where `error` names its code"
                 },
                 "target": {
                   "type": "string",
-                  "description": "Where the answer is sent. `product` is a write of the product, which `operation` names, and `fields` names the field; `workspace` is a setting or a property type the workspace adds in the application manager first, which no product write answers. A workspace without product images answers the pictures there too.",
+                  "description": "Where the answer is sent. `product` is a write of the product, which `operation` names, and `fields` names the field; `workspace` is a setting or a property type the workspace adds in the application manager first, which no product write answers. A workspace without product images answers the pictures there too. `variants` is a product with variants, which gets no passport of its own; its passports go to the products `productIds` names.",
                   "enum": [
                     "product",
-                    "workspace"
+                    "workspace",
+                    "variants"
                   ]
+                },
+                "productIds": {
+                  "type": "array",
+                  "description": "Where `target` is `variants`, the products at the ends of the family, the variants that have no variants themselves, by id in ascending order. Each takes its own passport; ask the requirements of each.",
+                  "items": {
+                    "type": "integer"
+                  }
                 },
                 "fields": {
                   "type": "array",
@@ -5668,7 +5730,7 @@
         "safe": true,
         "group": "dpps",
         "kind": "get",
-        "sentence": "The answer carries a body ready to fill for validate_dpp and create_dpp, and under missing what the product still lacks, each entry with the product field that answers it and, under operation, the tool that takes it."
+        "sentence": "The answer carries a body ready to fill for validate_dpp and create_dpp, and under missing what the product still lacks, each entry with the product field that answers it and, under operation, the tool that takes it. A product with variants is never ready: its one entry, error DPP_UNLOCKABLE_ID_HAS_VARIANTS, names under productIds the variants that take its passports."
       }
     },
     {
@@ -6316,7 +6378,7 @@
               },
               "autoIssued": {
                 "type": "boolean",
-                "description": "Whether the workspace issued the passport by itself above its unit passports, a model passport answering the GTIN or a lot passport of an item workspace. Such a passport is included in the plan, is never submitted to the EU registry, and is left out of the passport list's default view. Always present."
+                "description": "Whether the workspace issued the passport by itself above its unit passports, a model passport of the product or a lot passport of an item workspace. A workspace issues no such passport today, and no GS1 Digital Link leads to one; one issued earlier stays signed and readable by its code. Such a passport is included in the plan, is never submitted to the EU registry, and is listed only when the passport list asks for the auto-issued passports. Always present."
               },
               "status": {
                 "type": "string",
@@ -6345,6 +6407,30 @@
               "serialIdentifier": {
                 "type": "string",
                 "description": "Only present when set. Carried at item granularity."
+              },
+              "epc": {
+                "type": "object",
+                "description": "The EPC a UHF RFID tag of the unit carries, in the GS1 EPC Tag Data Standard. Only present on a passport with a serial of up to 20 characters of the GS1 serial character set, whose GTIN starts with one of the workspace's GS1 company prefixes. The URN opens the passport at `/epc/{urn}` on the passport host.",
+                "properties": {
+                  "scheme": {
+                    "type": "string",
+                    "description": "`SGTIN-96` for a serial of digits without a leading zero below 2^38, `SGTIN-198` for any other serial.",
+                    "enum": [
+                      "SGTIN-96",
+                      "SGTIN-198"
+                    ]
+                  },
+                  "urn": {
+                    "type": "string",
+                    "description": "The pure-identity URN, `urn:epc:id:sgtin:{company prefix}.{indicator and item reference}.{serial}`.",
+                    "example": "urn:epc:id:sgtin:4012345.067890.1001"
+                  },
+                  "hex": {
+                    "type": "string",
+                    "description": "The binary encoding an RFID encoder writes to the tag's EPC memory, in hex, with filter value 1 (point-of-sale trade item), padded to whole 16-bit words.",
+                    "example": "3034F4E4E4424C80000003E9"
+                  }
+                }
               },
               "passportStatus": {
                 "type": "string",
@@ -6664,6 +6750,10 @@
           "publishedDppsCount": {
             "type": "integer",
             "description": "Passports of the lot that have published at least once"
+          },
+          "serialsCount": {
+            "type": "integer",
+            "description": "The serial numbers the lot holds (`GET /lots/{id}/serials`), whose tags open its passport"
           },
           "createdAt": {
             "type": "string",
@@ -7216,7 +7306,8 @@
           },
           "overlay": {
             "type": "object",
-            "description": "DPP overlay content displayed on scan",
+            "description": "The passport's lead generator in the shape it had as an overlay. The id is the lead generator's, link its button label, and body the text with the form as HTML.",
+            "deprecated": true,
             "properties": {
               "id": {
                 "type": "integer"
@@ -8403,7 +8494,7 @@
                 },
                 "autoIssued": {
                   "type": "boolean",
-                  "description": "Whether the workspace issued the passport by itself above its unit passports, a model passport answering the GTIN or a lot passport of an item workspace. Such a passport is included in the plan, is never submitted to the EU registry, and is left out of the passport list's default view. Always present."
+                  "description": "Whether the workspace issued the passport by itself above its unit passports, a model passport of the product or a lot passport of an item workspace. A workspace issues no such passport today, and no GS1 Digital Link leads to one; one issued earlier stays signed and readable by its code. Such a passport is included in the plan, is never submitted to the EU registry, and is listed only when the passport list asks for the auto-issued passports. Always present."
                 },
                 "status": {
                   "type": "string",
@@ -8432,6 +8523,30 @@
                 "serialIdentifier": {
                   "type": "string",
                   "description": "Only present when set. Carried at item granularity."
+                },
+                "epc": {
+                  "type": "object",
+                  "description": "The EPC a UHF RFID tag of the unit carries, in the GS1 EPC Tag Data Standard. Only present on a passport with a serial of up to 20 characters of the GS1 serial character set, whose GTIN starts with one of the workspace's GS1 company prefixes. The URN opens the passport at `/epc/{urn}` on the passport host.",
+                  "properties": {
+                    "scheme": {
+                      "type": "string",
+                      "description": "`SGTIN-96` for a serial of digits without a leading zero below 2^38, `SGTIN-198` for any other serial.",
+                      "enum": [
+                        "SGTIN-96",
+                        "SGTIN-198"
+                      ]
+                    },
+                    "urn": {
+                      "type": "string",
+                      "description": "The pure-identity URN, `urn:epc:id:sgtin:{company prefix}.{indicator and item reference}.{serial}`.",
+                      "example": "urn:epc:id:sgtin:4012345.067890.1001"
+                    },
+                    "hex": {
+                      "type": "string",
+                      "description": "The binary encoding an RFID encoder writes to the tag's EPC memory, in hex, with filter value 1 (point-of-sale trade item), padded to whole 16-bit words.",
+                      "example": "3034F4E4E4424C80000003E9"
+                    }
+                  }
                 },
                 "passportStatus": {
                   "type": "string",
@@ -8995,7 +9110,7 @@
     {
       "name": "list_lots",
       "title": "List lots",
-      "description": "List lots. The lots batch and item passports freeze from. Narrow by product_id or identifier; a lot is created by the first passport that names it, never here, once its product passes every other required readiness check.\nPermission: dpp_read. Data tier: authorised (the workspace's own catalogue).\nExample: list_lots {\"per_page\":20}",
+      "description": "List lots. The lots batch and item passports freeze from. Narrow by product_id or identifier, or by product_id and serial for the lot a tag of that serial number opens; a lot is created by the first passport that names it, never here, once its product passes every other required readiness check.\nPermission: dpp_read. Data tier: authorised (the workspace's own catalogue).\nExample: list_lots {\"per_page\":20}",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -9006,6 +9121,10 @@
           "identifier": {
             "type": "string",
             "description": "Keep only the lot with this identifier, the value a passport carries as `batchIdentifier`"
+          },
+          "serial": {
+            "type": "string",
+            "description": "Keep only the lot of `product_id` holding this serial number (`POST /lots/{id}/serials`)"
           },
           "page": {
             "type": "integer",
@@ -9086,6 +9205,10 @@
                   "type": "integer",
                   "description": "Passports of the lot that have published at least once"
                 },
+                "serialsCount": {
+                  "type": "integer",
+                  "description": "The serial numbers the lot holds (`GET /lots/{id}/serials`), whose tags open its passport"
+                },
                 "createdAt": {
                   "type": "string",
                   "format": "date-time"
@@ -9126,7 +9249,7 @@
         "safe": true,
         "group": "dpps",
         "kind": "list",
-        "sentence": "The lots batch and item passports freeze from. Narrow by product_id or identifier; a lot is created by the first passport that names it, never here, once its product passes every other required readiness check."
+        "sentence": "The lots batch and item passports freeze from. Narrow by product_id or identifier, or by product_id and serial for the lot a tag of that serial number opens; a lot is created by the first passport that names it, never here, once its product passes every other required readiness check."
       }
     },
     {
@@ -10322,7 +10445,9 @@
             }
           },
           "bulkItemsPerMinute": {
-            "type": "integer"
+            "type": "integer",
+            "nullable": true,
+            "description": "The bulk pace, in rows per minute, at which the background work of all of the credential's bulk calls and imports is written. Background work waits for it; a synchronous `POST /dpps/bulk` past it answers 429 with `Retry-After`. 0 or null for none."
           },
           "workspace": {
             "type": "object",
@@ -10900,7 +11025,8 @@
           },
           "overlay": {
             "type": "object",
-            "description": "DPP overlay content displayed on scan",
+            "description": "The passport's lead generator in the shape it had as an overlay. The id is the lead generator's, link its button label, and body the text with the form as HTML.",
+            "deprecated": true,
             "properties": {
               "id": {
                 "type": "integer"
@@ -11605,7 +11731,8 @@
           },
           "overlay": {
             "type": "object",
-            "description": "DPP overlay content displayed on scan",
+            "description": "The passport's lead generator in the shape it had as an overlay. The id is the lead generator's, link its button label, and body the text with the form as HTML.",
+            "deprecated": true,
             "properties": {
               "id": {
                 "type": "integer"
@@ -11868,12 +11995,6 @@
                 "type": "string",
                 "description": "The language this article was served in, which can differ from the one asked for when the article has no copy in it",
                 "example": "de"
-              },
-              "tags": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
               },
               "url": {
                 "type": "string",
@@ -12248,7 +12369,7 @@
           },
           "autoIssued": {
             "type": "boolean",
-            "description": "Whether the workspace issued the passport by itself above its unit passports, a model passport answering the GTIN or a lot passport of an item workspace. Such a passport is included in the plan, is never submitted to the EU registry, and is left out of the passport list's default view. Always present."
+            "description": "Whether the workspace issued the passport by itself above its unit passports, a model passport of the product or a lot passport of an item workspace. A workspace issues no such passport today, and no GS1 Digital Link leads to one; one issued earlier stays signed and readable by its code. Such a passport is included in the plan, is never submitted to the EU registry, and is listed only when the passport list asks for the auto-issued passports. Always present."
           },
           "status": {
             "type": "string",
@@ -12277,6 +12398,30 @@
           "serialIdentifier": {
             "type": "string",
             "description": "Only present when set. Carried at item granularity."
+          },
+          "epc": {
+            "type": "object",
+            "description": "The EPC a UHF RFID tag of the unit carries, in the GS1 EPC Tag Data Standard. Only present on a passport with a serial of up to 20 characters of the GS1 serial character set, whose GTIN starts with one of the workspace's GS1 company prefixes. The URN opens the passport at `/epc/{urn}` on the passport host.",
+            "properties": {
+              "scheme": {
+                "type": "string",
+                "description": "`SGTIN-96` for a serial of digits without a leading zero below 2^38, `SGTIN-198` for any other serial.",
+                "enum": [
+                  "SGTIN-96",
+                  "SGTIN-198"
+                ]
+              },
+              "urn": {
+                "type": "string",
+                "description": "The pure-identity URN, `urn:epc:id:sgtin:{company prefix}.{indicator and item reference}.{serial}`.",
+                "example": "urn:epc:id:sgtin:4012345.067890.1001"
+              },
+              "hex": {
+                "type": "string",
+                "description": "The binary encoding an RFID encoder writes to the tag's EPC memory, in hex, with filter value 1 (point-of-sale trade item), padded to whole 16-bit words.",
+                "example": "3034F4E4E4424C80000003E9"
+              }
+            }
           },
           "passportStatus": {
             "type": "string",
@@ -14574,7 +14719,8 @@
           },
           "overlay": {
             "type": "object",
-            "description": "DPP overlay content displayed on scan",
+            "description": "The passport's lead generator in the shape it had as an overlay. The id is the lead generator's, link its button label, and body the text with the form as HTML.",
+            "deprecated": true,
             "properties": {
               "id": {
                 "type": "integer"
@@ -14847,12 +14993,6 @@
                   "description": "The language this article was served in, which can differ from the one asked for when the article has no copy in it",
                   "example": "de"
                 },
-                "tags": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
                 "url": {
                   "type": "string",
                   "description": "The page a person opens this article at in the application manager",
@@ -15110,7 +15250,7 @@
           },
           "autoIssued": {
             "type": "boolean",
-            "description": "Whether the workspace issued the passport by itself above its unit passports, a model passport answering the GTIN or a lot passport of an item workspace. Such a passport is included in the plan, is never submitted to the EU registry, and is left out of the passport list's default view. Always present."
+            "description": "Whether the workspace issued the passport by itself above its unit passports, a model passport of the product or a lot passport of an item workspace. A workspace issues no such passport today, and no GS1 Digital Link leads to one; one issued earlier stays signed and readable by its code. Such a passport is included in the plan, is never submitted to the EU registry, and is listed only when the passport list asks for the auto-issued passports. Always present."
           },
           "status": {
             "type": "string",
@@ -15139,6 +15279,30 @@
           "serialIdentifier": {
             "type": "string",
             "description": "Only present when set. Carried at item granularity."
+          },
+          "epc": {
+            "type": "object",
+            "description": "The EPC a UHF RFID tag of the unit carries, in the GS1 EPC Tag Data Standard. Only present on a passport with a serial of up to 20 characters of the GS1 serial character set, whose GTIN starts with one of the workspace's GS1 company prefixes. The URN opens the passport at `/epc/{urn}` on the passport host.",
+            "properties": {
+              "scheme": {
+                "type": "string",
+                "description": "`SGTIN-96` for a serial of digits without a leading zero below 2^38, `SGTIN-198` for any other serial.",
+                "enum": [
+                  "SGTIN-96",
+                  "SGTIN-198"
+                ]
+              },
+              "urn": {
+                "type": "string",
+                "description": "The pure-identity URN, `urn:epc:id:sgtin:{company prefix}.{indicator and item reference}.{serial}`.",
+                "example": "urn:epc:id:sgtin:4012345.067890.1001"
+              },
+              "hex": {
+                "type": "string",
+                "description": "The binary encoding an RFID encoder writes to the tag's EPC memory, in hex, with filter value 1 (point-of-sale trade item), padded to whole 16-bit words.",
+                "example": "3034F4E4E4424C80000003E9"
+              }
+            }
           },
           "passportStatus": {
             "type": "string",
@@ -15979,7 +16143,8 @@
           },
           "overlay": {
             "type": "object",
-            "description": "DPP overlay content displayed on scan",
+            "description": "The passport's lead generator in the shape it had as an overlay. The id is the lead generator's, link its button label, and body the text with the form as HTML.",
+            "deprecated": true,
             "properties": {
               "id": {
                 "type": "integer"
@@ -16550,7 +16715,7 @@
               },
               "unlockableId": {
                 "type": "integer",
-                "description": "The id of the product this passport is for, as `list_products` and `get_product` answer it"
+                "description": "The id of the product this passport is for, as `list_products` and `get_product` answer it. A product with variants gets no passport of its own (`DPP_UNLOCKABLE_ID_HAS_VARIANTS`); name one of its variants that has no variants itself."
               },
               "description": {
                 "type": "string"
@@ -16589,7 +16754,7 @@
                 "items": {
                   "type": "string"
                 },
-                "description": "The product property types the passport carries, by id; left out or empty, it carries every one. `GET /dpps/requirements` lists a product's under `inheritedProperties`. An id naming no product property type refuses the write with 422 `DPP_PROPERTY_TYPES_REFUSED`."
+                "description": "The product property types the passport carries, by id; left out or empty, it carries every one. `GET /dpps/requirements` lists a product's under `inheritedProperties`. An id naming no product property type refuses the write with 422 `DPP_PROPERTY_TYPES_REFUSED`; a selection sent as no list, a single id among them, with 422 `DPP_KEYS_REFUSED`, `fields.propertyTypeIds.error` `DPP_KEY_LIST_REQUIRED`."
               }
             }
           }
@@ -16744,7 +16909,7 @@
           },
           "autoIssued": {
             "type": "boolean",
-            "description": "Whether the workspace issued the passport by itself above its unit passports, a model passport answering the GTIN or a lot passport of an item workspace. Such a passport is included in the plan, is never submitted to the EU registry, and is left out of the passport list's default view. Always present."
+            "description": "Whether the workspace issued the passport by itself above its unit passports, a model passport of the product or a lot passport of an item workspace. A workspace issues no such passport today, and no GS1 Digital Link leads to one; one issued earlier stays signed and readable by its code. Such a passport is included in the plan, is never submitted to the EU registry, and is listed only when the passport list asks for the auto-issued passports. Always present."
           },
           "status": {
             "type": "string",
@@ -16773,6 +16938,30 @@
           "serialIdentifier": {
             "type": "string",
             "description": "Only present when set. Carried at item granularity."
+          },
+          "epc": {
+            "type": "object",
+            "description": "The EPC a UHF RFID tag of the unit carries, in the GS1 EPC Tag Data Standard. Only present on a passport with a serial of up to 20 characters of the GS1 serial character set, whose GTIN starts with one of the workspace's GS1 company prefixes. The URN opens the passport at `/epc/{urn}` on the passport host.",
+            "properties": {
+              "scheme": {
+                "type": "string",
+                "description": "`SGTIN-96` for a serial of digits without a leading zero below 2^38, `SGTIN-198` for any other serial.",
+                "enum": [
+                  "SGTIN-96",
+                  "SGTIN-198"
+                ]
+              },
+              "urn": {
+                "type": "string",
+                "description": "The pure-identity URN, `urn:epc:id:sgtin:{company prefix}.{indicator and item reference}.{serial}`.",
+                "example": "urn:epc:id:sgtin:4012345.067890.1001"
+              },
+              "hex": {
+                "type": "string",
+                "description": "The binary encoding an RFID encoder writes to the tag's EPC memory, in hex, with filter value 1 (point-of-sale trade item), padded to whole 16-bit words.",
+                "example": "3034F4E4E4424C80000003E9"
+              }
+            }
           },
           "passportStatus": {
             "type": "string",
@@ -16987,8 +17176,8 @@
     },
     {
       "name": "update_dynamic_data",
-      "title": "Update dynamic data",
-      "description": "Update dynamic data\nPermission: dpp_dynamic. Data tier: authorised (the workspace's own catalogue).\nExample: update_dynamic_data {\"dynamicData\":{\"stateOfHealth\":87.3,\"cycleCount\":412,\"retiredReason\":null},\"id\":\"<id>\"}",
+      "title": "Update changing values (e.g. battery health)",
+      "description": "Update changing values (e.g. battery health)\nPermission: dpp_dynamic. Data tier: authorised (the workspace's own catalogue).\nExample: update_dynamic_data {\"dynamicData\":{\"stateOfHealth\":87.3,\"cycleCount\":412,\"retiredReason\":null},\"id\":\"<id>\"}",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -17057,7 +17246,7 @@
           },
           "product": {
             "type": "object",
-            "description": "The fields of a product write. A create needs `name` and `componentsInput`, which the create operation says, and `name` alone where it names `parentId`; an update carries only what it means to change, because every field it names is written.",
+            "description": "The fields of a product write. A create needs `name` and `componentsInput`, which the create operation says, and `name` alone where it names `parentId`; an update carries only what it means to change, because every field it names is written. A key of the read (Product, ProductDetail) may come back with the write and passes while it holds what the read holds; changed, it refuses the write with 422 `PRODUCT_KEYS_REFUSED`, its field naming what writes it (`categories` categoryIds, `components` componentsInput, `properties` propertiesInput, `brand` and `brandName` brand.name beside product, `mediafiles` `PUT /products/{id}/mediafiles`, `published` `PUT /products/{id}/publish` or `unpublish`) or saying no call writes it (`permalink`, `publishedAt`, `updatedAt` and the other keys the server works out). A create compares them with what `GET /products/new` answers and passes any `id`. Any other key, here, inside a `componentsInput` entry or beside `product` and `brand`, refuses the write the same way, naming each; so does a list or an object sent as something else.",
             "properties": {
               "name": {
                 "type": "string",
@@ -17076,12 +17265,29 @@
                 "description": "The customs tariff number, the 8-digit CN code or, until the CN subheading is known, the 6-digit HS code. Spaces and dots between the digits are dropped (`6109 10 00` is stored as `61091000`); any other shape is refused with 422 naming `hsCode`. A passport publishes the first six digits as its HS code and all eight as its CN code. On a variant it is a value taken from the parent, so a number that differs becomes the variant's own. An empty string clears it.",
                 "example": "61091000"
               },
+              "weight": {
+                "type": "number",
+                "nullable": true,
+                "description": "The product's weight in `weightUnit`. A value that is no number is refused with 422 naming `weight`; null or an empty string clears it, and its unit with it. On a variant it is a value taken from the parent, with its unit.",
+                "example": 50
+              },
+              "weightUnit": {
+                "type": "string",
+                "enum": [
+                  "kg",
+                  "g",
+                  "mg",
+                  "t"
+                ],
+                "description": "The unit of `weight`. A weight written without one keeps the unit the product has, and a weight the product had none for is in kilograms.",
+                "example": "g"
+              },
               "parentId": {
                 "type": "integer",
                 "description": "On a create, the product the new one is a variant of. It starts as a copy of that product and takes its later changes, and the other fields of the body become its own where they differ. An update leaves it out or names the parent the product has."
               },
               "componentsInput": {
-                "description": "The product's components in order, as a list of names or a list of objects naming an existing component by componentId or a new one by name. Naming it replaces the whole list, so on an update send the components the product is to have from then on, not the ones being added; leaving it out keeps the list as it is.",
+                "description": "The product's components in order, as a list of names, of objects naming an existing component by componentId or a new one by name, or of both. An object's `percentage` is the component's share of the product; an entry naming it replaces the share, null clearing it, and an entry leaving it out keeps the share the component has. A share outside 0 to 100 refuses the write with 422 naming `componentsInput`. Naming the list replaces the whole list, so on an update send the components the product is to have from then on, not the ones being added; leaving it out keeps the list as it is.",
                 "oneOf": [
                   {
                     "type": "array",
@@ -17104,6 +17310,12 @@
                         },
                         "componentId": {
                           "type": "integer"
+                        },
+                        "percentage": {
+                          "type": "number",
+                          "nullable": true,
+                          "minimum": 0,
+                          "maximum": 100
                         }
                       }
                     }
@@ -17638,7 +17850,8 @@
           },
           "overlay": {
             "type": "object",
-            "description": "DPP overlay content displayed on scan",
+            "description": "The passport's lead generator in the shape it had as an overlay. The id is the lead generator's, link its button label, and body the text with the form as HTML.",
+            "deprecated": true,
             "properties": {
               "id": {
                 "type": "integer"
@@ -17839,7 +18052,7 @@
               },
               "unlockableId": {
                 "type": "integer",
-                "description": "The id of the product this passport is for, as `list_products` and `get_product` answer it"
+                "description": "The id of the product this passport is for, as `list_products` and `get_product` answer it. A product with variants gets no passport of its own (`DPP_UNLOCKABLE_ID_HAS_VARIANTS`); name one of its variants that has no variants itself."
               },
               "description": {
                 "type": "string"
@@ -17878,7 +18091,7 @@
                 "items": {
                   "type": "string"
                 },
-                "description": "The product property types the passport carries, by id; left out or empty, it carries every one. `GET /dpps/requirements` lists a product's under `inheritedProperties`. An id naming no product property type refuses the write with 422 `DPP_PROPERTY_TYPES_REFUSED`."
+                "description": "The product property types the passport carries, by id; left out or empty, it carries every one. `GET /dpps/requirements` lists a product's under `inheritedProperties`. An id naming no product property type refuses the write with 422 `DPP_PROPERTY_TYPES_REFUSED`; a selection sent as no list, a single id among them, with 422 `DPP_KEYS_REFUSED`, `fields.propertyTypeIds.error` `DPP_KEY_LIST_REQUIRED`."
               }
             }
           }
@@ -18229,7 +18442,7 @@
           },
           "autoIssued": {
             "type": "boolean",
-            "description": "Whether the workspace issued the passport by itself above its unit passports, a model passport answering the GTIN or a lot passport of an item workspace. Such a passport is included in the plan, is never submitted to the EU registry, and is left out of the passport list's default view. Always present."
+            "description": "Whether the workspace issued the passport by itself above its unit passports, a model passport of the product or a lot passport of an item workspace. A workspace issues no such passport today, and no GS1 Digital Link leads to one; one issued earlier stays signed and readable by its code. Such a passport is included in the plan, is never submitted to the EU registry, and is listed only when the passport list asks for the auto-issued passports. Always present."
           },
           "status": {
             "type": "string",
@@ -18258,6 +18471,30 @@
           "serialIdentifier": {
             "type": "string",
             "description": "Only present when set. Carried at item granularity."
+          },
+          "epc": {
+            "type": "object",
+            "description": "The EPC a UHF RFID tag of the unit carries, in the GS1 EPC Tag Data Standard. Only present on a passport with a serial of up to 20 characters of the GS1 serial character set, whose GTIN starts with one of the workspace's GS1 company prefixes. The URN opens the passport at `/epc/{urn}` on the passport host.",
+            "properties": {
+              "scheme": {
+                "type": "string",
+                "description": "`SGTIN-96` for a serial of digits without a leading zero below 2^38, `SGTIN-198` for any other serial.",
+                "enum": [
+                  "SGTIN-96",
+                  "SGTIN-198"
+                ]
+              },
+              "urn": {
+                "type": "string",
+                "description": "The pure-identity URN, `urn:epc:id:sgtin:{company prefix}.{indicator and item reference}.{serial}`.",
+                "example": "urn:epc:id:sgtin:4012345.067890.1001"
+              },
+              "hex": {
+                "type": "string",
+                "description": "The binary encoding an RFID encoder writes to the tag's EPC memory, in hex, with filter value 1 (point-of-sale trade item), padded to whole 16-bit words.",
+                "example": "3034F4E4E4424C80000003E9"
+              }
+            }
           },
           "passportStatus": {
             "type": "string",
