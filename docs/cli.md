@@ -1,6 +1,6 @@
 # Command reference
 
-Every command of `transpareo`, generated from API specification 2.41.1. `--help` on any command prints the same example and permission key.
+Every command of `transpareo`, generated from API specification 2.61.1. `--help` on any command prints the same example and permission key.
 
 | Option on every command | What it does |
 |---|---|
@@ -401,6 +401,37 @@ transpareo components delete <id> --yes
 
 `DELETE /components/{id}` · operation `delete_component` · permission `component_access` or `component_write` · cannot be undone, needs `--yes`
 
+### transpareo components files
+
+List component files.
+
+```sh
+transpareo components files <id>
+```
+
+| Option | What it does |
+|---|---|
+| `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
+
+`GET /components/{id}/files` · operation `get_component_files` · no permission needed, the endpoint is public
+
+### transpareo components files update
+
+Update component files.
+
+```sh
+transpareo components files update <id>
+transpareo components files update <id> --file body.json
+```
+
+| Option | What it does |
+|---|---|
+| `--file` \<value\> | request body from a file, or - for standard input |
+| `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
+| `--set` \<value\>... | body field as key=value, nested with dots (repeatable) |
+
+`PUT /components/{id}/files` · operation `update_component_files` · permission `component_access` or `component_write`
+
 ### transpareo components get
 
 Get a component.
@@ -666,7 +697,7 @@ transpareo dpps delete <id> --yes
 
 ### transpareo dpps dynamic-data update
 
-Update dynamic data.
+Update changing values (e.g. battery health).
 
 ```sh
 transpareo dpps dynamic-data update <id>
@@ -1313,7 +1344,24 @@ transpareo imports validate <id>
 
 ## Lots
 
-The lots batch and item passports freeze from, created with the first passport that names them once the product passes every other required readiness check.
+The lots batch and item passports freeze from, created with the first passport that names them once the product passes every other required readiness check, and the serial numbers a lot holds, which a scan of a tag resolves to its passport.
+
+### transpareo lots codes list
+
+List the codes of a lot's tags.
+
+```sh
+transpareo lots codes list <id>
+transpareo lots codes list <id> --page <page>
+```
+
+| Option | What it does |
+|---|---|
+| `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
+| `--page` \<n\> | Page number |
+| `--per-page` \<n\> | Rows per page (default: 100, max: 1000) |
+
+`GET /lots/{id}/codes` · operation `list_lot_codes` · permission `dpp_read`
 
 ### transpareo lots get
 
@@ -1345,10 +1393,61 @@ transpareo lots list --product-id <product_id>
 | `--page` \<n\> | Page number |
 | `--per-page` \<n\> | Records per page (default: 100, max: 500) |
 | `--product-id` \<n\> | Keep only the lots of this product |
+| `--serial` \<value\> | Keep only the lot of 'product_id' holding this serial number ('POST /lots/{id}/serials') |
 | `--sort` \<value\> | '-updated_at' lists the latest change first, '-created_at' the newest record first; ties fall to the id. Left out, the list keeps its own order. The camelCase spelling ('-updatedAt') reads the same. Any other value answers 422 'SORT_INVALID'. The guide's section "Sorting and polling" says how to poll with it. |
 | `--updated-since` \<value\> | Keep the records changed at this ISO 8601 time or later, the time itself included, so a record at the bound comes back on the next poll. A time without a zone is UTC. A value that is no time answers 422 'SINCE_FILTER_INVALID'. |
 
 `GET /lots` · operation `list_lots` · permission `dpp_read`
+
+### transpareo lots serials create
+
+Add serial numbers to a lot.
+
+```sh
+transpareo lots serials create <id>
+transpareo lots serials create <id> --file body.json
+```
+
+| Option | What it does |
+|---|---|
+| `--file` \<value\> | request body from a file, or - for standard input |
+| `--idempotency-key` \<value\> | makes the call safe to repeat: the same key within a day answers the result of the first call (default: random) |
+| `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
+| `--set` \<value\>... | body field as key=value, nested with dots (repeatable) |
+
+`POST /lots/{id}/serials` · operation `create_lot_serials` · permission `product_access`
+
+### transpareo lots serials delete
+
+Remove serial numbers from a lot.
+
+```sh
+transpareo lots serials delete <id> <entryId>
+transpareo lots serials delete <id> <entryId> --yes
+```
+
+| Option | What it does |
+|---|---|
+| `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
+
+`DELETE /lots/{id}/serials/{entryId}` · operation `delete_lot_serials` · permission `product_access` · cannot be undone, needs `--yes`
+
+### transpareo lots serials list
+
+List the serial numbers of a lot.
+
+```sh
+transpareo lots serials list <id>
+transpareo lots serials list <id> --page <page>
+```
+
+| Option | What it does |
+|---|---|
+| `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
+| `--page` \<n\> | Page number |
+| `--per-page` \<n\> | Records per page (default: 100, max: 500) |
+
+`GET /lots/{id}/serials` · operation `list_lot_serials` · permission `dpp_read`
 
 ## Mediafiles
 
@@ -1364,10 +1463,16 @@ transpareo mediafiles create --file <path> --upload <path>
 
 | Option | What it does |
 |---|---|
-| `--file` \<value\> | path of the file to upload; Image file to upload |
+| `--document-type` \<value\> | What the document is, one of the codes the Mediafile schema lists |
+| `--file` \<value\> | path of the file to upload; File to upload |
+| `--issuer` \<value\> | Who issued the document |
 | `--name` \<value\> | Optional display name |
+| `--number` \<value\> | The number the issuer gave the document |
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
+| `--public` \<value\> | False keeps the bytes in the protected store (default true) |
 | `--upload` \<value\> | path of the file to upload; The same file under the name the model uses; send either this or 'mediafile[file]' |
+| `--valid-from` \<value\> | The first day the document holds |
+| `--valid-until` \<value\> | The last day the document holds, not before validFrom |
 
 `POST /mediafiles` · operation `create_mediafile` · any consumer token
 
@@ -1402,6 +1507,23 @@ transpareo mediafiles list --page <page>
 | `--term` \<value\> | Filter by display name or stored file name |
 
 `GET /mediafiles` · operation `list_mediafiles` · any consumer token
+
+### transpareo mediafiles update
+
+Update a mediafile.
+
+```sh
+transpareo mediafiles update <id>
+transpareo mediafiles update <id> --file body.json
+```
+
+| Option | What it does |
+|---|---|
+| `--file` \<value\> | request body from a file, or - for standard input |
+| `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
+| `--set` \<value\>... | body field as key=value, nested with dots (repeatable) |
+
+`PUT /mediafiles/{id}` · operation `update_mediafile` · any consumer token
 
 ## Permalinks
 
@@ -1504,6 +1626,37 @@ transpareo products featured list
 | `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
 
 `GET /featured_products` · operation `list_featured_products` · no permission needed, the endpoint is public
+
+### transpareo products files
+
+List product files.
+
+```sh
+transpareo products files <id>
+```
+
+| Option | What it does |
+|---|---|
+| `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
+
+`GET /products/{id}/files` · operation `get_product_files` · permission `product_access`
+
+### transpareo products files update
+
+Update product files.
+
+```sh
+transpareo products files update <id>
+transpareo products files update <id> --file body.json
+```
+
+| Option | What it does |
+|---|---|
+| `--file` \<value\> | request body from a file, or - for standard input |
+| `-o`, `--output` \<value\> | write the answer to this file instead of standard output |
+| `--set` \<value\>... | body field as key=value, nested with dots (repeatable) |
+
+`PUT /products/{id}/files` · operation `update_product_files` · permission `product_access`
 
 ### transpareo products get
 
