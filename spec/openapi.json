@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Transpareo API",
-    "version": "2.41.1",
+    "version": "2.61.1",
     "description": "This site runs on the [Transpareo](https://transpareo.com) product information platform. The REST API gives programs access to products, product components, brands, Digital Product Passports, categories and configuration. This reference describes version 2, which a request names with `Accept: application/vnd.api.v2+json` or `?v=2`, and which answers a request that names none; version 1 is its earlier name and is answered the same way. The guide's [Versions](/apidocs/guide#versions) section says how versions change.\n\nThe guide at [/apidocs/guide](/apidocs/guide) is the narrative companion to this reference: credentials, permissions, pagination, idempotency, the passport flows, the event feed, webhooks, rate limits and the error format. It is also served as Markdown at [/apidocs/guide.md](/apidocs/guide.md).\n\nPrograms authenticate with the OAuth 2.0 client credentials grant. Exchange the client id and secret once, then send the token on every request:\n\n```\ncurl -X POST https://<host>/api/oauth/token -d grant_type=client_credentials -d client_id=<key> -d client_secret=<secret>\n\ncurl https://<host>/api/me -H \"Authorization: Bearer <access_token>\"\n```\n\nAn assistant that speaks the Model Context Protocol connects to `/mcp` on this host and calls these operations as tools, named in the catalogue at [/apidocs/mcp-tools.json](/apidocs/mcp-tools.json) and explained by the guide's Assistants section.",
     "contact": {
       "name": "Transpareo Support",
@@ -46,7 +46,7 @@
     },
     {
       "name": "Lots",
-      "description": "The lots batch and item passports freeze from, created with the first passport that names them once the product passes every other required readiness check"
+      "description": "The lots batch and item passports freeze from, created with the first passport that names them once the product passes every other required readiness check, and the serial numbers a lot holds, which a scan of a tag resolves to its passport"
     },
     {
       "name": "Grants",
@@ -138,7 +138,7 @@
     "securitySchemes": {
       "oauth2": {
         "type": "oauth2",
-        "description": "OAuth 2.0 for programs, in two flows. The client credentials grant is for a credential an operator provisioned in the application manager: its key is the client id and its secret the client secret. Exchange them at the token endpoint, as form fields or as HTTP Basic credentials, and send the returned token as `Authorization: Bearer <access_token>`.\n\nThe authorization code grant with PKCE is for an application that asks a person for access instead of holding a credential of its own. It registers itself at `POST /api/oauth/register`, sends the person to `/api/oauth/authorize`, and exchanges the code they approved for a token at the same token endpoint. A refresh token keeps that connection alive without asking again and rotates on every use; `POST /api/oauth/revoke` ends it. Its scopes are the ones a person may grant; private properties and registry callbacks are not among them.\n\nA token lives one hour and is bound to the host that issued it. `scope` narrows a token to a subset of the consumer's permission keys; without it the token follows the consumer's permissions on every request, so a right granted in the application manager works on the next call.\n\nA token is verified on every endpoint it is sent to, the public ones included. An endpoint that answers without credentials still refuses a token that is malformed, unknown, expired or issued to a consumer that is no longer in good standing, with `TOKEN_INVALID`, `TOKEN_EXPIRED` or `CONSUMER_INACTIVE`, so a broken credential surfaces at the first call instead of looking like a public read that worked.",
+        "description": "OAuth 2.0 for programs, in two flows. The client credentials grant is for a credential an operator provisioned in the application manager: its key is the client id and its secret the client secret. Exchange them at the token endpoint, as form fields or as HTTP Basic credentials, and send the returned token as `Authorization: Bearer <access_token>`.\n\nThe authorization code grant with PKCE is for an application that asks a person for access instead of holding a credential of its own. It registers itself at `POST /api/oauth/register`, sends the person to `/api/oauth/authorize`, and exchanges the code they approved for a token at the same token endpoint. A refresh token keeps that connection alive without asking again and rotates on every use; `POST /api/oauth/revoke` ends it. Its scopes are those of the client credentials grant, as far as the person holds them.\n\nA token lives one hour and is bound to the host that issued it. `scope` narrows a token to a subset of the consumer's permission keys; without it the token follows the consumer's permissions on every request, so a right granted in the application manager works on the next call.\n\nA token is verified on every endpoint it is sent to, the public ones included. An endpoint that answers without credentials still refuses a token that is malformed, unknown, expired or issued to a consumer that is no longer in good standing, with `TOKEN_INVALID`, `TOKEN_EXPIRED` or `CONSUMER_INACTIVE`, so a broken credential surfaces at the first call instead of looking like a public read that worked.",
         "flows": {
           "authorizationCode": {
             "authorizationUrl": "/api/oauth/authorize",
@@ -185,9 +185,7 @@
               "dpp_dynamic": "Update the dynamic data of passports",
               "dpp_history": "Read the events and versions of passports",
               "dpp_bulk_write": "Create passports in bulk",
-              "dpp_vault_read": "Read private properties",
-              "dpp_lifecycle": "Void, supersede and reissue passports",
-              "registry_callback": "Reserved for registry callbacks"
+              "dpp_lifecycle": "Void, supersede and reissue passports"
             }
           }
         }
@@ -371,7 +369,7 @@
         }
       },
       "WriteForbidden": {
-        "description": "Not authorized to write here. A credential whose access group grants this resource's line at **View** reads it and writes nothing; the message and the hint name the line and **Edit**, the tier writing takes, by the labels of the access group page. Any other refusal names the key the credential lacks, or says it may not touch this record.",
+        "description": "Not authorized to write here. A credential whose access group grants this resource's line at **View only** reads it and writes nothing; the message and the hint name the line and **Full access**, the tier writing takes, by the labels of the access group page. Any other refusal names the key the credential lacks, or says it may not touch this record.",
         "content": {
           "application/json": {
             "schema": {
@@ -379,8 +377,8 @@
             },
             "example": {
               "error": "PRODUCT_FORBIDDEN",
-              "message": "Writing takes \"Edit\" on the \"Products\" line of the access group; this credential holds that line at \"View\".",
-              "hint": "In the application manager, set the \"Products\" line of the API consumer's access group to \"Edit\"."
+              "message": "Writing takes \"Full access\" on the \"Products\" line of the access group; this credential holds that line at \"View only\".",
+              "hint": "In the application manager, set the \"Products\" line of the API consumer's access group to \"Full access\"."
             }
           }
         }
@@ -439,7 +437,7 @@
     "schemas": {
       "AsyncTask": {
         "type": "object",
-        "description": "The polling payload of an asynchronous bulk create. While the task runs, only `taskId`, `status` and `progress` are present; the counts and the error detail appear once it completes. Successful rows are counted, not listed - only rejected rows carry detail, so an integrator can patch and resubmit that subset.",
+        "description": "The polling payload of an asynchronous bulk create. While the task runs, only `taskId`, `status` and `progress` are present, and `pacedUntil` while it waits for the credential's bulk pace; the counts and the error detail appear once it completes. Successful rows are counted, not listed - only rejected rows carry detail, so an integrator can patch and resubmit that subset.",
         "properties": {
           "taskId": {
             "type": "string"
@@ -459,6 +457,11 @@
             "minimum": 0,
             "maximum": 100,
             "description": "Percent of rows processed. Capped at 99 until the task completes."
+          },
+          "pacedUntil": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Present while the task is `pending` because its next rows wait for the credential's bulk pace (`bulkItemsPerMinute` of `GET /me`); the task goes on by itself at that time."
           },
           "createdCount": {
             "type": "integer",
@@ -615,11 +618,12 @@
           },
           "error": {
             "type": "string",
-            "description": "On `error` only: `DPP_INVALID_LINE` (the line is not a JSON object), `DPP_INVALID` (the passport failed validation, see `fields`) or `DPP_PUBLISH_FAILED` (the passport row was kept unpublished; resubmit the same row to resume it).",
+            "description": "On `error` only: `DPP_INVALID_LINE` (the line is not a JSON object), `DPP_INVALID` (the passport failed validation, see `fields`), `DPP_PUBLISH_FAILED` (the passport row was kept unpublished; resubmit the same row to resume it) or `DPP_FORBIDDEN` (the natural key names an unpublished passport the caller does not write, which stays as it is).",
             "enum": [
               "DPP_INVALID_LINE",
               "DPP_INVALID",
-              "DPP_PUBLISH_FAILED"
+              "DPP_PUBLISH_FAILED",
+              "DPP_FORBIDDEN"
             ]
           },
           "message": {
@@ -628,7 +632,7 @@
           },
           "fields": {
             "type": "object",
-            "description": "On `DPP_INVALID`: the failing attribute names mapped to their error. A row naming a new lot of a product that fails another required readiness check answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, and the rest of the run goes on.",
+            "description": "On `DPP_INVALID`: the failing attribute names mapped to their error. A row naming a new lot of a product that fails another required readiness check answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, and a row naming a product with variants `DPP_UNLOCKABLE_ID_HAS_VARIANTS` on `unlockableId`; the rest of the run goes on.",
             "additionalProperties": {
               "type": "object",
               "properties": {
@@ -723,9 +727,10 @@
           },
           "error": {
             "type": "string",
-            "description": "On `error` only: the line is not a JSON object.",
+            "description": "On `error` only: `DPP_INVALID_LINE` (the line is not a JSON object) or `DPP_FORBIDDEN` (the natural key names an unpublished passport the caller does not write).",
             "enum": [
-              "DPP_INVALID_LINE"
+              "DPP_INVALID_LINE",
+              "DPP_FORBIDDEN"
             ]
           },
           "message": {
@@ -1050,6 +1055,13 @@
             },
             "description": "Component images. Only present in show action."
           },
+          "files": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Mediafile"
+            },
+            "description": "The Files of the component, such as safety data sheets, in their order, as `GET /components/{id}/files` reads them. A signed-in member or an API consumer reads every file, any other caller the public ones. Only present in show action."
+          },
           "products": {
             "type": "array",
             "items": {
@@ -1084,7 +1096,18 @@
             }
           },
           "citations": [],
-          "mediafiles": []
+          "mediafiles": [],
+          "files": [
+            {
+              "id": 41,
+              "type": "Mediafile",
+              "name": "Safety data sheet",
+              "url": "https://example.com/media/123/safety-data-sheet.pdf",
+              "image": false,
+              "extension": "pdf",
+              "public": true
+            }
+          ]
         }
       },
       "ComponentInput": {
@@ -1417,7 +1440,9 @@
             }
           },
           "bulkItemsPerMinute": {
-            "type": "integer"
+            "type": "integer",
+            "nullable": true,
+            "description": "The bulk pace, in rows per minute, at which the background work of all of the credential's bulk calls and imports is written. Background work waits for it; a synchronous `POST /dpps/bulk` past it answers 429 with `Retry-After`. 0 or null for none."
           },
           "workspace": {
             "type": "object",
@@ -1599,7 +1624,7 @@
           },
           "autoIssued": {
             "type": "boolean",
-            "description": "Whether the workspace issued the passport by itself above its unit passports, a model passport answering the GTIN or a lot passport of an item workspace. Such a passport is included in the plan, is never submitted to the EU registry, and is left out of the passport list's default view. Always present."
+            "description": "Whether the workspace issued the passport by itself above its unit passports, a model passport of the product or a lot passport of an item workspace. A workspace issues no such passport today, and no GS1 Digital Link leads to one; one issued earlier stays signed and readable by its code. Such a passport is included in the plan, is never submitted to the EU registry, and is listed only when the passport list asks for the auto-issued passports. Always present."
           },
           "status": {
             "type": "string",
@@ -1628,6 +1653,30 @@
           "serialIdentifier": {
             "type": "string",
             "description": "Only present when set. Carried at item granularity."
+          },
+          "epc": {
+            "type": "object",
+            "description": "The EPC a UHF RFID tag of the unit carries, in the GS1 EPC Tag Data Standard. Only present on a passport with a serial of up to 20 characters of the GS1 serial character set, whose GTIN starts with one of the workspace's GS1 company prefixes. The URN opens the passport at `/epc/{urn}` on the passport host.",
+            "properties": {
+              "scheme": {
+                "type": "string",
+                "description": "`SGTIN-96` for a serial of digits without a leading zero below 2^38, `SGTIN-198` for any other serial.",
+                "enum": [
+                  "SGTIN-96",
+                  "SGTIN-198"
+                ]
+              },
+              "urn": {
+                "type": "string",
+                "description": "The pure-identity URN, `urn:epc:id:sgtin:{company prefix}.{indicator and item reference}.{serial}`.",
+                "example": "urn:epc:id:sgtin:4012345.067890.1001"
+              },
+              "hex": {
+                "type": "string",
+                "description": "The binary encoding an RFID encoder writes to the tag's EPC memory, in hex, with filter value 1 (point-of-sale trade item), padded to whole 16-bit words.",
+                "example": "3034F4E4E4424C80000003E9"
+              }
+            }
           },
           "passportStatus": {
             "type": "string",
@@ -1783,7 +1832,7 @@
             "items": {
               "type": "string"
             },
-            "description": "The product property types the passport carries, by id, as on the single create. A row naming one that does not exist comes back as `error` with `DPP_PROPERTY_TYPES_REFUSED`."
+            "description": "The product property types the passport carries, by id, as on the single create. A row naming one that does not exist comes back as `error` with `DPP_PROPERTY_TYPES_REFUSED`, one sending the selection as no list with `DPP_KEYS_REFUSED`; a selection in `shared` reaches every row it merges into, and each answers for itself."
           },
           "dynamicData": {
             "type": "object",
@@ -1945,7 +1994,7 @@
           },
           "unlockableId": {
             "type": "integer",
-            "description": "The id of the product this passport is for, as `list_products` and `get_product` answer it"
+            "description": "The id of the product this passport is for, as `list_products` and `get_product` answer it. A product with variants gets no passport of its own (`DPP_UNLOCKABLE_ID_HAS_VARIANTS`); name one of its variants that has no variants itself."
           },
           "description": {
             "type": "string"
@@ -1984,7 +2033,7 @@
             "items": {
               "type": "string"
             },
-            "description": "The product property types the passport carries, by id; left out or empty, it carries every one. `GET /dpps/requirements` lists a product's under `inheritedProperties`. An id naming no product property type refuses the write with 422 `DPP_PROPERTY_TYPES_REFUSED`."
+            "description": "The product property types the passport carries, by id; left out or empty, it carries every one. `GET /dpps/requirements` lists a product's under `inheritedProperties`. An id naming no product property type refuses the write with 422 `DPP_PROPERTY_TYPES_REFUSED`; a selection sent as no list, a single id among them, with 422 `DPP_KEYS_REFUSED`, `fields.propertyTypeIds.error` `DPP_KEY_LIST_REQUIRED`."
           }
         }
       },
@@ -2175,11 +2224,11 @@
           },
           "ready": {
             "type": "boolean",
-            "description": "Whether a passport of this product at `granularity` is written and published as the product stands, read off the same check a new lot is refused by (`DPP_BATCH_PRODUCT_NOT_READY`). True when `missing` holds no required entry. The lot a batch or item passport names is no entry, since the create brings it."
+            "description": "Whether a passport of this product at `granularity` is written and published as the product stands, read off the same check a new lot is refused by (`DPP_BATCH_PRODUCT_NOT_READY`). True when `missing` holds no required entry. The lot a batch or item passport names is no entry, since the create brings it. Never true for a product with variants, which gets no passport of its own."
           },
           "missing": {
             "type": "array",
-            "description": "What the product still lacks, one entry per open check, required ones first, in a shape a workflow loops over. An entry stays under the same `check` while it is open and leaves the list once its answer is stored.",
+            "description": "What the product still lacks, one entry per open check, required ones first, in a shape a workflow loops over. An entry stays under the same `check` while it is open and leaves the list once its answer is stored. A product with variants answers one entry alone, `dpp.unlockable_id` with `error` `DPP_UNLOCKABLE_ID_HAS_VARIANTS` and `target` `variants`, whose `productIds` take its passports.",
             "items": {
               "type": "object",
               "properties": {
@@ -2203,17 +2252,29 @@
                   "type": "string",
                   "description": "The validator rule that failed, `<shape>.<path>`"
                 },
+                "error": {
+                  "type": "string",
+                  "description": "The field code a create of this passport answers, where the entry stands for a refusal of the create, such as `DPP_UNLOCKABLE_ID_HAS_VARIANTS`"
+                },
                 "message": {
                   "type": "string",
-                  "description": "The validator's own message"
+                  "description": "The validator's own message, or the create's where `error` names its code"
                 },
                 "target": {
                   "type": "string",
-                  "description": "Where the answer is sent. `product` is a write of the product, which `operation` names, and `fields` names the field; `workspace` is a setting or a property type the workspace adds in the application manager first, which no product write answers. A workspace without product images answers the pictures there too.",
+                  "description": "Where the answer is sent. `product` is a write of the product, which `operation` names, and `fields` names the field; `workspace` is a setting or a property type the workspace adds in the application manager first, which no product write answers. A workspace without product images answers the pictures there too. `variants` is a product with variants, which gets no passport of its own; its passports go to the products `productIds` names.",
                   "enum": [
                     "product",
-                    "workspace"
+                    "workspace",
+                    "variants"
                   ]
+                },
+                "productIds": {
+                  "type": "array",
+                  "description": "Where `target` is `variants`, the products at the ends of the family, the variants that have no variants themselves, by id in ascending order. Each takes its own passport; ask the requirements of each.",
+                  "items": {
+                    "type": "integer"
+                  }
                 },
                 "fields": {
                   "type": "array",
@@ -2614,8 +2675,9 @@
           "publishedAt": "2026-09-08T09:12:44Z",
           "snapshot": {
             "@context": [
-              "https://transpareo.com/vocab/vc/v1",
-              "https://transpareo.com/vocab/transpareo/v1"
+              "https://www.w3.org/ns/credentials/v2",
+              "https://transpareo.com/vocab/vc/v2",
+              "https://transpareo.com/vocab/transpareo/v2"
             ],
             "@id": "https://example.com/dpp/A1B2C3D4E#credential",
             "type": [
@@ -3267,12 +3329,6 @@
             "description": "The language this article was served in, which can differ from the one asked for when the article has no copy in it",
             "example": "de"
           },
-          "tags": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
           "url": {
             "type": "string",
             "description": "The page a person opens this article at in the application manager",
@@ -3887,7 +3943,7 @@
       },
       "Leadgen": {
         "type": "object",
-        "description": "Lead generation campaign with overlay and form",
+        "description": "A lead generator on passports, with the button on the passport and its action window, which shows a headline, an introduction and a link button or a form. Its form may serve other lead generators and pages too.",
         "properties": {
           "id": {
             "type": "integer"
@@ -3902,7 +3958,9 @@
             "type": "boolean"
           },
           "locale": {
-            "type": "string"
+            "type": "string",
+            "deprecated": true,
+            "description": "The workspace's default language, in which the request mails go out; a lead generator's texts carry a value per language"
           },
           "createdAt": {
             "type": "string",
@@ -3910,30 +3968,53 @@
           },
           "headline": {
             "type": "string",
-            "description": "Overlay headline"
+            "description": "Headline of the action window"
           },
           "body": {
             "type": "string",
-            "description": "Overlay body text"
+            "description": "Introduction of the action window, in Markdown"
           },
           "popup": {
             "type": "boolean",
-            "description": "Whether the overlay is a popup"
+            "description": "Whether the action window opens by itself on the passport; the button stays"
           },
           "link": {
             "type": "string",
-            "description": "Overlay link URL"
+            "description": "Label of the button on the passport that opens the action window"
           },
           "dpps": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Dpp"
             },
-            "description": "DPPs associated with this overlay"
+            "description": "DPPs whose pages show the lead generator"
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "form",
+              "link"
+            ],
+            "description": "What the visitor does in the action window"
+          },
+          "linkUrl": {
+            "type": "string",
+            "nullable": true,
+            "description": "Address of the link button, for the link action; without one the action window shows headline and text only"
+          },
+          "linkLabel": {
+            "type": "string",
+            "nullable": true,
+            "description": "Label of the link button in the action window, for the link action"
+          },
+          "formId": {
+            "type": "integer",
+            "nullable": true,
+            "description": "The form the lead generator uses, for the form action"
           },
           "code": {
             "type": "string",
-            "description": "Form code identifier"
+            "description": "Code of the form"
           },
           "message": {
             "type": "string",
@@ -3955,7 +4036,7 @@
           },
           "requestsCount": {
             "type": "integer",
-            "description": "Number of form submissions"
+            "description": "Number of requests sent through this lead generator"
           }
         },
         "example": {
@@ -3968,8 +4049,12 @@
           "headline": "Register your product",
           "body": "Two minutes, and the warranty runs for three years.",
           "popup": true,
-          "link": "https://example.com/register",
+          "link": "Register now",
           "dpps": [],
+          "action": "form",
+          "linkUrl": null,
+          "linkLabel": null,
+          "formId": 12,
           "code": "autumn-2026",
           "message": "Thank you, the registration is in.",
           "submitButtonLabel": "Register",
@@ -3995,7 +4080,9 @@
             "type": "boolean"
           },
           "locale": {
-            "type": "string"
+            "type": "string",
+            "deprecated": true,
+            "description": "Accepted and ignored; a lead generator's texts carry a value per language"
           },
           "headline": {
             "type": "string"
@@ -4007,13 +4094,34 @@
             "type": "boolean"
           },
           "link": {
-            "type": "string"
+            "type": "string",
+            "description": "Label of the button on the passport that opens the action window; a popup without one takes its headline"
           },
           "dppIds": {
             "type": "array",
             "items": {
               "type": "string"
             }
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "form",
+              "link"
+            ],
+            "description": "What the visitor does in the action window; form by default"
+          },
+          "linkUrl": {
+            "type": "string",
+            "description": "Address of the link button, http or https, for the link action"
+          },
+          "linkLabel": {
+            "type": "string",
+            "description": "Label of the link button in the action window; required with linkUrl"
+          },
+          "formId": {
+            "type": "integer",
+            "description": "A form you hold to use; without it a new lead generator gets a new form with name, email and message inputs. The form fields below apply to the lead generator's form, which other lead generators and pages may use too."
           },
           "message": {
             "type": "string"
@@ -4037,7 +4145,14 @@
                 },
                 "typ": {
                   "type": "string",
-                  "description": "Input type (text, email, textarea, etc.)"
+                  "enum": [
+                    "country",
+                    "email",
+                    "input",
+                    "select",
+                    "text"
+                  ],
+                  "description": "Input type; text is a multi-line field"
                 },
                 "required": {
                   "type": "boolean"
@@ -4050,7 +4165,7 @@
                 },
                 "options": {
                   "type": "string",
-                  "description": "Comma-separated options for select inputs"
+                  "description": "Options of a select input, separated by a pipe, for example S|M|L"
                 }
               }
             }
@@ -4090,6 +4205,10 @@
             "type": "integer",
             "description": "Passports of the lot that have published at least once"
           },
+          "serialsCount": {
+            "type": "integer",
+            "description": "The serial numbers the lot holds (`GET /lots/{id}/serials`), whose tags open its passport"
+          },
           "createdAt": {
             "type": "string",
             "format": "date-time"
@@ -4099,6 +4218,137 @@
             "format": "date-time",
             "description": "When the lot was last saved"
           }
+        }
+      },
+      "LotCode": {
+        "type": "object",
+        "description": "What the tag of one unit of a lot carries. A serial number with a unit passport of the lot takes that passport's link and EPC; any other links to the GTIN and the serial number without the lot, so a serial number moved to another lot follows on an NFC tag as on an RFID tag.",
+        "properties": {
+          "gtin": {
+            "type": "string",
+            "description": "The GTIN-14 of the lot's product. Only present while the product has a GTIN.",
+            "example": "04012345678901"
+          },
+          "serial": {
+            "type": "string",
+            "example": "NW-000412"
+          },
+          "link": {
+            "type": "string",
+            "format": "uri",
+            "description": "The address an NFC tag or a QR code of the unit carries, `/01/{gtin}/21/{serial}` on the passport host, the serial escaped. Only present while the product has a GTIN."
+          },
+          "epc": {
+            "type": "object",
+            "description": "The EPC a UHF RFID tag of the unit carries, as on a unit passport. Only present where the GTIN starts with one of the workspace's GS1 company prefixes and the serial number has up to 20 characters of the GS1 serial character set.",
+            "properties": {
+              "scheme": {
+                "type": "string",
+                "enum": [
+                  "SGTIN-96",
+                  "SGTIN-198"
+                ]
+              },
+              "urn": {
+                "type": "string",
+                "example": "urn:epc:id:sgtin:4012345.067890.1001"
+              },
+              "hex": {
+                "type": "string",
+                "example": "3034F4E4E4424C80000003E9"
+              }
+            }
+          }
+        },
+        "example": {
+          "gtin": "04012345678901",
+          "serial": "1001",
+          "link": "https://passports.example.com/01/04012345678901/21/1001",
+          "epc": {
+            "scheme": "SGTIN-96",
+            "urn": "urn:epc:id:sgtin:4012345.067890.1001",
+            "hex": "3034F4E4E4424C80000003E9"
+          }
+        }
+      },
+      "LotSerialEntry": {
+        "type": "object",
+        "description": "Serial numbers given to a lot in one go. A range is one entry per line as written; the single serial numbers of one submission are one list entry.",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "type": {
+            "type": "string",
+            "example": "LotSerialEntry"
+          },
+          "lotId": {
+            "type": "integer",
+            "description": "The lot that holds the serial numbers"
+          },
+          "productId": {
+            "type": "integer",
+            "description": "The lot's product, whose GTIN a tag carries beside the serial number"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "range",
+              "list"
+            ]
+          },
+          "notation": {
+            "type": "string",
+            "description": "Only present on a range, in the bracket form, the counting part in square brackets",
+            "example": "NW-[000001-100000]"
+          },
+          "count": {
+            "type": "integer",
+            "description": "The serial numbers of the entry"
+          },
+          "firstSerial": {
+            "type": "string",
+            "description": "The first serial number of the entry, in the order of its range or of its sorted list"
+          },
+          "lastSerial": {
+            "type": "string",
+            "description": "The last serial number of the entry"
+          },
+          "sgtin96": {
+            "type": "boolean",
+            "description": "Whether every serial number of the entry fits a 96-bit RFID tag (SGTIN-96), digits alone without a leading zero below 2^38. Any other serial number takes a tag of 208 bits or more (SGTIN-198)."
+          },
+          "source": {
+            "type": "string",
+            "description": "Where the entry was given, the application manager by hand (`admin`) or by file (`file`), or the API (`api`)",
+            "enum": [
+              "admin",
+              "file",
+              "api"
+            ]
+          },
+          "filename": {
+            "type": "string",
+            "description": "Only present on an entry read from a file, the file's name"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "example": {
+          "id": 12,
+          "type": "LotSerialEntry",
+          "lotId": 7,
+          "productId": 11,
+          "kind": "range",
+          "notation": "NW-[000001-100000]",
+          "count": 100000,
+          "firstSerial": "NW-000001",
+          "lastSerial": "NW-100000",
+          "sgtin96": false,
+          "source": "api",
+          "createdAt": "2026-09-01T08:15:00Z"
         }
       },
       "Mediafile": {
@@ -4115,11 +4365,49 @@
           },
           "url": {
             "type": "string",
-            "description": "Full URL to the file (includes asset host)"
+            "description": "Full URL to the file (includes asset host). Present only for a public file"
           },
           "image": {
             "type": "boolean",
             "description": "Whether the file is an image"
+          },
+          "extension": {
+            "type": "string",
+            "description": "The kind of file, as its extension (`jpg`, `pdf`)"
+          },
+          "public": {
+            "type": "boolean",
+            "description": "Whether the bytes are public. An internal file sits in the protected store, which only the application manager reaches, and carries no `url`"
+          },
+          "documentType": {
+            "type": "string",
+            "enum": [
+              "certificate",
+              "declaration_of_conformity",
+              "test_report",
+              "manual",
+              "safety_data_sheet",
+              "other"
+            ],
+            "description": "What the document is, as a code. Present only where set; a language version (a file of a key restricted to some languages) carries the details of the file of its key for every language, here and in the four fields below"
+          },
+          "issuer": {
+            "type": "string",
+            "description": "Who issued the document. Present only where set"
+          },
+          "number": {
+            "type": "string",
+            "description": "The number the issuer gave the document. Present only where set"
+          },
+          "validFrom": {
+            "type": "string",
+            "format": "date",
+            "description": "The first day the document holds. Present only where set"
+          },
+          "validUntil": {
+            "type": "string",
+            "format": "date",
+            "description": "The last day the document holds. Present only where set"
           }
         }
       },
@@ -4166,7 +4454,8 @@
       },
       "Overlay": {
         "type": "object",
-        "description": "DPP overlay content displayed on scan",
+        "description": "The passport's lead generator in the shape it had as an overlay. The id is the lead generator's, link its button label, and body the text with the form as HTML.",
+        "deprecated": true,
         "properties": {
           "id": {
             "type": "integer"
@@ -4509,7 +4798,7 @@
       },
       "PrivateProperties": {
         "type": "object",
-        "description": "The confidential rows of one passport version, as an ecdsa-sd-2023 derived Verifiable Credential. The Vault holds the full credential; what comes back here is the view this reader is entitled to - the mandatory public statements plus the restricted rows the reader may see. `legitimateInterest` rows survive only while the reader's access-group membership admits them, `onDemand` rows go to any authenticated reader, and `authorities` rows are never served here. The derived proof is the filter, so the response stays verifiable against the issuer keys and no confidential statement is signed away. JSON-LD keys (`@context`, `@type`) pass through unchanged.",
+        "description": "The confidential rows of one passport version, as an ecdsa-sd-2023 derived Verifiable Credential. The workspace keeps the full signed credential; what comes back here is the view this reader is entitled to - the mandatory public statements plus the restricted rows the reader may see. `legitimateInterest` rows survive only while the reader's access-group membership admits them, `onDemand` rows go to any authenticated reader, and `authorities` rows are never served here. The derived proof is the filter, so the response stays verifiable against the issuer keys and no confidential statement is signed away. JSON-LD keys (`@context`, `@type`) pass through unchanged.",
         "properties": {
           "@context": {
             "type": "array",
@@ -4568,8 +4857,9 @@
         },
         "example": {
           "@context": [
-            "https://transpareo.com/vocab/vc/v1",
-            "https://transpareo.com/vocab/transpareo/v1"
+            "https://www.w3.org/ns/credentials/v2",
+            "https://transpareo.com/vocab/vc/v2",
+            "https://transpareo.com/vocab/transpareo/v2"
           ],
           "@id": "https://example.com/dpp/A1B2C3D4E#credential",
           "type": [
@@ -4810,7 +5100,7 @@
           },
           "inheritance": {
             "type": "object",
-            "description": "Per value a variant takes from its parent, whether it follows the parent (`follows`), holds a value of its own (`pinned`), or holds one while the parent changed its value since (`parent_moved`). `images` is the list of files as one value, `componentsOrder` the order of the components. Present only on a variant, for a signed-in caller or an API consumer; each property value and each component carries its own.",
+            "description": "Per value a variant takes from its parent, whether it follows the parent (`follows`), holds a value of its own (`pinned`), or holds one while the parent changed its value since (`parent_moved`). `images` is the gallery as one value, `files` the product's Files as one value, `componentsOrder` the order of the components. Present only on a variant, for a signed-in caller or an API consumer; each property value and each component carries its own.",
             "properties": {
               "brand": {
                 "$ref": "#/components/schemas/InheritanceState"
@@ -4825,6 +5115,9 @@
                 "$ref": "#/components/schemas/InheritanceState"
               },
               "images": {
+                "$ref": "#/components/schemas/InheritanceState"
+              },
+              "files": {
                 "$ref": "#/components/schemas/InheritanceState"
               },
               "componentsOrder": {
@@ -4987,9 +5280,16 @@
             },
             "description": "Product images. Only present when product mediafiles feature is enabled in tenant config and in show/permalink actions."
           },
+          "files": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Mediafile"
+            },
+            "description": "The Files of the product, such as certificates and manuals, in their order, as `GET /products/{id}/files` reads them. A signed-in member or an API consumer reads every file, any other caller the public ones. Only present in show/permalink actions; written with `PUT /products/{id}/files`."
+          },
           "overlay": {
             "$ref": "#/components/schemas/Overlay",
-            "description": "Lead generation overlay. Only present when accessed via DPP unlock key and the DPP has an associated overlay."
+            "description": "The lead generator on the passport, in its earlier overlay shape. Only present when accessed via DPP unlock key and a published lead generator stands on the DPP. Deprecated, read the lead generators instead."
           },
           "ratingRange": {
             "type": "object",
@@ -5038,6 +5338,7 @@
             "hsCode": "follows",
             "weight": "pinned",
             "images": "parent_moved",
+            "files": "follows",
             "componentsOrder": "follows"
           },
           "brand": {
@@ -5079,12 +5380,23 @@
               "name": "Skincare"
             }
           ],
-          "mediafiles": []
+          "mediafiles": [],
+          "files": [
+            {
+              "id": 24,
+              "type": "Mediafile",
+              "name": "Declaration of conformity",
+              "url": "https://example.com/media/123/declaration-of-conformity.pdf",
+              "image": false,
+              "extension": "pdf",
+              "public": true
+            }
+          ]
         }
       },
       "ProductInput": {
         "type": "object",
-        "description": "The fields of a product write. A create needs `name` and `componentsInput`, which the create operation says, and `name` alone where it names `parentId`; an update carries only what it means to change, because every field it names is written.",
+        "description": "The fields of a product write. A create needs `name` and `componentsInput`, which the create operation says, and `name` alone where it names `parentId`; an update carries only what it means to change, because every field it names is written. A key of the read (Product, ProductDetail) may come back with the write and passes while it holds what the read holds; changed, it refuses the write with 422 `PRODUCT_KEYS_REFUSED`, its field naming what writes it (`categories` categoryIds, `components` componentsInput, `properties` propertiesInput, `brand` and `brandName` brand.name beside product, `mediafiles` `PUT /products/{id}/mediafiles`, `published` `PUT /products/{id}/publish` or `unpublish`) or saying no call writes it (`permalink`, `publishedAt`, `updatedAt` and the other keys the server works out). A create compares them with what `GET /products/new` answers and passes any `id`. Any other key, here, inside a `componentsInput` entry or beside `product` and `brand`, refuses the write the same way, naming each; so does a list or an object sent as something else.",
         "properties": {
           "name": {
             "type": "string",
@@ -5103,12 +5415,29 @@
             "description": "The customs tariff number, the 8-digit CN code or, until the CN subheading is known, the 6-digit HS code. Spaces and dots between the digits are dropped (`6109 10 00` is stored as `61091000`); any other shape is refused with 422 naming `hsCode`. A passport publishes the first six digits as its HS code and all eight as its CN code. On a variant it is a value taken from the parent, so a number that differs becomes the variant's own. An empty string clears it.",
             "example": "61091000"
           },
+          "weight": {
+            "type": "number",
+            "nullable": true,
+            "description": "The product's weight in `weightUnit`. A value that is no number is refused with 422 naming `weight`; null or an empty string clears it, and its unit with it. On a variant it is a value taken from the parent, with its unit.",
+            "example": 50
+          },
+          "weightUnit": {
+            "type": "string",
+            "enum": [
+              "kg",
+              "g",
+              "mg",
+              "t"
+            ],
+            "description": "The unit of `weight`. A weight written without one keeps the unit the product has, and a weight the product had none for is in kilograms.",
+            "example": "g"
+          },
           "parentId": {
             "type": "integer",
             "description": "On a create, the product the new one is a variant of. It starts as a copy of that product and takes its later changes, and the other fields of the body become its own where they differ. An update leaves it out or names the parent the product has."
           },
           "componentsInput": {
-            "description": "The product's components in order, as a list of names or a list of objects naming an existing component by componentId or a new one by name. Naming it replaces the whole list, so on an update send the components the product is to have from then on, not the ones being added; leaving it out keeps the list as it is.",
+            "description": "The product's components in order, as a list of names, of objects naming an existing component by componentId or a new one by name, or of both. An object's `percentage` is the component's share of the product; an entry naming it replaces the share, null clearing it, and an entry leaving it out keeps the share the component has. A share outside 0 to 100 refuses the write with 422 naming `componentsInput`. Naming the list replaces the whole list, so on an update send the components the product is to have from then on, not the ones being added; leaving it out keeps the list as it is.",
             "oneOf": [
               {
                 "type": "array",
@@ -5131,6 +5460,12 @@
                     },
                     "componentId": {
                       "type": "integer"
+                    },
+                    "percentage": {
+                      "type": "number",
+                      "nullable": true,
+                      "minimum": 0,
+                      "maximum": 100
                     }
                   }
                 }
@@ -5391,9 +5726,10 @@
               "review",
               "publish_review",
               "request_for_information",
-              "supply_answer"
+              "supply_answer",
+              "file_expiry"
             ],
-            "description": "`custom` for what a person asks; the review kinds come from a review flow and end in an `outcome`; `request_for_information` stands for a request to a supplier and opens and closes with it, `supply_answer` for the answer a supplier's group is asked for"
+            "description": "`custom` for what a person asks; the review kinds come from a review flow and end in an `outcome`; `request_for_information` stands for a request to a supplier and opens and closes with it, `supply_answer` for the answer a supplier's group is asked for; `file_expiry` reminds 30 days before a document in a record's Files expires, and closes once its `validUntil` moves or no record lists the file"
           },
           "title": {
             "type": "string",
@@ -6950,6 +7286,193 @@
         }
       }
     },
+    "/components/{id}/files": {
+      "get": {
+        "tags": [
+          "Components"
+        ],
+        "summary": "List component files",
+        "description": "The Files of a component, such as safety data sheets and test reports, in the order the component lists them. A published component reads for every caller, who reads its public files. A signed-in member or an API consumer reads every file, each saying under `public` whether its bytes are public, and reads a draft as `GET /components/{id}` does. Only a public file carries a `url`. `GET /components/{id}` carries the same list under `files`.",
+        "operationId": "get_component_files",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The files of the component",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "files": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Mediafile"
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "files": [
+                    {
+                      "id": 41,
+                      "type": "Mediafile",
+                      "name": "Safety data sheet",
+                      "url": "https://example.com/media/123/safety-data-sheet.pdf",
+                      "image": false,
+                      "extension": "pdf",
+                      "public": true
+                    }
+                  ]
+                }
+              }
+            },
+            "headers": {
+              "API-Total": {
+                "$ref": "#/components/headers/API-Total"
+              },
+              "API-Count": {
+                "$ref": "#/components/headers/API-Count"
+              }
+            }
+          },
+          "403": {
+            "description": "A credential without `component_access` or `component_write`, for a component that is not published (`COMPONENT_FORBIDDEN`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "security": []
+      },
+      "put": {
+        "tags": [
+          "Components"
+        ],
+        "summary": "Update component files",
+        "description": "Gives the component exactly the files named, in the order named, as one change. A file left out comes off the list and stays in the library.\n\nAn entry's `public` moves the file's bytes: `true` into the public tree, where anyone opening a public page of a record listing the file can download it, `false` into the protected store, which only the application manager reaches. A file is public or internal for every record listing it, and the language versions of a keyed file switch with it. An entry without `public` leaves the file as it is.\n\nA list naming a file that does not exist, or one held for review, answers 422 `FILES_UNKNOWN`. Switching off a file a gallery shows answers 422 `FILE_IN_GALLERY`, since a gallery shows its pictures wherever the record is public. Either refusal changes nothing. A file to add is uploaded first with `POST /mediafiles`, with `public` false to keep it internal from the start. The caller must own the component, or hold `component_write`. The answer is the list as `GET /components/{id}/files` reads it.",
+        "operationId": "update_component_files",
+        "x-permission": [
+          "component_access",
+          "component_write"
+        ],
+        "security": [
+          {
+            "userToken": []
+          },
+          {
+            "oauth2": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "files": {
+                    "type": "array",
+                    "description": "The files the component lists from now on, in this order; an empty list takes every file off",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "description": "The id of a mediafile, as `POST /mediafiles` answers it"
+                        },
+                        "public": {
+                          "type": "boolean",
+                          "description": "Moves the bytes into the public tree (true) or the protected store (false) for every record listing the file; left out, the file stays as it is"
+                        }
+                      },
+                      "required": [
+                        "id"
+                      ]
+                    }
+                  }
+                }
+              },
+              "example": {
+                "files": [
+                  {
+                    "id": 41,
+                    "public": true
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The files of the component",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "files": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Mediafile"
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "files": [
+                    {
+                      "id": 41,
+                      "type": "Mediafile",
+                      "name": "Safety data sheet",
+                      "url": "https://example.com/media/123/safety-data-sheet.pdf",
+                      "image": false,
+                      "extension": "pdf",
+                      "public": true
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/WriteForbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "422": {
+            "description": "A file naming nothing the library holds (`FILES_UNKNOWN`), or one a gallery shows switched off (`FILE_IN_GALLERY`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/components/{id}/publish": {
       "put": {
         "tags": [
@@ -7420,7 +7943,7 @@
           "DPPs"
         ],
         "summary": "Create a DPP",
-        "description": "Creates a new Digital Product Passport linked to a product. Generates a unique short code and QR code.\n\n`granularity` says which unit the passport stands for and therefore which identifiers it needs: `model` needs none of its own, `batch` needs a `batchIdentifier`, `item` needs a `serialIdentifier` as well. The lot is created from the product as it stands the first time its identifier is used and reused by every later passport of the same lot. A new lot is taken only of a product that passes every other required readiness check; until then the create answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`.\n\nA lot takes one `batch` passport and a unit one `item` passport. A second one is refused with 422 `DPP_BATCH_TAKEN` on `batch`, or `DPP_SERIAL_IDENTIFIER_TAKEN` on `serialIdentifier` for a serial the lot has already, and the message names the passport that stands for it. A voided or superseded passport still stands for its lot, and so does a draft, which is published instead. Item passports of a lot and its `batch` passport do not count against each other.\n\nThe answer carries `validation` and `publishBlocked` alongside the passport: the same report `POST /dpps/validate` produces, over the record that was just written, so a caller that skipped the dry run still sees what a publish would refuse or warn about.\n\n`propertyTypeIds` names the property types the passport carries, and it carries those alone. An entry naming no product property type refuses the whole write with 422 `DPP_PROPERTY_TYPES_REFUSED`, and no passport is created; the message names each, `fields.propertyTypeIds.unknown` lists them as sent.",
+        "description": "Creates a new Digital Product Passport linked to a product. Generates a unique short code and QR code.\n\n`granularity` says which unit the passport stands for and therefore which identifiers it needs: `model` needs none of its own, `batch` needs a `batchIdentifier`, `item` needs a `serialIdentifier` as well. The lot is created from the product as it stands the first time its identifier is used and reused by every later passport of the same lot. A new lot is taken only of a product that passes every other required readiness check; until then the create answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`.\n\nA product takes one `model` passport, a lot one `batch` passport and a unit one `item` passport. A second one is refused with 422 `DPP_UNLOCKABLE_ID_TAKEN` on `unlockableId`, `DPP_BATCH_TAKEN` on `batch`, or `DPP_SERIAL_IDENTIFIER_TAKEN` on `serialIdentifier` for a serial the lot has already, and the message names the passport that stands for it. A voided or superseded passport still stands for its product, lot or unit, and so does a draft, which is published instead, and a model passport the workspace issued by itself. Passports at different granularities do not count against each other.\n\nA product with variants gets no passport of its own: its passports go to the products at the ends of its family, the variants that have no variants themselves. A create naming one is refused with 422 `DPP_UNLOCKABLE_ID_HAS_VARIANTS` on `unlockableId`, and no lot is taken of it. A passport the product held before its first variant came stays as it is.\n\nA passport is issued of a product the caller writes: its own, or one its access groups give it to write. Any other product is refused with 422 `DPP_UNLOCKABLE_NOT_EDITABLE` on `unlockable`. A refused create writes nothing, the lot it names included.\n\nThe answer carries `validation` and `publishBlocked` alongside the passport: the same report `POST /dpps/validate` produces, over the record that was just written, so a caller that skipped the dry run still sees what a publish would refuse or warn about.\n\n`propertyTypeIds` names the property types the passport carries, and it carries those alone. An entry naming no product property type refuses the whole write with 422 `DPP_PROPERTY_TYPES_REFUSED`, and no passport is created; the message names each, `fields.propertyTypeIds.unknown` lists them as sent. A selection sent as no list, a single id among them, would carry every type, so it is refused with 422 `DPP_KEYS_REFUSED` and `fields.propertyTypeIds.error` `DPP_KEY_LIST_REQUIRED`.",
         "operationId": "create_dpp",
         "x-permission": "dpp_write",
         "security": [
@@ -7497,7 +8020,7 @@
           "DPPs"
         ],
         "summary": "Validate a DPP payload",
-        "description": "The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot; a lot or a unit that has a passport already shows as `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`, and a new lot its product may not have yet as `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, beside the report that names the checks the product still fails. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.\n\nA payload the platform would refuse is a plain `200` with `valid: false` - the request succeeded, the passport would not. Only a missing permission, a missing `dpp` object, an unreadable body, a granularity the workspace does not issue and a `propertyTypeIds` entry naming no property type answer with an error status, the last two as the create answers them.",
+        "description": "The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot; a product that has its model passport already shows as `DPP_UNLOCKABLE_ID_TAKEN`, a lot or a unit that has its passport as `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`, a product with variants as `DPP_UNLOCKABLE_ID_HAS_VARIANTS`, and a new lot its product may not have yet as `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, beside the report that names the checks the product still fails. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.\n\nA payload the platform would refuse is a plain `200` with `valid: false` - the request succeeded, the passport would not. Only a missing permission, a missing `dpp` object, an unreadable body, a granularity the workspace does not issue and a `propertyTypeIds` entry naming no property type answer with an error status, the last two as the create answers them.",
         "operationId": "validate_dpp",
         "x-permission": "dpp_write",
         "x-safe": true,
@@ -7579,7 +8102,7 @@
           "DPPs"
         ],
         "summary": "Create DPPs in bulk",
-        "description": "Streams passports in as newline-delimited JSON, one passport per line, so a line of production writes one request instead of thousands. Each row is created and its first version published at the workspace's publish stage, as `POST /dpps/{code}/publish` signs a draft; the response reports one result line per input row.\n\nAn optional first line `{\"shared\": {...}}` carries batch-wide defaults that each following row deep-merges over (a nested `\"__replace__\": true` opts a sub-tree out of the merge). An unsupported `shared.granularity` is rejected before any row is processed; per-row problems never abort the batch. A new row whose `propertyTypeIds` names no product property type comes back as `error` with `DPP_PROPERTY_TYPES_REFUSED`, the message naming each and `fields.propertyTypeIds.unknown` listing them, and nothing is created for it.\n\nRow keys may be written in camelCase (`unlockableId`, `modelIdentifier`, `serialIdentifier`) or as the snake_case attribute names; `tenantData` is an alias for `dynamicData`. The keys inside `dynamicData` are left as they are.\n\nResubmission is safe. Rows are deduplicated by natural key rather than by `Idempotency-Key`: at `model` granularity that is `modelIdentifier`, at `batch` it adds `batchIdentifier`, at `item` it adds `serialIdentifier`. A key that already maps to a published passport comes back as `duplicate`; one that maps to a passport that never published is resumed and published, so a retry after a partial failure finishes the job instead of duplicating it. A row whose key misses a passport its lot or unit already has (a row naming no `modelIdentifier`) is refused as `POST /dpps` refuses it, with `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`.\n\nSynchronous by default, capped at 500 rows and 5 MB. Send `Prefer: respond-async` to have the body persisted and processed by a background task instead: the response is `202` with a polling URL, and the caps rise to 50000 rows and 25 MB. Beyond that, batch across requests.\n\nEvery row it creates is signed, so the call needs `dpp_publish` as well; without it the answer is 403 and nothing is created. Where the workspace reviews every publish through a review flow, the answer is 409 `DPP_REVIEW_REQUIRED` and nothing is created.",
+        "description": "Streams passports in as newline-delimited JSON, one passport per line, so a line of production writes one request instead of thousands. Each row is created and its first version published at the workspace's publish stage, as `POST /dpps/{code}/publish` signs a draft; the response reports one result line per input row.\n\nAn optional first line `{\"shared\": {...}}` carries batch-wide defaults that each following row deep-merges over (a nested `\"__replace__\": true` opts a sub-tree out of the merge). An unsupported `shared.granularity` is rejected before any row is processed; per-row problems never abort the batch. A new row whose `propertyTypeIds` names no product property type comes back as `error` with `DPP_PROPERTY_TYPES_REFUSED`, the message naming each and `fields.propertyTypeIds.unknown` listing them, and nothing is created for it. A new row whose `propertyTypeIds` is no list comes back as `error` with `DPP_KEYS_REFUSED`; one in `shared` reaches every row it merges into, and each answers for itself.\n\nRow keys may be written in camelCase (`unlockableId`, `modelIdentifier`, `serialIdentifier`) or as the snake_case attribute names; `tenantData` is an alias for `dynamicData`. The keys inside `dynamicData` are left as they are.\n\nResubmission is safe. Rows are deduplicated by natural key rather than by `Idempotency-Key`: at `model` granularity that is `modelIdentifier`, at `batch` it adds `batchIdentifier`, at `item` it adds `serialIdentifier`. A key that already maps to a published passport comes back as `duplicate`; one that maps to a passport that never published is resumed and published, so a retry after a partial failure finishes the job instead of duplicating it. A row whose key misses a passport its product, lot or unit already has (a row naming no `modelIdentifier`, or no `granularity` in itself or in `shared`) is refused as `POST /dpps` refuses it, with `DPP_UNLOCKABLE_ID_TAKEN`, `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`. A row naming a product with variants is refused with `DPP_UNLOCKABLE_ID_HAS_VARIANTS`, and the rest of the run goes on.\n\nSynchronous by default, capped at 500 rows and 5 MB. Send `Prefer: respond-async` to have the body persisted and processed by a background task instead: the response is `202` with a polling URL, and the caps rise to 100000 rows and 50 MB, what a spreadsheet import takes. Beyond that, batch across requests.\n\nThe rows count against the credential's bulk pace, `bulkItemsPerMinute` of `GET /me`, shared by all of its bulk calls and imports. The background task takes its rows at that pace and waits, with `pacedUntil` in its status, while the credential is past it. A synchronous call takes its rows before it writes any: where the pace has no room for them it answers 429 `DPP_BULK_RATE_LIMITED`, writes nothing, and `Retry-After` says in how many seconds they fit. A pace of 0 means none.\n\nEvery row it creates is signed, so the call needs `dpp_publish` as well; without it the answer is 403 and nothing is created. Where the workspace reviews every publish through a review flow, the answer is 409 `DPP_REVIEW_REQUIRED` and nothing is created.",
         "operationId": "bulk_create_dpps",
         "x-permission": "dpp_bulk_write",
         "x-permission-also": "dpp_publish",
@@ -7705,7 +8228,7 @@
             }
           },
           "413": {
-            "description": "The body exceeds the row or byte cap for the chosen mode",
+            "description": "The body exceeds the row or byte cap for the chosen mode, or a background body compresses to more than 15 MB, which only rows of incompressible data reach",
             "content": {
               "application/json": {
                 "schema": {
@@ -7719,7 +8242,7 @@
             }
           },
           "429": {
-            "description": "The consumer's per-minute bulk item cap would be exceeded (`Retry-After` is set)",
+            "description": "A synchronous call whose rows the credential's bulk pace has no room for yet (`DPP_BULK_RATE_LIMITED`, `Retry-After` is set); nothing was written",
             "content": {
               "application/json": {
                 "schema": {
@@ -7727,7 +8250,7 @@
                 },
                 "example": {
                   "error": "DPP_BULK_RATE_LIMITED",
-                  "message": "Bulk item rate limit exceeded; retry in 60s"
+                  "message": "These 500 rows exceed the bulk pace of this API consumer; retry in 6 seconds."
                 }
               }
             }
@@ -7741,7 +8264,7 @@
           "DPPs"
         ],
         "summary": "Validate DPPs in bulk",
-        "description": "The dry run of `POST /dpps/bulk`: the same newline-delimited JSON in, one result line per input row out, and nothing written. Rows are read exactly as the create reads them - the optional `{\"shared\": {...}}` envelope, the deep merge, the camelCase aliases - so a batch that validates here is the batch that will be created.\n\nEach row comes back as `valid`, `invalid`, `duplicate` or `error`, numbered from one in input order. No passport, lot or version is written, and the rows do not count against the consumer's bulk item cap, so a batch may be validated as often as it takes to get it right.\n\nSynchronous only, capped at 500 rows and 5 MB like the synchronous create. There is no asynchronous mode; `Prefer: respond-async` has no effect here.",
+        "description": "The dry run of `POST /dpps/bulk`: the same newline-delimited JSON in, one result line per input row out, and nothing written. Rows are read exactly as the create reads them - the optional `{\"shared\": {...}}` envelope, the deep merge, the camelCase aliases - so a batch that validates here is the batch that will be created.\n\nEach row comes back as `valid`, `invalid`, `duplicate` or `error`, numbered from one in input order. No passport, lot or version is written, and the rows do not count against the consumer's bulk pace, so a batch may be validated as often as it takes to get it right.\n\nSynchronous only, capped at 500 rows and 5 MB like the synchronous create. There is no asynchronous mode; `Prefer: respond-async` has no effect here.",
         "operationId": "validate_dpps_bulk",
         "x-permission": "dpp_bulk_write",
         "x-safe": true,
@@ -7834,7 +8357,7 @@
           "DPPs"
         ],
         "summary": "Poll an asynchronous bulk create",
-        "description": "Reports the status and progress of a bulk-create task, and once it completes the aggregate counts plus the detail of every rejected row. Only the consumer that submitted the task can read it; another consumer's task answers 404.",
+        "description": "Reports the status and progress of a bulk-create task, and once it completes the aggregate counts plus the detail of every rejected row. While the task waits for the credential's bulk pace it is `pending` and `pacedUntil` says until when. Only the consumer that submitted the task can read it; another consumer's task answers 404.",
         "operationId": "get_bulk_task",
         "x-permission": "dpp_bulk_write",
         "security": [
@@ -7885,7 +8408,7 @@
           "DPPs"
         ],
         "summary": "What a passport of a product needs",
-        "description": "What a passport of the product would need at the requested granularity, and what the product still lacks, before anything is written: the identifiers each granularity keys on, the fields of the lot a batch or item passport freezes from, the property types whose values ride on the dynamic surface instead of the signed snapshot, the properties a passport inherits from the product, the report a publish would produce today, and bodies ready to fill for a create and for a bulk row.\n\n`missing` lists what the product still lacks, one entry per open check, each naming where its answer is sent (the product field, such as `gtin` or `propertiesInput` keyed by `propertyTypeId`, with the operation that takes it, or the workspace), and `ready` says whether nothing required is open. Both are read off the check a new lot is refused by, so a product answered ready is one whose passport saves and publishes as the product stands.\n\nField names throughout are the wire names, so a program copies them as they are. Reading requirements writes nothing.",
+        "description": "What a passport of the product would need at the requested granularity, and what the product still lacks, before anything is written: the identifiers each granularity keys on, the fields of the lot a batch or item passport freezes from, the property types whose values ride on the dynamic surface instead of the signed snapshot, the properties a passport inherits from the product, the report a publish would produce today, and bodies ready to fill for a create and for a bulk row.\n\n`missing` lists what the product still lacks, one entry per open check, each naming where its answer is sent (the product field, such as `gtin` or `propertiesInput` keyed by `propertyTypeId`, with the operation that takes it, or the workspace), and `ready` says whether nothing required is open. Both are read off the check a new lot is refused by, so a product answered ready is one whose passport saves and publishes as the product stands. A product with variants gets no passport of its own and is never ready: `missing` holds one entry, with the code `DPP_UNLOCKABLE_ID_HAS_VARIANTS` the create answers, naming under `productIds` the variants that take its passports.\n\nField names throughout are the wire names, so a program copies them as they are. Reading requirements writes nothing. A product the caller may not issue a passport of answers 404, as an unknown one does.",
         "operationId": "get_dpp_requirements",
         "x-permission": "dpp_read",
         "security": [
@@ -8080,7 +8603,7 @@
           "DPPs"
         ],
         "summary": "Update a DPP",
-        "description": "Updates a DPP you own. Admins can update any DPP.\n\nThe answer carries `validation` and `publishBlocked` alongside the passport: the same report `POST /dpps/validate` produces, over the record as it now stands, so an update that would block the next publish says so at once.\n\nA `propertyTypeIds` entry naming no product property type refuses the whole update with 422 `DPP_PROPERTY_TYPES_REFUSED`, and the passport keeps the types it had.",
+        "description": "Updates a passport the caller writes: one it issued, or one its access groups give it to write. Any other answers 403. Admins can update any DPP.\n\nThe answer carries `validation` and `publishBlocked` alongside the passport: the same report `POST /dpps/validate` produces, over the record as it now stands, so an update that would block the next publish says so at once.\n\nA `propertyTypeIds` entry naming no product property type refuses the whole update with 422 `DPP_PROPERTY_TYPES_REFUSED`, and the passport keeps the types it had; a selection sent as no list with 422 `DPP_KEYS_REFUSED`.",
         "operationId": "update_dpp",
         "x-permission": "dpp_write",
         "security": [
@@ -8477,7 +9000,7 @@
           "DPPs"
         ],
         "summary": "Append an event to a DPP",
-        "description": "Records one event against the passport. `eventType: status_change` moves the passport to the `status` you name and is recorded as a `lifecycle_transition`; any other type is recorded as a plain event.\n\nRecalling a unit is a status change to `suspended`. The passport stays readable and keeps answering a scan, which is the point: whoever holds the unit learns of the recall when they scan its code. Voiding is a different operation, for a unit that no longer exists.\n\nAn event is a pending draft until it is sealed. Send `publish: true` to seal it into the Vault at once (a status change is sealed into a new registered version, which needs `dpp_publish` as well); leave it out to keep the draft open. At most one pending event exists per passport, so a second call while one is open answers 409 until it is sealed or discarded.\n\nVersioned event types are rejected here: they stand for operations that mint a version, and those have their own endpoints (void, supersede, reissue, publish).",
+        "description": "Records one event against the passport. `eventType: status_change` moves the passport to the `status` you name and is recorded as a `lifecycle_transition`; any other type is recorded as a plain event.\n\nRecalling a unit is a status change to `suspended`. The passport stays readable and keeps answering a scan, which is the point: whoever holds the unit learns of the recall when they scan its code. Voiding is a different operation, for a unit that no longer exists.\n\nAn event is a pending draft until it is sealed. Send `publish: true` to seal it into the Vault at once (a status change is sealed into a new registered version, which needs `dpp_publish` as well); leave it out to keep the draft open. At most one pending event exists per passport, so a second call while one is open answers 409 until it is sealed or discarded.\n\nVersioned event types are rejected here: they stand for operations that mint a version, and those have their own endpoints (void, supersede, reissue, publish).\n\nA credential records on the passports it reads. One acting for a person records on the passports that person writes, and answers 403 for any other.",
         "operationId": "append_dpp_event",
         "x-permission": "dpp_events",
         "security": [
@@ -8592,8 +9115,8 @@
         "tags": [
           "DPPs"
         ],
-        "summary": "Update dynamic data",
-        "description": "Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none). A key naming a published legitimate-interest type is served to the readers its access groups admit by `GET /dpps/{code}/private_dynamic_data`; every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.",
+        "summary": "Update changing values (e.g. battery health)",
+        "description": "Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none). A key naming a published legitimate-interest type is served to the readers its access groups admit by `GET /dpps/{code}/private_dynamic_data`; every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission. A credential acting for a person sets values on the passports that person writes, and answers 403 for any other.",
         "operationId": "update_dpp_dynamic_data",
         "x-permission": "dpp_dynamic",
         "security": [
@@ -8691,7 +9214,7 @@
           "DPPs"
         ],
         "summary": "Void a DPP",
-        "description": "Marks the passport as voided - the unit it stands for no longer exists: it was destroyed, never shipped, or scrapped after a recall. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. This is not how a unit is recalled: a unit still out there is moved to `suspended` through a status change, so its passport goes on answering a scan with the recall. Voiding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).",
+        "description": "Marks the passport as voided - the unit it stands for no longer exists: it was destroyed, never shipped, or scrapped after a recall. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. This is not how a unit is recalled: a unit still out there is moved to `suspended` through a status change, so its passport goes on answering a scan with the recall. Voiding cannot be undone, and a voided passport still stands for its product, lot or unit, which never takes another passport at its granularity (see `POST /dpps`). A consumer also needs write access to the passport itself (`dpp_write`).",
         "operationId": "void_dpp",
         "x-permission": "dpp_lifecycle",
         "x-destructive": true,
@@ -8790,7 +9313,7 @@
           "DPPs"
         ],
         "summary": "Supersede a DPP",
-        "description": "Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. Superseding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).",
+        "description": "Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. A product, a lot or a unit takes one passport at each granularity (see `POST /dpps`), so the successor stands for another product, lot or unit. Superseding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).",
         "operationId": "supersede_dpp",
         "x-permission": "dpp_lifecycle",
         "x-destructive": true,
@@ -9117,7 +9640,7 @@
           "DPPs"
         ],
         "summary": "Publish a DPP",
-        "description": "Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. A `draft` that has not published moves to the workspace's publish stage first (`manufactured` or `placed_on_market`, a setting of the workspace), so the version signs that status and `GET /dpps/{code}` answers it; a refused publish leaves it at `draft`. Every other passport keeps its status. Publishing needs `dpp_publish` beside `dpp_write`; without it the answer is 403. A passport whose publish review was approved waits ready to publish, and the person who asked for the review publishes it here through a credential of theirs with `dpp_write` alone, and so does any caller with `dpp_publish`. That publish carries the reason the request gave, and `reason` is not read. The approval stands until the product changes; after that the call is judged like any other publish. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.",
+        "description": "Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. A `draft` that has not published moves to the workspace's publish stage first (`manufactured` or `placed_on_market`, a setting of the workspace), so the version signs that status and `GET /dpps/{code}` answers it; a refused publish leaves it at `draft`. Every other passport keeps its status. Publishing needs `dpp_publish` beside `dpp_write`; without it the answer is 403, as it is for a passport the caller does not write. Approving a publish review signs the passport at once (`POST /tasks/{id}/approve`). A passport may still keep an approval a review stored without signing; the person who asked for that review publishes it here through a credential of theirs with `dpp_write` alone, and so does any caller with `dpp_publish`. That publish carries the reason the request gave, and `reason` is not read. The approval stands until the product changes; after that the call is judged like any other publish. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.",
         "operationId": "publish_dpp",
         "x-permission": "dpp_write",
         "x-permission-also": "dpp_publish",
@@ -9256,7 +9779,7 @@
           "DPPs"
         ],
         "summary": "Read the private properties of several versions",
-        "description": "The reader-derived confidential rows for several versions of one passport in a single round-trip. Name the versions with `?versions=1,3,7`; at most 50 are derived per request. A version is left out when it carries no confidential rows or the reader may see none of them, so the answer only contains versions where the reader gains rows beyond the public passport. An unauthenticated request answers 401 with the `X-Auth-Fields` challenge the passport page uses to sign a reader in.",
+        "description": "The reader-derived confidential rows for several versions of one passport in a single round-trip. Name the versions with `?versions=1,3,7`; at most 50 are derived per request. A version is left out when it carries no legitimate-interest or on-demand rows, the workspace keeps no copy of them, or the reader may see none of them, so the answer only contains versions where the reader gains rows beyond the public passport. A reader signs in with a user token, a consumer token, or the session of the workspace's passport sign-in page; an unauthenticated request answers 401 with an `X-Auth-Url` header naming that page on the host the request came to.",
         "operationId": "get_dpp_private_properties",
         "x-permission": "dpp_read",
         "security": [
@@ -9309,8 +9832,9 @@
                   "versions": {
                     "3": {
                       "@context": [
-                        "https://transpareo.com/vocab/vc/v1",
-                        "https://transpareo.com/vocab/transpareo/v1"
+                        "https://www.w3.org/ns/credentials/v2",
+                        "https://transpareo.com/vocab/vc/v2",
+                        "https://transpareo.com/vocab/transpareo/v2"
                       ],
                       "@id": "https://example.com/dpp/A1B2C3D4E#credential",
                       "type": [
@@ -9347,7 +9871,7 @@
             }
           },
           "401": {
-            "description": "No authenticated reader. Carries the `X-Auth-Fields` challenge."
+            "description": "No authenticated reader. `X-Auth-Url` names the passport sign-in page."
           },
           "404": {
             "$ref": "#/components/responses/NotFound"
@@ -9361,7 +9885,7 @@
           "DPPs"
         ],
         "summary": "Read the private properties of one version",
-        "description": "The confidential rows of one passport version, as an ecdsa-sd-2023 derived Verifiable Credential carrying only what this reader is entitled to see. This is the address the public manifest's `privateProperties.url` points at. A reader who is authenticated but entitled to none of this version's restricted rows gets 204, which is deliberately distinct from an empty document. An unauthenticated request answers 401 with the `X-Auth-Fields` challenge the passport page uses to sign a reader in.",
+        "description": "The confidential rows of one passport version, as an ecdsa-sd-2023 derived Verifiable Credential carrying only what this reader is entitled to see. This is the address the public manifest's `privateProperties.url` points at. A reader who is authenticated but entitled to none of this version's restricted rows gets 204, which is deliberately distinct from an empty document. A reader signs in with a user token, a consumer token, or the session of the workspace's passport sign-in page; an unauthenticated request answers 401 with an `X-Auth-Url` header naming that page on the host the request came to.",
         "operationId": "get_dpp_version_private_properties",
         "x-permission": "dpp_read",
         "security": [
@@ -9415,10 +9939,21 @@
             "description": "Authenticated, but no restricted row of this version is visible to the reader"
           },
           "401": {
-            "description": "No authenticated reader. Carries the `X-Auth-Fields` challenge."
+            "description": "No authenticated reader. `X-Auth-Url` names the passport sign-in page."
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
+            "description": "No such passport or version, or the version carries no legitimate-interest or on-demand rows, the two tiers this endpoint serves. A version whose confidential rows the workspace keeps no copy of answers `PRIVATE_PROPERTIES_UNAVAILABLE`, to every caller and before any sign-in is asked for, since no reader can be served them.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "PRIVATE_PROPERTIES_UNAVAILABLE",
+                  "message": "The workspace keeps no copy of the confidential properties of this passport version, so they cannot be read."
+                }
+              }
+            }
           }
         }
       }
@@ -9429,7 +9964,7 @@
           "DPPs"
         ],
         "summary": "Read the restricted dynamic data",
-        "description": "The passport's live readings in the legitimate-interest tier that this reader may see. The public dynamic-data document carries the public tier only; this answer has the same shape, holds only the restricted rows, and is signed with the same platform key, so a reader verifies it the same way and merges the two. A key is served when it names a published property type in the legitimate-interest tier, no property type sharing its vocabulary term sits in the authorities or internal tier, and the reader belongs to an access group of every legitimate-interest type sharing it. An authority consumer reads without a group. A passport holding no such key answers 404; an authenticated reader who may see none of them gets 204. An unauthenticated request answers 401 with the `X-Auth-Fields` challenge the passport page uses to sign a reader in.",
+        "description": "The passport's live readings in the legitimate-interest tier that this reader may see. The public dynamic-data document carries the public tier only; this answer has the same shape, holds only the restricted rows, and is signed with the same platform key, so a reader verifies it the same way and merges the two. A key is served when it names a published property type in the legitimate-interest tier, no property type sharing its vocabulary term sits in the authorities or internal tier, and the reader belongs to an access group of every legitimate-interest type sharing it. An authority consumer reads without a group. A passport holding no such key answers 404; an authenticated reader who may see none of them gets 204. A reader signs in with a user token, a consumer token, or the session of the workspace's passport sign-in page; an unauthenticated request answers 401 with an `X-Auth-Url` header naming that page on the host the request came to.",
         "operationId": "get_dpp_private_dynamic_data",
         "x-permission": "dpp_read",
         "security": [
@@ -9499,7 +10034,7 @@
             "description": "Authenticated, but no restricted reading of this passport is visible to the reader"
           },
           "401": {
-            "description": "No authenticated reader. Carries the `X-Auth-Fields` challenge."
+            "description": "No authenticated reader. `X-Auth-Url` names the passport sign-in page."
           },
           "404": {
             "$ref": "#/components/responses/NotFound"
@@ -10448,7 +10983,6 @@
                       "category": "data_import",
                       "categoryTitle": "Import & export",
                       "locale": "en",
-                      "tags": [],
                       "url": "https://<host>/admin/help/data_export"
                     }
                   ]
@@ -10534,7 +11068,6 @@
                   "category": "data_import",
                   "categoryTitle": "Import & export",
                   "locale": "en",
-                  "tags": [],
                   "url": "https://<host>/admin/help/data_export",
                   "body": "## Starting an export\n\nOpen the export page and choose a format.\n",
                   "bodyFormat": "markdown",
@@ -11038,7 +11571,7 @@
           "Imports"
         ],
         "summary": "Execute an import",
-        "description": "Writes the rows in the background, after a backup a revert can restore from. Send `options.backup` as `false` to run without one. A passport import takes no backup and cannot be reverted, since a passport's versions are signed and its way out is a void. Poll the `statusUrl` until `status` is `completed` or `failed`.\n\nBesides `import_access` this needs the write permission of the data type: `component_write` for components, `product_access` for products, `dpp_bulk_write` for passports. The rows count against the consumer's bulk item cap for the minute.",
+        "description": "Writes the rows in the background, after a backup a revert can restore from. Send `options.backup` as `false` to run without one. A passport import takes no backup and cannot be reverted, since a passport's versions are signed and its way out is a void. Poll the `statusUrl` until `status` is `completed` or `failed`.\n\nBesides `import_access` this needs the write permission of the data type: `component_write` for components, `product_access` for products, `dpp_bulk_write` for passports. The rows count against the consumer's bulk pace (`bulkItemsPerMinute` of `GET /me`): the run is never refused for it, and writes its rows at that pace.",
         "operationId": "execute_import",
         "x-permission": "import_access",
         "security": [
@@ -11089,7 +11622,7 @@
             "$ref": "#/components/responses/Unauthorized"
           },
           "403": {
-            "description": "Missing `import_access`, or the write permission of the data type (`IMPORT_FORBIDDEN`, the hint names it). Where the access group holds that line, `import_access` or `product_access`, at **View**, the message and the hint name the line and **Edit**, the tier a run takes.",
+            "description": "Missing `import_access`, or the write permission of the data type (`IMPORT_FORBIDDEN`, the hint names it). Where the access group holds that line, `import_access` or `product_access`, at **View only**, the message and the hint name the line and **Full access**, the tier a run takes.",
             "content": {
               "application/json": {
                 "schema": {
@@ -11113,16 +11646,6 @@
           },
           "410": {
             "description": "The upload is no longer available (`IMPORT_EXPIRED`)",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "The rows exceed the consumer's bulk item cap for this minute (`IMPORT_RATE_LIMITED`, `Retry-After` is set)",
             "content": {
               "application/json": {
                 "schema": {
@@ -11296,7 +11819,7 @@
           "Leadgens"
         ],
         "summary": "Create a leadgen campaign",
-        "description": "Creates a new lead generation campaign with an overlay and form.",
+        "description": "Creates a new lead generation campaign with its copy and, for the form action, a form it names by formId or a new one.",
         "operationId": "create_leadgen",
         "security": [
           {
@@ -11540,7 +12063,7 @@
           "Lots"
         ],
         "summary": "List lots",
-        "description": "The lots batch and item passports freeze from, newest first. A lot is created with the first passport that names its identifier and reused by every later passport of the same lot, so there is nothing to create here: to issue a passport of a new lot, name the lot in `batchIdentifier` on `POST /dpps` or in the shared line of a bulk create. A new lot is taken only of a product that passes every other required readiness check; until then that create answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, and `GET /dpps/requirements` shows what the product still lacks.\n\nNarrow the list with `product_id` to see which lots a product already has, or with `identifier` to find the lot a passport names. `sort`, `created_since` and `updated_since` order and bound it for a poll.",
+        "description": "The lots batch and item passports freeze from, newest first. A lot is created with the first passport that names its identifier and reused by every later passport of the same lot, so there is nothing to create here: to issue a passport of a new lot, name the lot in `batchIdentifier` on `POST /dpps` or in the shared line of a bulk create. A new lot is taken only of a product that passes every other required readiness check; until then that create answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, and `GET /dpps/requirements` shows what the product still lacks.\n\nNarrow the list with `product_id` to see which lots a product already has, or with `identifier` to find the lot a passport names. `product_id` and `serial` together answer the lot holding a serial number, the one a scan of that unit's tag opens; `serial` without `product_id` answers 422 `PARAMETER_MISSING`, since a serial number is unique only within its product's GTIN. `sort`, `created_since` and `updated_since` order and bound it for a poll.",
         "operationId": "list_lots",
         "x-permission": "dpp_read",
         "security": [
@@ -11567,6 +12090,14 @@
               "type": "string"
             },
             "description": "Keep only the lot with this identifier, the value a passport carries as `batchIdentifier`"
+          },
+          {
+            "name": "serial",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Keep only the lot of `product_id` holding this serial number (`POST /lots/{id}/serials`)"
           },
           {
             "$ref": "#/components/parameters/page"
@@ -11610,6 +12141,7 @@
                       "manufacturedOn": "2026-09-01",
                       "dppsCount": 250,
                       "publishedDppsCount": 250,
+                      "serialsCount": 0,
                       "createdAt": "2026-09-01T08:15:00Z",
                       "updatedAt": "2026-09-01T08:15:00Z"
                     }
@@ -11693,9 +12225,517 @@
                   "manufacturedOn": "2026-09-01",
                   "dppsCount": 250,
                   "publishedDppsCount": 250,
+                  "serialsCount": 0,
                   "createdAt": "2026-09-01T08:15:00Z",
                   "updatedAt": "2026-09-01T08:15:00Z"
                 }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/lots/{id}/serials": {
+      "get": {
+        "tags": [
+          "Lots"
+        ],
+        "summary": "List the serial numbers of a lot",
+        "description": "The entries of serial numbers the lot holds, in the order they were given, each a range as written or a list of single serial numbers. A scan of a tag carrying the product's GTIN and one of these serial numbers opens the lot's passport.",
+        "operationId": "list_lot_serials",
+        "x-permission": "dpp_read",
+        "security": [
+          {
+            "userToken": []
+          },
+          {
+            "oauth2": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "The lot"
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "$ref": "#/components/parameters/per_page"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The entries of the lot",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "entries": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/LotSerialEntry"
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "entries": [
+                    {
+                      "id": 12,
+                      "type": "LotSerialEntry",
+                      "lotId": 7,
+                      "productId": 11,
+                      "kind": "range",
+                      "notation": "NW-[000001-100000]",
+                      "count": 100000,
+                      "firstSerial": "NW-000001",
+                      "lastSerial": "NW-100000",
+                      "sgtin96": false,
+                      "source": "api",
+                      "createdAt": "2026-09-01T08:15:00Z"
+                    }
+                  ]
+                }
+              }
+            },
+            "headers": {
+              "API-Total": {
+                "$ref": "#/components/headers/API-Total"
+              },
+              "API-Count": {
+                "$ref": "#/components/headers/API-Count"
+              },
+              "API-Offset": {
+                "$ref": "#/components/headers/API-Offset"
+              },
+              "API-Page": {
+                "$ref": "#/components/headers/API-Page"
+              },
+              "API-Per-Page": {
+                "$ref": "#/components/headers/API-Per-Page"
+              },
+              "Link": {
+                "$ref": "#/components/headers/Link"
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Lots"
+        ],
+        "summary": "Add serial numbers to a lot",
+        "description": "Gives the lot the serial numbers its units carry, the ones the ERP or the label supplier reserved for the run. Each element of `serials` is one entry, in one of three forms:\n\n- a range, the counting part in square brackets and the rest kept as written: `NW-[000001-100000]` is NW-000001 to NW-100000, zeros kept; `LOT7-[1-5000]-B` counts without padding;\n- a first and a last serial number with a spaced hyphen between, differing in one run of digits: `NW-000001 - NW-100000`;\n- a single serial number, or the EPC URN of one naming the product's GTIN: `NW-000412`, `urn:epc:id:sgtin:4012345.067890.412`.\n\nA serial number takes the characters of GS1 AI 21, letters, digits and ``!\"%&'()*+,-./:;<=>?_``, up to 20 of them. A line holds at most 1000000 serial numbers and a call at most 100000 lines. The product needs a GTIN, since a scan finds the lot by GTIN and serial number.\n\nThe call is taken whole or not at all. A serial number held by another lot of the product, a range overlapping the serial numbers of any lot, this one included, and a serial number with a unit passport in another lot refuse it with 422 `SERIALS_INVALID`, and `fields.serials.lines` names each refused line with its place in `serials`, counted from 1, the entry as sent and why: the first 1000 of them, `count` all. A single serial number the lot holds already is skipped and counted in `skippedCount`. While another change to the product's serial numbers runs the answer is 409 `SERIALS_BUSY`; try again a moment later.\n\nWhoever writes the lot's product adds and removes its serial numbers, as in the application manager: a credential with `product_access` at the full tier of its access group, on a product its group gives it to write, and a person with backend access whose groups open to the API give them the product. A repeated range is refused as overlapping its own lot, so send an `Idempotency-Key` to repeat a call safely.",
+        "operationId": "create_lot_serials",
+        "x-permission": "product_access",
+        "x-permission-also": "dpp_read",
+        "security": [
+          {
+            "userToken": []
+          },
+          {
+            "oauth2": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "The lot"
+          },
+          {
+            "$ref": "#/components/parameters/idempotency_key"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "serials"
+                ],
+                "properties": {
+                  "serials": {
+                    "type": "array",
+                    "description": "One entry per element, a range, a first and a last serial number, or a single serial number",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "example": {
+                "serials": [
+                  "NW-[000001-100000]",
+                  "NW-200017"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The entries written, and the single serial numbers skipped because the lot holds them already",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "entries": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/LotSerialEntry"
+                      }
+                    },
+                    "skippedCount": {
+                      "type": "integer"
+                    }
+                  }
+                },
+                "example": {
+                  "entries": [
+                    {
+                      "id": 12,
+                      "type": "LotSerialEntry",
+                      "lotId": 7,
+                      "productId": 11,
+                      "kind": "range",
+                      "notation": "NW-[000001-100000]",
+                      "count": 100000,
+                      "firstSerial": "NW-000001",
+                      "lastSerial": "NW-100000",
+                      "sgtin96": false,
+                      "source": "api",
+                      "createdAt": "2026-09-01T08:15:00Z"
+                    },
+                    {
+                      "id": 13,
+                      "type": "LotSerialEntry",
+                      "lotId": 7,
+                      "productId": 11,
+                      "kind": "list",
+                      "count": 1,
+                      "firstSerial": "NW-200017",
+                      "lastSerial": "NW-200017",
+                      "sgtin96": false,
+                      "source": "api",
+                      "createdAt": "2026-09-01T08:15:00Z"
+                    }
+                  ],
+                  "skippedCount": 0
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/WriteForbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "description": "Another change to the serial numbers of the lot's product is running (`SERIALS_BUSY`), or a call with the same `Idempotency-Key` is (`IDEMPOTENCY_IN_PROGRESS`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "SERIALS_BUSY",
+                  "message": "Another change to this product's serial numbers is running. Try again in a moment."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "A line cannot be taken and nothing was written (`SERIALS_INVALID`), or `serials` is missing or blank (`PARAMETER_MISSING`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "hint": {
+                      "type": "string"
+                    },
+                    "docsUrl": {
+                      "type": "string"
+                    },
+                    "fields": {
+                      "type": "object",
+                      "properties": {
+                        "serials": {
+                          "type": "object",
+                          "properties": {
+                            "error": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "count": {
+                              "type": "integer",
+                              "description": "The refused lines, all of them"
+                            },
+                            "lines": {
+                              "type": "array",
+                              "description": "The first 1000 refused lines",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "line": {
+                                    "type": "integer",
+                                    "nullable": true,
+                                    "description": "The place of the element in `serials`, counted from 1; null where the call as a whole is refused, for a product without a GTIN or more than 100000 lines"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "nullable": true,
+                                    "description": "The element as sent"
+                                  },
+                                  "error": {
+                                    "type": "string",
+                                    "description": "Why, as `SERIAL_` and the reason, for example `SERIAL_CHARACTER`, `SERIAL_ORDER`, `SERIAL_PADDING`, `SERIAL_OTHER_BATCH`, `SERIAL_UNIT_PASSPORT` or `SERIAL_NO_GTIN`"
+                                  },
+                                  "message": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "error": "SERIALS_INVALID",
+                  "message": "No serial numbers were added. fields.serials.lines names every entry that cannot be taken.",
+                  "fields": {
+                    "serials": {
+                      "error": "SERIALS_INVALID",
+                      "message": "No serial numbers were added. fields.serials.lines names every entry that cannot be taken.",
+                      "count": 1,
+                      "lines": [
+                        {
+                          "line": 2,
+                          "value": "NW-[004001-006000]",
+                          "error": "SERIAL_OTHER_BATCH",
+                          "message": "NW-[004001-006000] overlaps batch L2026-08: NW-004001 to NW-005000 already belong to it."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/lots/{id}/serials/{entryId}": {
+      "delete": {
+        "tags": [
+          "Lots"
+        ],
+        "summary": "Remove serial numbers from a lot",
+        "description": "Removes one entry of serial numbers from the lot. A scan of a tag carrying one of them then opens the product's newest lot, as a serial number no lot holds does. Allowed on a lot whose passport is published, so a mistake can be put right; nothing signed depends on it. The same rights as adding them.",
+        "operationId": "delete_lot_serials",
+        "x-permission": "product_access",
+        "x-permission-also": "dpp_read",
+        "x-destructive": true,
+        "security": [
+          {
+            "userToken": []
+          },
+          {
+            "oauth2": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "The lot"
+          },
+          {
+            "name": "entryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "The entry, from `GET /lots/{id}/serials`"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The entry was removed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "OK"
+                    }
+                  }
+                },
+                "example": {
+                  "status": "OK"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/WriteForbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/lots/{id}/codes": {
+      "get": {
+        "tags": [
+          "Lots"
+        ],
+        "summary": "List the codes of a lot's tags",
+        "description": "What a label converter encodes on each tag of the lot, one row per serial number the lot holds, in the order they were given, then one per unit passport of the lot no serial number covers. A unit passport the caller does not read is left out, and a serial number it covers gets the serial number's own link. Pages take up to 1000 rows.",
+        "operationId": "list_lot_codes",
+        "x-permission": "dpp_read",
+        "security": [
+          {
+            "userToken": []
+          },
+          {
+            "oauth2": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "The lot"
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 100,
+              "maximum": 1000
+            },
+            "description": "Rows per page (default: 100, max: 1000)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A page of the codes",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "codes": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/LotCode"
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "codes": [
+                    {
+                      "gtin": "04012345678901",
+                      "serial": "1001",
+                      "link": "https://passports.example.com/01/04012345678901/21/1001",
+                      "epc": {
+                        "scheme": "SGTIN-96",
+                        "urn": "urn:epc:id:sgtin:4012345.067890.1001",
+                        "hex": "3034F4E4E4424C80000003E9"
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "headers": {
+              "API-Total": {
+                "$ref": "#/components/headers/API-Total"
+              },
+              "API-Count": {
+                "$ref": "#/components/headers/API-Count"
+              },
+              "API-Offset": {
+                "$ref": "#/components/headers/API-Offset"
+              },
+              "API-Page": {
+                "$ref": "#/components/headers/API-Page"
+              },
+              "API-Per-Page": {
+                "$ref": "#/components/headers/API-Per-Page"
+              },
+              "Link": {
+                "$ref": "#/components/headers/Link"
               }
             }
           },
@@ -11767,7 +12807,9 @@
                       "type": "Mediafile",
                       "name": "product-photo.jpg",
                       "url": "https://example.com/media/123/product-photo.jpg",
-                      "image": true
+                      "image": true,
+                      "extension": "jpg",
+                      "public": true
                     }
                   ]
                 }
@@ -11814,7 +12856,7 @@
           "Mediafiles"
         ],
         "summary": "Upload a mediafile",
-        "description": "Uploads a new image file. Requires the product mediafiles feature. Any valid credential reaches it; the upload is owned by the caller.\n\nA browser and the command line send the file itself as `multipart/form-data`. A caller that can only send JSON sends the bytes as base64 instead, bare or as a `data:` URI, in a body of the shape `{\"mediafile\": {\"data\": \"iVBORw0KGgo...\", \"name\": \"Rain shell hero shot\"}}`.\n\nA caller holding a link sends `mediafile.url` and the server reads the bytes itself, which is the practical way in for anything larger than a small image. Only https, only an address outside this network, at most three redirects, and the same size cap; a refusal says which of those it was.\n\nThe kind of file is read from the bytes, not from anything the caller says about them, and the same size, readability and content rules apply whichever way it arrived.",
+        "description": "Uploads a new file: a picture for a gallery, or a document such as a certificate for the Files of a product or a component. Requires the product mediafiles feature. Any valid credential reaches it; the upload is owned by the caller.\n\nThe bytes are public unless `public` is false: then they go to the protected store, which only the application manager reaches, and the answer carries no `url`. A gallery takes pictures alone and shows them wherever the record is public, so a file meant for a gallery stays public. `PUT /products/{id}/files` and `PUT /components/{id}/files` switch a file later.\n\nA browser and the command line send the file itself as `multipart/form-data`. A caller that can only send JSON sends the bytes as base64 instead, bare or as a `data:` URI, in a body of the shape `{\"mediafile\": {\"data\": \"iVBORw0KGgo...\", \"name\": \"Rain shell hero shot\"}}`.\n\nA caller holding a link sends `mediafile.url` and the server reads the bytes itself, which is the practical way in for anything larger than a small image. Only https, only an address outside this network, at most three redirects, and the same size cap; a refusal says which of those it was.\n\nThe kind of file is read from the bytes, not from anything the caller says about them, and the same size, readability and content rules apply whichever way it arrived.\n\nA document's details may come along: its type, issuer, number and validity. `PUT /mediafiles/{id}` changes them later.",
         "operationId": "create_mediafile",
         "x-permission": [],
         "security": [
@@ -11835,7 +12877,7 @@
                   "mediafile[file]": {
                     "type": "string",
                     "format": "binary",
-                    "description": "Image file to upload"
+                    "description": "File to upload"
                   },
                   "mediafile[upload]": {
                     "type": "string",
@@ -11845,6 +12887,32 @@
                   "mediafile[name]": {
                     "type": "string",
                     "description": "Optional display name"
+                  },
+                  "mediafile[public]": {
+                    "type": "boolean",
+                    "description": "False keeps the bytes in the protected store (default true)"
+                  },
+                  "mediafile[documentType]": {
+                    "type": "string",
+                    "description": "What the document is, one of the codes the Mediafile schema lists"
+                  },
+                  "mediafile[issuer]": {
+                    "type": "string",
+                    "description": "Who issued the document"
+                  },
+                  "mediafile[number]": {
+                    "type": "string",
+                    "description": "The number the issuer gave the document"
+                  },
+                  "mediafile[validFrom]": {
+                    "type": "string",
+                    "format": "date",
+                    "description": "The first day the document holds"
+                  },
+                  "mediafile[validUntil]": {
+                    "type": "string",
+                    "format": "date",
+                    "description": "The last day the document holds, not before validFrom"
                   }
                 }
               },
@@ -11871,6 +12939,32 @@
                       "name": {
                         "type": "string",
                         "description": "Optional display name"
+                      },
+                      "public": {
+                        "type": "boolean",
+                        "description": "False keeps the bytes in the protected store (default true)"
+                      },
+                      "documentType": {
+                        "type": "string",
+                        "description": "What the document is, one of the codes the Mediafile schema lists"
+                      },
+                      "issuer": {
+                        "type": "string",
+                        "description": "Who issued the document"
+                      },
+                      "number": {
+                        "type": "string",
+                        "description": "The number the issuer gave the document"
+                      },
+                      "validFrom": {
+                        "type": "string",
+                        "format": "date",
+                        "description": "The first day the document holds"
+                      },
+                      "validUntil": {
+                        "type": "string",
+                        "format": "date",
+                        "description": "The last day the document holds, not before validFrom"
                       }
                     }
                   }
@@ -11904,7 +12998,9 @@
                     "type": "Mediafile",
                     "name": "product-photo.jpg",
                     "url": "https://example.com/media/123/product-photo.jpg",
-                    "image": true
+                    "image": true,
+                    "extension": "jpg",
+                    "public": true
                   }
                 }
               }
@@ -11923,12 +13019,126 @@
       }
     },
     "/mediafiles/{id}": {
+      "put": {
+        "tags": [
+          "Mediafiles"
+        ],
+        "summary": "Update a mediafile",
+        "description": "Changes the name of a file and a document's details: its type, issuer, number and validity, such as a renewed certificate's new end. The bytes stay as they are. Requires the product mediafiles feature, and the caller must own the file.\n\nA language version, a file of a key restricted to some languages, shows the details of the file of its key for every language and takes none of its own: details sent for it answer 422. A field sent as null or an empty string is cleared.",
+        "operationId": "update_mediafile",
+        "x-permission": [],
+        "security": [
+          {
+            "userToken": []
+          },
+          {
+            "oauth2": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "mediafile": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "description": "The display name"
+                      },
+                      "documentType": {
+                        "type": "string",
+                        "description": "What the document is, one of the codes the Mediafile schema lists"
+                      },
+                      "issuer": {
+                        "type": "string",
+                        "description": "Who issued the document"
+                      },
+                      "number": {
+                        "type": "string",
+                        "description": "The number the issuer gave the document"
+                      },
+                      "validFrom": {
+                        "type": "string",
+                        "format": "date",
+                        "description": "The first day the document holds"
+                      },
+                      "validUntil": {
+                        "type": "string",
+                        "format": "date",
+                        "description": "The last day the document holds, not before validFrom"
+                      }
+                    }
+                  }
+                }
+              },
+              "example": {
+                "mediafile": {
+                  "validUntil": "2029-12-31"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The file with its details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "mediafile": {
+                      "$ref": "#/components/schemas/Mediafile"
+                    }
+                  }
+                },
+                "example": {
+                  "mediafile": {
+                    "id": 61,
+                    "type": "Mediafile",
+                    "name": "CE certificate",
+                    "image": false,
+                    "extension": "pdf",
+                    "public": false,
+                    "documentType": "certificate",
+                    "issuer": "TUV Rheinland",
+                    "number": "AB 123456",
+                    "validFrom": "2027-01-01",
+                    "validUntil": "2029-12-31"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          }
+        }
+      },
       "delete": {
         "tags": [
           "Mediafiles"
         ],
         "summary": "Delete a mediafile",
-        "description": "Takes the file out of the library. The row is trashed rather than destroyed, so a person can restore it in the application manager. A file a record still shows answers 409 `MEDIAFILE_IN_USE` and names those records; take it off them first. The caller must own the file.",
+        "description": "Takes the file out of the library. The row is trashed rather than destroyed, so a person can restore it in the application manager. A file a record still shows, in its gallery or under its Files, answers 409 `MEDIAFILE_IN_USE` and names those records; take it off them first. The caller must own the file.",
         "operationId": "delete_mediafile",
         "x-permission": [],
         "x-destructive": true,
@@ -13265,7 +14475,7 @@
             "$ref": "#/components/responses/WriteForbidden"
           },
           "422": {
-            "description": "Validation failed. When mandatory property types have no value, `fields.properties.missing` names the ones still needed and `hint` repeats them in prose. `GET /products/new` lists every property type with its `mandatory` flag.\n\nA `propertiesInput` key naming no property type, or, for a credential, a type only the members of a plan edit, or a type of an access group the credential (or the person it acts for) is not in, refuses the write before anything is stored (`PRODUCT_PROPERTIES_REFUSED`). The message names each and why, a type of such a group by its key alone; `fields.propertiesInput.unknown`, `fields.propertiesInput.planGated` and `fields.propertiesInput.groupGated` list the keys as sent.",
+            "description": "Validation failed. When mandatory property types have no value, `fields.properties.missing` names the ones still needed and `hint` repeats them in prose. `GET /products/new` lists every property type with its `mandatory` flag.\n\nA `propertiesInput` key naming no property type, or, for a credential, a type only the members of a plan edit, or a type of an access group the credential (or the person it acts for) is not in, refuses the write before anything is stored (`PRODUCT_PROPERTIES_REFUSED`). The message names each and why, a type of such a group by its key alone; `fields.propertiesInput.unknown`, `fields.propertiesInput.planGated` and `fields.propertiesInput.groupGated` list the keys as sent.\n\nA key the write takes nowhere, a key of the read that differs from what `GET /products/new` answers, or a list or an object sent as something else refuses the write before anything is stored (`PRODUCT_KEYS_REFUSED`, ProductInput says which). The message names each key and why; `fields` carries one entry per key as sent (`componentsInput[0].share` for a key inside a component entry), coded `PRODUCT_KEY_UNKNOWN`, `PRODUCT_KEY_MISPLACED` (a product field sent beside `product`), `PRODUCT_KEY_WRITTEN_ELSEWHERE` (with `field`, the body key that writes it, and `operation`), `PRODUCT_KEY_READ_ONLY`, `PRODUCT_KEY_LIST_REQUIRED` or `PRODUCT_KEY_OBJECT_REQUIRED`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -13524,7 +14734,7 @@
           "Products"
         ],
         "summary": "Update a product",
-        "description": "Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are. A brand name no brand carries creates the brand, which asks a consumer for `brand_access` (403 `BRAND_FORBIDDEN` without it); a credential acting for a person names only what that person reads, as on create. On a variant, a value the body changes becomes the variant's own and a value it sends as it was read goes on following the parent. `parentId` is left out or names the parent the product has; any other answers 422 `PRODUCT_PARENT_READ_ONLY`, since a variant moves to another parent through a spreadsheet import only. A `propertiesInput` key naming no property type, or, for a credential, a type only the members of a plan edit, or a type of an access group the credential (or the person it acts for) is not in, refuses the whole write with 422 `PRODUCT_PROPERTIES_REFUSED`, whose message names each and why; `fields.propertiesInput.unknown`, `fields.propertiesInput.planGated` and `fields.propertiesInput.groupGated` list the keys as sent.",
+        "description": "Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are. A brand name no brand carries creates the brand, which asks a consumer for `brand_access` (403 `BRAND_FORBIDDEN` without it); a credential acting for a person names only what that person reads, as on create. On a variant, a value the body changes becomes the variant's own and a value it sends as it was read goes on following the parent. `parentId` is left out or names the parent the product has; any other answers 422 `PRODUCT_PARENT_READ_ONLY`, since a variant moves to another parent through a spreadsheet import only. A `propertiesInput` key naming no property type, or, for a credential, a type only the members of a plan edit, or a type of an access group the credential (or the person it acts for) is not in, refuses the whole write with 422 `PRODUCT_PROPERTIES_REFUSED`, whose message names each and why; `fields.propertiesInput.unknown`, `fields.propertiesInput.planGated` and `fields.propertiesInput.groupGated` list the keys as sent. The product's read sent back under `product` passes as it was read; a key of it that differs from the product as it stands, a key the write takes nowhere, or a list or an object sent as something else refuses the whole write with 422 `PRODUCT_KEYS_REFUSED`, one field per key as on create, so a body read before another write changed the product names what moved.",
         "operationId": "update_product",
         "x-permission": "product_access",
         "security": [
@@ -13771,7 +14981,7 @@
           "Products"
         ],
         "summary": "Update product mediafile assignments",
-        "description": "Replaces all mediafile assignments on a product with the given list in the specified order, as one change. On a variant, a list that differs from its parent's becomes the variant's own, and the list sent as it was read goes on following the parent. Requires the product mediafiles feature to be enabled.",
+        "description": "Replaces all mediafile assignments on a product with the given list in the specified order, as one change. On a variant, a list that differs from its parent's becomes the variant's own, and the list sent as it was read goes on following the parent. The gallery takes pictures alone (images and SVG); a list naming any other file answers 422 `MEDIAFILE_NOT_A_PICTURE` and changes nothing. Requires the product mediafiles feature to be enabled.",
         "operationId": "update_product_mediafiles",
         "x-permission": "product_access",
         "security": [
@@ -13849,6 +15059,213 @@
         }
       }
     },
+    "/products/{id}/files": {
+      "get": {
+        "tags": [
+          "Products"
+        ],
+        "summary": "List product files",
+        "description": "The Files of a product, such as certificates, manuals and test reports, in the order the product lists them. A request without a credential reads the public files of a published product. A signed-in member or a credential holding `product_access` reads every file, each saying under `public` whether its bytes are public. Only a public file carries a `url`; an internal file sits in the protected store, which only the application manager reaches. `GET /products/{id}` carries the same list under `files`.",
+        "operationId": "get_product_files",
+        "x-permission": "product_access",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The files of the product",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "files": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Mediafile"
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "files": [
+                    {
+                      "id": 24,
+                      "type": "Mediafile",
+                      "name": "Declaration of conformity",
+                      "url": "https://example.com/media/123/declaration-of-conformity.pdf",
+                      "image": false,
+                      "extension": "pdf",
+                      "public": true
+                    },
+                    {
+                      "id": 31,
+                      "type": "Mediafile",
+                      "name": "Test report",
+                      "image": false,
+                      "extension": "pdf",
+                      "public": false
+                    }
+                  ]
+                }
+              }
+            },
+            "headers": {
+              "API-Total": {
+                "$ref": "#/components/headers/API-Total"
+              },
+              "API-Count": {
+                "$ref": "#/components/headers/API-Count"
+              }
+            }
+          },
+          "403": {
+            "description": "A credential without `product_access` (`PRODUCT_FORBIDDEN`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Products"
+        ],
+        "summary": "Update product files",
+        "description": "Gives the product exactly the files named, in the order named, as one change. A file left out comes off the list and stays in the library. On a variant, a list that differs from its parent's becomes the variant's own, and the list sent as it was read goes on following the parent.\n\nAn entry's `public` moves the file's bytes: `true` into the public tree, where anyone opening a public page of a record listing the file can download it, `false` into the protected store, which only the application manager reaches. A file is public or internal for every record listing it, and the language versions of a keyed file switch with it. An entry without `public` leaves the file as it is.\n\nA list naming a file that does not exist, or one held for review, answers 422 `FILES_UNKNOWN`. Switching off a file a gallery shows answers 422 `FILE_IN_GALLERY`, since a gallery shows its pictures wherever the record is public. Either refusal changes nothing. A file to add is uploaded first with `POST /mediafiles`, with `public` false to keep it internal from the start. The answer is the list as `GET /products/{id}/files` reads it.",
+        "operationId": "update_product_files",
+        "x-permission": "product_access",
+        "security": [
+          {
+            "userToken": []
+          },
+          {
+            "oauth2": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "files": {
+                    "type": "array",
+                    "description": "The files the product lists from now on, in this order; an empty list takes every file off",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "description": "The id of a mediafile, as `POST /mediafiles` answers it"
+                        },
+                        "public": {
+                          "type": "boolean",
+                          "description": "Moves the bytes into the public tree (true) or the protected store (false) for every record listing the file; left out, the file stays as it is"
+                        }
+                      },
+                      "required": [
+                        "id"
+                      ]
+                    }
+                  }
+                }
+              },
+              "example": {
+                "files": [
+                  {
+                    "id": 24,
+                    "public": true
+                  },
+                  {
+                    "id": 31,
+                    "public": false
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The files of the product",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "files": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Mediafile"
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "files": [
+                    {
+                      "id": 24,
+                      "type": "Mediafile",
+                      "name": "Declaration of conformity",
+                      "url": "https://example.com/media/123/declaration-of-conformity.pdf",
+                      "image": false,
+                      "extension": "pdf",
+                      "public": true
+                    },
+                    {
+                      "id": 31,
+                      "type": "Mediafile",
+                      "name": "Test report",
+                      "image": false,
+                      "extension": "pdf",
+                      "public": false
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/components/responses/MembershipExpired"
+          },
+          "403": {
+            "$ref": "#/components/responses/WriteForbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "422": {
+            "description": "A file naming nothing the library holds (`FILES_UNKNOWN`), or one a gallery shows switched off (`FILE_IN_GALLERY`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/products/{id}/restore": {
       "put": {
         "tags": [
@@ -13889,6 +15306,7 @@
                         "hsCode",
                         "weight",
                         "images",
+                        "files",
                         "componentsOrder"
                       ]
                     }
@@ -14601,7 +16019,7 @@
           "Session"
         ],
         "summary": "Login (create session)",
-        "description": "Authenticates a user with email/alias and password. Returns a JWT bearer token for subsequent requests. Optionally assigns unclaimed products to the user via `productTokens`.",
+        "description": "Authenticates a user with email/alias and password. Returns a JWT bearer token for subsequent requests. Optionally assigns unclaimed products to the user via `productTokens`. A user who set up a second factor sends its code as `otp`, from the authenticator app or one of the backup codes; without it the answer is 401 `MFA_REQUIRED`, with a wrong one 401 `MFA_INVALID`, and no token is issued. A user whose only second factor is a security key or a passkey, which this sign-in cannot ask for, gets 403 `MFA_METHOD_UNSUPPORTED` before any code is read; they sign in through OAuth or an API consumer, or add an authenticator app. Staff who owe a password of their own or the second factor the workspace demands get 403 `ACCOUNT_SETUP_REQUIRED` until they set it up in the application manager.",
         "operationId": "login_session",
         "security": [],
         "requestBody": {
@@ -14621,6 +16039,10 @@
                   },
                   "password": {
                     "type": "string"
+                  },
+                  "otp": {
+                    "type": "string",
+                    "description": "The code of the second factor, for a user who set one up"
                   },
                   "productTokens": {
                     "type": "array",
@@ -14672,7 +16094,7 @@
             }
           },
           "401": {
-            "description": "Invalid credentials",
+            "description": "Invalid credentials, or the second factor is missing (`MFA_REQUIRED`) or wrong (`MFA_INVALID`)",
             "content": {
               "application/json": {
                 "schema": {
@@ -14686,7 +16108,7 @@
             }
           },
           "403": {
-            "description": "User logins are not enabled for this account",
+            "description": "User logins are not enabled for this account, the user's only second factor is a security key (`MFA_METHOD_UNSUPPORTED`), or the user owes the application manager a password of their own or a second factor (`ACCOUNT_SETUP_REQUIRED`)",
             "content": {
               "application/json": {
                 "schema": {
@@ -14705,7 +16127,7 @@
           "Session"
         ],
         "summary": "Refresh session token",
-        "description": "Refreshes the session nonce and returns a new bearer token. Requires a valid existing token.",
+        "description": "Refreshes the session nonce and returns a new bearer token. Requires a valid existing token. A user who owes the application manager a password of their own or a second factor renews none (403 `ACCOUNT_SETUP_REQUIRED`).",
         "operationId": "refresh_session",
         "security": [
           {
@@ -14736,7 +16158,7 @@
             }
           },
           "403": {
-            "description": "Invalid session",
+            "description": "Invalid session, or the user owes a password or a second factor (`ACCOUNT_SETUP_REQUIRED`)",
             "content": {
               "application/json": {
                 "schema": {
@@ -15481,7 +16903,7 @@
           "Tasks"
         ],
         "summary": "Approve a review",
-        "description": "Approves the step a review stands at, as the person the credential acts for. A review walks the steps of the workspace's review flow, or the one step of everyone who may sign passports where no flow fits. Approving a middle step passes the request on to the next step and signs nothing. Approving the last step carries the request out in the person's name, which needs `dpp_publish` in the credential's scope beside `task_access`; without it the answer is 403 and the review stays open. A publish review then approves the passport, which waits ready to publish for the person who asked (`POST /dpps/{code}/publish`) until the product changes; a review of an event's seal or of a correction signs at once.\n\nSend the `step` the caller read, so a press on a review that moved on in between decides nothing (`TASK_STEP_MOVED`). The person who asked for a review decides no step of it (`TASK_OWN_REQUEST`). A publish the validator or the workspace refuses answers as `POST /dpps/{code}/publish` does, and the review stays open.",
+        "description": "Approves the step a review stands at, as the person the credential acts for. A review walks the steps of the workspace's review flow, or the one step of everyone who may sign passports where no flow fits. Approving a middle step passes the request on to the next step and signs nothing. Approving the last step carries the request out in the person's name, which needs `dpp_publish` in the credential's scope beside `task_access`; without it the answer is 403 and the review stays open. A publish review signs the passport then, as a review of an event's seal or of a correction does. A publish review whose DPP or product changed after the request is refused (`TASK_SOURCE_CHANGED`), and so is one whose DPP recorded an event since (`TASK_EVENT_RECORDED`); the review stays open, and a new request to publish the DPP replaces it.\n\nSend the `step` the caller read, so a press on a review that moved on in between decides nothing (`TASK_STEP_MOVED`). The person who asked for a review decides no step of it (`TASK_OWN_REQUEST`). A publish the validator or the workspace refuses answers as `POST /dpps/{code}/publish` does, and the review stays open.",
         "operationId": "approve_task",
         "x-permission": "task_access",
         "security": [
@@ -15541,7 +16963,7 @@
             }
           },
           "422": {
-            "description": "The review refuses the decision (`TASK_NOT_OPEN`, `TASK_NOT_REVIEW`, `TASK_OWN_REQUEST`, `TASK_NOT_PERMITTED`, `TASK_ALREADY_CLAIMED`, `TASK_DECIDING`, `TASK_STEP_MOVED`, or what its subject says, such as `TASK_PENDING_EVENT`), or the validator refuses the publish (`DPP_PUBLISH_VALIDATION_BLOCKED`, see `fields`)",
+            "description": "The review refuses the decision (`TASK_NOT_OPEN`, `TASK_NOT_REVIEW`, `TASK_OWN_REQUEST`, `TASK_NOT_PERMITTED`, `TASK_ALREADY_CLAIMED`, `TASK_DECIDING`, `TASK_STEP_MOVED`, or what its subject says, such as `TASK_PENDING_EVENT`, `TASK_SOURCE_CHANGED` or `TASK_EVENT_RECORDED`), or the validator refuses the publish (`DPP_PUBLISH_VALIDATION_BLOCKED`, see `fields`)",
             "content": {
               "application/json": {
                 "schema": {
