@@ -7,7 +7,7 @@ require (
 	github.com/oapi-codegen/runtime v1.7.0
 	github.com/sigstore/sigstore-go v1.3.0
 	github.com/spf13/cobra v1.10.2
-	github.com/spf13/pflag v1.0.10
+	github.com/spf13/pflag v1.1.0
 	github.com/zalando/go-keyring v0.2.8
 	golang.org/x/term v0.47.0
 )
