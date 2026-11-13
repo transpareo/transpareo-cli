@@ -314,6 +314,14 @@
     "operationId": "list_dpp_events"
   },
   {
+    "path": "transpareo dpps file",
+    "args": "<code> <name>",
+    "flags": [
+      "output"
+    ],
+    "operationId": "get_dpp_file"
+  },
+  {
     "path": "transpareo dpps get",
     "args": "<id>",
     "flags": [
@@ -530,6 +538,7 @@
   {
     "path": "transpareo imports create",
     "flags": [
+      "content-locale",
       "data-type",
       "file",
       "mappings",
@@ -592,6 +601,15 @@
     "operationId": "map_import"
   },
   {
+    "path": "transpareo imports rerun",
+    "args": "<id>",
+    "flags": [
+      "output",
+      "wait"
+    ],
+    "operationId": "rerun_import"
+  },
+  {
     "path": "transpareo imports revert",
     "args": "<id>",
     "flags": [
@@ -639,6 +657,16 @@
     "operationId": "validate_import"
   },
   {
+    "path": "transpareo lots codes list",
+    "args": "<id>",
+    "flags": [
+      "output",
+      "page",
+      "per-page"
+    ],
+    "operationId": "list_lot_codes"
+  },
+  {
     "path": "transpareo lots get",
     "args": "<id>",
     "flags": [
@@ -655,10 +683,40 @@
       "page",
       "per-page",
       "product-id",
+      "serial",
       "sort",
       "updated-since"
     ],
     "operationId": "list_lots"
+  },
+  {
+    "path": "transpareo lots serials create",
+    "args": "<id>",
+    "flags": [
+      "file",
+      "idempotency-key",
+      "output",
+      "set"
+    ],
+    "operationId": "create_lot_serials"
+  },
+  {
+    "path": "transpareo lots serials delete",
+    "args": "<id> <entryId>",
+    "flags": [
+      "output"
+    ],
+    "operationId": "delete_lot_serials"
+  },
+  {
+    "path": "transpareo lots serials list",
+    "args": "<id>",
+    "flags": [
+      "output",
+      "page",
+      "per-page"
+    ],
+    "operationId": "list_lot_serials"
   },
   {
     "path": "transpareo mcp",
@@ -673,10 +731,16 @@
   {
     "path": "transpareo mediafiles create",
     "flags": [
+      "document-type",
       "file",
+      "issuer",
       "name",
+      "number",
       "output",
-      "upload"
+      "public",
+      "upload",
+      "valid-from",
+      "valid-until"
     ],
     "operationId": "create_mediafile"
   },
@@ -697,6 +761,16 @@
       "term"
     ],
     "operationId": "list_mediafiles"
+  },
+  {
+    "path": "transpareo mediafiles update",
+    "args": "<id>",
+    "flags": [
+      "file",
+      "output",
+      "set"
+    ],
+    "operationId": "update_mediafile"
   },
   {
     "path": "transpareo permalinks resolve",
@@ -984,7 +1058,9 @@
     "path": "transpareo tasks complete",
     "args": "<id>",
     "flags": [
-      "output"
+      "file",
+      "output",
+      "set"
     ],
     "operationId": "complete_task"
   },
