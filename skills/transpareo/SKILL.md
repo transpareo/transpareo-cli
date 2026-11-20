@@ -158,9 +158,10 @@ any of them shows an example and the permission it needs;
 - `transpareo dpps correct <id>`: Correct a DPP from its source (dpp_write)
 - `transpareo dpps create`: Create a DPP (dpp_write)
 - `transpareo dpps delete <id>`: Delete a DPP (dpp_write)
-- `transpareo dpps dynamic-data update <id>`: Update dynamic data (dpp_dynamic)
+- `transpareo dpps dynamic-data update <id>`: Update changing values (e.g. battery health) (dpp_dynamic)
 - `transpareo dpps events append <id>`: Append an event to a DPP (dpp_events)
 - `transpareo dpps events list <id>`: List the event log of a DPP (dpp_history)
+- `transpareo dpps file <code> <name>`: Read a restricted file of a passport (dpp_read)
 - `transpareo dpps get <id>`: Read a DPP (dpp_read)
 - `transpareo dpps list`: List Digital Product Passports (dpp_read)
 - `transpareo dpps private-dynamic-data <code>`: Read the restricted dynamic data (dpp_read)
@@ -189,17 +190,23 @@ any of them shows an example and the permission it needs;
 - `transpareo imports get <id>`: Poll an import (import_access)
 - `transpareo imports list`: List imports (import_access)
 - `transpareo imports map <id>`: Send the column mapping of a fresh import (import_access)
+- `transpareo imports rerun <id>`: Run an import again (import_access)
 - `transpareo imports revert <id>`: Revert an import (import_access)
 - `transpareo imports run --file <path> --type <components|products|dpps>`: Upload, map, validate and, with --execute, run an import (import_access)
 - `transpareo imports supplier-form`: Download the blank supplier form (import_access)
 - `transpareo imports validate <id>`: Validate an import (import_access)
+- `transpareo lots codes list <id>`: List the codes of a lot's tags (dpp_read)
 - `transpareo lots get <id>`: Get a lot (dpp_read)
 - `transpareo lots list`: List lots (dpp_read)
+- `transpareo lots serials create <id>`: Add serial numbers to a lot (product_access)
+- `transpareo lots serials delete <id> <entryId>`: Remove serial numbers from a lot (product_access)
+- `transpareo lots serials list <id>`: List the serial numbers of a lot (dpp_read)
 - `transpareo mcp [--tools <group,...>] [--read-only]`: Start the Model Context Protocol server over standard input and output
 - `transpareo me`: Show what the current credential allows (GET /me)
 - `transpareo mediafiles create`: Upload a mediafile
 - `transpareo mediafiles delete <id>`: Delete a mediafile
 - `transpareo mediafiles list`: List mediafiles
+- `transpareo mediafiles update <id>`: Update a mediafile
 - `transpareo permalinks resolve <path>`: Resolve a permalink
 - `transpareo plans get <id>`: Get a subscription plan
 - `transpareo plans list`: List subscription plans
