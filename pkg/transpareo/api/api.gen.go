@@ -20,19 +20,49 @@ import (
 
 // Defines values for AsyncTaskErrorsError.
 const (
-	AsyncTaskErrorsErrorDPPINVALID       AsyncTaskErrorsError = "DPP_INVALID"
-	AsyncTaskErrorsErrorDPPINVALIDLINE   AsyncTaskErrorsError = "DPP_INVALID_LINE"
-	AsyncTaskErrorsErrorDPPPUBLISHFAILED AsyncTaskErrorsError = "DPP_PUBLISH_FAILED"
+	AsyncTaskErrorsErrorDPPFORBIDDEN                AsyncTaskErrorsError = "DPP_FORBIDDEN"
+	AsyncTaskErrorsErrorDPPGRANULARITYINVALID       AsyncTaskErrorsError = "DPP_GRANULARITY_INVALID"
+	AsyncTaskErrorsErrorDPPINVALID                  AsyncTaskErrorsError = "DPP_INVALID"
+	AsyncTaskErrorsErrorDPPINVALIDLINE              AsyncTaskErrorsError = "DPP_INVALID_LINE"
+	AsyncTaskErrorsErrorDPPKEYSREFUSED              AsyncTaskErrorsError = "DPP_KEYS_REFUSED"
+	AsyncTaskErrorsErrorDPPLIMITREACHED             AsyncTaskErrorsError = "DPP_LIMIT_REACHED"
+	AsyncTaskErrorsErrorDPPPROPERTYTYPESREFUSED     AsyncTaskErrorsError = "DPP_PROPERTY_TYPES_REFUSED"
+	AsyncTaskErrorsErrorDPPPUBLISHFAILED            AsyncTaskErrorsError = "DPP_PUBLISH_FAILED"
+	AsyncTaskErrorsErrorDPPPUBLISHFORBIDDEN         AsyncTaskErrorsError = "DPP_PUBLISH_FORBIDDEN"
+	AsyncTaskErrorsErrorDPPPUBLISHINGPAUSED         AsyncTaskErrorsError = "DPP_PUBLISHING_PAUSED"
+	AsyncTaskErrorsErrorDPPPUBLISHPRECONDITION      AsyncTaskErrorsError = "DPP_PUBLISH_PRECONDITION"
+	AsyncTaskErrorsErrorDPPPUBLISHVALIDATIONBLOCKED AsyncTaskErrorsError = "DPP_PUBLISH_VALIDATION_BLOCKED"
+	AsyncTaskErrorsErrorDPPSAVEFAILED               AsyncTaskErrorsError = "DPP_SAVE_FAILED"
 )
 
 // Valid indicates whether the value is a known member of the AsyncTaskErrorsError enum.
 func (e AsyncTaskErrorsError) Valid() bool {
 	switch e {
+	case AsyncTaskErrorsErrorDPPFORBIDDEN:
+		return true
+	case AsyncTaskErrorsErrorDPPGRANULARITYINVALID:
+		return true
 	case AsyncTaskErrorsErrorDPPINVALID:
 		return true
 	case AsyncTaskErrorsErrorDPPINVALIDLINE:
 		return true
+	case AsyncTaskErrorsErrorDPPKEYSREFUSED:
+		return true
+	case AsyncTaskErrorsErrorDPPLIMITREACHED:
+		return true
+	case AsyncTaskErrorsErrorDPPPROPERTYTYPESREFUSED:
+		return true
 	case AsyncTaskErrorsErrorDPPPUBLISHFAILED:
+		return true
+	case AsyncTaskErrorsErrorDPPPUBLISHFORBIDDEN:
+		return true
+	case AsyncTaskErrorsErrorDPPPUBLISHINGPAUSED:
+		return true
+	case AsyncTaskErrorsErrorDPPPUBLISHPRECONDITION:
+		return true
+	case AsyncTaskErrorsErrorDPPPUBLISHVALIDATIONBLOCKED:
+		return true
+	case AsyncTaskErrorsErrorDPPSAVEFAILED:
 		return true
 	default:
 		return false
@@ -89,19 +119,49 @@ func (e AsyncTaskStatus) Valid() bool {
 
 // Defines values for BulkRowError.
 const (
-	BulkRowErrorDPPINVALID       BulkRowError = "DPP_INVALID"
-	BulkRowErrorDPPINVALIDLINE   BulkRowError = "DPP_INVALID_LINE"
-	BulkRowErrorDPPPUBLISHFAILED BulkRowError = "DPP_PUBLISH_FAILED"
+	BulkRowErrorDPPFORBIDDEN                BulkRowError = "DPP_FORBIDDEN"
+	BulkRowErrorDPPGRANULARITYINVALID       BulkRowError = "DPP_GRANULARITY_INVALID"
+	BulkRowErrorDPPINVALID                  BulkRowError = "DPP_INVALID"
+	BulkRowErrorDPPINVALIDLINE              BulkRowError = "DPP_INVALID_LINE"
+	BulkRowErrorDPPKEYSREFUSED              BulkRowError = "DPP_KEYS_REFUSED"
+	BulkRowErrorDPPLIMITREACHED             BulkRowError = "DPP_LIMIT_REACHED"
+	BulkRowErrorDPPPROPERTYTYPESREFUSED     BulkRowError = "DPP_PROPERTY_TYPES_REFUSED"
+	BulkRowErrorDPPPUBLISHFAILED            BulkRowError = "DPP_PUBLISH_FAILED"
+	BulkRowErrorDPPPUBLISHFORBIDDEN         BulkRowError = "DPP_PUBLISH_FORBIDDEN"
+	BulkRowErrorDPPPUBLISHINGPAUSED         BulkRowError = "DPP_PUBLISHING_PAUSED"
+	BulkRowErrorDPPPUBLISHPRECONDITION      BulkRowError = "DPP_PUBLISH_PRECONDITION"
+	BulkRowErrorDPPPUBLISHVALIDATIONBLOCKED BulkRowError = "DPP_PUBLISH_VALIDATION_BLOCKED"
+	BulkRowErrorDPPSAVEFAILED               BulkRowError = "DPP_SAVE_FAILED"
 )
 
 // Valid indicates whether the value is a known member of the BulkRowError enum.
 func (e BulkRowError) Valid() bool {
 	switch e {
+	case BulkRowErrorDPPFORBIDDEN:
+		return true
+	case BulkRowErrorDPPGRANULARITYINVALID:
+		return true
 	case BulkRowErrorDPPINVALID:
 		return true
 	case BulkRowErrorDPPINVALIDLINE:
 		return true
+	case BulkRowErrorDPPKEYSREFUSED:
+		return true
+	case BulkRowErrorDPPLIMITREACHED:
+		return true
+	case BulkRowErrorDPPPROPERTYTYPESREFUSED:
+		return true
 	case BulkRowErrorDPPPUBLISHFAILED:
+		return true
+	case BulkRowErrorDPPPUBLISHFORBIDDEN:
+		return true
+	case BulkRowErrorDPPPUBLISHINGPAUSED:
+		return true
+	case BulkRowErrorDPPPUBLISHPRECONDITION:
+		return true
+	case BulkRowErrorDPPPUBLISHVALIDATIONBLOCKED:
+		return true
+	case BulkRowErrorDPPSAVEFAILED:
 		return true
 	default:
 		return false
@@ -131,12 +191,15 @@ func (e BulkRowStatus) Valid() bool {
 
 // Defines values for BulkValidateRowError.
 const (
+	BulkValidateRowErrorDPPFORBIDDEN   BulkValidateRowError = "DPP_FORBIDDEN"
 	BulkValidateRowErrorDPPINVALIDLINE BulkValidateRowError = "DPP_INVALID_LINE"
 )
 
 // Valid indicates whether the value is a known member of the BulkValidateRowError enum.
 func (e BulkValidateRowError) Valid() bool {
 	switch e {
+	case BulkValidateRowErrorDPPFORBIDDEN:
+		return true
 	case BulkValidateRowErrorDPPINVALIDLINE:
 		return true
 	default:
@@ -237,6 +300,24 @@ func (e ConsumerIdentityStatus) Valid() bool {
 	case ConsumerIdentityStatusRevoked:
 		return true
 	case ConsumerIdentityStatusSuspended:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for DppEpcScheme.
+const (
+	DppEpcSchemeSGTIN198 DppEpcScheme = "SGTIN-198"
+	DppEpcSchemeSGTIN96  DppEpcScheme = "SGTIN-96"
+)
+
+// Valid indicates whether the value is a known member of the DppEpcScheme enum.
+func (e DppEpcScheme) Valid() bool {
+	switch e {
+	case DppEpcSchemeSGTIN198:
+		return true
+	case DppEpcSchemeSGTIN96:
 		return true
 	default:
 		return false
@@ -468,9 +549,7 @@ const (
 	DppEventInputEventTypeInspection        DppEventInputEventType = "inspection"
 	DppEventInputEventTypeOwnershipTransfer DppEventInputEventType = "ownership_transfer"
 	DppEventInputEventTypeRecall            DppEventInputEventType = "recall"
-	DppEventInputEventTypeRegisteredWithEu  DppEventInputEventType = "registered_with_eu"
 	DppEventInputEventTypeStatusChange      DppEventInputEventType = "status_change"
-	DppEventInputEventTypeValidationWarning DppEventInputEventType = "validation_warning"
 )
 
 // Valid indicates whether the value is a known member of the DppEventInputEventType enum.
@@ -484,11 +563,7 @@ func (e DppEventInputEventType) Valid() bool {
 		return true
 	case DppEventInputEventTypeRecall:
 		return true
-	case DppEventInputEventTypeRegisteredWithEu:
-		return true
 	case DppEventInputEventTypeStatusChange:
-		return true
-	case DppEventInputEventTypeValidationWarning:
 		return true
 	default:
 		return false
@@ -636,6 +711,7 @@ func (e DppRequirementsMissingOperation) Valid() bool {
 // Defines values for DppRequirementsMissingTarget.
 const (
 	DppRequirementsMissingTargetProduct   DppRequirementsMissingTarget = "product"
+	DppRequirementsMissingTargetVariants  DppRequirementsMissingTarget = "variants"
 	DppRequirementsMissingTargetWorkspace DppRequirementsMissingTarget = "workspace"
 )
 
@@ -643,6 +719,8 @@ const (
 func (e DppRequirementsMissingTarget) Valid() bool {
 	switch e {
 	case DppRequirementsMissingTargetProduct:
+		return true
+	case DppRequirementsMissingTargetVariants:
 		return true
 	case DppRequirementsMissingTargetWorkspace:
 		return true
@@ -1041,13 +1119,44 @@ func (e ImportMappingsInputMappingsAction) Valid() bool {
 	}
 }
 
+// Defines values for ImportMappingsInputMappingsDocumentType.
+const (
+	ImportMappingsInputMappingsDocumentTypeCertificate             ImportMappingsInputMappingsDocumentType = "certificate"
+	ImportMappingsInputMappingsDocumentTypeDeclarationOfConformity ImportMappingsInputMappingsDocumentType = "declaration_of_conformity"
+	ImportMappingsInputMappingsDocumentTypeManual                  ImportMappingsInputMappingsDocumentType = "manual"
+	ImportMappingsInputMappingsDocumentTypeOther                   ImportMappingsInputMappingsDocumentType = "other"
+	ImportMappingsInputMappingsDocumentTypeSafetyDataSheet         ImportMappingsInputMappingsDocumentType = "safety_data_sheet"
+	ImportMappingsInputMappingsDocumentTypeTestReport              ImportMappingsInputMappingsDocumentType = "test_report"
+)
+
+// Valid indicates whether the value is a known member of the ImportMappingsInputMappingsDocumentType enum.
+func (e ImportMappingsInputMappingsDocumentType) Valid() bool {
+	switch e {
+	case ImportMappingsInputMappingsDocumentTypeCertificate:
+		return true
+	case ImportMappingsInputMappingsDocumentTypeDeclarationOfConformity:
+		return true
+	case ImportMappingsInputMappingsDocumentTypeManual:
+		return true
+	case ImportMappingsInputMappingsDocumentTypeOther:
+		return true
+	case ImportMappingsInputMappingsDocumentTypeSafetyDataSheet:
+		return true
+	case ImportMappingsInputMappingsDocumentTypeTestReport:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for ImportPreviewColumnsMatchType.
 const (
-	ImportPreviewColumnsMatchTypeAttribute ImportPreviewColumnsMatchType = "attribute"
-	ImportPreviewColumnsMatchTypeConflict  ImportPreviewColumnsMatchType = "conflict"
-	ImportPreviewColumnsMatchTypeExact     ImportPreviewColumnsMatchType = "exact"
-	ImportPreviewColumnsMatchTypeFuzzy     ImportPreviewColumnsMatchType = "fuzzy"
-	ImportPreviewColumnsMatchTypeNone      ImportPreviewColumnsMatchType = "none"
+	ImportPreviewColumnsMatchTypeAttribute  ImportPreviewColumnsMatchType = "attribute"
+	ImportPreviewColumnsMatchTypeConflict   ImportPreviewColumnsMatchType = "conflict"
+	ImportPreviewColumnsMatchTypeExact      ImportPreviewColumnsMatchType = "exact"
+	ImportPreviewColumnsMatchTypeFuzzy      ImportPreviewColumnsMatchType = "fuzzy"
+	ImportPreviewColumnsMatchTypeNone       ImportPreviewColumnsMatchType = "none"
+	ImportPreviewColumnsMatchTypeRemembered ImportPreviewColumnsMatchType = "remembered"
 )
 
 // Valid indicates whether the value is a known member of the ImportPreviewColumnsMatchType enum.
@@ -1062,6 +1171,8 @@ func (e ImportPreviewColumnsMatchType) Valid() bool {
 	case ImportPreviewColumnsMatchTypeFuzzy:
 		return true
 	case ImportPreviewColumnsMatchTypeNone:
+		return true
+	case ImportPreviewColumnsMatchTypeRemembered:
 		return true
 	default:
 		return false
@@ -1203,6 +1314,156 @@ func (e InheritanceState) Valid() bool {
 	}
 }
 
+// Defines values for LeadgenAction.
+const (
+	LeadgenActionForm LeadgenAction = "form"
+	LeadgenActionLink LeadgenAction = "link"
+)
+
+// Valid indicates whether the value is a known member of the LeadgenAction enum.
+func (e LeadgenAction) Valid() bool {
+	switch e {
+	case LeadgenActionForm:
+		return true
+	case LeadgenActionLink:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for LeadgenInputAction.
+const (
+	LeadgenInputActionForm LeadgenInputAction = "form"
+	LeadgenInputActionLink LeadgenInputAction = "link"
+)
+
+// Valid indicates whether the value is a known member of the LeadgenInputAction enum.
+func (e LeadgenInputAction) Valid() bool {
+	switch e {
+	case LeadgenInputActionForm:
+		return true
+	case LeadgenInputActionLink:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for LeadgenInputInputsTyp.
+const (
+	LeadgenInputInputsTypCountry LeadgenInputInputsTyp = "country"
+	LeadgenInputInputsTypEmail   LeadgenInputInputsTyp = "email"
+	LeadgenInputInputsTypInput   LeadgenInputInputsTyp = "input"
+	LeadgenInputInputsTypSelect  LeadgenInputInputsTyp = "select"
+	LeadgenInputInputsTypText    LeadgenInputInputsTyp = "text"
+)
+
+// Valid indicates whether the value is a known member of the LeadgenInputInputsTyp enum.
+func (e LeadgenInputInputsTyp) Valid() bool {
+	switch e {
+	case LeadgenInputInputsTypCountry:
+		return true
+	case LeadgenInputInputsTypEmail:
+		return true
+	case LeadgenInputInputsTypInput:
+		return true
+	case LeadgenInputInputsTypSelect:
+		return true
+	case LeadgenInputInputsTypText:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for LotCodeEpcScheme.
+const (
+	LotCodeEpcSchemeSGTIN198 LotCodeEpcScheme = "SGTIN-198"
+	LotCodeEpcSchemeSGTIN96  LotCodeEpcScheme = "SGTIN-96"
+)
+
+// Valid indicates whether the value is a known member of the LotCodeEpcScheme enum.
+func (e LotCodeEpcScheme) Valid() bool {
+	switch e {
+	case LotCodeEpcSchemeSGTIN198:
+		return true
+	case LotCodeEpcSchemeSGTIN96:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for LotSerialEntryKind.
+const (
+	List  LotSerialEntryKind = "list"
+	Range LotSerialEntryKind = "range"
+)
+
+// Valid indicates whether the value is a known member of the LotSerialEntryKind enum.
+func (e LotSerialEntryKind) Valid() bool {
+	switch e {
+	case List:
+		return true
+	case Range:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for LotSerialEntrySource.
+const (
+	LotSerialEntrySourceAdmin LotSerialEntrySource = "admin"
+	LotSerialEntrySourceApi   LotSerialEntrySource = "api"
+	LotSerialEntrySourceFile  LotSerialEntrySource = "file"
+)
+
+// Valid indicates whether the value is a known member of the LotSerialEntrySource enum.
+func (e LotSerialEntrySource) Valid() bool {
+	switch e {
+	case LotSerialEntrySourceAdmin:
+		return true
+	case LotSerialEntrySourceApi:
+		return true
+	case LotSerialEntrySourceFile:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for MediafileDocumentType.
+const (
+	MediafileDocumentTypeCertificate             MediafileDocumentType = "certificate"
+	MediafileDocumentTypeDeclarationOfConformity MediafileDocumentType = "declaration_of_conformity"
+	MediafileDocumentTypeManual                  MediafileDocumentType = "manual"
+	MediafileDocumentTypeOther                   MediafileDocumentType = "other"
+	MediafileDocumentTypeSafetyDataSheet         MediafileDocumentType = "safety_data_sheet"
+	MediafileDocumentTypeTestReport              MediafileDocumentType = "test_report"
+)
+
+// Valid indicates whether the value is a known member of the MediafileDocumentType enum.
+func (e MediafileDocumentType) Valid() bool {
+	switch e {
+	case MediafileDocumentTypeCertificate:
+		return true
+	case MediafileDocumentTypeDeclarationOfConformity:
+		return true
+	case MediafileDocumentTypeManual:
+		return true
+	case MediafileDocumentTypeOther:
+		return true
+	case MediafileDocumentTypeSafetyDataSheet:
+		return true
+	case MediafileDocumentTypeTestReport:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for OAuthErrorError.
 const (
 	AccessDenied          OAuthErrorError = "access_denied"
@@ -1287,6 +1548,30 @@ func (e ProductDetailWeightUnit) Valid() bool {
 	}
 }
 
+// Defines values for ProductInputWeightUnit.
+const (
+	ProductInputWeightUnitG  ProductInputWeightUnit = "g"
+	ProductInputWeightUnitKg ProductInputWeightUnit = "kg"
+	ProductInputWeightUnitMg ProductInputWeightUnit = "mg"
+	ProductInputWeightUnitT  ProductInputWeightUnit = "t"
+)
+
+// Valid indicates whether the value is a known member of the ProductInputWeightUnit enum.
+func (e ProductInputWeightUnit) Valid() bool {
+	switch e {
+	case ProductInputWeightUnitG:
+		return true
+	case ProductInputWeightUnitKg:
+		return true
+	case ProductInputWeightUnitMg:
+		return true
+	case ProductInputWeightUnitT:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for RegisteredClientTokenEndpointAuthMethod.
 const (
 	RegisteredClientTokenEndpointAuthMethodClientSecretBasic RegisteredClientTokenEndpointAuthMethod = "client_secret_basic"
@@ -1335,6 +1620,7 @@ func (e TaskClosingReason) Valid() bool {
 // Defines values for TaskKind.
 const (
 	TaskKindCustom                TaskKind = "custom"
+	TaskKindFileExpiry            TaskKind = "file_expiry"
 	TaskKindPublishReview         TaskKind = "publish_review"
 	TaskKindRequestForInformation TaskKind = "request_for_information"
 	TaskKindReview                TaskKind = "review"
@@ -1345,6 +1631,8 @@ const (
 func (e TaskKind) Valid() bool {
 	switch e {
 	case TaskKindCustom:
+		return true
+	case TaskKindFileExpiry:
 		return true
 	case TaskKindPublishReview:
 		return true
@@ -2163,7 +2451,7 @@ func (e ListTasksParamsSort) Valid() bool {
 	}
 }
 
-// AsyncTask The polling payload of an asynchronous bulk create. While the task runs, only `taskId`, `status` and `progress` are present; the counts and the error detail appear once it completes. Successful rows are counted, not listed - only rejected rows carry detail, so an integrator can patch and resubmit that subset.
+// AsyncTask The polling payload of an asynchronous bulk create. While the task runs, only `taskId`, `status` and `progress` are present, and `pacedUntil` while it waits for the credential's bulk pace; the counts and the error detail appear once it completes. Successful rows are counted, not listed - only rejected rows carry detail, so an integrator can patch and resubmit that subset.
 //
 // Example: {"createdCount":1180,"duplicateCount":14,"errorCount":6,"errors":[{"error":"DPP_INVALID","fields":{"unlockableId":{"error":"blank","fullMessage":"Product is required","message":"is required"}},"modelIdentifier":"FC-50ML","row":42,"status":"error"}],"progress":100,"status":"completed","taskId":"507f1f77bcf86cd799439099"}
 type AsyncTask struct {
@@ -2181,10 +2469,10 @@ type AsyncTask struct {
 		// Code The public passport code printed on QR codes. Present alongside `id`.
 		Code *string `json:"code,omitempty"`
 
-		// Error On `error` only: `DPP_INVALID_LINE` (the line is not a JSON object), `DPP_INVALID` (the passport failed validation, see `fields`) or `DPP_PUBLISH_FAILED` (the passport row was kept unpublished; resubmit the same row to resume it).
+		// Error On `error` only: `DPP_INVALID_LINE` (the line is not a JSON object), `DPP_GRANULARITY_INVALID` (the row names a granularity the workspace does not issue), `DPP_INVALID` (the passport failed validation, see `fields`), `DPP_PROPERTY_TYPES_REFUSED` or `DPP_KEYS_REFUSED` (the row's `propertyTypeIds` name types that do not exist or are no list, see `fields`), `DPP_SAVE_FAILED` (the database did not take the row; resubmit it, and a passport it saved is resumed), `DPP_PUBLISH_FAILED` (the passport row was kept unpublished; resubmit the same row to resume it), `DPP_PUBLISH_FORBIDDEN` (the caller may not publish passports), `DPP_PUBLISH_VALIDATION_BLOCKED` (the validator refuses to sign the passport), `DPP_PUBLISH_PRECONDITION` (the workspace lacks a signing key or has registered its own public key for only one curve), `DPP_LIMIT_REACHED` (the workspace has published as many passports as its plan includes), `DPP_PUBLISHING_PAUSED` (the workspace's plan is unpaid; the message names the cause) or `DPP_FORBIDDEN` (the natural key names an unpublished passport the caller does not write, which stays as it is). On the five refusals the passport row is kept unpublished as well, and a resubmitted row meets the same refusal until the right, the product, the keys or the plan are fixed.
 		Error *AsyncTaskErrorsError `json:"error,omitempty"`
 
-		// Fields On `DPP_INVALID`: the failing attribute names mapped to their error. A row naming a new lot of a product that fails another required readiness check answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, and the rest of the run goes on.
+		// Fields On `DPP_INVALID`: the failing attribute names mapped to their error. A row naming a new lot of a product that fails another required readiness check answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, and a row naming a product with variants `DPP_UNLOCKABLE_ID_HAS_VARIANTS` on `unlockableId`; the rest of the run goes on.
 		Fields *map[string]struct {
 			Error       *string `json:"error,omitempty"`
 			FullMessage *string `json:"fullMessage,omitempty"`
@@ -2194,7 +2482,7 @@ type AsyncTask struct {
 		// Id Passport id. On `created` and `duplicate`, and on an `error` whose passport row was written but whose publish failed.
 		Id *int `json:"id,omitempty"`
 
-		// Message Human-readable detail. On `DPP_INVALID_LINE` and `DPP_PUBLISH_FAILED`.
+		// Message Human-readable detail. On every `error` but `DPP_INVALID`.
 		Message         *string `json:"message,omitempty"`
 		ModelIdentifier *string `json:"modelIdentifier,omitempty"`
 
@@ -2207,13 +2495,16 @@ type AsyncTask struct {
 		Url *string `json:"url,omitempty"`
 	} `json:"errors,omitempty"`
 
+	// PacedUntil Present while the task is `pending` because its next rows wait for the credential's bulk pace (`bulkItemsPerMinute` of `GET /me`); the task goes on by itself at that time.
+	PacedUntil *time.Time `json:"pacedUntil,omitempty"`
+
 	// Progress Percent of rows processed. Capped at 99 until the task completes.
 	Progress *int             `json:"progress,omitempty"`
 	Status   *AsyncTaskStatus `json:"status,omitempty"`
 	TaskId   *string          `json:"taskId,omitempty"`
 }
 
-// AsyncTaskErrorsError On `error` only: `DPP_INVALID_LINE` (the line is not a JSON object), `DPP_INVALID` (the passport failed validation, see `fields`) or `DPP_PUBLISH_FAILED` (the passport row was kept unpublished; resubmit the same row to resume it).
+// AsyncTaskErrorsError On `error` only: `DPP_INVALID_LINE` (the line is not a JSON object), `DPP_GRANULARITY_INVALID` (the row names a granularity the workspace does not issue), `DPP_INVALID` (the passport failed validation, see `fields`), `DPP_PROPERTY_TYPES_REFUSED` or `DPP_KEYS_REFUSED` (the row's `propertyTypeIds` name types that do not exist or are no list, see `fields`), `DPP_SAVE_FAILED` (the database did not take the row; resubmit it, and a passport it saved is resumed), `DPP_PUBLISH_FAILED` (the passport row was kept unpublished; resubmit the same row to resume it), `DPP_PUBLISH_FORBIDDEN` (the caller may not publish passports), `DPP_PUBLISH_VALIDATION_BLOCKED` (the validator refuses to sign the passport), `DPP_PUBLISH_PRECONDITION` (the workspace lacks a signing key or has registered its own public key for only one curve), `DPP_LIMIT_REACHED` (the workspace has published as many passports as its plan includes), `DPP_PUBLISHING_PAUSED` (the workspace's plan is unpaid; the message names the cause) or `DPP_FORBIDDEN` (the natural key names an unpublished passport the caller does not write, which stays as it is). On the five refusals the passport row is kept unpublished as well, and a resubmitted row meets the same refusal until the right, the product, the keys or the plan are fixed.
 type AsyncTaskErrorsError string
 
 // AsyncTaskErrorsStatus defines model for AsyncTask.Errors.Status.
@@ -2245,7 +2536,7 @@ type Brand struct {
 // BrandInput Example: {"brand":{"name":"Natura Care"}}
 type BrandInput struct {
 	Brand struct {
-		// Name The brand name, harmonised the way the application manager does it
+		// Name The brand name, harmonised the way the Application Manager does it
 		Name string `json:"name"`
 	} `json:"brand"`
 }
@@ -2259,10 +2550,10 @@ type BulkRow struct {
 	// Code The public passport code printed on QR codes. Present alongside `id`.
 	Code *string `json:"code,omitempty"`
 
-	// Error On `error` only: `DPP_INVALID_LINE` (the line is not a JSON object), `DPP_INVALID` (the passport failed validation, see `fields`) or `DPP_PUBLISH_FAILED` (the passport row was kept unpublished; resubmit the same row to resume it).
+	// Error On `error` only: `DPP_INVALID_LINE` (the line is not a JSON object), `DPP_GRANULARITY_INVALID` (the row names a granularity the workspace does not issue), `DPP_INVALID` (the passport failed validation, see `fields`), `DPP_PROPERTY_TYPES_REFUSED` or `DPP_KEYS_REFUSED` (the row's `propertyTypeIds` name types that do not exist or are no list, see `fields`), `DPP_SAVE_FAILED` (the database did not take the row; resubmit it, and a passport it saved is resumed), `DPP_PUBLISH_FAILED` (the passport row was kept unpublished; resubmit the same row to resume it), `DPP_PUBLISH_FORBIDDEN` (the caller may not publish passports), `DPP_PUBLISH_VALIDATION_BLOCKED` (the validator refuses to sign the passport), `DPP_PUBLISH_PRECONDITION` (the workspace lacks a signing key or has registered its own public key for only one curve), `DPP_LIMIT_REACHED` (the workspace has published as many passports as its plan includes), `DPP_PUBLISHING_PAUSED` (the workspace's plan is unpaid; the message names the cause) or `DPP_FORBIDDEN` (the natural key names an unpublished passport the caller does not write, which stays as it is). On the five refusals the passport row is kept unpublished as well, and a resubmitted row meets the same refusal until the right, the product, the keys or the plan are fixed.
 	Error *BulkRowError `json:"error,omitempty"`
 
-	// Fields On `DPP_INVALID`: the failing attribute names mapped to their error. A row naming a new lot of a product that fails another required readiness check answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, and the rest of the run goes on.
+	// Fields On `DPP_INVALID`: the failing attribute names mapped to their error. A row naming a new lot of a product that fails another required readiness check answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, and a row naming a product with variants `DPP_UNLOCKABLE_ID_HAS_VARIANTS` on `unlockableId`; the rest of the run goes on.
 	Fields *map[string]struct {
 		Error       *string `json:"error,omitempty"`
 		FullMessage *string `json:"fullMessage,omitempty"`
@@ -2272,7 +2563,7 @@ type BulkRow struct {
 	// Id Passport id. On `created` and `duplicate`, and on an `error` whose passport row was written but whose publish failed.
 	Id *int `json:"id,omitempty"`
 
-	// Message Human-readable detail. On `DPP_INVALID_LINE` and `DPP_PUBLISH_FAILED`.
+	// Message Human-readable detail. On every `error` but `DPP_INVALID`.
 	Message          *string       `json:"message,omitempty"`
 	ModelIdentifier  *string       `json:"modelIdentifier,omitempty"`
 	SerialIdentifier *string       `json:"serialIdentifier,omitempty"`
@@ -2282,7 +2573,7 @@ type BulkRow struct {
 	Url *string `json:"url,omitempty"`
 }
 
-// BulkRowError On `error` only: `DPP_INVALID_LINE` (the line is not a JSON object), `DPP_INVALID` (the passport failed validation, see `fields`) or `DPP_PUBLISH_FAILED` (the passport row was kept unpublished; resubmit the same row to resume it).
+// BulkRowError On `error` only: `DPP_INVALID_LINE` (the line is not a JSON object), `DPP_GRANULARITY_INVALID` (the row names a granularity the workspace does not issue), `DPP_INVALID` (the passport failed validation, see `fields`), `DPP_PROPERTY_TYPES_REFUSED` or `DPP_KEYS_REFUSED` (the row's `propertyTypeIds` name types that do not exist or are no list, see `fields`), `DPP_SAVE_FAILED` (the database did not take the row; resubmit it, and a passport it saved is resumed), `DPP_PUBLISH_FAILED` (the passport row was kept unpublished; resubmit the same row to resume it), `DPP_PUBLISH_FORBIDDEN` (the caller may not publish passports), `DPP_PUBLISH_VALIDATION_BLOCKED` (the validator refuses to sign the passport), `DPP_PUBLISH_PRECONDITION` (the workspace lacks a signing key or has registered its own public key for only one curve), `DPP_LIMIT_REACHED` (the workspace has published as many passports as its plan includes), `DPP_PUBLISHING_PAUSED` (the workspace's plan is unpaid; the message names the cause) or `DPP_FORBIDDEN` (the natural key names an unpublished passport the caller does not write, which stays as it is). On the five refusals the passport row is kept unpublished as well, and a resubmitted row meets the same refusal until the right, the product, the keys or the plan are fixed.
 type BulkRowError string
 
 // BulkRowStatus defines model for BulkRow.Status.
@@ -2297,7 +2588,7 @@ type BulkValidateRow struct {
 	// Code On `duplicate`: the public passport code printed on QR codes.
 	Code *string `json:"code,omitempty"`
 
-	// Error On `error` only: the line is not a JSON object.
+	// Error On `error` only: `DPP_INVALID_LINE` (the line is not a JSON object) or `DPP_FORBIDDEN` (the natural key names an unpublished passport the caller does not write).
 	Error *BulkValidateRowError `json:"error,omitempty"`
 
 	// Fields On `valid` and `invalid`: the model errors of the row, one entry per attribute, empty on `valid`.
@@ -2326,11 +2617,11 @@ type BulkValidateRow struct {
 
 	// Validation The rules a publish of the passport as it stands would apply, split by severity. A `must` failure blocks the publish; a `should` failure is recorded as a warning and lets it through. Two empty arrays mean the passport publishes cleanly.
 	//
-	// Example: {"must":[{"constraint":"min_count","field":"Issuer name","message":"issuer.name requires at least 1 value(s), got 0","path":"issuer.name"}],"should":[],"validatorVersion":"shacl-v2"}
+	// Example: {"must":[{"constraint":"min_count","field":"Issuer name","message":"issuer.name requires at least 1 value(s), got 0","path":"issuer.name"}],"should":[],"validatorVersion":"shacl-v3"}
 	Validation *DppValidationReport `json:"validation,omitempty"`
 }
 
-// BulkValidateRowError On `error` only: the line is not a JSON object.
+// BulkValidateRowError On `error` only: `DPP_INVALID_LINE` (the line is not a JSON object) or `DPP_FORBIDDEN` (the natural key names an unpublished passport the caller does not write).
 type BulkValidateRowError string
 
 // BulkValidateRowStatus defines model for BulkValidateRow.Status.
@@ -2503,7 +2794,7 @@ type ComponentDetail struct {
 	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
 }
 
-// ComponentInput A component write. `component` carries the attributes; `properties` and `templateIds` ride beside it in the shape the application manager's form sends and are applied after the component is saved.
+// ComponentInput A component write. `component` carries the attributes; `properties` and `templateIds` ride beside it in the shape the Application Manager's form sends and are applied after the component is saved.
 //
 // Example: {"component":{"mpn":"SB-RAW-25KG","name":"Shea Butter"},"properties":{"existing":{"14":{"811":{"value":"ES"}}},"new":{"12":[{"value":"Emollient"}]}},"templateIds":["507"]}
 type ComponentInput struct {
@@ -2515,7 +2806,7 @@ type ComponentInput struct {
 		Name *string `json:"name,omitempty"`
 	} `json:"component,omitempty"`
 
-	// Properties Property changes keyed by property type id. Values are matched against existing properties of that type, so two components naming the same value share one property.
+	// Properties Property changes keyed by property type id. Values are matched against existing properties of that type, so two components naming the same value share one property. A link type takes several values, each a web address or `file:<id>` naming a file of the workspace by the id `POST /mediafiles` answered; the file joins the component's Files as the write saves and stays listed while a field names it, and an id naming no file of the library, one held for review, or a protected file the caller did not upload, refuses the whole write with 422 `FILE_REFERENCE_UNKNOWN`; a file the field names already stays.
 	Properties *struct {
 		// Existing Properties to change, per property type id, keyed by property id. A property this half does not name is left as it is; one it names with an empty value is removed. Both ids come from `GET /components/{id}`, which names the type id on each group and an id on each value. This half is keyed by ids where `new` carries a plain list, so the two are not interchangeable; `new` adds a value beside the ones already there rather than replacing one.
 		Existing *map[string]map[string]struct {
@@ -2610,13 +2901,15 @@ type Config struct {
 // Example: {"authority":false,"bulkItemsPerMinute":5000,"expiresAt":null,"inactiveAccessGroups":[],"key":"3f6a9c2e-8d1b-4f7e-9a3c-5b2d8e1f4a7c","name":"ERP integration","permissions":["product_access","dpp_read","dpp_write"],"rateLimit":{"limit":1000,"used":12,"windowStartedAt":"2026-09-08T14:10:00Z"},"resourceScope":{},"scope":["dpp_read","dpp_write"],"status":"active","tokenExpiresAt":"2026-09-08T15:04:05Z","workspace":{"host":"acme.transpareo.com","name":"Acme Outdoor","publishesOnCreate":true}}
 type ConsumerIdentity struct {
 	// Authority True for a regulator consumer issued by the platform
-	Authority          *bool `json:"authority,omitempty"`
-	BulkItemsPerMinute *int  `json:"bulkItemsPerMinute,omitempty"`
+	Authority *bool `json:"authority,omitempty"`
+
+	// BulkItemsPerMinute The bulk pace, in rows per minute, at which the background work of all of the credential's bulk calls and imports is written. Background work waits for it; a synchronous `POST /dpps/bulk` past it answers 429 with `Retry-After`. 0 or null for none.
+	BulkItemsPerMinute *int `json:"bulkItemsPerMinute,omitempty"`
 
 	// ExpiresAt The consumer's own expiry
 	ExpiresAt *time.Time `json:"expiresAt,omitempty"`
 
-	// InactiveAccessGroups The names of the switched-off access groups the consumer is a member of. They grant nothing until they are switched on in the application manager, so this says why `scope` is empty where it is.
+	// InactiveAccessGroups The names of the switched-off access groups the consumer is a member of. They grant nothing until they are switched on in the Application Manager, so this says why `scope` is empty where it is.
 	InactiveAccessGroups *[]string `json:"inactiveAccessGroups,omitempty"`
 
 	// Key The consumer's key (the OAuth client id)
@@ -2696,7 +2989,7 @@ type Currency struct {
 //
 // Example: {"code":"A1B2C3D4E","counter":142,"createdAt":"2026-02-01T12:00:00Z","description":"Hydrating Face Cream 50ml","id":14,"locale":"de","type":"Dpp","unlockable":{"id":11,"name":"Hydrating Face Cream","type":"Product"},"updatedAt":"2026-02-03T08:30:00Z","url":"https://example.com/A1B2C3D4E"}
 type Dpp struct {
-	// AutoIssued Whether the workspace issued the passport by itself above its unit passports, a model passport answering the GTIN or a lot passport of an item workspace. Such a passport is included in the plan, is never submitted to the EU registry, and is left out of the passport list's default view. Always present.
+	// AutoIssued Whether the workspace issued the passport by itself above its unit passports, a model passport of the product or a lot passport of an item workspace. A workspace issues no such passport today, and no GS1 Digital Link leads to one; one issued earlier stays signed and readable by its code. Such a passport is included in the plan, is never submitted to the EU registry, and is listed only when the passport list asks for the auto-issued passports. Always present.
 	AutoIssued *bool `json:"autoIssued,omitempty"`
 
 	// BatchIdentifier Only present when set. Carried at batch and item granularity.
@@ -2719,6 +3012,22 @@ type Dpp struct {
 
 	// DppProperties Public product properties grouped for display (only present when configured)
 	DppProperties *[]map[string]interface{} `json:"dppProperties,omitempty"`
+
+	// Epc The EPC a UHF RFID tag of the unit carries, in the GS1 EPC Tag Data Standard. Only present on a passport with a serial of up to 20 characters of the GS1 serial character set, whose GTIN starts with one of the workspace's GS1 company prefixes. The URN opens the passport at `/epc/{urn}` on the passport host.
+	Epc *struct {
+		// Hex The binary encoding an RFID encoder writes to the tag's EPC memory, in hex, with filter value 1 (point-of-sale trade item), padded to whole 16-bit words.
+		//
+		// Example: 3034F4E4E4424C80000003E9
+		Hex *string `json:"hex,omitempty"`
+
+		// Scheme `SGTIN-96` for a serial of digits without a leading zero below 2^38, `SGTIN-198` for any other serial.
+		Scheme *DppEpcScheme `json:"scheme,omitempty"`
+
+		// Urn The pure-identity URN, `urn:epc:id:sgtin:{company prefix}.{indicator and item reference}.{serial}`.
+		//
+		// Example: urn:epc:id:sgtin:4012345.067890.1001
+		Urn *string `json:"urn,omitempty"`
+	} `json:"epc,omitempty"`
 
 	// Granularity Which unit the passport stands for
 	Granularity *DppGranularity `json:"granularity,omitempty"`
@@ -2782,7 +3091,7 @@ type Dpp struct {
 
 	// Validation The rules a publish of the passport as it stands would apply, split by severity. A `must` failure blocks the publish; a `should` failure is recorded as a warning and lets it through. Two empty arrays mean the passport publishes cleanly.
 	//
-	// Example: {"must":[{"constraint":"min_count","field":"Issuer name","message":"issuer.name requires at least 1 value(s), got 0","path":"issuer.name"}],"should":[],"validatorVersion":"shacl-v2"}
+	// Example: {"must":[{"constraint":"min_count","field":"Issuer name","message":"issuer.name requires at least 1 value(s), got 0","path":"issuer.name"}],"should":[],"validatorVersion":"shacl-v3"}
 	Validation *DppValidationReport `json:"validation,omitempty"`
 
 	// VoidedAt When the passport was voided. Only present on a voided passport.
@@ -2791,6 +3100,9 @@ type Dpp struct {
 	// VoidedReason Why the passport was voided. Only present on a voided passport.
 	VoidedReason *string `json:"voidedReason,omitempty"`
 }
+
+// DppEpcScheme `SGTIN-96` for a serial of digits without a leading zero below 2^38, `SGTIN-198` for any other serial.
+type DppEpcScheme string
 
 // DppGranularity Which unit the passport stands for
 type DppGranularity string
@@ -2818,7 +3130,7 @@ type DppBulkRowInput struct {
 	Locale          *string `json:"locale,omitempty"`
 	ModelIdentifier *string `json:"modelIdentifier,omitempty"`
 
-	// PropertyTypeIds The product property types the passport carries, by id, as on the single create. A row naming one that does not exist comes back as `error` with `DPP_PROPERTY_TYPES_REFUSED`.
+	// PropertyTypeIds The product property types the passport carries, by id, as on the single create. A row naming one that does not exist comes back as `error` with `DPP_PROPERTY_TYPES_REFUSED`, one sending the selection as no list with `DPP_KEYS_REFUSED`; a selection in `shared` reaches every row it merges into, and each answers for itself.
 	PropertyTypeIds  *[]string `json:"propertyTypeIds,omitempty"`
 	SerialIdentifier *string   `json:"serialIdentifier,omitempty"`
 
@@ -2835,7 +3147,7 @@ type DppBulkRowInputUnlockableType string
 
 // DppEvent One entry of a passport's event log. Versioned types ride a registered DppVersion and carry `dppVersionNumber`; local types are recorded in the passport's own log and carry none.
 //
-// Example: {"actorLabel":"Workshop Meier","actorType":"ApiConsumer","data":{"workshopId":"DE-4711"},"description":"Annual safety inspection passed","dppVersionNumber":3,"eventType":"inspection","occurredAt":"2026-09-08T09:12:44Z"}
+// Example: {"actorLabel":"Workshop Meier","actorType":"ApiConsumer","data":{"workshopId":"DE-4711"},"description":"Annual safety inspection passed","descriptionLocale":"en","dppVersionNumber":3,"eventType":"inspection","occurredAt":"2026-09-08T09:12:44Z"}
 type DppEvent struct {
 	// ActorLabel Denormalised actor name, kept readable after the actor row is gone
 	ActorLabel *string `json:"actorLabel,omitempty"`
@@ -2844,8 +3156,13 @@ type DppEvent struct {
 	ActorType *DppEventActorType `json:"actorType,omitempty"`
 
 	// Data Free-form metadata the caller attached to the event
-	Data        *map[string]interface{} `json:"data,omitempty"`
-	Description *string                 `json:"description,omitempty"`
+	Data *map[string]interface{} `json:"data,omitempty"`
+
+	// Description The note as it was written, in `descriptionLocale`. A note on a passport event (a versioned type) appears on the public passport in every language, translated from this one; a local type's note stays internal.
+	Description *string `json:"description,omitempty"`
+
+	// DescriptionLocale The language the note is written in. Absent when there is no note, on the failure codes of a registry submission, and on notes recorded before notes carried a language.
+	DescriptionLocale *string `json:"descriptionLocale,omitempty"`
 
 	// DppVersionNumber The version this event was sealed into. Absent on a local event and on a pending draft.
 	DppVersionNumber *int `json:"dppVersionNumber,omitempty"`
@@ -2869,26 +3186,31 @@ type DppEventEventType string
 
 // DppEventInput The event to append. `eventType` decides the branch - `status_change` drives a status transition and requires `status`; every other type records a plain event. The versioned types are not accepted here, they ride their own operations.
 //
-// Example: {"data":{"workshopId":"DE-4711"},"description":"Annual safety inspection passed","eventType":"inspection","gln":"4012345000009","publish":true}
+// Example: {"data":{"workshopId":"DE-4711"},"description":"Annual safety inspection passed","descriptionLocale":"en","eventType":"inspection","gln":"4012345000009","publish":true}
 type DppEventInput struct {
 	// Data Free-form metadata carried onto the event
-	Data        *map[string]interface{} `json:"data,omitempty"`
-	Description *string                 `json:"description,omitempty"`
+	Data *map[string]interface{} `json:"data,omitempty"`
 
-	// EventType `status_change` drives the transition and is recorded as an event of type `lifecycle_transition`; every other value is recorded verbatim. `recall` records an authority-only note and moves the passport nowhere - recalling a unit is a `status_change` to `suspended`. A versioned type answers 422 `EVENT_TYPE_NOT_ALLOWED` - those ride the void / supersede / reissue / publish operations instead.
+	// Description The note on the event. On a `status_change` it is a note on a passport event, which appears on the public passport in every language and cannot be changed or removed once saved, so it must contain no personal data (names, email addresses, phone numbers). The other types here are local events, whose note stays internal.
+	Description *string `json:"description,omitempty"`
+
+	// DescriptionLocale The language `description` is written in, one of the workspace's working languages such as `de`; another answers 422 `DESCRIPTION_LOCALE_INVALID`. Leave it out to take the language of the request.
+	DescriptionLocale *string `json:"descriptionLocale,omitempty"`
+
+	// EventType `status_change` drives the transition and is recorded as an event of type `lifecycle_transition`; every other value is recorded verbatim. `recall` records an authority-only note and moves the passport nowhere - recalling a unit is a `status_change` to `suspended`. A versioned type answers 422 `EVENT_TYPE_NOT_ALLOWED` - those ride the void / supersede / reissue / publish operations instead - and so do `registered_with_eu`, `validation_warning` and `registry_submission_failed`, which the workspace records itself.
 	EventType DppEventInputEventType `json:"eventType"`
 
 	// Gln GS1 Global Location Number of the place the event happened. Falls back to the calling consumer's GLN, then to the workspace GLN.
 	Gln *string `json:"gln,omitempty"`
 
-	// Publish Seals the event into the Vault (and, for a status change, into a new registered version) instead of leaving it as a pending draft. Honours the publish-debounce window.
+	// Publish Seals the event instead of leaving it as a pending draft; a status change is sealed into a new registered version, and on a paid plan any other event is also written to the Vault. Honours the publish-debounce window.
 	Publish *bool `json:"publish,omitempty"`
 
 	// Status The status to move to. Required on `status_change`, ignored otherwise. `suspended` is the recall and regulatory-hold status: a unit that is still in the field and must stop being used is moved there, and its passport stays readable so whoever scans the code learns of the recall. Voiding is for a unit that no longer exists.
 	Status *DppEventInputStatus `json:"status,omitempty"`
 }
 
-// DppEventInputEventType `status_change` drives the transition and is recorded as an event of type `lifecycle_transition`; every other value is recorded verbatim. `recall` records an authority-only note and moves the passport nowhere - recalling a unit is a `status_change` to `suspended`. A versioned type answers 422 `EVENT_TYPE_NOT_ALLOWED` - those ride the void / supersede / reissue / publish operations instead.
+// DppEventInputEventType `status_change` drives the transition and is recorded as an event of type `lifecycle_transition`; every other value is recorded verbatim. `recall` records an authority-only note and moves the passport nowhere - recalling a unit is a `status_change` to `suspended`. A versioned type answers 422 `EVENT_TYPE_NOT_ALLOWED` - those ride the void / supersede / reissue / publish operations instead - and so do `registered_with_eu`, `validation_warning` and `registry_submission_failed`, which the workspace records itself.
 type DppEventInputEventType string
 
 // DppEventInputStatus The status to move to. Required on `status_change`, ignored otherwise. `suspended` is the recall and regulatory-hold status: a unit that is still in the field and must stop being used is moved there, and its passport stays readable so whoever scans the code learns of the recall. Voiding is for a unit that no longer exists.
@@ -2910,13 +3232,13 @@ type DppInput struct {
 	// ModelIdentifier Falls back to what the product supplies - its GTIN, else its manufacturer part number
 	ModelIdentifier *string `json:"modelIdentifier,omitempty"`
 
-	// PropertyTypeIds The product property types the passport carries, by id; left out or empty, it carries every one. `GET /dpps/requirements` lists a product's under `inheritedProperties`. An id naming no product property type refuses the write with 422 `DPP_PROPERTY_TYPES_REFUSED`.
+	// PropertyTypeIds The product property types the passport carries, by id; left out or empty, it carries every one. `GET /dpps/requirements` lists a product's under `inheritedProperties`. An id naming no product property type refuses the write with 422 `DPP_PROPERTY_TYPES_REFUSED`; a selection sent as no list, a single id among them, with 422 `DPP_KEYS_REFUSED`, `fields.propertyTypeIds.error` `DPP_KEY_LIST_REQUIRED`.
 	PropertyTypeIds *[]string `json:"propertyTypeIds,omitempty"`
 
 	// SerialIdentifier Required at item granularity
 	SerialIdentifier *string `json:"serialIdentifier,omitempty"`
 
-	// UnlockableId The id of the product this passport is for, as `list_products` and `get_product` answer it
+	// UnlockableId The id of the product this passport is for, as `list_products` and `get_product` answer it. A product with variants gets no passport of its own (`DPP_UNLOCKABLE_ID_HAS_VARIANTS`); name one of its variants that has no variants itself.
 	UnlockableId int `json:"unlockableId"`
 
 	// UnlockableType What the passport stands for. Only `Product` is issued one, which is the default.
@@ -2984,10 +3306,13 @@ type DppRequirements struct {
 		Values         *[]string `json:"values,omitempty"`
 	} `json:"inheritedProperties,omitempty"`
 
-	// Missing What the product still lacks, one entry per open check, required ones first, in a shape a workflow loops over. An entry stays under the same `check` while it is open and leaves the list once its answer is stored.
+	// Missing What the product still lacks, one entry per open check, required ones first, in a shape a workflow loops over. An entry stays under the same `check` while it is open and leaves the list once its answer is stored. A product with variants answers one entry alone, `dpp.unlockable_id` with `error` `DPP_UNLOCKABLE_ID_HAS_VARIANTS` and `target` `variants`, whose `productIds` take its passports.
 	Missing *[]struct {
 		// Check The name of the check, the same on every call while it stays open, such as `modelIdentifier`, `propertiesInput.804` or a validator rule
 		Check *string `json:"check,omitempty"`
+
+		// Error The field code a create of this passport answers, where the entry stands for a refusal of the create, such as `DPP_UNLOCKABLE_ID_HAS_VARIANTS`
+		Error *string `json:"error,omitempty"`
 
 		// Fields The body keys of the write `operation` names that answer it, any one of them. For `update_product` they are keys of `product`, except `brand`, the object beside it; `propertiesInput` takes the value keyed by `propertyTypeId`. For `update_product_mediafiles` the key is `mediafileIds`, the files `POST /mediafiles` stored. A batch or item passport may name its own `modelIdentifier` in place of the product's GTIN or MPN. Empty where no write answers it, such as a parent the product names that no longer exists.
 		Fields *[]string `json:"fields,omitempty"`
@@ -2995,7 +3320,7 @@ type DppRequirements struct {
 		// Granularity The granularity that asks for it, where a granularity does (the model identifier of a batch or item passport)
 		Granularity *string `json:"granularity,omitempty"`
 
-		// Message The validator's own message
+		// Message The validator's own message, or the create's where `error` names its code
 		Message *string `json:"message,omitempty"`
 
 		// Name What is missing, in the reader's language
@@ -3007,6 +3332,9 @@ type DppRequirements struct {
 		// Operation The operation that takes `fields`, by its operationId, which is also the name of the assistant's tool for it. Present where `target` is `product` and `fields` names a key.
 		Operation *DppRequirementsMissingOperation `json:"operation,omitempty"`
 
+		// ProductIds Where `target` is `variants`, the products at the ends of the family, the variants that have no variants themselves, by id in ascending order. Each takes its own passport; ask the requirements of each.
+		ProductIds *[]int `json:"productIds,omitempty"`
+
 		// PropertyTypeId The property type whose value is missing
 		PropertyTypeId *int `json:"propertyTypeId,omitempty"`
 
@@ -3016,7 +3344,7 @@ type DppRequirements struct {
 		// Rule The validator rule that failed, `<shape>.<path>`
 		Rule *string `json:"rule,omitempty"`
 
-		// Target Where the answer is sent. `product` is a write of the product, which `operation` names, and `fields` names the field; `workspace` is a setting or a property type the workspace adds in the application manager first, which no product write answers. A workspace without product images answers the pictures there too.
+		// Target Where the answer is sent. `product` is a write of the product, which `operation` names, and `fields` names the field; `workspace` is a setting or a property type the workspace adds in the Application Manager first, which no product write answers. A workspace without product images answers the pictures there too. `variants` is a product with variants, which gets no passport of its own; its passports go to the products `productIds` names.
 		Target *DppRequirementsMissingTarget `json:"target,omitempty"`
 	} `json:"missing,omitempty"`
 
@@ -3037,7 +3365,7 @@ type DppRequirements struct {
 		Name            *string `json:"name,omitempty"`
 	} `json:"product,omitempty"`
 
-	// Ready Whether a passport of this product at `granularity` is written and published as the product stands, read off the same check a new lot is refused by (`DPP_BATCH_PRODUCT_NOT_READY`). True when `missing` holds no required entry. The lot a batch or item passport names is no entry, since the create brings it.
+	// Ready Whether a passport of this product at `granularity` is written and published as the product stands, read off the same check a new lot is refused by (`DPP_BATCH_PRODUCT_NOT_READY`). True when `missing` holds no required entry. The lot a batch or item passport names is no entry, since the create brings it. Never true for a product with variants, which gets no passport of its own.
 	Ready *bool `json:"ready,omitempty"`
 
 	// Templates Bodies ready to fill, with the blanks the caller supplies left empty
@@ -3064,14 +3392,14 @@ type DppRequirementsIdentifiersModelIdentifierSource string
 // DppRequirementsMissingOperation The operation that takes `fields`, by its operationId, which is also the name of the assistant's tool for it. Present where `target` is `product` and `fields` names a key.
 type DppRequirementsMissingOperation string
 
-// DppRequirementsMissingTarget Where the answer is sent. `product` is a write of the product, which `operation` names, and `fields` names the field; `workspace` is a setting or a property type the workspace adds in the application manager first, which no product write answers. A workspace without product images answers the pictures there too.
+// DppRequirementsMissingTarget Where the answer is sent. `product` is a write of the product, which `operation` names, and `fields` names the field; `workspace` is a setting or a property type the workspace adds in the Application Manager first, which no product write answers. A workspace without product images answers the pictures there too. `variants` is a product with variants, which gets no passport of its own; its passports go to the products `productIds` names.
 type DppRequirementsMissingTarget string
 
 // DppValidationFailure One rule the passport does not satisfy, as the validator recorded it.
 //
 // Example: {"constraint":"min_count","field":"Issuer name","message":"issuer.name requires at least 1 value(s), got 0","path":"issuer.name"}
 type DppValidationFailure struct {
-	// Constraint The rule that failed. A snapshot rule reports its constraint - `min_count`, `max_count`, `min_length`, `max_length`, `pattern`, `in`, `has_value` or `datatype`. A rule the linked product itself failed reports the model error name instead, for example `invalid` or `blank`.
+	// Constraint The rule that failed. A snapshot rule reports its constraint - `min_count`, `max_count`, `min_length`, `max_length`, `pattern`, `in`, `has_value` or `datatype`. A battery passport's rule on the form the EU registry takes reports `public` (the value is held behind an access tier), `unit` (its property type uses another unit) or `format` (the value cannot take that form), and `eu_format` where the document for the EU registry could not be built from it. The passport's address reports `UPI_NOT_HTTPS`, `UPI_HOST_UNANSWERED` or `UPI_PRODUCT_MOVED`. A rule the linked product itself failed reports the model error name instead, for example `invalid` or `blank`.
 	Constraint *string `json:"constraint,omitempty"`
 
 	// Field The label a person sees for that path, in the tenant's language
@@ -3086,7 +3414,7 @@ type DppValidationFailure struct {
 
 // DppValidationOutcome The answer of the dry run behind `POST /dpps/validate`: whether the payload would be accepted, the model errors it carries, and the report a publish would produce. Nothing is written either way, so `valid: false` is the normal answer for an unacceptable payload rather than a failed request.
 //
-// Example: {"fields":{},"publishBlocked":true,"valid":false,"validation":{"must":[{"constraint":"min_count","field":"Issuer name","message":"issuer.name requires at least 1 value(s), got 0","path":"issuer.name"}],"should":[],"validatorVersion":"shacl-v2"}}
+// Example: {"fields":{},"publishBlocked":true,"valid":false,"validation":{"must":[{"constraint":"min_count","field":"Issuer name","message":"issuer.name requires at least 1 value(s), got 0","path":"issuer.name"}],"should":[],"validatorVersion":"shacl-v3"}}
 type DppValidationOutcome struct {
 	// Fields The model errors of the payload, one entry per attribute, empty when there are none. Same shape as the `fields` of a 422.
 	Fields *map[string]struct {
@@ -3103,13 +3431,13 @@ type DppValidationOutcome struct {
 
 	// Validation The rules a publish of the passport as it stands would apply, split by severity. A `must` failure blocks the publish; a `should` failure is recorded as a warning and lets it through. Two empty arrays mean the passport publishes cleanly.
 	//
-	// Example: {"must":[{"constraint":"min_count","field":"Issuer name","message":"issuer.name requires at least 1 value(s), got 0","path":"issuer.name"}],"should":[],"validatorVersion":"shacl-v2"}
+	// Example: {"must":[{"constraint":"min_count","field":"Issuer name","message":"issuer.name requires at least 1 value(s), got 0","path":"issuer.name"}],"should":[],"validatorVersion":"shacl-v3"}
 	Validation *DppValidationReport `json:"validation,omitempty"`
 }
 
 // DppValidationReport The rules a publish of the passport as it stands would apply, split by severity. A `must` failure blocks the publish; a `should` failure is recorded as a warning and lets it through. Two empty arrays mean the passport publishes cleanly.
 //
-// Example: {"must":[{"constraint":"min_count","field":"Issuer name","message":"issuer.name requires at least 1 value(s), got 0","path":"issuer.name"}],"should":[],"validatorVersion":"shacl-v2"}
+// Example: {"must":[{"constraint":"min_count","field":"Issuer name","message":"issuer.name requires at least 1 value(s), got 0","path":"issuer.name"}],"should":[],"validatorVersion":"shacl-v3"}
 type DppValidationReport struct {
 	// Must Failures that block a publish
 	Must *[]DppValidationFailure `json:"must,omitempty"`
@@ -3119,7 +3447,7 @@ type DppValidationReport struct {
 
 	// ValidatorVersion The rule set that produced this report
 	//
-	// Example: shacl-v2
+	// Example: shacl-v3
 	ValidatorVersion *string `json:"validatorVersion,omitempty"`
 }
 
@@ -3157,7 +3485,7 @@ type DppVersion struct {
 
 // DppVersionSnapshot One published version of a passport, with the signed JSON-LD document as it was served, the hash it was signed over and the address it is kept at.
 //
-// Example: {"code":"A1B2C3D4E","hashValue":"9f2b1c4e8a7d6035b1e2c9f04a8d7e6152b3c4d5e6f708192a3b4c5d6e7f8091","publishedAt":"2026-09-08T09:12:44Z","snapshot":{"@context":["https://transpareo.com/vocab/vc/v1","https://transpareo.com/vocab/transpareo/v1"],"@id":"https://example.com/dpp/A1B2C3D4E#credential","issuer":"did:web:nordic-wear.002.fsn.transpareo.com","type":["VerifiableCredential","dpp:DigitalProductPassport"]},"url":"https://cdn.example.com/nordic-wear/dpp/A1B2C3D4E/v/3-1a2b3c4d5e6f.json","version":3}
+// Example: {"code":"A1B2C3D4E","hashValue":"9f2b1c4e8a7d6035b1e2c9f04a8d7e6152b3c4d5e6f708192a3b4c5d6e7f8091","publishedAt":"2026-09-08T09:12:44Z","snapshot":{"@context":["https://www.w3.org/ns/credentials/v2","https://transpareo.com/vocab/vc/v2","https://transpareo.com/vocab/transpareo/v2"],"@id":"https://example.com/dpp/A1B2C3D4E#credential","issuer":"did:web:nordic-wear.002.fsn.transpareo.com","type":["VerifiableCredential","dpp:DigitalProductPassport"]},"url":"https://cdn.example.com/nordic-wear/dpp/A1B2C3D4E/v/3-1a2b3c4d5e6f.json","version":3}
 type DppVersionSnapshot struct {
 	// Code The public code of the passport the version belongs to
 	Code *string `json:"code,omitempty"`
@@ -3242,7 +3570,7 @@ type Error struct {
 
 // EventFeed One page of the workspace-wide event feed. Each entry is a `DppEvent` with the id that serves as cursor and the passport it belongs to.
 //
-// Example: {"events":[{"dppCode":"A1B2C3D4E","dppId":4711,"dppVersionNumber":3,"eventType":"published","id":"68bea2f8a3c1d40011e5f0b2","occurredAt":"2026-09-08T09:12:44Z"},{"actorLabel":"Workshop Meier","actorType":"ApiConsumer","description":"Annual safety inspection passed","dppCode":"F6G7H8J9K","dppId":4712,"eventType":"inspection","id":"68bea31ca3c1d40011e5f0b9","occurredAt":"2026-09-08T09:13:20Z"}],"nextCursor":"68bea31ca3c1d40011e5f0b9"}
+// Example: {"events":[{"dppCode":"A1B2C3D4E","dppId":4711,"dppVersionNumber":3,"eventType":"published","id":"68bea2f8a3c1d40011e5f0b2","occurredAt":"2026-09-08T09:12:44Z"},{"actorLabel":"Workshop Meier","actorType":"ApiConsumer","description":"Annual safety inspection passed","descriptionLocale":"en","dppCode":"F6G7H8J9K","dppId":4712,"eventType":"inspection","id":"68bea31ca3c1d40011e5f0b9","occurredAt":"2026-09-08T09:13:20Z"}],"nextCursor":"68bea31ca3c1d40011e5f0b9"}
 type EventFeed struct {
 	Events []struct {
 		// ActorLabel Denormalised actor name, kept readable after the actor row is gone
@@ -3252,8 +3580,13 @@ type EventFeed struct {
 		ActorType *EventFeedEventsActorType `json:"actorType,omitempty"`
 
 		// Data Free-form metadata the caller attached to the event
-		Data        *map[string]interface{} `json:"data,omitempty"`
-		Description *string                 `json:"description,omitempty"`
+		Data *map[string]interface{} `json:"data,omitempty"`
+
+		// Description The note as it was written, in `descriptionLocale`. A note on a passport event (a versioned type) appears on the public passport in every language, translated from this one; a local type's note stays internal.
+		Description *string `json:"description,omitempty"`
+
+		// DescriptionLocale The language the note is written in. Absent when there is no note, on the failure codes of a registry submission, and on notes recorded before notes carried a language.
+		DescriptionLocale *string `json:"descriptionLocale,omitempty"`
 
 		// DppCode Public code of that passport, absent once the passport row is gone
 		DppCode *string `json:"dppCode,omitempty"`
@@ -3313,7 +3646,7 @@ type Export struct {
 	// Failure Why the export failed. Only on `failed`.
 	Failure *string `json:"failure,omitempty"`
 
-	// Filename The name the export goes by in the application manager and its archive downloads under, given when the export is started
+	// Filename The name the export goes by in the Application Manager and its archive downloads under, given when the export is started
 	Filename     *string       `json:"filename,omitempty"`
 	Format       *ExportFormat `json:"format,omitempty"`
 	Id           int           `json:"id"`
@@ -3346,7 +3679,7 @@ type ExportStatus string
 //
 // Example: {"dataType":"products","includeMedia":true}
 type ExportInput struct {
-	// DataType The records the archive carries, each type its own alone. Payments, users and audit logs are exported from the application manager.
+	// DataType The records the archive carries, each type its own alone. Payments, users and audit logs are exported from the Application Manager.
 	DataType *ExportInputDataType `json:"dataType,omitempty"`
 
 	// Format `jsonld` downloads as one file, `<dataType>-<yyyymmdd-hhmmss>.jsonld`: one self-contained record per passport, product or component in the passport's vocabulary, translated texts as language maps. A variant names its parent in `isVariantOf`; a passport edited since its latest version carries `unpublishedChanges` and no version number. `csv` and `xlsx` write one sheet per language of the workspace, in the columns the spreadsheet import reads back: the one sheet of a workspace in one language as a file of its own, the sheets of several languages as a ZIP holding `<language>/<dataType>.csv` or `.xlsx`. `sql` downloads as one file of CREATE TABLE and INSERT statements in a small generic schema, translated texts in a `translations` table, that load into PostgreSQL, MySQL and SQLite.
@@ -3360,7 +3693,7 @@ type ExportInput struct {
 	Normalize *bool `json:"normalize,omitempty"`
 }
 
-// ExportInputDataType The records the archive carries, each type its own alone. Payments, users and audit logs are exported from the application manager.
+// ExportInputDataType The records the archive carries, each type its own alone. Payments, users and audit logs are exported from the Application Manager.
 type ExportInputDataType string
 
 // ExportInputFormat `jsonld` downloads as one file, `<dataType>-<yyyymmdd-hhmmss>.jsonld`: one self-contained record per passport, product or component in the passport's vocabulary, translated texts as language maps. A variant names its parent in `isVariantOf`; a passport edited since its latest version carries `unpublishedChanges` and no version number. `csv` and `xlsx` write one sheet per language of the workspace, in the columns the spreadsheet import reads back: the one sheet of a workspace in one language as a file of its own, the sheets of several languages as a ZIP holding `<language>/<dataType>.csv` or `.xlsx`. `sql` downloads as one file of CREATE TABLE and INSERT statements in a small generic schema, translated texts in a `translations` table, that load into PostgreSQL, MySQL and SQLite.
@@ -3385,7 +3718,7 @@ type ExportSummary struct {
 	// DownloadUrl Where to fetch the archive. On `completed`.
 	DownloadUrl *string `json:"downloadUrl,omitempty"`
 
-	// Filename The name the export goes by in the application manager and its archive downloads under, given when the export is started
+	// Filename The name the export goes by in the Application Manager and its archive downloads under, given when the export is started
 	Filename *string              `json:"filename,omitempty"`
 	Format   *ExportSummaryFormat `json:"format,omitempty"`
 	Id       int                  `json:"id"`
@@ -3476,7 +3809,7 @@ type GrantInput struct {
 
 // HelpArticle One help article whole: everything a summary carries, plus the body and the articles next to it.
 type HelpArticle struct {
-	// Body The article as Markdown. A `%{site_name}` placeholder is resolved to the workspace's name, and a link into the application manager is rendered as an anchor carrying its address, so a reader can name the page a person should open.
+	// Body The article as Markdown. A `%{site_name}` placeholder is resolved to the workspace's name, and a link into the Application Manager is rendered as an anchor carrying its address, so a reader can name the page a person should open.
 	Body       *string                `json:"body,omitempty"`
 	BodyFormat *HelpArticleBodyFormat `json:"bodyFormat,omitempty"`
 
@@ -3510,8 +3843,7 @@ type HelpArticle struct {
 	ShowToc *bool `json:"showToc,omitempty"`
 
 	// Summary One or two sentences saying what the article covers
-	Summary *string   `json:"summary,omitempty"`
-	Tags    *[]string `json:"tags,omitempty"`
+	Summary *string `json:"summary,omitempty"`
 
 	// Title The heading a person sees, with its placeholders resolved
 	//
@@ -3521,7 +3853,7 @@ type HelpArticle struct {
 	// Type Example: HelpArticle
 	Type *string `json:"type,omitempty"`
 
-	// Url The page a person opens this article at in the application manager
+	// Url The page a person opens this article at in the Application Manager
 	//
 	// Example: https://<host>/admin/help/data_export
 	Url *string `json:"url,omitempty"`
@@ -3553,8 +3885,7 @@ type HelpSummary struct {
 	Locale *string `json:"locale,omitempty"`
 
 	// Summary One or two sentences saying what the article covers
-	Summary *string   `json:"summary,omitempty"`
-	Tags    *[]string `json:"tags,omitempty"`
+	Summary *string `json:"summary,omitempty"`
 
 	// Title The heading a person sees, with its placeholders resolved
 	//
@@ -3564,26 +3895,32 @@ type HelpSummary struct {
 	// Type Example: HelpArticle
 	Type *string `json:"type,omitempty"`
 
-	// Url The page a person opens this article at in the application manager
+	// Url The page a person opens this article at in the Application Manager
 	//
 	// Example: https://<host>/admin/help/data_export
 	Url *string `json:"url,omitempty"`
 }
 
-// Import One import and where it stands. `preview` is present while the import is `fresh`; `progress` while a task runs; `errorGroups` and `rowErrors` once a validation or a run has found problems.
+// Import One import and where it stands. `preview` is present on the upload's answer and on every answer while the import still takes a mapping (`fresh`, `mapped`, `validated`), so `status` says whether a mapping is still needed; `progress` while a task runs; `errorGroups` and `rowErrors` once a validation or a run has found problems.
 //
-// Example: {"createdAt":"2026-09-08T09:12:44Z","createdCount":0,"dataType":"components","errorGroups":[],"failedCount":0,"fileFormat":"xlsx","id":12,"mappings":{"artikelname":{"action":"map_to_attribute","coreAttribute":"name","isSingleValue":true}},"options":{"published":false},"originalFilename":"catalogue.xlsx","revertable":false,"rowErrors":[],"status":"mapped","statusUrl":"https://example.com/api/imports/12","totalEntries":240,"unchangedCount":0,"updatedCount":0}
+// Example: {"contentLocale":"en","createdAt":"2026-09-08T09:12:44Z","createdCount":0,"dataType":"components","detectedLocale":"en","errorGroups":[],"failedCount":0,"fileFormat":"xlsx","filesStoredCount":0,"id":12,"mappings":{"artikelname":{"action":"map_to_attribute","coreAttribute":"name","isSingleValue":true}},"options":{"published":false},"originalFilename":"catalogue.xlsx","rerunnable":false,"revertable":false,"rowErrors":[],"status":"mapped","statusUrl":"https://example.com/api/imports/12","totalEntries":240,"unchangedCount":0,"updatedCount":0}
 type Import struct {
-	CompletedAt  *time.Time     `json:"completedAt,omitempty"`
-	CreatedAt    *time.Time     `json:"createdAt,omitempty"`
-	CreatedCount *int           `json:"createdCount,omitempty"`
-	DataType     ImportDataType `json:"dataType"`
+	CompletedAt *time.Time `json:"completedAt,omitempty"`
+
+	// ContentLocale The language the run writes the file's texts in, as a language code such as `de` or `en`. The upload fills it with the language it recognised, and the caller may name another one on the upload or with the mapping. Absent before the run when nothing was recognised and nothing named; the run then writes in the workspace's default language and fills it in. A passport import writes no texts, so neither the upload nor the run fills it in.
+	ContentLocale *string        `json:"contentLocale,omitempty"`
+	CreatedAt     *time.Time     `json:"createdAt,omitempty"`
+	CreatedCount  *int           `json:"createdCount,omitempty"`
+	DataType      ImportDataType `json:"dataType"`
+
+	// DetectedLocale The language the upload recognised in the file's texts, kept as found when the caller names another one. Absent when the texts did not tell it.
+	DetectedLocale *string `json:"detectedLocale,omitempty"`
 
 	// ErrorGroups The problems the validation or the run found, grouped by cause, each with the count and up to five sample rows
 	ErrorGroups *[]struct {
 		Count *int `json:"count,omitempty"`
 
-		// Key The cause. `column_conflict` and `ambiguous_type` refuse the whole run before any row is written; their samples name the columns and the property type instead of rows. `column_conflict` is two or more columns going to one property type, `ambiguous_type` a column whose name several property types carry.
+		// Key The cause. `column_conflict`, `ambiguous_type`, `file_not_link`, `detail_without_document` and `unknown_document_type` refuse the whole run before any row is written; their samples name the columns and the property type or value instead of rows. `column_conflict` is two or more columns going to one property type, `ambiguous_type` a column whose name several property types carry, `file_not_link` a column with `asFile` on a type that takes no link, `detail_without_document` a document detail describing no column of files, `unknown_document_type` a `documentType` outside the preview's `documentTypes`. `image_failed` and `file_failed` name a picture or a file a row could not bring with it; the record imported all the same.
 		Key     *string `json:"key,omitempty"`
 		Message *string `json:"message,omitempty"`
 		Samples *[]struct {
@@ -3594,22 +3931,28 @@ type Import struct {
 	} `json:"errorGroups,omitempty"`
 	FailedCount *int              `json:"failedCount,omitempty"`
 	FileFormat  *ImportFileFormat `json:"fileFormat,omitempty"`
-	Id          int               `json:"id"`
 
-	// Mappings The stored mapping, one action per column, in the shape of `ImportMappingsInput`
+	// FilesStoredCount The files the run stored from its columns of files, each counted once however many records list it
+	FilesStoredCount *int `json:"filesStoredCount,omitempty"`
+	Id               int  `json:"id"`
+
+	// Mappings The stored mapping, one action per column, in the shape of `ImportMappingsInput`. Its keys are the columns, camelized like every key of an answer (`recycled_content` reads `recycledContent`); a mapping sent back names each column by the `column` of the preview.
 	Mappings *map[string]map[string]interface{} `json:"mappings,omitempty"`
 
 	// Options The options the run reads, `published` and `backup`
 	Options          *map[string]interface{} `json:"options,omitempty"`
 	OriginalFilename *string                 `json:"originalFilename,omitempty"`
 
-	// Preview What the upload looks like and what a mapping may target. Present while the import is `fresh`. An agent given this answers `PUT /imports/{id}/mappings` in one turn.
+	// Preview What the upload looks like and what a mapping may target. Present on the upload's answer and while the import takes a mapping (`fresh`, `mapped`, `validated`). The columns keep what the upload found and suggested; the mapping stored since is in `mappings`. An agent given this answers `PUT /imports/{id}/mappings` in one turn.
 	//
-	// Example: {"columns":[{"column":"artikelname","coreAttribute":"name","header":"Artikelname","matchType":"attribute","sampleValues":["Aqua","Glycerin"],"similarity":1,"singleValue":true,"suggestedAction":"map_to_attribute"},{"column":"farbe","header":"Farbe","matchType":"fuzzy","sampleValues":["Blue"],"similarity":0.82,"singleValue":true,"suggestedAction":"use_existing","typeId":"6650","typeName":"Colour"}],"coreAttributes":["name","id","external_id"],"propertyTypes":[{"id":"6650","inputType":"list","name":"Colour"}],"requiredAttributes":["name"]}
+	// Example: {"columns":[{"column":"artikelname","coreAttribute":"name","header":"Artikelname","matchType":"attribute","sampleValues":["Aqua","Glycerin"],"similarity":1,"singleValue":true,"suggestedAction":"map_to_attribute"},{"column":"farbe","header":"Farbe","matchType":"fuzzy","sampleValues":["Blue"],"similarity":0.82,"singleValue":true,"suggestedAction":"use_existing","typeId":"6650","typeName":"Colour"}],"coreAttributes":["name","id","external_id"],"documentTypes":["certificate","declaration_of_conformity","test_report","manual","safety_data_sheet","other"],"propertyTypes":[{"id":"6650","inputType":"list","name":"Colour"}],"requiredAttributes":["name"]}
 	Preview *ImportPreview `json:"preview,omitempty"`
 
 	// Progress Percent of the running task, while one runs
 	Progress *int `json:"progress,omitempty"`
+
+	// Rerunnable A completed, failed or reverted run whose file is still kept can run again as a new import with `POST /imports/{id}/rerun`
+	Rerunnable *bool `json:"rerunnable,omitempty"`
 
 	// Revertable A completed or failed component or product run with a backup or created records can be reverted; a passport run never can
 	Revertable *bool `json:"revertable,omitempty"`
@@ -3651,14 +3994,25 @@ type ImportStatus string
 
 // ImportMappingsInput One action per column of the upload, keyed by the column as the preview names it, plus the options a run reads. Every required attribute of the data type must be covered by a column mapped to it, unless the rows carry it on their own, as a JSON upload does with `name`.
 //
-// Example: {"mappings":{"artikelname":{"action":"map_to_attribute","coreAttribute":"name"},"farbe":{"action":"create_new","typeName":"Colour"},"gewicht":{"action":"use_existing","typeId":"6650"},"intern":{"action":"skip"}},"options":{"published":false}}
+// Example: {"mappings":{"ablauf":{"action":"map_to_attribute","coreAttribute":"document_valid_until","describes":"zertifikat"},"artikelname":{"action":"map_to_attribute","coreAttribute":"name"},"farbe":{"action":"create_new","typeName":"Colour"},"gewicht":{"action":"use_existing","typeId":"6650"},"intern":{"action":"skip"},"zertifikat":{"action":"use_existing","asFile":true,"documentType":"certificate","typeId":"6651"}},"options":{"published":false}}
 type ImportMappingsInput struct {
-	Mappings map[string]struct {
+	// ContentLocale The language the run writes the file's texts in, as a language code such as `de` or `en`, in place of the one the upload recognised. Blank or absent keeps that one; to write in the workspace's default language, name its code. A code the import does not know answers 422 `IMPORT_CONTENT_LOCALE_UNKNOWN`.
+	ContentLocale *string `json:"contentLocale,omitempty"`
+	Mappings      map[string]struct {
 		// Action `map_to_attribute` feeds a core attribute, `use_existing` a property type by id, `create_new` a property type by name (this changes the schema of the workspace for good and is never inferred), `skip` drops the column
 		Action ImportMappingsInputMappingsAction `json:"action"`
 
-		// CoreAttribute With `map_to_attribute`, one of the preview's `coreAttributes`
+		// AsFile With `use_existing` on a property type whose `inputType` is `link`, the run reads each address of the column into a protected file of the media library, one file per document however many rows name it, and the value names the file (`file:<id>`) in place of the address; a file it cannot read is reported in `errorGroups` (`file_failed`) while the record imports. Defaults to false; on any other type the run is refused before any row (`file_not_link`).
+		AsFile *bool `json:"asFile,omitempty"`
+
+		// CoreAttribute With `map_to_attribute`, one of the preview's `coreAttributes`. Each takes one column, except the document details `document_issuer`, `document_number`, `document_valid_from` and `document_valid_until`, which several columns may take. A detail column writes onto the file of the link column stored as files (`asFile`) it `describes`; a cell naming several files takes no details.
 		CoreAttribute *string `json:"coreAttribute,omitempty"`
+
+		// Describes With a document detail, the `column` of the preview whose files the detail describes, a `files` column or one with `asFile`. A detail describing no such column refuses the run before any row (`detail_without_document`).
+		Describes *string `json:"describes,omitempty"`
+
+		// DocumentType With a `files` column or `asFile`, the document type of the files the column holds, one of the preview's `documentTypes`. Another value refuses the run before any row (`unknown_document_type`).
+		DocumentType *ImportMappingsInputMappingsDocumentType `json:"documentType,omitempty"`
 
 		// IsSingleValue Whether the column holds one value per row; defaults to what the preview found
 		IsSingleValue *bool `json:"isSingleValue,omitempty"`
@@ -3670,7 +4024,7 @@ type ImportMappingsInput struct {
 		TypeName *string `json:"typeName,omitempty"`
 	} `json:"mappings"`
 	Options *struct {
-		// Auto Carry a clean validation into the import on its own. On the upload it also takes the suggested mapping and publishes what it imports unless `published` is false, so the whole run needs no further call. For a sheet whose mapping is clear, the headings of the import template or ones already seen to resolve in this workspace; a column nothing matches becomes a property type under its own heading, so an uncertain sheet goes through the preview instead.
+		// Auto Carry a clean validation into the import on its own. On the upload it also takes the suggested mapping and publishes what it imports unless `published` is false, so the whole run needs no further call. For a sheet whose mapping is clear, the headings of the import template or ones already seen to resolve in this workspace; a column nothing matches becomes a property type under its own heading, in the workspace's default language when the file is written in another one, so an uncertain sheet goes through the preview instead.
 		Auto *bool `json:"auto,omitempty"`
 
 		// Backup Take the backup a revert restores from. Defaults to true.
@@ -3687,11 +4041,17 @@ type ImportMappingsInput struct {
 // ImportMappingsInputMappingsAction `map_to_attribute` feeds a core attribute, `use_existing` a property type by id, `create_new` a property type by name (this changes the schema of the workspace for good and is never inferred), `skip` drops the column
 type ImportMappingsInputMappingsAction string
 
-// ImportPreview What the upload looks like and what a mapping may target. Present while the import is `fresh`. An agent given this answers `PUT /imports/{id}/mappings` in one turn.
+// ImportMappingsInputMappingsDocumentType With a `files` column or `asFile`, the document type of the files the column holds, one of the preview's `documentTypes`. Another value refuses the run before any row (`unknown_document_type`).
+type ImportMappingsInputMappingsDocumentType string
+
+// ImportPreview What the upload looks like and what a mapping may target. Present on the upload's answer and while the import takes a mapping (`fresh`, `mapped`, `validated`). The columns keep what the upload found and suggested; the mapping stored since is in `mappings`. An agent given this answers `PUT /imports/{id}/mappings` in one turn.
 //
-// Example: {"columns":[{"column":"artikelname","coreAttribute":"name","header":"Artikelname","matchType":"attribute","sampleValues":["Aqua","Glycerin"],"similarity":1,"singleValue":true,"suggestedAction":"map_to_attribute"},{"column":"farbe","header":"Farbe","matchType":"fuzzy","sampleValues":["Blue"],"similarity":0.82,"singleValue":true,"suggestedAction":"use_existing","typeId":"6650","typeName":"Colour"}],"coreAttributes":["name","id","external_id"],"propertyTypes":[{"id":"6650","inputType":"list","name":"Colour"}],"requiredAttributes":["name"]}
+// Example: {"columns":[{"column":"artikelname","coreAttribute":"name","header":"Artikelname","matchType":"attribute","sampleValues":["Aqua","Glycerin"],"similarity":1,"singleValue":true,"suggestedAction":"map_to_attribute"},{"column":"farbe","header":"Farbe","matchType":"fuzzy","sampleValues":["Blue"],"similarity":0.82,"singleValue":true,"suggestedAction":"use_existing","typeId":"6650","typeName":"Colour"}],"coreAttributes":["name","id","external_id"],"documentTypes":["certificate","declaration_of_conformity","test_report","manual","safety_data_sheet","other"],"propertyTypes":[{"id":"6650","inputType":"list","name":"Colour"}],"requiredAttributes":["name"]}
 type ImportPreview struct {
 	Columns *[]struct {
+		// AsFile Present on a column the workspace remembers as a link column stored as a file, as `asFile` of `ImportMappingsInput`
+		AsFile *bool `json:"asFile,omitempty"`
+
 		// Column The key the mapping is written under
 		Column *string `json:"column,omitempty"`
 
@@ -3704,10 +4064,16 @@ type ImportPreview struct {
 		// CoreAttribute The core attribute the suggestion feeds
 		CoreAttribute *string `json:"coreAttribute,omitempty"`
 
+		// Describes The column a remembered document detail describes, present while the upload holds that column
+		Describes *string `json:"describes,omitempty"`
+
+		// DocumentType The document type a remembered column of files gives its files
+		DocumentType *string `json:"documentType,omitempty"`
+
 		// Header The column header as the file spells it
 		Header *string `json:"header,omitempty"`
 
-		// MatchType How the header was recognised. `exact` and `attribute` resolve on their own; `fuzzy` is a match by similarity, the one the mapping page prefills, so take its suggestion; `none` found nothing, and that is the one column a person has to decide. `conflict` marks a column that goes to the same property type as another column (`conflictColumns`), or whose header several property types carry (`conflictTypes`); its suggested action is `choose`, and a run whose mapping leaves two columns on one type is refused before any row.
+		// MatchType How the header was recognised. `exact` and `attribute` resolve on their own; `remembered` takes the target the workspace remembers for the column, the one an operator mapped it to by hand in an earlier import or the one the import being run again had, and resolves on its own as well, a column remembered as skipped included; `fuzzy` is a match by similarity, the one the mapping page prefills, so take its suggestion; `none` found nothing, and that is the one column a person has to decide. `conflict` marks a column that goes to the same property type as another column (`conflictColumns`), or whose header several property types carry (`conflictTypes`); its suggested action is `choose`, and a run whose mapping leaves two columns on one type is refused before any row.
 		MatchType *ImportPreviewColumnsMatchType `json:"matchType,omitempty"`
 
 		// SampleValues Up to three values from the column
@@ -3728,6 +4094,9 @@ type ImportPreview struct {
 	// CoreAttributes The attributes `map_to_attribute` may target for this data type
 	CoreAttributes *[]string `json:"coreAttributes,omitempty"`
 
+	// DocumentTypes The document types `documentType` may name
+	DocumentTypes *[]string `json:"documentTypes,omitempty"`
+
 	// PropertyTypes The workspace's property types `use_existing` may target
 	PropertyTypes *[]struct {
 		Id        *string `json:"id,omitempty"`
@@ -3740,7 +4109,7 @@ type ImportPreview struct {
 	RequiredAttributes *[]string `json:"requiredAttributes,omitempty"`
 }
 
-// ImportPreviewColumnsMatchType How the header was recognised. `exact` and `attribute` resolve on their own; `fuzzy` is a match by similarity, the one the mapping page prefills, so take its suggestion; `none` found nothing, and that is the one column a person has to decide. `conflict` marks a column that goes to the same property type as another column (`conflictColumns`), or whose header several property types carry (`conflictTypes`); its suggested action is `choose`, and a run whose mapping leaves two columns on one type is refused before any row.
+// ImportPreviewColumnsMatchType How the header was recognised. `exact` and `attribute` resolve on their own; `remembered` takes the target the workspace remembers for the column, the one an operator mapped it to by hand in an earlier import or the one the import being run again had, and resolves on its own as well, a column remembered as skipped included; `fuzzy` is a match by similarity, the one the mapping page prefills, so take its suggestion; `none` found nothing, and that is the one column a person has to decide. `conflict` marks a column that goes to the same property type as another column (`conflictColumns`), or whose header several property types carry (`conflictTypes`); its suggested action is `choose`, and a run whose mapping leaves two columns on one type is refused before any row.
 type ImportPreviewColumnsMatchType string
 
 // ImportPreviewColumnsSuggestedAction defines model for ImportPreview.Columns.SuggestedAction.
@@ -3748,16 +4117,22 @@ type ImportPreviewColumnsSuggestedAction string
 
 // ImportSummary One import as a list answers it: what names the run and how it went. The preview, the mapping, the problems found and the progress of a running task are read from `GET /imports/{id}`.
 //
-// Example: {"completedAt":"2026-09-08T09:13:30Z","createdAt":"2026-09-08T09:12:44Z","createdCount":238,"dataType":"components","failedCount":0,"fileFormat":"xlsx","id":12,"originalFilename":"catalogue.xlsx","revertable":true,"startedAt":"2026-09-08T09:12:50Z","status":"completed","statusUrl":"https://example.com/api/imports/12","totalEntries":240,"unchangedCount":0,"updatedCount":2}
+// Example: {"completedAt":"2026-09-08T09:13:30Z","createdAt":"2026-09-08T09:12:44Z","createdCount":238,"dataType":"components","failedCount":0,"fileFormat":"xlsx","filesStoredCount":0,"id":12,"originalFilename":"catalogue.xlsx","rerunnable":true,"revertable":true,"startedAt":"2026-09-08T09:12:50Z","status":"completed","statusUrl":"https://example.com/api/imports/12","totalEntries":240,"unchangedCount":0,"updatedCount":2}
 type ImportSummary struct {
-	CompletedAt      *time.Time               `json:"completedAt,omitempty"`
-	CreatedAt        *time.Time               `json:"createdAt,omitempty"`
-	CreatedCount     *int                     `json:"createdCount,omitempty"`
-	DataType         ImportSummaryDataType    `json:"dataType"`
-	FailedCount      *int                     `json:"failedCount,omitempty"`
-	FileFormat       *ImportSummaryFileFormat `json:"fileFormat,omitempty"`
-	Id               int                      `json:"id"`
-	OriginalFilename *string                  `json:"originalFilename,omitempty"`
+	CompletedAt  *time.Time               `json:"completedAt,omitempty"`
+	CreatedAt    *time.Time               `json:"createdAt,omitempty"`
+	CreatedCount *int                     `json:"createdCount,omitempty"`
+	DataType     ImportSummaryDataType    `json:"dataType"`
+	FailedCount  *int                     `json:"failedCount,omitempty"`
+	FileFormat   *ImportSummaryFileFormat `json:"fileFormat,omitempty"`
+
+	// FilesStoredCount The files the run stored from its columns of files
+	FilesStoredCount *int    `json:"filesStoredCount,omitempty"`
+	Id               int     `json:"id"`
+	OriginalFilename *string `json:"originalFilename,omitempty"`
+
+	// Rerunnable A completed, failed or reverted run whose file is still kept can run again as a new import
+	Rerunnable *bool `json:"rerunnable,omitempty"`
 
 	// Revertable A completed or failed run with a backup or created records can be reverted
 	Revertable *bool               `json:"revertable,omitempty"`
@@ -3813,67 +4188,112 @@ type Language struct {
 	Url  *string `json:"url,omitempty"`
 }
 
-// Leadgen Lead generation campaign with overlay and form
+// Leadgen A campaign on passports, with the button on the passport and its action window, which shows a picture, a headline, an introduction and a link button or a form. Its form may serve other campaigns and pages too.
 //
-// Example: {"body":"Two minutes, and the warranty runs for three years.","code":"autumn-2026","createdAt":"2026-03-04T11:20:00Z","dpps":[],"headline":"Register your product","id":31,"inputs":[{"label":"Email","name":"email","required":true,"typ":"email"}],"link":"https://example.com/register","locale":"en","message":"Thank you, the registration is in.","name":"Autumn campaign","popup":true,"published":true,"recipient":"leads@example.com","requestsCount":42,"submitButtonLabel":"Register","type":"Leadgen"}
+// Example: {"action":"form","body":"Two minutes, and the warranty runs for three years.","code":"autumn-2026","createdAt":"2026-03-04T11:20:00Z","dpps":[],"formId":12,"headline":"Register your product","id":31,"imageId":null,"inputs":[{"label":"Email","name":"email","required":true,"typ":"email"}],"link":"Register now","linkLabel":null,"linkUrl":null,"locale":"en","message":"Thank you, the registration is in.","name":"Autumn campaign","popup":true,"published":true,"recipient":"leads@example.com","requestsCount":42,"submitButtonLabel":"Register","type":"Leadgen"}
 type Leadgen struct {
-	// Body Overlay body text
+	// Action What the visitor does in the action window
+	Action *LeadgenAction `json:"action,omitempty"`
+
+	// Body Introduction of the action window, in Markdown; optional with a picture
 	Body *string `json:"body,omitempty"`
 
-	// Code Form code identifier
+	// Code Code of the form
 	Code      *string    `json:"code,omitempty"`
 	CreatedAt *time.Time `json:"createdAt,omitempty"`
 
-	// Dpps DPPs associated with this overlay
+	// Dpps DPPs whose pages show the campaign
 	Dpps *[]Dpp `json:"dpps,omitempty"`
 
-	// Headline Overlay headline
+	// FormId The form the campaign uses, for the form action
+	FormId *int `json:"formId,omitempty"`
+
+	// Headline Headline of the action window
 	Headline *string `json:"headline,omitempty"`
 	Id       *int    `json:"id,omitempty"`
+
+	// Image The picture `imageId` names; absent where the file was deleted or binned since. The passport shows it only while it is public
+	Image *Mediafile `json:"image,omitempty"`
+
+	// ImageId The picture at the top of the action window, a file of the media library
+	ImageId *int `json:"imageId,omitempty"`
 
 	// Inputs Form input fields
 	Inputs *[]FormField `json:"inputs,omitempty"`
 
-	// Link Overlay link URL
-	Link   *string `json:"link,omitempty"`
+	// Link Label of the button on the passport that opens the action window
+	Link *string `json:"link,omitempty"`
+
+	// LinkLabel Label of the link button in the action window, for the link action
+	LinkLabel *string `json:"linkLabel,omitempty"`
+
+	// LinkUrl Address of the link button, for the link action; without one the action window shows headline and text only
+	LinkUrl *string `json:"linkUrl,omitempty"`
+
+	// Locale The workspace's default language, in which the request mails go out; a campaign's texts carry a value per language
+	// Deprecated: this property has been marked as deprecated upstream, but no `x-deprecated-reason` was set
 	Locale *string `json:"locale,omitempty"`
 
 	// Message Form success message
 	Message *string `json:"message,omitempty"`
 	Name    *string `json:"name,omitempty"`
 
-	// Popup Whether the overlay is a popup
+	// Popup Whether the action window opens by itself on the passport; the button stays
 	Popup     *bool `json:"popup,omitempty"`
 	Published *bool `json:"published,omitempty"`
 
 	// Recipient Email recipient for form submissions
 	Recipient *string `json:"recipient,omitempty"`
 
-	// RequestsCount Number of form submissions
+	// RequestsCount Number of requests sent through this campaign
 	RequestsCount     *int    `json:"requestsCount,omitempty"`
 	SubmitButtonLabel *string `json:"submitButtonLabel,omitempty"`
 	Type              *string `json:"type,omitempty"`
 }
 
+// LeadgenAction What the visitor does in the action window
+type LeadgenAction string
+
 // LeadgenInput defines model for LeadgenInput.
 type LeadgenInput struct {
-	Body     *string   `json:"body,omitempty"`
-	DppIds   *[]string `json:"dppIds,omitempty"`
-	Headline *string   `json:"headline,omitempty"`
-	Inputs   *[]struct {
+	// Action What the visitor does in the action window; form by default
+	Action *LeadgenInputAction `json:"action,omitempty"`
+
+	// Body Introduction in Markdown; required without a picture
+	Body   *string   `json:"body,omitempty"`
+	DppIds *[]string `json:"dppIds,omitempty"`
+
+	// FormId A form you hold to use; without it a new campaign gets a new form with name, email and message inputs. The form fields below apply to the campaign's form, which other campaigns and pages may use too.
+	FormId   *int    `json:"formId,omitempty"`
+	Headline *string `json:"headline,omitempty"`
+
+	// ImageId A public picture of the media library, shown at the top of the action window; null removes it. An internal one is refused
+	ImageId *int `json:"imageId,omitempty"`
+	Inputs  *[]struct {
 		Label     *string `json:"label,omitempty"`
 		Maxlength *int    `json:"maxlength,omitempty"`
 		Name      *string `json:"name,omitempty"`
 
-		// Options Comma-separated options for select inputs
+		// Options Options of a select input, separated by a pipe, for example S|M|L
 		Options     *string `json:"options,omitempty"`
 		Placeholder *string `json:"placeholder,omitempty"`
 		Required    *bool   `json:"required,omitempty"`
 
-		// Typ Input type (text, email, textarea, etc.)
-		Typ *string `json:"typ,omitempty"`
+		// Typ Input type; text is a multi-line field
+		Typ *LeadgenInputInputsTyp `json:"typ,omitempty"`
 	} `json:"inputs,omitempty"`
-	Link              *string `json:"link,omitempty"`
+
+	// Link Label of the button on the passport that opens the action window; a popup without one takes its headline
+	Link *string `json:"link,omitempty"`
+
+	// LinkLabel Label of the link button in the action window; required with linkUrl
+	LinkLabel *string `json:"linkLabel,omitempty"`
+
+	// LinkUrl Address of the link button, http or https, for the link action
+	LinkUrl *string `json:"linkUrl,omitempty"`
+
+	// Locale Accepted and ignored; a campaign's texts carry a value per language
+	// Deprecated: this property has been marked as deprecated upstream, but no `x-deprecated-reason` was set
 	Locale            *string `json:"locale,omitempty"`
 	Message           *string `json:"message,omitempty"`
 	Name              *string `json:"name,omitempty"`
@@ -3882,6 +4302,12 @@ type LeadgenInput struct {
 	Recipient         *string `json:"recipient,omitempty"`
 	SubmitButtonLabel *string `json:"submitButtonLabel,omitempty"`
 }
+
+// LeadgenInputAction What the visitor does in the action window; form by default
+type LeadgenInputAction string
+
+// LeadgenInputInputsTyp Input type; text is a multi-line field
+type LeadgenInputInputsTyp string
 
 // Lot A lot batch and item passports freeze from. It holds the product's components and properties as they stood when the lot was created, so every passport of the lot carries the same frozen data.
 type Lot struct {
@@ -3905,6 +4331,9 @@ type Lot struct {
 	// PublishedDppsCount Passports of the lot that have published at least once
 	PublishedDppsCount *int `json:"publishedDppsCount,omitempty"`
 
+	// SerialsCount The serial numbers the lot holds (`GET /lots/{id}/serials`), whose tags open its passport
+	SerialsCount *int `json:"serialsCount,omitempty"`
+
 	// Type Example: Lot
 	Type *string `json:"type,omitempty"`
 
@@ -3912,18 +4341,116 @@ type Lot struct {
 	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
 }
 
+// LotCode What the tag of one unit of a lot carries. A serial number with a unit passport of the lot takes that passport's link and EPC; any other links to the GTIN and the serial number without the lot, so a serial number moved to another lot follows on an NFC tag as on an RFID tag.
+//
+// Example: {"epc":{"hex":"3034F4E4E4424C80000003E9","scheme":"SGTIN-96","urn":"urn:epc:id:sgtin:4012345.067890.1001"},"gtin":"04012345678901","link":"https://passports.example.com/01/04012345678901/21/1001","serial":"1001"}
+type LotCode struct {
+	// Epc The EPC a UHF RFID tag of the unit carries, as on a unit passport. Only present where the GTIN starts with one of the workspace's GS1 company prefixes and the serial number has up to 20 characters of the GS1 serial character set.
+	Epc *struct {
+		// Hex Example: 3034F4E4E4424C80000003E9
+		Hex    *string           `json:"hex,omitempty"`
+		Scheme *LotCodeEpcScheme `json:"scheme,omitempty"`
+
+		// Urn Example: urn:epc:id:sgtin:4012345.067890.1001
+		Urn *string `json:"urn,omitempty"`
+	} `json:"epc,omitempty"`
+
+	// Gtin The GTIN-14 of the lot's product. Only present while the product has a GTIN.
+	//
+	// Example: 04012345678901
+	Gtin *string `json:"gtin,omitempty"`
+
+	// Link The address an NFC tag or a QR code of the unit carries, `/01/{gtin}/21/{serial}` on the passport host, the serial escaped. Only present while the product has a GTIN.
+	Link *string `json:"link,omitempty"`
+
+	// Serial Example: NW-000412
+	Serial *string `json:"serial,omitempty"`
+}
+
+// LotCodeEpcScheme defines model for LotCode.Epc.Scheme.
+type LotCodeEpcScheme string
+
+// LotSerialEntry Serial numbers given to a lot in one go. A range is one entry per line as written; the single serial numbers of one submission are one list entry.
+//
+// Example: {"count":100000,"createdAt":"2026-09-01T08:15:00Z","firstSerial":"NW-000001","id":12,"kind":"range","lastSerial":"NW-100000","lotId":7,"notation":"NW-[000001-100000]","productId":11,"sgtin96":false,"source":"api","type":"LotSerialEntry"}
+type LotSerialEntry struct {
+	// Count The serial numbers of the entry
+	Count     *int       `json:"count,omitempty"`
+	CreatedAt *time.Time `json:"createdAt,omitempty"`
+
+	// Filename Only present on an entry read from a file, the file's name
+	Filename *string `json:"filename,omitempty"`
+
+	// FirstSerial The first serial number of the entry, in the order of its range or of its sorted list
+	FirstSerial *string             `json:"firstSerial,omitempty"`
+	Id          *int                `json:"id,omitempty"`
+	Kind        *LotSerialEntryKind `json:"kind,omitempty"`
+
+	// LastSerial The last serial number of the entry
+	LastSerial *string `json:"lastSerial,omitempty"`
+
+	// LotId The lot that holds the serial numbers
+	LotId *int `json:"lotId,omitempty"`
+
+	// Notation Only present on a range, in the bracket form, the counting part in square brackets
+	//
+	// Example: NW-[000001-100000]
+	Notation *string `json:"notation,omitempty"`
+
+	// ProductId The lot's product, whose GTIN a tag carries beside the serial number
+	ProductId *int `json:"productId,omitempty"`
+
+	// Sgtin96 Whether every serial number of the entry fits a 96-bit RFID tag (SGTIN-96), digits alone without a leading zero below 2^38. Any other serial number takes a tag of 208 bits or more (SGTIN-198).
+	Sgtin96 *bool `json:"sgtin96,omitempty"`
+
+	// Source Where the entry was given, the Application Manager by hand (`admin`) or by file (`file`), or the API (`api`)
+	Source *LotSerialEntrySource `json:"source,omitempty"`
+
+	// Type Example: LotSerialEntry
+	Type *string `json:"type,omitempty"`
+}
+
+// LotSerialEntryKind defines model for LotSerialEntry.Kind.
+type LotSerialEntryKind string
+
+// LotSerialEntrySource Where the entry was given, the Application Manager by hand (`admin`) or by file (`file`), or the API (`api`)
+type LotSerialEntrySource string
+
 // Mediafile defines model for Mediafile.
 type Mediafile struct {
-	Id *int `json:"id,omitempty"`
+	// DocumentType What the document is, as a code. Present only where set; a language version (a file of a key restricted to some languages) carries the details of the file of its key for every language, here and in the four fields below
+	DocumentType *MediafileDocumentType `json:"documentType,omitempty"`
+
+	// Extension The kind of file, as its extension (`jpg`, `pdf`)
+	Extension *string `json:"extension,omitempty"`
+	Id        *int    `json:"id,omitempty"`
 
 	// Image Whether the file is an image
-	Image *bool   `json:"image,omitempty"`
-	Name  *string `json:"name,omitempty"`
-	Type  *string `json:"type,omitempty"`
+	Image *bool `json:"image,omitempty"`
 
-	// Url Full URL to the file (includes asset host)
+	// Issuer Who issued the document. Present only where set
+	Issuer *string `json:"issuer,omitempty"`
+	Name   *string `json:"name,omitempty"`
+
+	// Number The number the issuer gave the document. Present only where set
+	Number *string `json:"number,omitempty"`
+
+	// Public Whether the bytes are public. An internal file sits in the protected store, which only the Application Manager reaches, and carries no `url`
+	Public *bool   `json:"public,omitempty"`
+	Type   *string `json:"type,omitempty"`
+
+	// Url Full URL to the file (includes asset host). Present only for a public file
 	Url *string `json:"url,omitempty"`
+
+	// ValidFrom The first day the document holds. Present only where set
+	ValidFrom *openapi_types.Date `json:"validFrom,omitempty"`
+
+	// ValidUntil The last day the document holds. Present only where set
+	ValidUntil *openapi_types.Date `json:"validUntil,omitempty"`
 }
+
+// MediafileDocumentType What the document is, as a code. Present only where set; a language version (a file of a key restricted to some languages) carries the details of the file of its key for every language, here and in the four fields below
+type MediafileDocumentType string
 
 // NavigationItem defines model for NavigationItem.
 type NavigationItem struct {
@@ -3945,7 +4472,9 @@ type OAuthError struct {
 // OAuthErrorError defines model for OAuthError.Error.
 type OAuthErrorError string
 
-// Overlay DPP overlay content displayed on scan
+// Overlay The passport's campaign in the shape it had as an overlay. The id is the campaign's, link its button label, and body the text with the form as HTML.
+//
+// Deprecated: this type has been marked as deprecated upstream, but no `x-deprecated-reason` was set
 type Overlay struct {
 	// Body HTML body content
 	Body     *string `json:"body,omitempty"`
@@ -4069,9 +4598,9 @@ type PlanVariantDuration struct {
 	Type *string `json:"type,omitempty"`
 }
 
-// PrivateProperties The confidential rows of one passport version, as an ecdsa-sd-2023 derived Verifiable Credential. The Vault holds the full credential; what comes back here is the view this reader is entitled to - the mandatory public statements plus the restricted rows the reader may see. `legitimateInterest` rows survive only while the reader's access-group membership admits them, `onDemand` rows go to any authenticated reader, and `authorities` rows are never served here. The derived proof is the filter, so the response stays verifiable against the issuer keys and no confidential statement is signed away. JSON-LD keys (`@context`, `@type`) pass through unchanged.
+// PrivateProperties The confidential rows of one passport version, as an ecdsa-sd-2023 derived Verifiable Credential. The workspace keeps the full signed credential; what comes back here is the view this reader is entitled to - the mandatory public statements plus the restricted rows the reader may see. `legitimateInterest` rows survive only while the reader's access-group membership admits them, `onDemand` rows go to any authenticated reader, and `authorities` rows are never served here. The derived proof is the filter, so the response stays verifiable against the issuer keys and no confidential statement is signed away. JSON-LD keys (`@context`, `@type`) pass through unchanged.
 //
-// Example: {"@context":["https://transpareo.com/vocab/vc/v1","https://transpareo.com/vocab/transpareo/v1"],"@id":"https://example.com/dpp/A1B2C3D4E#credential","credentialSubject":{"@id":"https://example.com/dpp/A1B2C3D4E","@type":"dpp:DigitalProductPassport","product":{"@id":"https://example.com/dpp/A1B2C3D4E#product","@type":"Product","properties":[{"@id":"https://example.com/dpp/A1B2C3D4E#property/21","@type":"PropertyValue","name":[{"@language":"en","@value":"Cell supplier"}],"propertyID":"21","value":"Nordic Cells AB","valueDataType":"xsd:string"}]},"version":3},"issuer":"did:web:nordic-wear.002.fsn.transpareo.com","proof":[{"cryptosuite":"ecdsa-sd-2023","proofPurpose":"assertionMethod","proofValue":"u2V0BhVhAn1sBcx9k...","type":"DataIntegrityProof","verificationMethod":"did:web:nordic-wear.002.fsn.transpareo.com#key-1"}],"type":["VerifiableCredential","dpp:DigitalProductPassport"]}
+// Example: {"@context":["https://www.w3.org/ns/credentials/v2","https://transpareo.com/vocab/vc/v2","https://transpareo.com/vocab/transpareo/v2"],"@id":"https://example.com/dpp/A1B2C3D4E#credential","credentialSubject":{"@id":"https://example.com/dpp/A1B2C3D4E","@type":"dpp:DigitalProductPassport","product":{"@id":"https://example.com/dpp/A1B2C3D4E#product","@type":"Product","properties":[{"@id":"https://example.com/dpp/A1B2C3D4E#property/21","@type":"PropertyValue","name":[{"@language":"en","@value":"Cell supplier"}],"propertyID":"21","value":"Nordic Cells AB","valueDataType":"xsd:string"}]},"version":3},"issuer":"did:web:nordic-wear.002.fsn.transpareo.com","proof":[{"cryptosuite":"ecdsa-sd-2023","proofPurpose":"assertionMethod","proofValue":"u2V0BhVhAn1sBcx9k...","type":"DataIntegrityProof","verificationMethod":"did:web:nordic-wear.002.fsn.transpareo.com#key-1"}],"type":["VerifiableCredential","dpp:DigitalProductPassport"]}
 type PrivateProperties struct {
 	Context *[]string `json:"@context,omitempty"`
 
@@ -4219,7 +4748,7 @@ type ProductDetail struct {
 	HsCode *string `json:"hsCode,omitempty"`
 	Id     *int    `json:"id,omitempty"`
 
-	// Inheritance Per value a variant takes from its parent, whether it follows the parent (`follows`), holds a value of its own (`pinned`), or holds one while the parent changed its value since (`parent_moved`). `images` is the list of files as one value, `componentsOrder` the order of the components. Present only on a variant, for a signed-in caller or an API consumer; each property value and each component carries its own.
+	// Inheritance Per value a variant takes from its parent, whether it follows the parent (`follows`), holds a value of its own (`pinned`), or holds one while the parent changed its value since (`parent_moved`). `images` is the gallery as one value, `componentsOrder` the order of the components. Present only on a variant, for a signed-in caller or an API consumer; each property value and each component carries its own.
 	Inheritance *struct {
 		// Brand What a variant does with a value its parent holds. `follows` takes the parent's value whenever it changes; `pinned` holds a value of the variant's own; `parent_moved` holds one while the parent changed its value since; `own` marks a property value or a component the variant added itself.
 		Brand *InheritanceState `json:"brand,omitempty"`
@@ -4249,7 +4778,8 @@ type ProductDetail struct {
 	// Name Example: Nivea Creme
 	Name *string `json:"name,omitempty"`
 
-	// Overlay DPP overlay content displayed on scan
+	// Overlay The passport's campaign in the shape it had as an overlay. The id is the campaign's, link its button label, and body the text with the form as HTML.
+	// Deprecated: this property has been marked as deprecated upstream, but no `x-deprecated-reason` was set
 	Overlay *Overlay `json:"overlay,omitempty"`
 
 	// OwnerName Name of the record owner. Only present in show action when the product has an owner.
@@ -4317,7 +4847,7 @@ type ProductDetail struct {
 		// RestrictedByGroup Restricted to specific access groups
 		RestrictedByGroup *bool `json:"restrictedByGroup,omitempty"`
 
-		// RestrictedByParam Requires the show parameter to display
+		// RestrictedByParam On demand. Served only to an authenticated caller that names the property in the show parameter. Only present when true.
 		RestrictedByParam *bool `json:"restrictedByParam,omitempty"`
 
 		// Unit The physical unit values are given in. Only present on quantitative property types.
@@ -4358,13 +4888,15 @@ type ProductDetail struct {
 // ProductDetailWeightUnit The unit of `weight`. Present with the weight.
 type ProductDetailWeightUnit string
 
-// ProductInput The fields of a product write. A create needs `name` and `componentsInput`, which the create operation says, and `name` alone where it names `parentId`; an update carries only what it means to change, because every field it names is written.
+// ProductInput The fields of a product write. A create needs `name` and `componentsInput`, which the create operation says, and `name` alone where it names `parentId`; an update carries only what it means to change, because every field it names is written. A key of the read (Product, ProductDetail) may come back with the write and passes while it holds what the read holds; changed, it refuses the write with 422 `PRODUCT_KEYS_REFUSED`, its field naming what writes it (`categories` categoryIds, `components` componentsInput, `properties` propertiesInput, `brand` and `brandName` brand.name beside product, `mediafiles` `PUT /products/{id}/mediafiles`, `published` `PUT /products/{id}/publish` or `unpublish`) or saying no call writes it (`permalink`, `publishedAt`, `updatedAt` and the other keys the server works out). A create compares them with what `GET /products/new` answers and passes any `id`. Any other key, here, inside a `componentsInput` entry or beside `product` and `brand`, refuses the write the same way, naming each; so does a list or an object sent as something else.
 type ProductInput struct {
 	CategoryIds *[]string `json:"categoryIds,omitempty"`
 
-	// ComponentsInput The product's components in order, as a list of names or a list of objects naming an existing component by componentId or a new one by name. Naming it replaces the whole list, so on an update send the components the product is to have from then on, not the ones being added; leaving it out keeps the list as it is.
+	// ComponentsInput The product's components in order, as a list of names, of objects naming an existing component by componentId or a new one by name, or of both. An object's `percentage` is the component's share of the product; an entry naming it replaces the share, null clearing it, and an entry leaving it out keeps the share the component has. A share outside 0 to 100 refuses the write with 422 naming `componentsInput`. Naming the list replaces the whole list, so on an update send the components the product is to have from then on, not the ones being added; leaving it out keeps the list as it is.
 	ComponentsInput *ProductInput_ComponentsInput `json:"componentsInput,omitempty"`
-	Gtin            *string                       `json:"gtin,omitempty"`
+
+	// Gtin Global Trade Item Number. Enter only GTINs covered by a valid GS1 licence.
+	Gtin *string `json:"gtin,omitempty"`
 
 	// HsCode The customs tariff number, the 8-digit CN code or, until the CN subheading is known, the 6-digit HS code. Spaces and dots between the digits are dropped (`6109 10 00` is stored as `61091000`); any other shape is refused with 422 naming `hsCode`. A passport publishes the first six digits as its HS code and all eight as its CN code. On a variant it is a value taken from the parent, so a number that differs becomes the variant's own. An empty string clears it.
 	//
@@ -4382,10 +4914,20 @@ type ProductInput struct {
 	// ParentId On a create, the product the new one is a variant of. It starts as a copy of that product and takes its later changes, and the other fields of the body become its own where they differ. An update leaves it out or names the parent the product has.
 	ParentId *int `json:"parentId,omitempty"`
 
-	// PropertiesInput Property values keyed by property type id, as GET /products/new lists them. An entry is a bare value, an object with value plus an optional percentage and compositionRows, or a list of either for a type that takes several values. A type named here is replaced by what the entry carries; a type left out keeps the values it has. On a variant, a value the product already holds stays as it is, so a value it inherits goes on following its parent; a value that differs becomes the variant's own, and the parent's later changes to that value no longer reach it. A type sent with no value keeps the parent's values for it out of the variant. A key naming no property type, or, for a credential, a type only the members of a plan edit, or a type of an access group the credential is not in, refuses the whole write with 422 `PRODUCT_PROPERTIES_REFUSED`; `GET /products/new` lists the types a credential may write.
+	// PropertiesInput Property values keyed by property type id, as GET /products/new lists them. An entry is a bare value, an object with value plus an optional percentage and compositionRows, or a list of either for a type that takes several values. A type named here is replaced by what the entry carries; a type left out keeps the values it has. On a variant, a value the product already holds stays as it is, so a value it inherits goes on following its parent; a value that differs becomes the variant's own, and the parent's later changes to that value no longer reach it. A type sent with no value keeps the parent's values for it out of the variant. A link type takes several values, in the order sent, each a web address or `file:<id>` naming a file of the workspace by the id `POST /mediafiles` answered; the file joins the product's Files as the write saves and stays listed while a field names it, and an id naming no file of the library, one held for review, or a protected file the caller did not upload, refuses the whole write with 422 `FILE_REFERENCE_UNKNOWN`; a file the field names already stays. A key naming no property type, or, for a credential, a type only the members of a plan edit, or a type of an access group the credential is not in, refuses the whole write with 422 `PRODUCT_PROPERTIES_REFUSED`; `GET /products/new` lists the types a credential may write.
 	//
-	// Example: {"1":"https://example.com/documents/technical-documentation.pdf","12":["Red","Blue"],"5":"100% organic cotton","9":{"percentage":95,"value":"Cotton"}}
+	// Example: {"1":"https://example.com/documents/technical-documentation.pdf","12":["Red","Blue"],"3":"file:42","5":"100% organic cotton","9":{"percentage":95,"value":"Cotton"}}
 	PropertiesInput *map[string]interface{} `json:"propertiesInput,omitempty"`
+
+	// Weight The product's weight in `weightUnit`. A value that is no number is refused with 422 naming `weight`; null or an empty string clears it, and its unit with it. On a variant it is a value taken from the parent, with its unit.
+	//
+	// Example: 50
+	Weight *float32 `json:"weight,omitempty"`
+
+	// WeightUnit The unit of `weight`. A weight written without one keeps the unit the product has, and a weight the product had none for is in kilograms.
+	//
+	// Example: g
+	WeightUnit *ProductInputWeightUnit `json:"weightUnit,omitempty"`
 }
 
 // ProductInputComponentsInput0 Example: ["Aqua","Glycerin","Cetearyl Alcohol"]
@@ -4393,19 +4935,28 @@ type ProductInputComponentsInput0 = []string
 
 // ProductInputComponentsInput1 defines model for ProductInput.ComponentsInput.1.
 type ProductInputComponentsInput1 = []struct {
-	ComponentId *int    `json:"componentId,omitempty"`
-	Name        *string `json:"name,omitempty"`
+	ComponentId *int     `json:"componentId,omitempty"`
+	Name        *string  `json:"name,omitempty"`
+	Percentage  *float32 `json:"percentage,omitempty"`
 }
 
-// ProductInput_ComponentsInput The product's components in order, as a list of names or a list of objects naming an existing component by componentId or a new one by name. Naming it replaces the whole list, so on an update send the components the product is to have from then on, not the ones being added; leaving it out keeps the list as it is.
+// ProductInput_ComponentsInput The product's components in order, as a list of names, of objects naming an existing component by componentId or a new one by name, or of both. An object's `percentage` is the component's share of the product; an entry naming it replaces the share, null clearing it, and an entry leaving it out keeps the share the component has. A share outside 0 to 100 refuses the write with 422 naming `componentsInput`. Naming the list replaces the whole list, so on an update send the components the product is to have from then on, not the ones being added; leaving it out keeps the list as it is.
 type ProductInput_ComponentsInput struct {
 	union json.RawMessage
 }
+
+// ProductInputWeightUnit The unit of `weight`. A weight written without one keeps the unit the product has, and a weight the product had none for is in kilograms.
+//
+// Example: g
+type ProductInputWeightUnit string
 
 // Property defines model for Property.
 type Property struct {
 	// CompositionRows The rows of a structured composition, each keyed by the column keys the property type declares. Only present when the property carries rows.
 	CompositionRows *[]map[string]interface{} `json:"compositionRows,omitempty"`
+
+	// File The file a link value names, the entry the record's `files` carries for it. Present where the value is `file:<id>` and the caller reads that file in `files`, so the storefront sees an internal file's token alone
+	File *Mediafile `json:"file,omitempty"`
 
 	// Id The property's own id, which the `existing` half of a properties payload is keyed by
 	Id *int `json:"id,omitempty"`
@@ -4422,7 +4973,7 @@ type Property struct {
 	// RowId The row a variant holds the value in. One value document may serve several products, so the row is what a variant follows or holds as its own. Present only on a variant's values, for a signed-in caller or an API consumer.
 	RowId *int `json:"rowId,omitempty"`
 
-	// Value Rendered HTML value (or raw value when ?raw=true)
+	// Value Rendered HTML value (or raw value when ?raw=true). A link value is a web address, or `file:<id>` where it names a file of the workspace, which `file` then describes
 	Value *string `json:"value,omitempty"`
 }
 
@@ -4498,7 +5049,7 @@ type Task struct {
 	// AssigneeKey The assignee as `User:<id>` or `AccessGroup:<id>`, the value `POST /tasks` takes
 	AssigneeKey *string `json:"assigneeKey,omitempty"`
 
-	// Attachments The files the task carries, in their order. Only those who see the task read them, each at its `url`; they are added in the application manager.
+	// Attachments The files the task carries, in their order. Only those who see the task read them, each at its `url`; they are added in the Application Manager.
 	Attachments *[]struct {
 		Bytes *int `json:"bytes,omitempty"`
 
@@ -4523,7 +5074,7 @@ type Task struct {
 	// Example: {"id":3,"name":"Quality","type":"AccessGroup"}
 	ClosedBy *TaskParty `json:"closedBy,omitempty"`
 
-	// ClosingNote Why the review was rejected, in the decider's words
+	// ClosingNote The closing words of the person who closed the task - why a review was rejected or a custom task declined, or the reply a done custom task was finished with
 	ClosingNote *string `json:"closingNote,omitempty"`
 
 	// ClosingReason Why a review closed without a decision
@@ -4535,7 +5086,7 @@ type Task struct {
 	Editable *bool `json:"editable,omitempty"`
 	Id       int   `json:"id"`
 
-	// Kind `custom` for what a person asks; the review kinds come from a review flow and end in an `outcome`; `request_for_information` stands for a request to a supplier and opens and closes with it, `supply_answer` for the answer a supplier's group is asked for
+	// Kind `custom` for what a person asks; the review kinds come from a review flow and end in an `outcome`; `request_for_information` stands for a request to a supplier and opens and closes with it, `supply_answer` for the answer a supplier's group is asked for; `file_expiry` reminds 30 days before a document in a record's Files expires, and closes once its `validUntil` moves or no record lists the file
 	Kind TaskKind `json:"kind"`
 
 	// Moves The moves this credential may take on the task now, each a `POST /tasks/{id}/<move>`
@@ -4611,7 +5162,7 @@ type Task struct {
 // TaskClosingReason Why a review closed without a decision
 type TaskClosingReason string
 
-// TaskKind `custom` for what a person asks; the review kinds come from a review flow and end in an `outcome`; `request_for_information` stands for a request to a supplier and opens and closes with it, `supply_answer` for the answer a supplier's group is asked for
+// TaskKind `custom` for what a person asks; the review kinds come from a review flow and end in an `outcome`; `request_for_information` stands for a request to a supplier and opens and closes with it, `supply_answer` for the answer a supplier's group is asked for; `file_expiry` reminds 30 days before a document in a record's Files expires, and closes once its `validUntil` moves or no record lists the file
 type TaskKind string
 
 // TaskMoves defines model for Task.Moves.
@@ -4644,6 +5195,14 @@ type TaskStepsType string
 // TaskType defines model for Task.Type.
 type TaskType string
 
+// TaskCompletion What the person finishing a custom task sends along.
+//
+// Example: {"note":"The renewed certificate is in the supplier folder."}
+type TaskCompletion struct {
+	// Note The reply the person who asked reads in their bell, and the task shows as `closingNote` once done. Optional; a longer one is refused with `TASK_NOTE_TOO_LONG`.
+	Note *string `json:"note,omitempty"`
+}
+
 // TaskDecision A decision on the step a review stands at.
 //
 // Example: {"note":"The care instructions are missing","step":1}
@@ -4659,7 +5218,7 @@ type TaskDecision struct {
 type TaskInput struct {
 	// Task On create, `title` and `assigneeKey` are needed; on update, send only what changes.
 	Task struct {
-		// AssigneeKey `User:<id>` or `AccessGroup:<id>`, as `GET /tasks/assignees` names them. A person who can open the application manager, or a group with access to it and at least one member. A new assignee clears the claim and is told.
+		// AssigneeKey `User:<id>` or `AccessGroup:<id>`, as `GET /tasks/assignees` names them. A person who can open the Application Manager, or a group with access to it and at least one member. A new assignee clears the claim and is told.
 		AssigneeKey *string `json:"assigneeKey,omitempty"`
 
 		// DueOn Optional; not in the past. From the day after, the task counts as overdue.
@@ -5120,8 +5679,11 @@ type UpdateDppJSONBody struct {
 
 // CorrectDppJSONBody defines parameters for CorrectDpp.
 type CorrectDppJSONBody struct {
-	// Description Free-text note carried onto the `corrected` event
+	// Description Free-text note carried onto the `corrected` event. A note on a passport event appears on the public passport in every language and cannot be changed or removed once saved, so it must contain no personal data (names, email addresses, phone numbers).
 	Description *string `json:"description,omitempty"`
+
+	// DescriptionLocale The language the note is written in, one of the workspace's working languages; another answers 422 `DESCRIPTION_LOCALE_INVALID`. Leave it out to take the language of the request.
+	DescriptionLocale *string `json:"descriptionLocale,omitempty"`
 }
 
 // CorrectDppParams defines parameters for CorrectDpp.
@@ -5148,14 +5710,17 @@ type ListDppEventsParams struct {
 type AppendDppEventJSONBody struct {
 	// Event The event to append. `eventType` decides the branch - `status_change` drives a status transition and requires `status`; every other type records a plain event. The versioned types are not accepted here, they ride their own operations.
 	//
-	// Example: {"data":{"workshopId":"DE-4711"},"description":"Annual safety inspection passed","eventType":"inspection","gln":"4012345000009","publish":true}
+	// Example: {"data":{"workshopId":"DE-4711"},"description":"Annual safety inspection passed","descriptionLocale":"en","eventType":"inspection","gln":"4012345000009","publish":true}
 	Event DppEventInput `json:"event"`
 }
 
 // ReissueDppJSONBody defines parameters for ReissueDpp.
 type ReissueDppJSONBody struct {
-	// Description Free-text note carried onto the `reissued` event
+	// Description Free-text note carried onto the `reissued` event. A note on a passport event appears on the public passport in every language and cannot be changed or removed once saved, so it must contain no personal data (names, email addresses, phone numbers).
 	Description *string `json:"description,omitempty"`
+
+	// DescriptionLocale The language the note is written in, one of the workspace's working languages; another answers 422 `DESCRIPTION_LOCALE_INVALID`. Leave it out to take the language of the request.
+	DescriptionLocale *string `json:"descriptionLocale,omitempty"`
 
 	// SuccessorCode The public code of the freshly minted passport, when there is one
 	SuccessorCode *string `json:"successorCode,omitempty"`
@@ -5178,8 +5743,11 @@ type GetDppStatsParamsFormat string
 
 // SupersedeDppJSONBody defines parameters for SupersedeDpp.
 type SupersedeDppJSONBody struct {
-	// Description Free-text note carried onto the `superseded` event
+	// Description Free-text note carried onto the `superseded` event. A note on a passport event appears on the public passport in every language and cannot be changed or removed once saved, so it must contain no personal data (names, email addresses, phone numbers).
 	Description *string `json:"description,omitempty"`
+
+	// DescriptionLocale The language the note is written in, one of the workspace's working languages; another answers 422 `DESCRIPTION_LOCALE_INVALID`. Leave it out to take the language of the request.
+	DescriptionLocale *string `json:"descriptionLocale,omitempty"`
 
 	// SuccessorCode The public code of the passport that replaces this one
 	SuccessorCode string `json:"successorCode"`
@@ -5193,8 +5761,11 @@ type SupersedeDppParams struct {
 
 // VoidDppJSONBody defines parameters for VoidDpp.
 type VoidDppJSONBody struct {
-	// Description Free-text note carried onto the `voided` event
+	// Description Free-text note carried onto the `voided` event. A note on a passport event appears on the public passport in every language and cannot be changed or removed once saved, so it must contain no personal data (names, email addresses, phone numbers).
 	Description *string `json:"description,omitempty"`
+
+	// DescriptionLocale The language the note is written in, one of the workspace's working languages; another answers 422 `DESCRIPTION_LOCALE_INVALID`. Leave it out to take the language of the request.
+	DescriptionLocale *string `json:"descriptionLocale,omitempty"`
 
 	// Reason Why the unit is gone. `recalled` means recalled and then disposed of; a recall on its own is a status change to `suspended`, not a void.
 	Reason VoidDppJSONBodyReason `json:"reason"`
@@ -5340,7 +5911,9 @@ type ListImportsParams struct {
 
 // CreateImportMultipartBody defines parameters for CreateImport.
 type CreateImportMultipartBody struct {
-	DataType *CreateImportMultipartBodyDataType `json:"dataType,omitempty"`
+	// ContentLocale The language of the file's texts, as `contentLocale` of `ImportMappingsInput` says; absent, the upload recognises it
+	ContentLocale *string                            `json:"contentLocale,omitempty"`
+	DataType      *CreateImportMultipartBodyDataType `json:"dataType,omitempty"`
 
 	// File The spreadsheet, at most 50 MB, 100000 rows and 2000000 cells
 	File openapi_types.File `json:"file"`
@@ -5394,7 +5967,7 @@ type RevertImportJSONBody struct {
 
 // ListLeadgensParams defines parameters for ListLeadgens.
 type ListLeadgensParams struct {
-	// Term Search leadgens by name
+	// Term Search campaigns by name
 	Term *string `form:"term,omitempty" json:"term,omitempty"`
 }
 
@@ -5425,6 +5998,9 @@ type ListLotsParams struct {
 	// Identifier Keep only the lot with this identifier, the value a passport carries as `batchIdentifier`
 	Identifier *string `form:"identifier,omitempty" json:"identifier,omitempty"`
 
+	// Serial Keep only the lot of `product_id` holding this serial number (`POST /lots/{id}/serials`)
+	Serial *string `form:"serial,omitempty" json:"serial,omitempty"`
+
 	// Page Page number
 	Page *Page `form:"page,omitempty" json:"page,omitempty"`
 
@@ -5444,6 +6020,36 @@ type ListLotsParams struct {
 // ListLotsParamsSort defines parameters for ListLots.
 type ListLotsParamsSort string
 
+// ListLotCodesParams defines parameters for ListLotCodes.
+type ListLotCodesParams struct {
+	// Page Page number
+	Page *Page `form:"page,omitempty" json:"page,omitempty"`
+
+	// PerPage Rows per page (default: 100, max: 1000)
+	PerPage *int `form:"per_page,omitempty" json:"per_page,omitempty"`
+}
+
+// ListLotSerialsParams defines parameters for ListLotSerials.
+type ListLotSerialsParams struct {
+	// Page Page number
+	Page *Page `form:"page,omitempty" json:"page,omitempty"`
+
+	// PerPage Records per page (default: 100, max: 500)
+	PerPage *PerPage `form:"per_page,omitempty" json:"per_page,omitempty"`
+}
+
+// CreateLotSerialsJSONBody defines parameters for CreateLotSerials.
+type CreateLotSerialsJSONBody struct {
+	// Serials One entry per element, a range, a first and a last serial number, or a single serial number
+	Serials []string `json:"serials"`
+}
+
+// CreateLotSerialsParams defines parameters for CreateLotSerials.
+type CreateLotSerialsParams struct {
+	// IdempotencyKey Makes the request safe to repeat. The same key and body within 24 hours replays the stored response with `Idempotent-Replayed: true`; the same key with another body answers 422 `IDEMPOTENCY_KEY_REUSED`; a key whose first request is still running answers 409 `IDEMPOTENCY_IN_PROGRESS`.
+	IdempotencyKey *IdempotencyKey `json:"Idempotency-Key,omitempty"`
+}
+
 // ListMediafilesParams defines parameters for ListMediafiles.
 type ListMediafilesParams struct {
 	// Page Page number
@@ -5462,24 +6068,83 @@ type CreateMediafileJSONBody struct {
 		// Data The bytes of the file as base64, bare or as a `data:` URI
 		Data *string `json:"data,omitempty"`
 
+		// DocumentType What the document is, one of the codes the Mediafile schema lists
+		DocumentType *string `json:"documentType,omitempty"`
+
+		// Issuer Who issued the document
+		Issuer *string `json:"issuer,omitempty"`
+
 		// Name Optional display name
 		Name *string `json:"name,omitempty"`
 
+		// Number The number the issuer gave the document
+		Number *string `json:"number,omitempty"`
+
+		// Public False keeps the bytes in the protected store (default true)
+		Public *bool `json:"public,omitempty"`
+
 		// Url An https address the server reads the bytes from, instead of `data`
 		Url *string `json:"url,omitempty"`
+
+		// ValidFrom The first day the document holds
+		ValidFrom *openapi_types.Date `json:"validFrom,omitempty"`
+
+		// ValidUntil The last day the document holds, not before validFrom
+		ValidUntil *openapi_types.Date `json:"validUntil,omitempty"`
 	} `json:"mediafile,omitempty"`
 }
 
 // CreateMediafileMultipartBody defines parameters for CreateMediafile.
 type CreateMediafileMultipartBody struct {
-	// MediafileFile Image file to upload
+	// MediafileDocumentType What the document is, one of the codes the Mediafile schema lists
+	MediafileDocumentType *string `json:"mediafile[documentType],omitempty"`
+
+	// MediafileFile File to upload
 	MediafileFile *openapi_types.File `json:"mediafile[file],omitempty"`
+
+	// MediafileIssuer Who issued the document
+	MediafileIssuer *string `json:"mediafile[issuer],omitempty"`
 
 	// MediafileName Optional display name
 	MediafileName *string `json:"mediafile[name],omitempty"`
 
+	// MediafileNumber The number the issuer gave the document
+	MediafileNumber *string `json:"mediafile[number],omitempty"`
+
+	// MediafilePublic False keeps the bytes in the protected store (default true)
+	MediafilePublic *bool `json:"mediafile[public],omitempty"`
+
 	// MediafileUpload The same file under the name the model uses; send either this or `mediafile[file]`
 	MediafileUpload *openapi_types.File `json:"mediafile[upload],omitempty"`
+
+	// MediafileValidFrom The first day the document holds
+	MediafileValidFrom *openapi_types.Date `json:"mediafile[validFrom],omitempty"`
+
+	// MediafileValidUntil The last day the document holds, not before validFrom
+	MediafileValidUntil *openapi_types.Date `json:"mediafile[validUntil],omitempty"`
+}
+
+// UpdateMediafileJSONBody defines parameters for UpdateMediafile.
+type UpdateMediafileJSONBody struct {
+	Mediafile *struct {
+		// DocumentType What the document is, one of the codes the Mediafile schema lists
+		DocumentType *string `json:"documentType,omitempty"`
+
+		// Issuer Who issued the document
+		Issuer *string `json:"issuer,omitempty"`
+
+		// Name The display name
+		Name *string `json:"name,omitempty"`
+
+		// Number The number the issuer gave the document
+		Number *string `json:"number,omitempty"`
+
+		// ValidFrom The first day the document holds
+		ValidFrom *openapi_types.Date `json:"validFrom,omitempty"`
+
+		// ValidUntil The last day the document holds, not before validFrom
+		ValidUntil *openapi_types.Date `json:"validUntil,omitempty"`
+	} `json:"mediafile,omitempty"`
 }
 
 // AuthorizeClientParams defines parameters for AuthorizeClient.
@@ -5487,7 +6152,7 @@ type AuthorizeClientParams struct {
 	// ResponseType Always `code`.
 	ResponseType AuthorizeClientParamsResponseType `form:"response_type" json:"response_type"`
 
-	// ClientId The client id dynamic client registration answered with.
+	// ClientId The client id dynamic client registration answered with, or the https URL of the application's Client ID Metadata Document. The server reads that document (at most 5 KB, no redirects followed), keeps it as long as its `Cache-Control` allows, between 5 minutes and a day, and takes the redirect URIs it lists. The document has to name this URL as its `client_id` and authenticate with `none`; a loopback redirect URI it lists matches on any port.
 	ClientId string `form:"client_id" json:"client_id"`
 
 	// RedirectUri One of the application's registered redirect URIs, matched as an exact string.
@@ -5572,7 +6237,7 @@ type PreparePaymentJSONBody = map[string]interface{}
 
 // ResolvePermalinkParams defines parameters for ResolvePermalink.
 type ResolvePermalinkParams struct {
-	// Show Comma-separated property type IDs to reveal restricted properties
+	// Show Comma-separated property namespaces naming the on-demand properties to include, a bare prefix (`transpareo`) or an exact term (`transpareo:capacityWh`). Served to an authenticated caller only; without authentication the on-demand properties stay out.
 	Show *string `form:"show,omitempty" json:"show,omitempty"`
 }
 
@@ -5659,7 +6324,7 @@ type CreateProductJSONBody struct {
 		Name string `json:"name"`
 	} `json:"brand,omitempty"`
 
-	// Product The fields of a product write. A create needs `name` and `componentsInput`, which the create operation says, and `name` alone where it names `parentId`; an update carries only what it means to change, because every field it names is written.
+	// Product The fields of a product write. A create needs `name` and `componentsInput`, which the create operation says, and `name` alone where it names `parentId`; an update carries only what it means to change, because every field it names is written. A key of the read (Product, ProductDetail) may come back with the write and passes while it holds what the read holds; changed, it refuses the write with 422 `PRODUCT_KEYS_REFUSED`, its field naming what writes it (`categories` categoryIds, `components` componentsInput, `properties` propertiesInput, `brand` and `brandName` brand.name beside product, `mediafiles` `PUT /products/{id}/mediafiles`, `published` `PUT /products/{id}/publish` or `unpublish`) or saying no call writes it (`permalink`, `publishedAt`, `updatedAt` and the other keys the server works out). A create compares them with what `GET /products/new` answers and passes any `id`. Any other key, here, inside a `componentsInput` entry or beside `product` and `brand`, refuses the write the same way, naming each; so does a list or an object sent as something else.
 	Product ProductInput `json:"product"`
 }
 
@@ -5677,7 +6342,7 @@ type AssignProductsJSONBody struct {
 
 // GetProductParams defines parameters for GetProduct.
 type GetProductParams struct {
-	// Show Comma-separated property type IDs to reveal restricted properties
+	// Show Comma-separated property namespaces naming the on-demand properties to include, a bare prefix (`transpareo`) or an exact term (`transpareo:capacityWh`). Served to an authenticated caller only; without authentication the on-demand properties stay out.
 	Show *string `form:"show,omitempty" json:"show,omitempty"`
 
 	// Raw Return raw property values instead of rendered HTML
@@ -5690,7 +6355,7 @@ type UpdateProductJSONBody struct {
 		Name *string `json:"name,omitempty"`
 	} `json:"brand,omitempty"`
 
-	// Product The fields of a product write. A create needs `name` and `componentsInput`, which the create operation says, and `name` alone where it names `parentId`; an update carries only what it means to change, because every field it names is written.
+	// Product The fields of a product write. A create needs `name` and `componentsInput`, which the create operation says, and `name` alone where it names `parentId`; an update carries only what it means to change, because every field it names is written. A key of the read (Product, ProductDetail) may come back with the write and passes while it holds what the read holds; changed, it refuses the write with 422 `PRODUCT_KEYS_REFUSED`, its field naming what writes it (`categories` categoryIds, `components` componentsInput, `properties` propertiesInput, `brand` and `brandName` brand.name beside product, `mediafiles` `PUT /products/{id}/mediafiles`, `published` `PUT /products/{id}/publish` or `unpublish`) or saying no call writes it (`permalink`, `publishedAt`, `updatedAt` and the other keys the server works out). A create compares them with what `GET /products/new` answers and passes any `id`. Any other key, here, inside a `componentsInput` entry or beside `product` and `brand`, refuses the write the same way, naming each; so does a list or an object sent as something else.
 	Product *ProductInput `json:"product,omitempty"`
 }
 
@@ -5769,8 +6434,11 @@ type SearchCatalogue200JSONResponseBody_Results_Item struct {
 // LoginSessionJSONBody defines parameters for LoginSession.
 type LoginSessionJSONBody struct {
 	// Login Email address or user alias
-	Login    string `json:"login"`
-	Password string `json:"password"`
+	Login string `json:"login"`
+
+	// Otp The code of the second factor, for a user who set one up
+	Otp      *string `json:"otp,omitempty"`
+	Password string  `json:"password"`
 
 	// ProductTokens Claim tokens for products to assign to the user on login
 	ProductTokens *[]string `json:"productTokens,omitempty"`
@@ -5949,11 +6617,17 @@ type CreateLeadgenJSONRequestBody CreateLeadgenJSONBody
 // UpdateLeadgenJSONRequestBody defines body for UpdateLeadgen for application/json ContentType.
 type UpdateLeadgenJSONRequestBody UpdateLeadgenJSONBody
 
+// CreateLotSerialsJSONRequestBody defines body for CreateLotSerials for application/json ContentType.
+type CreateLotSerialsJSONRequestBody CreateLotSerialsJSONBody
+
 // CreateMediafileJSONRequestBody defines body for CreateMediafile for application/json ContentType.
 type CreateMediafileJSONRequestBody CreateMediafileJSONBody
 
 // CreateMediafileMultipartRequestBody defines body for CreateMediafile for multipart/form-data ContentType.
 type CreateMediafileMultipartRequestBody CreateMediafileMultipartBody
+
+// UpdateMediafileJSONRequestBody defines body for UpdateMediafile for application/json ContentType.
+type UpdateMediafileJSONRequestBody UpdateMediafileJSONBody
 
 // RegisterClientJSONRequestBody defines body for RegisterClient for application/json ContentType.
 type RegisterClientJSONRequestBody = ClientRegistration
@@ -6002,6 +6676,9 @@ type UpdateTaskJSONRequestBody = TaskInput
 
 // ApproveTaskJSONRequestBody defines body for ApproveTask for application/json ContentType.
 type ApproveTaskJSONRequestBody = TaskDecision
+
+// CompleteTaskJSONRequestBody defines body for CompleteTask for application/json ContentType.
+type CompleteTaskJSONRequestBody = TaskCompletion
 
 // RejectTaskJSONRequestBody defines body for RejectTask for application/json ContentType.
 type RejectTaskJSONRequestBody = TaskDecision
@@ -6355,7 +7032,7 @@ type ClientInterface interface {
 
 	// CreateBrandWithBody Create a brand
 	//
-	// Creates a brand owned by the caller, or answers 200 with the brand of that name when one exists, since a brand is one row per name across the workspace. Names are harmonised the way the application manager does it. A brand is published on its own once it has products, so there is nothing to publish by hand.
+	// Creates a brand owned by the caller, or answers 200 with the brand of that name when one exists, since a brand is one row per name across the workspace. Names are harmonised the way the Application Manager does it. A brand is published on its own once it has products, so there is nothing to publish by hand.
 	//
 	// A consumer needs `brand_access` or `brand_write`; a signed-in person needs a confirmed account.
 	//
@@ -6366,7 +7043,7 @@ type ClientInterface interface {
 
 	// CreateBrand Create a brand
 	//
-	// Creates a brand owned by the caller, or answers 200 with the brand of that name when one exists, since a brand is one row per name across the workspace. Names are harmonised the way the application manager does it. A brand is published on its own once it has products, so there is nothing to publish by hand.
+	// Creates a brand owned by the caller, or answers 200 with the brand of that name when one exists, since a brand is one row per name across the workspace. Names are harmonised the way the Application Manager does it. A brand is published on its own once it has products, so there is nothing to publish by hand.
 	//
 	// A consumer needs `brand_access` or `brand_write`; a signed-in person needs a confirmed account.
 	//
@@ -6446,11 +7123,11 @@ type ClientInterface interface {
 
 	// CreateComponentWithBody Create a component
 	//
-	// Creates a component, unpublished, owned by the caller. Properties and template ids ride beside it in the shape the application manager's form sends: `properties.new` maps a property type id to the values to add, `templateIds` names the components whose properties the new one inherits.
+	// Creates a component, unpublished, owned by the caller. Properties and template ids ride beside it in the shape the Application Manager's form sends: `properties.new` maps a property type id to the values to add, `templateIds` names the components whose properties the new one inherits.
 	//
 	// A consumer needs `component_access` or `component_write`; a signed-in person needs a confirmed account. The answer is the same document as `GET /components/{id}`.
 	//
-	// A property type id naming no property type refuses the whole write with 422 `COMPONENT_PROPERTIES_REFUSED`, and no component is created; the message names each id, `fields.properties.unknown` lists them as sent. `fields.properties.planGated` and `fields.properties.groupGated` keep the shape of the product refusal and stay empty, since no plan or access group limits a component property type.
+	// A property type id naming no property type refuses the whole write with 422 `COMPONENT_PROPERTIES_REFUSED`, and no component is created; the message names each id, `fields.properties.unknown` lists them as sent. `fields.properties.planGated` and `fields.properties.groupGated` keep the shape of the product refusal and stay empty, since no plan or access group limits a component property type. A link value naming a file by `file:<id>` lists the file on the component; an id naming no file of the library refuses the whole write with 422 `FILE_REFERENCE_UNKNOWN`, and no component is created.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -6459,11 +7136,11 @@ type ClientInterface interface {
 
 	// CreateComponent Create a component
 	//
-	// Creates a component, unpublished, owned by the caller. Properties and template ids ride beside it in the shape the application manager's form sends: `properties.new` maps a property type id to the values to add, `templateIds` names the components whose properties the new one inherits.
+	// Creates a component, unpublished, owned by the caller. Properties and template ids ride beside it in the shape the Application Manager's form sends: `properties.new` maps a property type id to the values to add, `templateIds` names the components whose properties the new one inherits.
 	//
 	// A consumer needs `component_access` or `component_write`; a signed-in person needs a confirmed account. The answer is the same document as `GET /components/{id}`.
 	//
-	// A property type id naming no property type refuses the whole write with 422 `COMPONENT_PROPERTIES_REFUSED`, and no component is created; the message names each id, `fields.properties.unknown` lists them as sent. `fields.properties.planGated` and `fields.properties.groupGated` keep the shape of the product refusal and stay empty, since no plan or access group limits a component property type.
+	// A property type id naming no property type refuses the whole write with 422 `COMPONENT_PROPERTIES_REFUSED`, and no component is created; the message names each id, `fields.properties.unknown` lists them as sent. `fields.properties.planGated` and `fields.properties.groupGated` keep the shape of the product refusal and stay empty, since no plan or access group limits a component property type. A link value naming a file by `file:<id>` lists the file on the component; an id naming no file of the library refuses the whole write with 422 `FILE_REFERENCE_UNKNOWN`, and no component is created.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -6486,7 +7163,7 @@ type ClientInterface interface {
 
 	// UpdateComponentWithBody Update a component
 	//
-	// Renames the component and applies property and template changes in the shape the application manager form sends. The write is a patch, so the properties it does not name stay as they are. `properties.existing` maps a property type id to the properties to change by id, an empty value removes one; `properties.new` adds values; `templateIds` replaces the template set. The caller must own the component, or hold `component_write`. A property type id naming no property type refuses the whole write with 422 `COMPONENT_PROPERTIES_REFUSED`, whose message names each; `fields.properties.unknown` lists them as sent, `planGated` and `groupGated` stay empty.
+	// Renames the component and applies property and template changes in the shape the Application Manager form sends. The write is a patch, so the properties it does not name stay as they are. `properties.existing` maps a property type id to the properties to change by id, an empty value removes one; `properties.new` adds values; `templateIds` replaces the template set. The caller must own the component, or hold `component_write`. A property type id naming no property type refuses the whole write with 422 `COMPONENT_PROPERTIES_REFUSED`, whose message names each; `fields.properties.unknown` lists them as sent, `planGated` and `groupGated` stay empty. A link value naming a file by `file:<id>` lists the file on the component; an id naming no file of the library refuses the whole write with 422 `FILE_REFERENCE_UNKNOWN`.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -6495,7 +7172,7 @@ type ClientInterface interface {
 
 	// UpdateComponent Update a component
 	//
-	// Renames the component and applies property and template changes in the shape the application manager form sends. The write is a patch, so the properties it does not name stay as they are. `properties.existing` maps a property type id to the properties to change by id, an empty value removes one; `properties.new` adds values; `templateIds` replaces the template set. The caller must own the component, or hold `component_write`. A property type id naming no property type refuses the whole write with 422 `COMPONENT_PROPERTIES_REFUSED`, whose message names each; `fields.properties.unknown` lists them as sent, `planGated` and `groupGated` stay empty.
+	// Renames the component and applies property and template changes in the shape the Application Manager form sends. The write is a patch, so the properties it does not name stay as they are. `properties.existing` maps a property type id to the properties to change by id, an empty value removes one; `properties.new` adds values; `templateIds` replaces the template set. The caller must own the component, or hold `component_write`. A property type id naming no property type refuses the whole write with 422 `COMPONENT_PROPERTIES_REFUSED`, whose message names each; `fields.properties.unknown` lists them as sent, `planGated` and `groupGated` stay empty. A link value naming a file by `file:<id>` lists the file on the component; an id naming no file of the library refuses the whole write with 422 `FILE_REFERENCE_UNKNOWN`.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -6525,7 +7202,7 @@ type ClientInterface interface {
 
 	// ConfirmSignup Confirm user email after signup
 	//
-	// Confirms a user's email address using the token sent during registration.
+	// Confirms a user's email address using the token sent during registration. A signup link older than 24 hours on an unconfirmed account answers 422 with `TOKEN_PARAM_EXPIRED`.
 	//
 	// Corresponds with PUT /confirm_signup (the `ConfirmSignup` operationId).
 	ConfirmSignup(ctx context.Context, params *ConfirmSignupParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -6557,11 +7234,15 @@ type ClientInterface interface {
 	//
 	// `granularity` says which unit the passport stands for and therefore which identifiers it needs: `model` needs none of its own, `batch` needs a `batchIdentifier`, `item` needs a `serialIdentifier` as well. The lot is created from the product as it stands the first time its identifier is used and reused by every later passport of the same lot. A new lot is taken only of a product that passes every other required readiness check; until then the create answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`.
 	//
-	// A lot takes one `batch` passport and a unit one `item` passport. A second one is refused with 422 `DPP_BATCH_TAKEN` on `batch`, or `DPP_SERIAL_IDENTIFIER_TAKEN` on `serialIdentifier` for a serial the lot has already, and the message names the passport that stands for it. A voided or superseded passport still stands for its lot, and so does a draft, which is published instead. Item passports of a lot and its `batch` passport do not count against each other.
+	// A product takes one `model` passport, a lot one `batch` passport and a unit one `item` passport. A second one is refused with 422 `DPP_UNLOCKABLE_ID_TAKEN` on `unlockableId`, `DPP_BATCH_TAKEN` on `batch`, or `DPP_SERIAL_IDENTIFIER_TAKEN` on `serialIdentifier` for a serial the lot has already, and the message names the passport that stands for it. A voided or superseded passport still stands for its product, lot or unit, and so does a draft, which is published instead, and a model passport the workspace issued by itself. Passports at different granularities do not count against each other.
+	//
+	// A product with variants gets no passport of its own: its passports go to the products at the ends of its family, the variants that have no variants themselves. A create naming one is refused with 422 `DPP_UNLOCKABLE_ID_HAS_VARIANTS` on `unlockableId`, and no lot is taken of it. A passport the product held before its first variant came stays as it is.
+	//
+	// A passport is issued of a product the caller writes: its own, or one its access groups give it to write. Any other product is refused with 422 `DPP_UNLOCKABLE_NOT_EDITABLE` on `unlockable`. A refused create writes nothing, the lot it names included.
 	//
 	// The answer carries `validation` and `publishBlocked` alongside the passport: the same report `POST /dpps/validate` produces, over the record that was just written, so a caller that skipped the dry run still sees what a publish would refuse or warn about.
 	//
-	// `propertyTypeIds` names the property types the passport carries, and it carries those alone. An entry naming no product property type refuses the whole write with 422 `DPP_PROPERTY_TYPES_REFUSED`, and no passport is created; the message names each, `fields.propertyTypeIds.unknown` lists them as sent.
+	// `propertyTypeIds` names the property types the passport carries, and it carries those alone. An entry naming no product property type refuses the whole write with 422 `DPP_PROPERTY_TYPES_REFUSED`, and no passport is created; the message names each, `fields.propertyTypeIds.unknown` lists them as sent. A selection sent as no list, a single id among them, would carry every type, so it is refused with 422 `DPP_KEYS_REFUSED` and `fields.propertyTypeIds.error` `DPP_KEY_LIST_REQUIRED`.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -6574,11 +7255,15 @@ type ClientInterface interface {
 	//
 	// `granularity` says which unit the passport stands for and therefore which identifiers it needs: `model` needs none of its own, `batch` needs a `batchIdentifier`, `item` needs a `serialIdentifier` as well. The lot is created from the product as it stands the first time its identifier is used and reused by every later passport of the same lot. A new lot is taken only of a product that passes every other required readiness check; until then the create answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`.
 	//
-	// A lot takes one `batch` passport and a unit one `item` passport. A second one is refused with 422 `DPP_BATCH_TAKEN` on `batch`, or `DPP_SERIAL_IDENTIFIER_TAKEN` on `serialIdentifier` for a serial the lot has already, and the message names the passport that stands for it. A voided or superseded passport still stands for its lot, and so does a draft, which is published instead. Item passports of a lot and its `batch` passport do not count against each other.
+	// A product takes one `model` passport, a lot one `batch` passport and a unit one `item` passport. A second one is refused with 422 `DPP_UNLOCKABLE_ID_TAKEN` on `unlockableId`, `DPP_BATCH_TAKEN` on `batch`, or `DPP_SERIAL_IDENTIFIER_TAKEN` on `serialIdentifier` for a serial the lot has already, and the message names the passport that stands for it. A voided or superseded passport still stands for its product, lot or unit, and so does a draft, which is published instead, and a model passport the workspace issued by itself. Passports at different granularities do not count against each other.
+	//
+	// A product with variants gets no passport of its own: its passports go to the products at the ends of its family, the variants that have no variants themselves. A create naming one is refused with 422 `DPP_UNLOCKABLE_ID_HAS_VARIANTS` on `unlockableId`, and no lot is taken of it. A passport the product held before its first variant came stays as it is.
+	//
+	// A passport is issued of a product the caller writes: its own, or one its access groups give it to write. Any other product is refused with 422 `DPP_UNLOCKABLE_NOT_EDITABLE` on `unlockable`. A refused create writes nothing, the lot it names included.
 	//
 	// The answer carries `validation` and `publishBlocked` alongside the passport: the same report `POST /dpps/validate` produces, over the record that was just written, so a caller that skipped the dry run still sees what a publish would refuse or warn about.
 	//
-	// `propertyTypeIds` names the property types the passport carries, and it carries those alone. An entry naming no product property type refuses the whole write with 422 `DPP_PROPERTY_TYPES_REFUSED`, and no passport is created; the message names each, `fields.propertyTypeIds.unknown` lists them as sent.
+	// `propertyTypeIds` names the property types the passport carries, and it carries those alone. An entry naming no product property type refuses the whole write with 422 `DPP_PROPERTY_TYPES_REFUSED`, and no passport is created; the message names each, `fields.propertyTypeIds.unknown` lists them as sent. A selection sent as no list, a single id among them, would carry every type, so it is refused with 422 `DPP_KEYS_REFUSED` and `fields.propertyTypeIds.error` `DPP_KEY_LIST_REQUIRED`.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -6589,13 +7274,15 @@ type ClientInterface interface {
 	//
 	// Streams passports in as newline-delimited JSON, one passport per line, so a line of production writes one request instead of thousands. Each row is created and its first version published at the workspace's publish stage, as `POST /dpps/{code}/publish` signs a draft; the response reports one result line per input row.
 	//
-	// An optional first line `{"shared": {...}}` carries batch-wide defaults that each following row deep-merges over (a nested `"__replace__": true` opts a sub-tree out of the merge). An unsupported `shared.granularity` is rejected before any row is processed; per-row problems never abort the batch. A new row whose `propertyTypeIds` names no product property type comes back as `error` with `DPP_PROPERTY_TYPES_REFUSED`, the message naming each and `fields.propertyTypeIds.unknown` listing them, and nothing is created for it.
+	// An optional first line `{"shared": {...}}` carries batch-wide defaults that each following row deep-merges over (a nested `"__replace__": true` opts a sub-tree out of the merge). An unsupported `shared.granularity` is rejected before any row is processed; per-row problems never abort the batch. A new row whose `propertyTypeIds` names no product property type comes back as `error` with `DPP_PROPERTY_TYPES_REFUSED`, the message naming each and `fields.propertyTypeIds.unknown` listing them, and nothing is created for it. A new row whose `propertyTypeIds` is no list comes back as `error` with `DPP_KEYS_REFUSED`; one in `shared` reaches every row it merges into, and each answers for itself.
 	//
 	// Row keys may be written in camelCase (`unlockableId`, `modelIdentifier`, `serialIdentifier`) or as the snake_case attribute names; `tenantData` is an alias for `dynamicData`. The keys inside `dynamicData` are left as they are.
 	//
-	// Resubmission is safe. Rows are deduplicated by natural key rather than by `Idempotency-Key`: at `model` granularity that is `modelIdentifier`, at `batch` it adds `batchIdentifier`, at `item` it adds `serialIdentifier`. A key that already maps to a published passport comes back as `duplicate`; one that maps to a passport that never published is resumed and published, so a retry after a partial failure finishes the job instead of duplicating it. A row whose key misses a passport its lot or unit already has (a row naming no `modelIdentifier`) is refused as `POST /dpps` refuses it, with `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`.
+	// Resubmission is safe. Rows are deduplicated by natural key rather than by `Idempotency-Key`: at `model` granularity that is `modelIdentifier`, at `batch` it adds `batchIdentifier`, at `item` it adds `serialIdentifier`. A key that already maps to a published passport comes back as `duplicate`; one that maps to a passport that never published is resumed and published, so a retry after a partial failure finishes the job instead of duplicating it. A row whose key misses a passport its product, lot or unit already has (a row naming no `modelIdentifier`, or no `granularity` in itself or in `shared`) is refused as `POST /dpps` refuses it, with `DPP_UNLOCKABLE_ID_TAKEN`, `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`. A row naming a product with variants is refused with `DPP_UNLOCKABLE_ID_HAS_VARIANTS`, and the rest of the run goes on.
 	//
-	// Synchronous by default, capped at 500 rows and 5 MB. Send `Prefer: respond-async` to have the body persisted and processed by a background task instead: the response is `202` with a polling URL, and the caps rise to 50000 rows and 25 MB. Beyond that, batch across requests.
+	// Synchronous by default, capped at 500 rows and 5 MB. Send `Prefer: respond-async` to have the body persisted and processed by a background task instead: the response is `202` with a polling URL, and the caps rise to 100000 rows and 50 MB, what a spreadsheet import takes. Beyond that, batch across requests.
+	//
+	// The rows count against the credential's bulk pace, `bulkItemsPerMinute` of `GET /me`, shared by all of its bulk calls and imports. The background task takes its rows at that pace and waits, with `pacedUntil` in its status, while the credential is past it. A synchronous call takes its rows before it writes any: where the pace has no room for them it answers 429 `DPP_BULK_RATE_LIMITED`, writes nothing, and `Retry-After` says in how many seconds they fit. A pace of 0 means none.
 	//
 	// Every row it creates is signed, so the call needs `dpp_publish` as well; without it the answer is 403 and nothing is created. Where the workspace reviews every publish through a review flow, the answer is 409 `DPP_REVIEW_REQUIRED` and nothing is created.
 	//
@@ -6608,7 +7295,7 @@ type ClientInterface interface {
 	//
 	// The dry run of `POST /dpps/bulk`: the same newline-delimited JSON in, one result line per input row out, and nothing written. Rows are read exactly as the create reads them - the optional `{"shared": {...}}` envelope, the deep merge, the camelCase aliases - so a batch that validates here is the batch that will be created.
 	//
-	// Each row comes back as `valid`, `invalid`, `duplicate` or `error`, numbered from one in input order. No passport, lot or version is written, and the rows do not count against the consumer's bulk item cap, so a batch may be validated as often as it takes to get it right.
+	// Each row comes back as `valid`, `invalid`, `duplicate` or `error`, numbered from one in input order. No passport, lot or version is written, and the rows do not count against the consumer's bulk pace, so a batch may be validated as often as it takes to get it right.
 	//
 	// Synchronous only, capped at 500 rows and 5 MB like the synchronous create. There is no asynchronous mode; `Prefer: respond-async` has no effect here.
 	//
@@ -6619,7 +7306,7 @@ type ClientInterface interface {
 
 	// GetBulkTask Poll an asynchronous bulk create
 	//
-	// Reports the status and progress of a bulk-create task, and once it completes the aggregate counts plus the detail of every rejected row. Only the consumer that submitted the task can read it; another consumer's task answers 404.
+	// Reports the status and progress of a bulk-create task, and once it completes the aggregate counts plus the detail of every rejected row. While the task waits for the credential's bulk pace it is `pending` and `pacedUntil` says until when. Only the consumer that submitted the task can read it; another consumer's task answers 404.
 	//
 	// Corresponds with GET /dpps/bulk/{taskId} (the `GetBulkTask` operationId).
 	GetBulkTask(ctx context.Context, taskId string, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -6628,16 +7315,16 @@ type ClientInterface interface {
 	//
 	// What a passport of the product would need at the requested granularity, and what the product still lacks, before anything is written: the identifiers each granularity keys on, the fields of the lot a batch or item passport freezes from, the property types whose values ride on the dynamic surface instead of the signed snapshot, the properties a passport inherits from the product, the report a publish would produce today, and bodies ready to fill for a create and for a bulk row.
 	//
-	// `missing` lists what the product still lacks, one entry per open check, each naming where its answer is sent (the product field, such as `gtin` or `propertiesInput` keyed by `propertyTypeId`, with the operation that takes it, or the workspace), and `ready` says whether nothing required is open. Both are read off the check a new lot is refused by, so a product answered ready is one whose passport saves and publishes as the product stands.
+	// `missing` lists what the product still lacks, one entry per open check, each naming where its answer is sent (the product field, such as `gtin` or `propertiesInput` keyed by `propertyTypeId`, with the operation that takes it, or the workspace), and `ready` says whether nothing required is open. Both are read off the check a new lot is refused by, so a product answered ready is one whose passport saves and publishes as the product stands. A product with variants gets no passport of its own and is never ready: `missing` holds one entry, with the code `DPP_UNLOCKABLE_ID_HAS_VARIANTS` the create answers, naming under `productIds` the variants that take its passports.
 	//
-	// Field names throughout are the wire names, so a program copies them as they are. Reading requirements writes nothing.
+	// Field names throughout are the wire names, so a program copies them as they are. Reading requirements writes nothing. A product the caller may not issue a passport of answers 404, as an unknown one does.
 	//
 	// Corresponds with GET /dpps/requirements (the `GetDppRequirements` operationId).
 	GetDppRequirements(ctx context.Context, params *GetDppRequirementsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// ValidateDppWithBody Validate a DPP payload
 	//
-	// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot; a lot or a unit that has a passport already shows as `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`, and a new lot its product may not have yet as `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, beside the report that names the checks the product still fails. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.
+	// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot; a product that has its model passport already shows as `DPP_UNLOCKABLE_ID_TAKEN`, a lot or a unit that has its passport as `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`, a product with variants as `DPP_UNLOCKABLE_ID_HAS_VARIANTS`, and a new lot its product may not have yet as `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, beside the report that names the checks the product still fails. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.
 	//
 	// A payload the platform would refuse is a plain `200` with `valid: false` - the request succeeded, the passport would not. Only a missing permission, a missing `dpp` object, an unreadable body, a granularity the workspace does not issue and a `propertyTypeIds` entry naming no property type answer with an error status, the last two as the create answers them.
 	//
@@ -6648,7 +7335,7 @@ type ClientInterface interface {
 
 	// ValidateDpp Validate a DPP payload
 	//
-	// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot; a lot or a unit that has a passport already shows as `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`, and a new lot its product may not have yet as `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, beside the report that names the checks the product still fails. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.
+	// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot; a product that has its model passport already shows as `DPP_UNLOCKABLE_ID_TAKEN`, a lot or a unit that has its passport as `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`, a product with variants as `DPP_UNLOCKABLE_ID_HAS_VARIANTS`, and a new lot its product may not have yet as `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, beside the report that names the checks the product still fails. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.
 	//
 	// A payload the platform would refuse is a plain `200` with `valid: false` - the request succeeded, the passport would not. Only a missing permission, a missing `dpp` object, an unreadable body, a granularity the workspace does not issue and a `propertyTypeIds` entry naming no property type answer with an error status, the last two as the create answers them.
 	//
@@ -6657,30 +7344,37 @@ type ClientInterface interface {
 	// Corresponds with POST /dpps/validate (the `ValidateDpp` operationId).
 	ValidateDpp(ctx context.Context, body ValidateDppJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetDppFile Read a restricted file of a passport
+	//
+	// The copy of a file a restricted field of the passport names, at the address the signed `href` of that field's Link points to. A reader opens it where one of the passport's versions holds a restricted row the reader may see whose Link names the file by its digest and type, the newest version first; the read is entered in the passport's access log. A program sends its user token or consumer token and any Accept header but HTML; a browser without a reader is sent to the passport sign-in page and back. The type comes from the extension; images and PDFs come inline, every other kind as an attachment, under the document's name in the reader's language.
+	//
+	// Corresponds with GET /dpps/{code}/files/{name} (the `GetDppFile` operationId).
+	GetDppFile(ctx context.Context, code string, name string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetDppPrivateDynamicData Read the restricted dynamic data
 	//
-	// The passport's live readings in the legitimate-interest tier that this reader may see. The public dynamic-data document carries the public tier only; this answer has the same shape, holds only the restricted rows, and is signed with the same platform key, so a reader verifies it the same way and merges the two. A key is served when it names a published property type in the legitimate-interest tier, no property type sharing its vocabulary term sits in the authorities or internal tier, and the reader belongs to an access group of every legitimate-interest type sharing it. An authority consumer reads without a group. A passport holding no such key answers 404; an authenticated reader who may see none of them gets 204. An unauthenticated request answers 401 with the `X-Auth-Fields` challenge the passport page uses to sign a reader in.
+	// The passport's live readings in the legitimate-interest tier that this reader may see. The public dynamic-data document carries the public tier only; this answer has the same shape, holds only the restricted rows, and is signed with the same platform key, so a reader verifies it the same way and merges the two. A key is served when it names a published property type in the legitimate-interest tier, no property type sharing its vocabulary term sits in the authorities or internal tier, and the reader belongs to an access group of every legitimate-interest type sharing it. An authority consumer reads without a group. A passport holding no such key answers 404; an authenticated reader who may see none of them gets 204. A reader signs in with a user token, a consumer token, or the session of the workspace's passport sign-in page; an unauthenticated request answers 401 with an `X-Auth-Url` header naming that page on the host the request came to.
 	//
 	// Corresponds with GET /dpps/{code}/private_dynamic_data (the `GetDppPrivateDynamicData` operationId).
 	GetDppPrivateDynamicData(ctx context.Context, code string, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetDppPrivateProperties Read the private properties of several versions
 	//
-	// The reader-derived confidential rows for several versions of one passport in a single round-trip. Name the versions with `?versions=1,3,7`; at most 50 are derived per request. A version is left out when it carries no confidential rows or the reader may see none of them, so the answer only contains versions where the reader gains rows beyond the public passport. An unauthenticated request answers 401 with the `X-Auth-Fields` challenge the passport page uses to sign a reader in.
+	// The reader-derived confidential rows for several versions of one passport in a single round-trip. Name the versions with `?versions=1,3,7`; at most 50 are derived per request. A version is left out when it carries no legitimate-interest or on-demand rows, the workspace keeps no copy of them, or the reader may see none of them, so the answer only contains versions where the reader gains rows beyond the public passport. A reader signs in with a user token, a consumer token, or the session of the workspace's passport sign-in page; an unauthenticated request answers 401 with an `X-Auth-Url` header naming that page on the host the request came to.
 	//
 	// Corresponds with GET /dpps/{code}/private_properties (the `GetDppPrivateProperties` operationId).
 	GetDppPrivateProperties(ctx context.Context, code string, params *GetDppPrivatePropertiesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetDppVersionPrivateProperties Read the private properties of one version
 	//
-	// The confidential rows of one passport version, as an ecdsa-sd-2023 derived Verifiable Credential carrying only what this reader is entitled to see. This is the address the public manifest's `privateProperties.url` points at. A reader who is authenticated but entitled to none of this version's restricted rows gets 204, which is deliberately distinct from an empty document. An unauthenticated request answers 401 with the `X-Auth-Fields` challenge the passport page uses to sign a reader in.
+	// The confidential rows of one passport version, as an ecdsa-sd-2023 derived Verifiable Credential carrying only what this reader is entitled to see. This is the address the public manifest's `privateProperties.url` points at. A reader who is authenticated but entitled to none of this version's restricted rows gets 204, which is deliberately distinct from an empty document. A reader signs in with a user token, a consumer token, or the session of the workspace's passport sign-in page; an unauthenticated request answers 401 with an `X-Auth-Url` header naming that page on the host the request came to.
 	//
 	// Corresponds with GET /dpps/{code}/private_properties/{version} (the `GetDppVersionPrivateProperties` operationId).
 	GetDppVersionPrivateProperties(ctx context.Context, code string, version int, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// PublishDppWithBody Publish a DPP
 	//
-	// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. A `draft` that has not published moves to the workspace's publish stage first (`manufactured` or `placed_on_market`, a setting of the workspace), so the version signs that status and `GET /dpps/{code}` answers it; a refused publish leaves it at `draft`. Every other passport keeps its status. Publishing needs `dpp_publish` beside `dpp_write`; without it the answer is 403. A passport whose publish review was approved waits ready to publish, and the person who asked for the review publishes it here through a credential of theirs with `dpp_write` alone, and so does any caller with `dpp_publish`. That publish carries the reason the request gave, and `reason` is not read. The approval stands until the product changes; after that the call is judged like any other publish. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
+	// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. A `draft` that has not published moves to the workspace's publish stage first (`manufactured` or `placed_on_market`, a setting of the workspace), so the version signs that status and `GET /dpps/{code}` answers it; a refused publish leaves it at `draft`. Every other passport keeps its status. Publishing needs `dpp_publish` beside `dpp_write`; without it the answer is 403, as it is for a passport the caller does not write. Approving a publish review signs the passport at once (`POST /tasks/{id}/approve`). A passport may still keep an approval a review stored without signing; the person who asked for that review publishes it here through a credential of theirs with `dpp_write` alone, and so does any caller with `dpp_publish`. That publish carries the reason the request gave, and `reason` is not read. The approval stands until the product changes; after that the call is judged like any other publish. Publishing is refused when the snapshot fails a mandatory validation rule, when the signing key or the workspace context is missing, and for a passport that has not published once the workspace has published as many passports as its plan includes; a new version of a published passport takes no slot. While the workspace's plan is unpaid, after a failed payment or once the plan ended, every publish is refused, new versions included. On a paid plan the publish also seals a copy in the Vault that cannot be changed or deleted for ten years; a version published during a trial is sealed there once the workspace moves to a paid plan.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -6689,7 +7383,7 @@ type ClientInterface interface {
 
 	// PublishDpp Publish a DPP
 	//
-	// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. A `draft` that has not published moves to the workspace's publish stage first (`manufactured` or `placed_on_market`, a setting of the workspace), so the version signs that status and `GET /dpps/{code}` answers it; a refused publish leaves it at `draft`. Every other passport keeps its status. Publishing needs `dpp_publish` beside `dpp_write`; without it the answer is 403. A passport whose publish review was approved waits ready to publish, and the person who asked for the review publishes it here through a credential of theirs with `dpp_write` alone, and so does any caller with `dpp_publish`. That publish carries the reason the request gave, and `reason` is not read. The approval stands until the product changes; after that the call is judged like any other publish. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
+	// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. A `draft` that has not published moves to the workspace's publish stage first (`manufactured` or `placed_on_market`, a setting of the workspace), so the version signs that status and `GET /dpps/{code}` answers it; a refused publish leaves it at `draft`. Every other passport keeps its status. Publishing needs `dpp_publish` beside `dpp_write`; without it the answer is 403, as it is for a passport the caller does not write. Approving a publish review signs the passport at once (`POST /tasks/{id}/approve`). A passport may still keep an approval a review stored without signing; the person who asked for that review publishes it here through a credential of theirs with `dpp_write` alone, and so does any caller with `dpp_publish`. That publish carries the reason the request gave, and `reason` is not read. The approval stands until the product changes; after that the call is judged like any other publish. Publishing is refused when the snapshot fails a mandatory validation rule, when the signing key or the workspace context is missing, and for a passport that has not published once the workspace has published as many passports as its plan includes; a new version of a published passport takes no slot. While the workspace's plan is unpaid, after a failed payment or once the plan ended, every publish is refused, new versions included. On a paid plan the publish also seals a copy in the Vault that cannot be changed or deleted for ten years; a version published during a trial is sealed there once the workspace moves to a paid plan.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -6698,7 +7392,7 @@ type ClientInterface interface {
 
 	// DeleteDpp Delete a DPP
 	//
-	// Deletes a never-published draft you own. A published DPP cannot be deleted - its signed snapshot stays in the ten-year archive and its URL may already be printed on QR codes - and answers 422 instead. The lifecycle exit for a published DPP is void or supersede.
+	// Deletes a never-published draft you own. A published DPP cannot be deleted - its signed snapshot stays on record and its URL may already be printed on QR codes - and answers 422 `DPP_PUBLISHED` instead, the message naming the reason. The lifecycle exit for a published DPP is void or supersede. A test workspace keeps nothing on record, so there a published DPP is deleted as well, together with its versions, its events and its public copies, and its slot of the plan comes free; one the EU DPP registry knows still answers 422.
 	//
 	// Corresponds with DELETE /dpps/{id} (the `DeleteDpp` operationId).
 	DeleteDpp(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -6712,11 +7406,11 @@ type ClientInterface interface {
 
 	// UpdateDppWithBody Update a DPP
 	//
-	// Updates a DPP you own. Admins can update any DPP.
+	// Updates a passport the caller writes: one it issued, or one its access groups give it to write. Any other answers 403. Admins can update any DPP.
 	//
 	// The answer carries `validation` and `publishBlocked` alongside the passport: the same report `POST /dpps/validate` produces, over the record as it now stands, so an update that would block the next publish says so at once.
 	//
-	// A `propertyTypeIds` entry naming no product property type refuses the whole update with 422 `DPP_PROPERTY_TYPES_REFUSED`, and the passport keeps the types it had.
+	// A `propertyTypeIds` entry naming no product property type refuses the whole update with 422 `DPP_PROPERTY_TYPES_REFUSED`, and the passport keeps the types it had; a selection sent as no list with 422 `DPP_KEYS_REFUSED`.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -6725,11 +7419,11 @@ type ClientInterface interface {
 
 	// UpdateDpp Update a DPP
 	//
-	// Updates a DPP you own. Admins can update any DPP.
+	// Updates a passport the caller writes: one it issued, or one its access groups give it to write. Any other answers 403. Admins can update any DPP.
 	//
 	// The answer carries `validation` and `publishBlocked` alongside the passport: the same report `POST /dpps/validate` produces, over the record as it now stands, so an update that would block the next publish says so at once.
 	//
-	// A `propertyTypeIds` entry naming no product property type refuses the whole update with 422 `DPP_PROPERTY_TYPES_REFUSED`, and the passport keeps the types it had.
+	// A `propertyTypeIds` entry naming no product property type refuses the whole update with 422 `DPP_PROPERTY_TYPES_REFUSED`, and the passport keeps the types it had; a selection sent as no list with 422 `DPP_KEYS_REFUSED`.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -6754,18 +7448,18 @@ type ClientInterface interface {
 	// Corresponds with POST /dpps/{id}/correct (the `CorrectDpp` operationId).
 	CorrectDpp(ctx context.Context, id Id, params *CorrectDppParams, body CorrectDppJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// UpdateDppDynamicDataWithBody Update dynamic data
+	// UpdateDppDynamicDataWithBody Update changing values (e.g. battery health)
 	//
-	// Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none). A key naming a published legitimate-interest type is served to the readers its access groups admit by `GET /dpps/{code}/private_dynamic_data`; every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.
+	// Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none). A key naming a published legitimate-interest type is served to the readers its access groups admit by `GET /dpps/{code}/private_dynamic_data`; every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission. A credential sets values on the passports the group granting `dpp_dynamic` gives it to write, by the group's reach, and one acting for a person on the passports that person writes; any other passport answers 403 `DPP_FORBIDDEN`, one the credential reads included.
 	//
 	// Takes any type of body and a specified content type.
 	//
 	// Corresponds with PATCH /dpps/{id}/dynamic_data (the `UpdateDppDynamicData` operationId).
 	UpdateDppDynamicDataWithBody(ctx context.Context, id Id, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// UpdateDppDynamicData Update dynamic data
+	// UpdateDppDynamicData Update changing values (e.g. battery health)
 	//
-	// Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none). A key naming a published legitimate-interest type is served to the readers its access groups admit by `GET /dpps/{code}/private_dynamic_data`; every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.
+	// Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none). A key naming a published legitimate-interest type is served to the readers its access groups admit by `GET /dpps/{code}/private_dynamic_data`; every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission. A credential sets values on the passports the group granting `dpp_dynamic` gives it to write, by the group's reach, and one acting for a person on the passports that person writes; any other passport answers 403 `DPP_FORBIDDEN`, one the credential reads included.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -6785,9 +7479,13 @@ type ClientInterface interface {
 	//
 	// Recalling a unit is a status change to `suspended`. The passport stays readable and keeps answering a scan, which is the point: whoever holds the unit learns of the recall when they scan its code. Voiding is a different operation, for a unit that no longer exists.
 	//
-	// An event is a pending draft until it is sealed. Send `publish: true` to seal it into the Vault at once (a status change is sealed into a new registered version, which needs `dpp_publish` as well); leave it out to keep the draft open. At most one pending event exists per passport, so a second call while one is open answers 409 until it is sealed or discarded.
+	// An event is a pending draft until it is sealed. Send `publish: true` to seal it at once: a status change is sealed into a new registered version, which needs `dpp_publish` as well; any other event is sealed as it stands, and on a paid plan written to the Vault. Leave it out to keep the draft open. A refused seal takes the status change back, so the passport stays as it was and the same call can be sent again once the cause is settled. At most one pending event exists per passport, so a second call while one is open answers 409 until it is sealed or discarded.
 	//
 	// Versioned event types are rejected here: they stand for operations that mint a version, and those have their own endpoints (void, supersede, reissue, publish).
+	//
+	// The note (`description`) of a status change is a note on a passport event: it appears on the public passport in every language and cannot be changed or removed once saved, so it must contain no personal data (names, email addresses, phone numbers). The note of any other type here stays internal. `descriptionLocale` names the language the note is written in; without it the note takes the language of the request.
+	//
+	// A credential records on the passports the group granting `dpp_events` gives it to write: under **Own and team's** its own and those of the group's members, under **All** every passport, under **Selected** the picked ones, and a partner grant on its one passport. One acting for a person records on the passports that person writes. Any other passport answers 403 `DPP_FORBIDDEN`, one the credential reads included.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -6800,9 +7498,13 @@ type ClientInterface interface {
 	//
 	// Recalling a unit is a status change to `suspended`. The passport stays readable and keeps answering a scan, which is the point: whoever holds the unit learns of the recall when they scan its code. Voiding is a different operation, for a unit that no longer exists.
 	//
-	// An event is a pending draft until it is sealed. Send `publish: true` to seal it into the Vault at once (a status change is sealed into a new registered version, which needs `dpp_publish` as well); leave it out to keep the draft open. At most one pending event exists per passport, so a second call while one is open answers 409 until it is sealed or discarded.
+	// An event is a pending draft until it is sealed. Send `publish: true` to seal it at once: a status change is sealed into a new registered version, which needs `dpp_publish` as well; any other event is sealed as it stands, and on a paid plan written to the Vault. Leave it out to keep the draft open. A refused seal takes the status change back, so the passport stays as it was and the same call can be sent again once the cause is settled. At most one pending event exists per passport, so a second call while one is open answers 409 until it is sealed or discarded.
 	//
 	// Versioned event types are rejected here: they stand for operations that mint a version, and those have their own endpoints (void, supersede, reissue, publish).
+	//
+	// The note (`description`) of a status change is a note on a passport event: it appears on the public passport in every language and cannot be changed or removed once saved, so it must contain no personal data (names, email addresses, phone numbers). The note of any other type here stays internal. `descriptionLocale` names the language the note is written in; without it the note takes the language of the request.
+	//
+	// A credential records on the passports the group granting `dpp_events` gives it to write: under **Own and team's** its own and those of the group's members, under **All** every passport, under **Selected** the picked ones, and a partner grant on its one passport. One acting for a person records on the passports that person writes. Any other passport answers 403 `DPP_FORBIDDEN`, one the credential reads included.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -6836,7 +7538,7 @@ type ClientInterface interface {
 
 	// SupersedeDppWithBody Supersede a DPP
 	//
-	// Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. Superseding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
+	// Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. A product, a lot or a unit takes one passport at each granularity (see `POST /dpps`), so the successor stands for another product, lot or unit. Superseding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -6845,7 +7547,7 @@ type ClientInterface interface {
 
 	// SupersedeDpp Supersede a DPP
 	//
-	// Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. Superseding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
+	// Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. A product, a lot or a unit takes one passport at each granularity (see `POST /dpps`), so the successor stands for another product, lot or unit. Superseding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -6861,7 +7563,7 @@ type ClientInterface interface {
 
 	// VoidDppWithBody Void a DPP
 	//
-	// Marks the passport as voided - the unit it stands for no longer exists: it was destroyed, never shipped, or scrapped after a recall. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. This is not how a unit is recalled: a unit still out there is moved to `suspended` through a status change, so its passport goes on answering a scan with the recall. Voiding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
+	// Marks the passport as voided - the unit it stands for no longer exists: it was destroyed, never shipped, or scrapped after a recall. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. This is not how a unit is recalled: a unit still out there is moved to `suspended` through a status change, so its passport goes on answering a scan with the recall. Voiding cannot be undone, and a voided passport still stands for its product, lot or unit, which never takes another passport at its granularity (see `POST /dpps`). A consumer also needs write access to the passport itself (`dpp_write`).
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -6870,7 +7572,7 @@ type ClientInterface interface {
 
 	// VoidDpp Void a DPP
 	//
-	// Marks the passport as voided - the unit it stands for no longer exists: it was destroyed, never shipped, or scrapped after a recall. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. This is not how a unit is recalled: a unit still out there is moved to `suspended` through a status change, so its passport goes on answering a scan with the recall. Voiding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
+	// Marks the passport as voided - the unit it stands for no longer exists: it was destroyed, never shipped, or scrapped after a recall. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. This is not how a unit is recalled: a unit still out there is moved to `suspended` through a status change, so its passport goes on answering a scan with the recall. Voiding cannot be undone, and a voided passport still stands for its product, lot or unit, which never takes another passport at its granularity (see `POST /dpps`). A consumer also needs write access to the passport itself (`dpp_write`).
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -7018,7 +7720,7 @@ type ClientInterface interface {
 	//
 	// Turns a scanned QR code into credentials that can write to that one passport. A workshop, certifier or recycler registered as a long-lived API consumer with no passports of its own calls this with the code it scanned and gets back the client credentials of a short-lived child consumer, exchanged for a bearer token exactly like its own. The child may act on that single passport for 24 hours; the caller keeps its own workspace-wide standing.
 	//
-	// The child inherits only the event-write permissions the caller itself holds, out of `dpp_events`, `dpp_history` and `dpp_dynamic`, so a grant can never widen access. A caller that holds none of them is refused. A caller already confined to a set of passports can only grant one from that set.
+	// The child inherits only the event-write permissions the caller itself holds, out of `dpp_events`, `dpp_history` and `dpp_dynamic`, and of those the ones the caller may use on that passport: `dpp_history` where it reads the passport, `dpp_events` and `dpp_dynamic` where it records on it itself. So a grant can never widen access. A caller that holds none of them is refused, and so is one holding `dpp_events` or `dpp_dynamic` for a passport it records on with neither (403 `SCOPE_FORBIDDEN`). A caller already confined to a set of passports can only grant one from that set.
 	//
 	// Regulator consumers do not use this flow - their access is platform-issued and workspace-wide - and are refused.
 	//
@@ -7031,7 +7733,7 @@ type ClientInterface interface {
 	//
 	// Turns a scanned QR code into credentials that can write to that one passport. A workshop, certifier or recycler registered as a long-lived API consumer with no passports of its own calls this with the code it scanned and gets back the client credentials of a short-lived child consumer, exchanged for a bearer token exactly like its own. The child may act on that single passport for 24 hours; the caller keeps its own workspace-wide standing.
 	//
-	// The child inherits only the event-write permissions the caller itself holds, out of `dpp_events`, `dpp_history` and `dpp_dynamic`, so a grant can never widen access. A caller that holds none of them is refused. A caller already confined to a set of passports can only grant one from that set.
+	// The child inherits only the event-write permissions the caller itself holds, out of `dpp_events`, `dpp_history` and `dpp_dynamic`, and of those the ones the caller may use on that passport: `dpp_history` where it reads the passport, `dpp_events` and `dpp_dynamic` where it records on it itself. So a grant can never widen access. A caller that holds none of them is refused, and so is one holding `dpp_events` or `dpp_dynamic` for a passport it records on with neither (403 `SCOPE_FORBIDDEN`). A caller already confined to a set of passports can only grant one from that set.
 	//
 	// Regulator consumers do not use this flow - their access is platform-issued and workspace-wide - and are refused.
 	//
@@ -7042,7 +7744,7 @@ type ClientInterface interface {
 
 	// ListHelp Search the help articles
 	//
-	// The articles the application manager shows a person: where a setting lives, what a button does, which step comes before which. Give `term` the question in the reader's own words: every word is matched on its own and the words a question is phrased with are dropped, so a whole sentence finds what a keyword would. Hits come back best first, a title match ahead of one in the body.
+	// The articles the Application Manager shows a person: where a setting lives, what a button does, which step comes before which. Give `term` the question in the reader's own words: every word is matched on its own and the words a question is phrased with are dropped, so a whole sentence finds what a keyword would. Hits come back best first, a title match ahead of one in the body.
 	//
 	// An answer with no hits says the articles cover nothing by that name. To tell that apart from a workspace whose help content has not arrived yet, call again with no `term`: the total is then the whole set this workspace can read.
 	//
@@ -7071,9 +7773,9 @@ type ClientInterface interface {
 
 	// CreateImportWithBody Upload a spreadsheet to import
 	//
-	// One multipart request, the shape every upload API has: `curl -F file=@catalogue.xlsx -F dataType=components`. The importer reads xlsx, csv, ods and json. When every column resolves on its own (the canonical headers of the template `GET /imports/example` serves, or a JSON file whose entries carry the canonical keys) the import comes back `mapped`. Otherwise it is `fresh` and the answer carries the `preview` to write the mapping from; send that with `PUT /imports/{id}/mappings`, or along with the file as `mappings`.
+	// One multipart request, the shape every upload API has: `curl -F file=@catalogue.xlsx -F dataType=components`. The importer reads xlsx, csv, ods and json. When every column resolves on its own (the canonical headers of the template `GET /imports/example` serves, or a JSON file whose entries carry the canonical keys) the import comes back `mapped`. Otherwise it is `fresh` and waits for a mapping, sent with `PUT /imports/{id}/mappings` or along with the file as `mappings`. Either way the answer carries the `preview`: every column with its header, the key a mapping names it by and what the upload found, so a caller sees what was mapped and can override a column it finds by its header.
 	//
-	// `options[auto]=true` imports straight away: the upload takes the mapping the mapping form would prefill, a column nothing matches becoming a property type under its own heading, and comes back `validating`; a clean validation goes on into the import on its own, one with errors stops at `validated` for the caller to decide. An automatic run publishes what it imports unless `options[published]=false` says otherwise. Poll the import until `status` is `completed`, `validated` or `failed`. A required attribute no column covers answers 422 `IMPORT_MAPPING_INCOMPLETE` with nothing saved.
+	// `options[auto]=true` imports straight away: the upload takes the mapping the mapping form would prefill, a column nothing matches becoming a property type under its own heading (named in the workspace's default language when the file is written in another one and the translation answers within a few seconds, with the heading kept as its name in the file's language), and comes back `validating`; a clean validation goes on into the import on its own, one with errors stops at `validated` for the caller to decide. An automatic run publishes what it imports unless `options[published]=false` says otherwise. Poll the import until `status` is `completed`, `validated` or `failed`. A required attribute no column covers answers 422 `IMPORT_MAPPING_INCOMPLETE` with nothing saved.
 	//
 	// The upload is held for a limited time; once it is gone, the run endpoints answer 410 `IMPORT_EXPIRED`.
 	//
@@ -7098,7 +7800,7 @@ type ClientInterface interface {
 
 	// GetImport Poll an import
 	//
-	// The status, the counts, the preview while the import is `fresh`, the progress while a task runs, and the problems found so far, both grouped by cause and one entry per failing row. Another consumer's import answers 404.
+	// The status, the counts, the preview while the import still takes a mapping (`fresh`, `mapped`, `validated`), the progress while a task runs, and the problems found so far, both grouped by cause and one entry per failing row. Another consumer's import answers 404.
 	//
 	// Corresponds with GET /imports/{id} (the `GetImport` operationId).
 	GetImport(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -7107,7 +7809,7 @@ type ClientInterface interface {
 	//
 	// Writes the rows in the background, after a backup a revert can restore from. Send `options.backup` as `false` to run without one. A passport import takes no backup and cannot be reverted, since a passport's versions are signed and its way out is a void. Poll the `statusUrl` until `status` is `completed` or `failed`.
 	//
-	// Besides `import_access` this needs the write permission of the data type: `component_write` for components, `product_access` for products, `dpp_bulk_write` for passports. The rows count against the consumer's bulk item cap for the minute.
+	// Besides `import_access` this needs the write permission of the data type: `component_write` for components, `product_access` for products, `dpp_bulk_write` for passports. The rows count against the consumer's bulk pace (`bulkItemsPerMinute` of `GET /me`): the run is never refused for it, and writes its rows at that pace.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -7118,7 +7820,7 @@ type ClientInterface interface {
 	//
 	// Writes the rows in the background, after a backup a revert can restore from. Send `options.backup` as `false` to run without one. A passport import takes no backup and cannot be reverted, since a passport's versions are signed and its way out is a void. Poll the `statusUrl` until `status` is `completed` or `failed`.
 	//
-	// Besides `import_access` this needs the write permission of the data type: `component_write` for components, `product_access` for products, `dpp_bulk_write` for passports. The rows count against the consumer's bulk item cap for the minute.
+	// Besides `import_access` this needs the write permission of the data type: `component_write` for components, `product_access` for products, `dpp_bulk_write` for passports. The rows count against the consumer's bulk pace (`bulkItemsPerMinute` of `GET /me`): the run is never refused for it, and writes its rows at that pace.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -7127,7 +7829,7 @@ type ClientInterface interface {
 
 	// MapImportWithBody Map the columns of an import
 	//
-	// One action per column, in the vocabulary the preview lists. Every required attribute must be covered. `create_new` adds a property type to the workspace for good, so the API only creates one when the mapping says so. The import moves to `mapped`.
+	// One action per column, in the vocabulary the preview lists, each under the preview's `column`. The mapping replaces the stored one whole, so it names every column to import, the ones the upload mapped on its own included, and overrides what the upload chose for any of them. Every required attribute must be covered. `create_new` adds a property type to the workspace for good, so the API only creates one when the mapping says so. The import moves to `mapped`.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -7136,12 +7838,21 @@ type ClientInterface interface {
 
 	// MapImport Map the columns of an import
 	//
-	// One action per column, in the vocabulary the preview lists. Every required attribute must be covered. `create_new` adds a property type to the workspace for good, so the API only creates one when the mapping says so. The import moves to `mapped`.
+	// One action per column, in the vocabulary the preview lists, each under the preview's `column`. The mapping replaces the stored one whole, so it names every column to import, the ones the upload mapped on its own included, and overrides what the upload chose for any of them. Every required attribute must be covered. `create_new` adds a property type to the workspace for good, so the API only creates one when the mapping says so. The import moves to `mapped`.
 	//
 	// Takes a body of the `application/json` content type.
 	//
 	// Corresponds with PUT /imports/{id}/mappings (the `MapImport` operationId).
 	MapImport(ctx context.Context, id Id, body MapImportJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// RerunImport Run an import again
+	//
+	// A finished import (`completed`, `failed` or `reverted`) keeps the mapping it ran with, so its counts, row errors, backup and revert stay the record of that run. Its file runs once more as a new import: a copy of the same file with the same column mapping, `contentLocale`, value separator, options and data type, `mapped` and ready for `POST /imports/{id}/validate` or a new mapping. The new import belongs to the caller and has its own counts, row errors, backup and revert.
+	//
+	// A row that runs again finds the record it wrote, so an unchanged row counts as unchanged and a record deleted since is created again. A passport already signed is left as it is.
+	//
+	// Corresponds with POST /imports/{id}/rerun (the `RerunImport` operationId).
+	RerunImport(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// RevertImportWithBody Revert an import
 	//
@@ -7175,53 +7886,57 @@ type ClientInterface interface {
 	// Corresponds with GET /languages (the `ListLanguages` operationId).
 	ListLanguages(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// ListLeadgens List lead generation campaigns
+	// ListLeadgens List campaigns
 	//
-	// Returns leadgen campaigns owned by the authenticated user. Campaigns belong to people, not to API consumers, so this is a user-token surface.
+	// Returns campaigns owned by the authenticated user. Campaigns belong to people, not to API consumers, so this is a user-token surface.
 	//
 	// Corresponds with GET /leadgens (the `ListLeadgens` operationId).
 	ListLeadgens(ctx context.Context, params *ListLeadgensParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// CreateLeadgenWithBody Create a leadgen campaign
+	// CreateLeadgenWithBody Create a campaign
 	//
-	// Creates a new lead generation campaign with an overlay and form.
+	// Creates a new campaign with its copy and, for the form action, a form it names by formId or a new one.
 	//
 	// Takes any type of body and a specified content type.
 	//
 	// Corresponds with POST /leadgens (the `CreateLeadgen` operationId).
 	CreateLeadgenWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// CreateLeadgen Create a leadgen campaign
+	// CreateLeadgen Create a campaign
 	//
-	// Creates a new lead generation campaign with an overlay and form.
+	// Creates a new campaign with its copy and, for the form action, a form it names by formId or a new one.
 	//
 	// Takes a body of the `application/json` content type.
 	//
 	// Corresponds with POST /leadgens (the `CreateLeadgen` operationId).
 	CreateLeadgen(ctx context.Context, body CreateLeadgenJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// DeleteLeadgen Delete a leadgen campaign
+	// DeleteLeadgen Delete a campaign
 	//
 	// Corresponds with DELETE /leadgens/{id} (the `DeleteLeadgen` operationId).
 	DeleteLeadgen(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// UpdateLeadgenWithBody Update a leadgen campaign
+	// UpdateLeadgenWithBody Update a campaign
+	//
+	// Writes the fields the body names. With a picture (imageId) the introduction may stay empty.
 	//
 	// Takes any type of body and a specified content type.
 	//
 	// Corresponds with PUT /leadgens/{id} (the `UpdateLeadgen` operationId).
 	UpdateLeadgenWithBody(ctx context.Context, id Id, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// UpdateLeadgen Update a leadgen campaign
+	// UpdateLeadgen Update a campaign
+	//
+	// Writes the fields the body names. With a picture (imageId) the introduction may stay empty.
 	//
 	// Takes a body of the `application/json` content type.
 	//
 	// Corresponds with PUT /leadgens/{id} (the `UpdateLeadgen` operationId).
 	UpdateLeadgen(ctx context.Context, id Id, body UpdateLeadgenJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// GetLeadgenRequests Export leadgen form requests
+	// GetLeadgenRequests Export a campaign's form requests
 	//
-	// Exports form submissions for a leadgen campaign as CSV or XLSX.
+	// Exports form submissions for a campaign as CSV or XLSX.
 	//
 	// Corresponds with GET /leadgens/{id}/requests (the `GetLeadgenRequests` operationId).
 	GetLeadgenRequests(ctx context.Context, id Id, params *GetLeadgenRequestsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -7237,7 +7952,7 @@ type ClientInterface interface {
 	//
 	// The lots batch and item passports freeze from, newest first. A lot is created with the first passport that names its identifier and reused by every later passport of the same lot, so there is nothing to create here: to issue a passport of a new lot, name the lot in `batchIdentifier` on `POST /dpps` or in the shared line of a bulk create. A new lot is taken only of a product that passes every other required readiness check; until then that create answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, and `GET /dpps/requirements` shows what the product still lacks.
 	//
-	// Narrow the list with `product_id` to see which lots a product already has, or with `identifier` to find the lot a passport names. `sort`, `created_since` and `updated_since` order and bound it for a poll.
+	// Narrow the list with `product_id` to see which lots a product already has, or with `identifier` to find the lot a passport names. `product_id` and `serial` together answer the lot holding a serial number, the one a scan of that unit's tag opens; `serial` without `product_id` answers 422 `PARAMETER_MISSING`, since a serial number is unique only within its product's GTIN. `sort`, `created_since` and `updated_since` order and bound it for a poll.
 	//
 	// Corresponds with GET /lots (the `ListLots` operationId).
 	ListLots(ctx context.Context, params *ListLotsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -7248,6 +7963,65 @@ type ClientInterface interface {
 	//
 	// Corresponds with GET /lots/{id} (the `GetLot` operationId).
 	GetLot(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListLotCodes List the codes of a lot's tags
+	//
+	// What a label converter encodes on each tag of the lot, one row per serial number the lot holds, in the order they were given, then one per unit passport of the lot no serial number covers. A unit passport the caller does not read is left out, and a serial number it covers gets the serial number's own link. Pages take up to 1000 rows.
+	//
+	// Corresponds with GET /lots/{id}/codes (the `ListLotCodes` operationId).
+	ListLotCodes(ctx context.Context, id int, params *ListLotCodesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListLotSerials List the serial numbers of a lot
+	//
+	// The entries of serial numbers the lot holds, in the order they were given, each a range as written or a list of single serial numbers. A scan of a tag carrying the product's GTIN and one of these serial numbers opens the lot's passport.
+	//
+	// Corresponds with GET /lots/{id}/serials (the `ListLotSerials` operationId).
+	ListLotSerials(ctx context.Context, id int, params *ListLotSerialsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateLotSerialsWithBody Add serial numbers to a lot
+	//
+	// Gives the lot the serial numbers its units carry, the ones the ERP or the label supplier reserved for the run. Each element of `serials` is one entry, in one of three forms:
+	//
+	// - a range, the counting part in square brackets and the rest kept as written: `NW-[000001-100000]` is NW-000001 to NW-100000, zeros kept; `LOT7-[1-5000]-B` counts without padding;
+	// - a first and a last serial number with a spaced hyphen between, differing in one run of digits: `NW-000001 - NW-100000`;
+	// - a single serial number, or the EPC URN of one naming the product's GTIN: `NW-000412`, `urn:epc:id:sgtin:4012345.067890.412`.
+	//
+	// A serial number takes the characters of GS1 AI 21, letters, digits and ``!"%&'()*+,-./:;<=>?_``, up to 20 of them. A line holds at most 1000000 serial numbers and a call at most 100000 lines. The product needs a GTIN, since a scan finds the lot by GTIN and serial number.
+	//
+	// The call is taken whole or not at all. A serial number held by another lot of the product, a range overlapping the serial numbers of any lot, this one included, and a serial number with a unit passport in another lot refuse it with 422 `SERIALS_INVALID`, and `fields.serials.lines` names each refused line with its place in `serials`, counted from 1, the entry as sent and why: the first 1000 of them, `count` all. A single serial number the lot holds already is skipped and counted in `skippedCount`. While another change to the product's serial numbers runs the answer is 409 `SERIALS_BUSY`; try again a moment later.
+	//
+	// Whoever writes the lot's product adds and removes its serial numbers, as in the Application Manager: a credential with `product_access` at the full tier of its access group, on a product its group gives it to write, and a person with backend access whose groups open to the API give them the product. A repeated range is refused as overlapping its own lot, so send an `Idempotency-Key` to repeat a call safely.
+	//
+	// Takes any type of body and a specified content type.
+	//
+	// Corresponds with POST /lots/{id}/serials (the `CreateLotSerials` operationId).
+	CreateLotSerialsWithBody(ctx context.Context, id int, params *CreateLotSerialsParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateLotSerials Add serial numbers to a lot
+	//
+	// Gives the lot the serial numbers its units carry, the ones the ERP or the label supplier reserved for the run. Each element of `serials` is one entry, in one of three forms:
+	//
+	// - a range, the counting part in square brackets and the rest kept as written: `NW-[000001-100000]` is NW-000001 to NW-100000, zeros kept; `LOT7-[1-5000]-B` counts without padding;
+	// - a first and a last serial number with a spaced hyphen between, differing in one run of digits: `NW-000001 - NW-100000`;
+	// - a single serial number, or the EPC URN of one naming the product's GTIN: `NW-000412`, `urn:epc:id:sgtin:4012345.067890.412`.
+	//
+	// A serial number takes the characters of GS1 AI 21, letters, digits and ``!"%&'()*+,-./:;<=>?_``, up to 20 of them. A line holds at most 1000000 serial numbers and a call at most 100000 lines. The product needs a GTIN, since a scan finds the lot by GTIN and serial number.
+	//
+	// The call is taken whole or not at all. A serial number held by another lot of the product, a range overlapping the serial numbers of any lot, this one included, and a serial number with a unit passport in another lot refuse it with 422 `SERIALS_INVALID`, and `fields.serials.lines` names each refused line with its place in `serials`, counted from 1, the entry as sent and why: the first 1000 of them, `count` all. A single serial number the lot holds already is skipped and counted in `skippedCount`. While another change to the product's serial numbers runs the answer is 409 `SERIALS_BUSY`; try again a moment later.
+	//
+	// Whoever writes the lot's product adds and removes its serial numbers, as in the Application Manager: a credential with `product_access` at the full tier of its access group, on a product its group gives it to write, and a person with backend access whose groups open to the API give them the product. A repeated range is refused as overlapping its own lot, so send an `Idempotency-Key` to repeat a call safely.
+	//
+	// Takes a body of the `application/json` content type.
+	//
+	// Corresponds with POST /lots/{id}/serials (the `CreateLotSerials` operationId).
+	CreateLotSerials(ctx context.Context, id int, params *CreateLotSerialsParams, body CreateLotSerialsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// DeleteLotSerials Remove serial numbers from a lot
+	//
+	// Removes one entry of serial numbers from the lot. A scan of a tag carrying one of them then opens the product's newest lot, as a serial number no lot holds does. Allowed on a lot whose passport is published, so a mistake can be put right; nothing signed depends on it. The same rights as adding them.
+	//
+	// Corresponds with DELETE /lots/{id}/serials/{entryId} (the `DeleteLotSerials` operationId).
+	DeleteLotSerials(ctx context.Context, id int, entryId int, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetMe What the presented token allows
 	//
@@ -7265,13 +8039,17 @@ type ClientInterface interface {
 
 	// CreateMediafileWithBody Upload a mediafile
 	//
-	// Uploads a new image file. Requires the product mediafiles feature. Any valid credential reaches it; the upload is owned by the caller.
+	// Uploads a new file: a picture for a gallery, or a document such as a certificate that a link field of a product or a component names by its token `file:<id>`. Requires the product mediafiles feature. Any valid credential reaches it; the upload is owned by the caller.
+	//
+	// The bytes are public unless `public` is false: then they go to the protected store, which only the Application Manager reaches, and the answer carries no `url`. A gallery takes pictures alone and shows them wherever the record is public, so a file meant for a gallery stays public. A protected file is named in a link field, or put in a gallery, by the caller that uploaded it, and by a credential acting for the person who did; a public file by anyone.
 	//
 	// A browser and the command line send the file itself as `multipart/form-data`. A caller that can only send JSON sends the bytes as base64 instead, bare or as a `data:` URI, in a body of the shape `{"mediafile": {"data": "iVBORw0KGgo...", "name": "Rain shell hero shot"}}`.
 	//
 	// A caller holding a link sends `mediafile.url` and the server reads the bytes itself, which is the practical way in for anything larger than a small image. Only https, only an address outside this network, at most three redirects, and the same size cap; a refusal says which of those it was.
 	//
 	// The kind of file is read from the bytes, not from anything the caller says about them, and the same size, readability and content rules apply whichever way it arrived.
+	//
+	// A document's details may come along: its type, issuer, number and validity. `PUT /mediafiles/{id}` changes them later.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -7280,13 +8058,17 @@ type ClientInterface interface {
 
 	// CreateMediafile Upload a mediafile
 	//
-	// Uploads a new image file. Requires the product mediafiles feature. Any valid credential reaches it; the upload is owned by the caller.
+	// Uploads a new file: a picture for a gallery, or a document such as a certificate that a link field of a product or a component names by its token `file:<id>`. Requires the product mediafiles feature. Any valid credential reaches it; the upload is owned by the caller.
+	//
+	// The bytes are public unless `public` is false: then they go to the protected store, which only the Application Manager reaches, and the answer carries no `url`. A gallery takes pictures alone and shows them wherever the record is public, so a file meant for a gallery stays public. A protected file is named in a link field, or put in a gallery, by the caller that uploaded it, and by a credential acting for the person who did; a public file by anyone.
 	//
 	// A browser and the command line send the file itself as `multipart/form-data`. A caller that can only send JSON sends the bytes as base64 instead, bare or as a `data:` URI, in a body of the shape `{"mediafile": {"data": "iVBORw0KGgo...", "name": "Rain shell hero shot"}}`.
 	//
 	// A caller holding a link sends `mediafile.url` and the server reads the bytes itself, which is the practical way in for anything larger than a small image. Only https, only an address outside this network, at most three redirects, and the same size cap; a refusal says which of those it was.
 	//
 	// The kind of file is read from the bytes, not from anything the caller says about them, and the same size, readability and content rules apply whichever way it arrived.
+	//
+	// A document's details may come along: its type, issuer, number and validity. `PUT /mediafiles/{id}` changes them later.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -7295,10 +8077,32 @@ type ClientInterface interface {
 
 	// DeleteMediafile Delete a mediafile
 	//
-	// Takes the file out of the library. The row is trashed rather than destroyed, so a person can restore it in the application manager. A file a record still shows answers 409 `MEDIAFILE_IN_USE` and names those records; take it off them first. The caller must own the file.
+	// Takes the file out of the library. The row is trashed rather than destroyed, so a person can restore it in the Application Manager. A file a record's gallery still shows answers 409 `MEDIAFILE_IN_USE` and names those records; take it out of them first. A file a link field of a product or a component names, in place of a web address, answers 409 `MEDIAFILE_DELETE_REFUSED`, ahead of the galleries showing it; point those fields elsewhere first. The caller must own the file.
 	//
 	// Corresponds with DELETE /mediafiles/{id} (the `DeleteMediafile` operationId).
 	DeleteMediafile(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpdateMediafileWithBody Update a mediafile
+	//
+	// Changes the name of a file and a document's details: its type, issuer, number and validity, such as a renewed certificate's new end. The bytes stay as they are. Requires the product mediafiles feature, and the caller must own the file.
+	//
+	// A language version, a file of a key restricted to some languages, shows the details of the file of its key for every language and takes none of its own: details sent for it answer 422. A field sent as null or an empty string is cleared.
+	//
+	// Takes any type of body and a specified content type.
+	//
+	// Corresponds with PUT /mediafiles/{id} (the `UpdateMediafile` operationId).
+	UpdateMediafileWithBody(ctx context.Context, id Id, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpdateMediafile Update a mediafile
+	//
+	// Changes the name of a file and a document's details: its type, issuer, number and validity, such as a renewed certificate's new end. The bytes stay as they are. Requires the product mediafiles feature, and the caller must own the file.
+	//
+	// A language version, a file of a key restricted to some languages, shows the details of the file of its key for every language and takes none of its own: details sent for it answer 422. A field sent as null or an empty string is cleared.
+	//
+	// Takes a body of the `application/json` content type.
+	//
+	// Corresponds with PUT /mediafiles/{id} (the `UpdateMediafile` operationId).
+	UpdateMediafile(ctx context.Context, id Id, body UpdateMediafileJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetNavigation Get navigation items
 	//
@@ -7309,7 +8113,7 @@ type ClientInterface interface {
 
 	// AuthorizeClient Ask a person in the workspace for access
 	//
-	// The authorization request (RFC 6749, section 4.1.1) with PKCE (RFC 7636). Open it in the person's browser. The server checks the request, writes it down, and sends the person to the consent screen of the application manager on this same host, where they sign in if they are not already and see the requested permissions named one by one. Allow sends them back to `redirect_uri` with a `code`; Refuse sends them back with `error=access_denied`.
+	// The authorization request (RFC 6749, section 4.1.1) with PKCE (RFC 7636). Open it in the person's browser. The server checks the request, writes it down, and sends the person to the consent screen of the Application Manager on this same host, where they sign in if they are not already and see the requested permissions named one by one. Allow sends them back to `redirect_uri` with a `code`; Refuse sends them back with `error=access_denied`.
 	//
 	// PKCE is mandatory. `code_challenge` is required and `code_challenge_method` has to be `S256`; `plain` is refused. The code that comes back lives 60 seconds and is spent once, at the token endpoint, with the verifier the challenge was derived from.
 	//
@@ -7489,7 +8293,7 @@ type ClientInterface interface {
 
 	// ListProductGtins Search products by GTIN
 	//
-	// Returns products matching a GTIN prefix. Requires the GTIN feature to be enabled.
+	// Returns products matching a GTIN prefix, out of those `GET /products` answers the caller with. Requires the GTIN feature to be enabled. A credential holding `product_access` receives the products its access groups reach, drafts included; where the storefront shows its lists or analyses, every other reader receives the published products; where it shows neither, a credential without `product_access` answers 403 naming the key. A row carries no claim token.
 	//
 	// Corresponds with GET /product_gtins (the `ListProductGtins` operationId).
 	ListProductGtins(ctx context.Context, params *ListProductGtinsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -7516,7 +8320,7 @@ type ClientInterface interface {
 	//
 	// Creates a new product. The authenticated user or API consumer becomes the owner. A product needs a brand, named alongside it (an existing brand of that name is used, a new one created and owned by the caller), and at least one component under componentsInput. A consumer needs `product_access`, and to create the brand it names also `brand_access`, as `POST /brands` asks; without it a new brand name answers 403 `BRAND_FORBIDDEN`.
 	//
-	// A credential acting for a person (one granted on the consent screen, or the assistant's) names only the categories, the brand and the manufacturers that person reads in the application manager, and creates a brand only where that person may; anything else answers 422 naming `categories`, `brand` or `properties`.
+	// A credential acting for a person (one granted on the consent screen, or the assistant's) names only the categories, the brand and the manufacturers that person reads in the Application Manager, and creates a brand only where that person may; anything else answers 422 naming `categories`, `brand` or `properties`.
 	//
 	// A product naming a parent under `parentId` is created as its variant: it starts as a copy of the parent, with its brand, categories, components, images and property values, and takes the parent's later changes. Such a body needs a name only. The brand, categories, components and property values it names besides become the variant's own where they differ from the parent's, and the variant's read marks them `pinned`. The parent is a product the caller may update, since a variant holds its parent's delete back: a parent the caller cannot read answers 422 `PRODUCT_PARENT_NOT_FOUND`, one it cannot update 403. A variant takes its mandatory values from its parent, so its create asks for none of them.
 	//
@@ -7529,7 +8333,7 @@ type ClientInterface interface {
 	//
 	// Creates a new product. The authenticated user or API consumer becomes the owner. A product needs a brand, named alongside it (an existing brand of that name is used, a new one created and owned by the caller), and at least one component under componentsInput. A consumer needs `product_access`, and to create the brand it names also `brand_access`, as `POST /brands` asks; without it a new brand name answers 403 `BRAND_FORBIDDEN`.
 	//
-	// A credential acting for a person (one granted on the consent screen, or the assistant's) names only the categories, the brand and the manufacturers that person reads in the application manager, and creates a brand only where that person may; anything else answers 422 naming `categories`, `brand` or `properties`.
+	// A credential acting for a person (one granted on the consent screen, or the assistant's) names only the categories, the brand and the manufacturers that person reads in the Application Manager, and creates a brand only where that person may; anything else answers 422 naming `categories`, `brand` or `properties`.
 	//
 	// A product naming a parent under `parentId` is created as its variant: it starts as a copy of the parent, with its brand, categories, components, images and property values, and takes the parent's later changes. Such a body needs a name only. The brand, categories, components and property values it names besides become the variant's own where they differ from the parent's, and the variant's read marks them `pinned`. The parent is a product the caller may update, since a variant holds its parent's delete back: a parent the caller cannot read answers 422 `PRODUCT_PARENT_NOT_FOUND`, one it cannot update 403. A variant takes its mandatory values from its parent, so its create asks for none of them.
 	//
@@ -7581,7 +8385,7 @@ type ClientInterface interface {
 
 	// UpdateProductWithBody Update a product
 	//
-	// Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are. A brand name no brand carries creates the brand, which asks a consumer for `brand_access` (403 `BRAND_FORBIDDEN` without it); a credential acting for a person names only what that person reads, as on create. On a variant, a value the body changes becomes the variant's own and a value it sends as it was read goes on following the parent. `parentId` is left out or names the parent the product has; any other answers 422 `PRODUCT_PARENT_READ_ONLY`, since a variant moves to another parent through a spreadsheet import only. A `propertiesInput` key naming no property type, or, for a credential, a type only the members of a plan edit, or a type of an access group the credential (or the person it acts for) is not in, refuses the whole write with 422 `PRODUCT_PROPERTIES_REFUSED`, whose message names each and why; `fields.propertiesInput.unknown`, `fields.propertiesInput.planGated` and `fields.propertiesInput.groupGated` list the keys as sent.
+	// Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are. A brand name no brand carries creates the brand, which asks a consumer for `brand_access` (403 `BRAND_FORBIDDEN` without it); a credential acting for a person names only what that person reads, as on create. On a variant, a value the body changes becomes the variant's own and a value it sends as it was read goes on following the parent. `parentId` is left out or names the parent the product has; any other answers 422 `PRODUCT_PARENT_READ_ONLY`, since a variant moves to another parent through a spreadsheet import only. A `propertiesInput` key naming no property type, or, for a credential, a type only the members of a plan edit, or a type of an access group the credential (or the person it acts for) is not in, or is in through a membership whose record scope names other products, refuses the whole write with 422 `PRODUCT_PROPERTIES_REFUSED`, whose message names each and why; `fields.propertiesInput.unknown`, `fields.propertiesInput.planGated` and `fields.propertiesInput.groupGated` list the keys as sent. A link value naming a file by `file:<id>` lists the file on the product; an id naming no file of the library refuses the whole write with 422 `FILE_REFERENCE_UNKNOWN`. The product's read sent back under `product` passes as it was read; a key of it that differs from the product as it stands, a key the write takes nowhere, or a list or an object sent as something else refuses the whole write with 422 `PRODUCT_KEYS_REFUSED`, one field per key as on create, so a body read before another write changed the product names what moved.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -7590,7 +8394,7 @@ type ClientInterface interface {
 
 	// UpdateProduct Update a product
 	//
-	// Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are. A brand name no brand carries creates the brand, which asks a consumer for `brand_access` (403 `BRAND_FORBIDDEN` without it); a credential acting for a person names only what that person reads, as on create. On a variant, a value the body changes becomes the variant's own and a value it sends as it was read goes on following the parent. `parentId` is left out or names the parent the product has; any other answers 422 `PRODUCT_PARENT_READ_ONLY`, since a variant moves to another parent through a spreadsheet import only. A `propertiesInput` key naming no property type, or, for a credential, a type only the members of a plan edit, or a type of an access group the credential (or the person it acts for) is not in, refuses the whole write with 422 `PRODUCT_PROPERTIES_REFUSED`, whose message names each and why; `fields.propertiesInput.unknown`, `fields.propertiesInput.planGated` and `fields.propertiesInput.groupGated` list the keys as sent.
+	// Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are. A brand name no brand carries creates the brand, which asks a consumer for `brand_access` (403 `BRAND_FORBIDDEN` without it); a credential acting for a person names only what that person reads, as on create. On a variant, a value the body changes becomes the variant's own and a value it sends as it was read goes on following the parent. `parentId` is left out or names the parent the product has; any other answers 422 `PRODUCT_PARENT_READ_ONLY`, since a variant moves to another parent through a spreadsheet import only. A `propertiesInput` key naming no property type, or, for a credential, a type only the members of a plan edit, or a type of an access group the credential (or the person it acts for) is not in, or is in through a membership whose record scope names other products, refuses the whole write with 422 `PRODUCT_PROPERTIES_REFUSED`, whose message names each and why; `fields.propertiesInput.unknown`, `fields.propertiesInput.planGated` and `fields.propertiesInput.groupGated` list the keys as sent. A link value naming a file by `file:<id>` lists the file on the product; an id naming no file of the library refuses the whole write with 422 `FILE_REFERENCE_UNKNOWN`. The product's read sent back under `product` passes as it was read; a key of it that differs from the product as it stands, a key the write takes nowhere, or a list or an object sent as something else refuses the whole write with 422 `PRODUCT_KEYS_REFUSED`, one field per key as on create, so a body read before another write changed the product names what moved.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -7599,7 +8403,7 @@ type ClientInterface interface {
 
 	// UpdateProductMediafilesWithBody Update product mediafile assignments
 	//
-	// Replaces all mediafile assignments on a product with the given list in the specified order, as one change. On a variant, a list that differs from its parent's becomes the variant's own, and the list sent as it was read goes on following the parent. Requires the product mediafiles feature to be enabled.
+	// Replaces all mediafile assignments on a product with the given list in the specified order, as one change. On a variant, a list that differs from its parent's becomes the variant's own, and the list sent as it was read goes on following the parent. The gallery takes pictures alone (images and SVG); a list naming any other file answers 422 `MEDIAFILE_NOT_A_PICTURE` and changes nothing. A list naming a picture held for review, or a protected one that the caller did not upload and the gallery does not hold already, answers 404 `MEDIAFILE_NOT_FOUND` and changes nothing; an id naming no file is left out. Requires the product mediafiles feature to be enabled.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -7608,7 +8412,7 @@ type ClientInterface interface {
 
 	// UpdateProductMediafiles Update product mediafile assignments
 	//
-	// Replaces all mediafile assignments on a product with the given list in the specified order, as one change. On a variant, a list that differs from its parent's becomes the variant's own, and the list sent as it was read goes on following the parent. Requires the product mediafiles feature to be enabled.
+	// Replaces all mediafile assignments on a product with the given list in the specified order, as one change. On a variant, a list that differs from its parent's becomes the variant's own, and the list sent as it was read goes on following the parent. The gallery takes pictures alone (images and SVG); a list naming any other file answers 422 `MEDIAFILE_NOT_A_PICTURE` and changes nothing. A list naming a picture held for review, or a protected one that the caller did not upload and the gallery does not hold already, answers 404 `MEDIAFILE_NOT_FOUND` and changes nothing; an id naming no file is left out. Requires the product mediafiles feature to be enabled.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -7715,7 +8519,7 @@ type ClientInterface interface {
 
 	// LoginSessionWithBody Login (create session)
 	//
-	// Authenticates a user with email/alias and password. Returns a JWT bearer token for subsequent requests. Optionally assigns unclaimed products to the user via `productTokens`.
+	// Authenticates a user with email/alias and password. Returns a JWT bearer token for subsequent requests. Optionally assigns unclaimed products to the user via `productTokens`. A user who set up a second factor sends its code as `otp`, from the authenticator app or one of the backup codes; without it the answer is 401 `MFA_REQUIRED`, with a wrong one 401 `MFA_INVALID`, and no token is issued. A user whose only second factor is a security key or a passkey, which this sign-in cannot ask for, gets 403 `MFA_METHOD_UNSUPPORTED` before any code is read; they sign in through OAuth or an API consumer, or add an authenticator app. Staff who owe a password of their own or the second factor the workspace demands get 403 `ACCOUNT_SETUP_REQUIRED` until they set it up in the Application Manager.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -7724,7 +8528,7 @@ type ClientInterface interface {
 
 	// LoginSession Login (create session)
 	//
-	// Authenticates a user with email/alias and password. Returns a JWT bearer token for subsequent requests. Optionally assigns unclaimed products to the user via `productTokens`.
+	// Authenticates a user with email/alias and password. Returns a JWT bearer token for subsequent requests. Optionally assigns unclaimed products to the user via `productTokens`. A user who set up a second factor sends its code as `otp`, from the authenticator app or one of the backup codes; without it the answer is 401 `MFA_REQUIRED`, with a wrong one 401 `MFA_INVALID`, and no token is issued. A user whose only second factor is a security key or a passkey, which this sign-in cannot ask for, gets 403 `MFA_METHOD_UNSUPPORTED` before any code is read; they sign in through OAuth or an API consumer, or add an authenticator app. Staff who owe a password of their own or the second factor the workspace demands get 403 `ACCOUNT_SETUP_REQUIRED` until they set it up in the Application Manager.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -7733,7 +8537,7 @@ type ClientInterface interface {
 
 	// RefreshSession Refresh session token
 	//
-	// Refreshes the session nonce and returns a new bearer token. Requires a valid existing token.
+	// Refreshes the session nonce and returns a new bearer token. Requires a valid existing token. A user who owes the Application Manager a password of their own or a second factor renews none (403 `ACCOUNT_SETUP_REQUIRED`).
 	//
 	// Corresponds with PUT /session (the `RefreshSession` operationId).
 	RefreshSession(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -7742,7 +8546,7 @@ type ClientInterface interface {
 	//
 	// The tasks of one list, newest first. A credential that acts for a person (a grant the person approved, or their assistant) reads the lists as that person. Any other credential reads them as itself: it finds the tasks it asked for under `requested` and `done`, and nothing waits on it.
 	//
-	// - `mine` (the default): what the person has to do: the tasks given to them, the ones they claimed, and the group tasks and reviews nobody has claimed yet. A request for information waiting for its supplier is left out. The number beside the bell in the application manager counts these.
+	// - `mine` (the default): what the person has to do: the tasks given to them, the ones they claimed, and the group tasks and reviews nobody has claimed yet. A request for information waiting for its supplier is left out. The number beside the bell in the Application Manager counts these.
 	// - `waiting`: the person's requests for information while they wait for the supplier, and the tasks they take part in that someone else has claimed.
 	// - `requested`: the open tasks the caller asked of others.
 	// - `done`: the finished and cancelled tasks the caller took part in.
@@ -7756,7 +8560,7 @@ type ClientInterface interface {
 
 	// CreateTaskWithBody Create a task
 	//
-	// Asks a person or an access group for something. The task is a request (`kind` custom) whatever the body says, and names the caller as the one who asked: the person a grant or an assistant acts for, or the credential itself. Every person the task reaches sees it at once in the application manager and hears of it in the bell; the morning mail carries it too.
+	// Asks a person or an access group for something. The task is a request (`kind` custom) whatever the body says, and names the caller as the one who asked: the person a grant or an assistant acts for, or the credential itself. Every person the task reaches sees it at once in the Application Manager and hears of it in the bell; the morning mail carries it too.
 	//
 	// Find the `assigneeKey` with `GET /tasks/assignees`. A task may link one record the caller reads (`subjectKey`) and carry a `priority`.
 	//
@@ -7767,7 +8571,7 @@ type ClientInterface interface {
 
 	// CreateTask Create a task
 	//
-	// Asks a person or an access group for something. The task is a request (`kind` custom) whatever the body says, and names the caller as the one who asked: the person a grant or an assistant acts for, or the credential itself. Every person the task reaches sees it at once in the application manager and hears of it in the bell; the morning mail carries it too.
+	// Asks a person or an access group for something. The task is a request (`kind` custom) whatever the body says, and names the caller as the one who asked: the person a grant or an assistant acts for, or the credential itself. Every person the task reaches sees it at once in the Application Manager and hears of it in the bell; the morning mail carries it too.
 	//
 	// Find the `assigneeKey` with `GET /tasks/assignees`. A task may link one record the caller reads (`subjectKey`) and carry a `priority`.
 	//
@@ -7778,7 +8582,7 @@ type ClientInterface interface {
 
 	// ListTaskAssignees List task assignees
 	//
-	// Whom a task may go to, matching `term`, as the `key` `POST /tasks` takes and the name the application manager shows. Groups with access to the application manager come first, then the people who can open it; 25 at most.
+	// Whom a task may go to, matching `term`, as the `key` `POST /tasks` takes and the name the Application Manager shows. Groups with access to the Application Manager come first, then the people who can open it; 25 at most.
 	//
 	// Corresponds with GET /tasks/assignees (the `ListTaskAssignees` operationId).
 	ListTaskAssignees(ctx context.Context, params *ListTaskAssigneesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -7810,7 +8614,7 @@ type ClientInterface interface {
 
 	// ApproveTaskWithBody Approve a review
 	//
-	// Approves the step a review stands at, as the person the credential acts for. A review walks the steps of the workspace's review flow, or the one step of everyone who may sign passports where no flow fits. Approving a middle step passes the request on to the next step and signs nothing. Approving the last step carries the request out in the person's name, which needs `dpp_publish` in the credential's scope beside `task_access`; without it the answer is 403 and the review stays open. A publish review then approves the passport, which waits ready to publish for the person who asked (`POST /dpps/{code}/publish`) until the product changes; a review of an event's seal or of a correction signs at once.
+	// Approves the step a review stands at, as the person the credential acts for. A review walks the steps of the workspace's review flow, or the one step of everyone who may sign passports where no flow fits. Approving a middle step passes the request on to the next step and signs nothing. Approving the last step carries the request out in the person's name, which needs `dpp_publish` in the credential's scope beside `task_access`; without it the answer is 403 and the review stays open. A publish review signs the passport then, as a review of an event's seal or of a correction does. A publish review whose DPP or product changed after the request is refused (`TASK_SOURCE_CHANGED`), and so is one whose DPP recorded an event since (`TASK_EVENT_RECORDED`); the review stays open, and a new request to publish the DPP replaces it.
 	//
 	// Send the `step` the caller read, so a press on a review that moved on in between decides nothing (`TASK_STEP_MOVED`). The person who asked for a review decides no step of it (`TASK_OWN_REQUEST`). A publish the validator or the workspace refuses answers as `POST /dpps/{code}/publish` does, and the review stays open.
 	//
@@ -7821,7 +8625,7 @@ type ClientInterface interface {
 
 	// ApproveTask Approve a review
 	//
-	// Approves the step a review stands at, as the person the credential acts for. A review walks the steps of the workspace's review flow, or the one step of everyone who may sign passports where no flow fits. Approving a middle step passes the request on to the next step and signs nothing. Approving the last step carries the request out in the person's name, which needs `dpp_publish` in the credential's scope beside `task_access`; without it the answer is 403 and the review stays open. A publish review then approves the passport, which waits ready to publish for the person who asked (`POST /dpps/{code}/publish`) until the product changes; a review of an event's seal or of a correction signs at once.
+	// Approves the step a review stands at, as the person the credential acts for. A review walks the steps of the workspace's review flow, or the one step of everyone who may sign passports where no flow fits. Approving a middle step passes the request on to the next step and signs nothing. Approving the last step carries the request out in the person's name, which needs `dpp_publish` in the credential's scope beside `task_access`; without it the answer is 403 and the review stays open. A publish review signs the passport then, as a review of an event's seal or of a correction does. A publish review whose DPP or product changed after the request is refused (`TASK_SOURCE_CHANGED`), and so is one whose DPP recorded an event since (`TASK_EVENT_RECORDED`); the review stays open, and a new request to publish the DPP replaces it.
 	//
 	// Send the `step` the caller read, so a press on a review that moved on in between decides nothing (`TASK_STEP_MOVED`). The person who asked for a review decides no step of it (`TASK_OWN_REQUEST`). A publish the validator or the workspace refuses answers as `POST /dpps/{code}/publish` does, and the review stays open.
 	//
@@ -7832,7 +8636,7 @@ type ClientInterface interface {
 
 	// GetTaskAttachment Download a file of a task
 	//
-	// One of the files a task carries, the `url` its `attachments` name. Only those who see the task read its files, so a task the caller has no part in answers 404, and so does a file the task does not carry (`MEDIAFILE_NOT_FOUND`). Images and PDFs come inline, every other kind as an attachment. Files are added in the application manager.
+	// One of the files a task carries, the `url` its `attachments` name. Only those who see the task read its files, so a task the caller has no part in answers 404, and so does a file the task does not carry (`MEDIAFILE_NOT_FOUND`). Images and PDFs come inline, every other kind as an attachment. Files are added in the Application Manager.
 	//
 	// Corresponds with GET /tasks/{id}/attachments/{attachmentId} (the `GetTaskAttachment` operationId).
 	GetTaskAttachment(ctx context.Context, id Id, attachmentId int, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -7851,12 +8655,23 @@ type ClientInterface interface {
 	// Corresponds with POST /tasks/{id}/claim (the `ClaimTask` operationId).
 	ClaimTask(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// CompleteTask Complete a task
+	// CompleteTaskWithBody Complete a task
 	//
-	// Marks an open request as done. The person it is for may, or a current member of its group, who claims it in the same move; a task someone else holds stays theirs. Only a person works on a task, so a credential acting as itself is refused with `TASK_NOT_PERMITTED`, and a review ends in a decision in the application manager (`TASK_NOT_CUSTOM`). The one who asked hears of it in the bell.
+	// Marks an open request as done. The person it is for may, or a current member of its group, who claims it in the same move; a task someone else holds stays theirs. Only a person works on a task, so a credential acting as itself is refused with `TASK_NOT_PERMITTED`, and a review ends in a decision in the Application Manager (`TASK_NOT_CUSTOM`). The one who asked hears of it in the bell, with the optional `note` as the reply.
+	//
+	// Takes any type of body and a specified content type.
 	//
 	// Corresponds with POST /tasks/{id}/complete (the `CompleteTask` operationId).
-	CompleteTask(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error)
+	CompleteTaskWithBody(ctx context.Context, id Id, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CompleteTask Complete a task
+	//
+	// Marks an open request as done. The person it is for may, or a current member of its group, who claims it in the same move; a task someone else holds stays theirs. Only a person works on a task, so a credential acting as itself is refused with `TASK_NOT_PERMITTED`, and a review ends in a decision in the Application Manager (`TASK_NOT_CUSTOM`). The one who asked hears of it in the bell, with the optional `note` as the reply.
+	//
+	// Takes a body of the `application/json` content type.
+	//
+	// Corresponds with POST /tasks/{id}/complete (the `CompleteTask` operationId).
+	CompleteTask(ctx context.Context, id Id, body CompleteTaskJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// RejectTaskWithBody Reject a review
 	//
@@ -8091,7 +8906,7 @@ func (c *Client) ListBrands(ctx context.Context, params *ListBrandsParams, reqEd
 
 // CreateBrandWithBody Create a brand
 //
-// Creates a brand owned by the caller, or answers 200 with the brand of that name when one exists, since a brand is one row per name across the workspace. Names are harmonised the way the application manager does it. A brand is published on its own once it has products, so there is nothing to publish by hand.
+// Creates a brand owned by the caller, or answers 200 with the brand of that name when one exists, since a brand is one row per name across the workspace. Names are harmonised the way the Application Manager does it. A brand is published on its own once it has products, so there is nothing to publish by hand.
 //
 // A consumer needs `brand_access` or `brand_write`; a signed-in person needs a confirmed account.
 //
@@ -8112,7 +8927,7 @@ func (c *Client) CreateBrandWithBody(ctx context.Context, params *CreateBrandPar
 
 // CreateBrand Create a brand
 //
-// Creates a brand owned by the caller, or answers 200 with the brand of that name when one exists, since a brand is one row per name across the workspace. Names are harmonised the way the application manager does it. A brand is published on its own once it has products, so there is nothing to publish by hand.
+// Creates a brand owned by the caller, or answers 200 with the brand of that name when one exists, since a brand is one row per name across the workspace. Names are harmonised the way the Application Manager does it. A brand is published on its own once it has products, so there is nothing to publish by hand.
 //
 // A consumer needs `brand_access` or `brand_write`; a signed-in person needs a confirmed account.
 //
@@ -8292,11 +9107,11 @@ func (c *Client) ListComponents(ctx context.Context, params *ListComponentsParam
 
 // CreateComponentWithBody Create a component
 //
-// Creates a component, unpublished, owned by the caller. Properties and template ids ride beside it in the shape the application manager's form sends: `properties.new` maps a property type id to the values to add, `templateIds` names the components whose properties the new one inherits.
+// Creates a component, unpublished, owned by the caller. Properties and template ids ride beside it in the shape the Application Manager's form sends: `properties.new` maps a property type id to the values to add, `templateIds` names the components whose properties the new one inherits.
 //
 // A consumer needs `component_access` or `component_write`; a signed-in person needs a confirmed account. The answer is the same document as `GET /components/{id}`.
 //
-// A property type id naming no property type refuses the whole write with 422 `COMPONENT_PROPERTIES_REFUSED`, and no component is created; the message names each id, `fields.properties.unknown` lists them as sent. `fields.properties.planGated` and `fields.properties.groupGated` keep the shape of the product refusal and stay empty, since no plan or access group limits a component property type.
+// A property type id naming no property type refuses the whole write with 422 `COMPONENT_PROPERTIES_REFUSED`, and no component is created; the message names each id, `fields.properties.unknown` lists them as sent. `fields.properties.planGated` and `fields.properties.groupGated` keep the shape of the product refusal and stay empty, since no plan or access group limits a component property type. A link value naming a file by `file:<id>` lists the file on the component; an id naming no file of the library refuses the whole write with 422 `FILE_REFERENCE_UNKNOWN`, and no component is created.
 //
 // Takes any type of body and a specified content type.
 //
@@ -8315,11 +9130,11 @@ func (c *Client) CreateComponentWithBody(ctx context.Context, params *CreateComp
 
 // CreateComponent Create a component
 //
-// Creates a component, unpublished, owned by the caller. Properties and template ids ride beside it in the shape the application manager's form sends: `properties.new` maps a property type id to the values to add, `templateIds` names the components whose properties the new one inherits.
+// Creates a component, unpublished, owned by the caller. Properties and template ids ride beside it in the shape the Application Manager's form sends: `properties.new` maps a property type id to the values to add, `templateIds` names the components whose properties the new one inherits.
 //
 // A consumer needs `component_access` or `component_write`; a signed-in person needs a confirmed account. The answer is the same document as `GET /components/{id}`.
 //
-// A property type id naming no property type refuses the whole write with 422 `COMPONENT_PROPERTIES_REFUSED`, and no component is created; the message names each id, `fields.properties.unknown` lists them as sent. `fields.properties.planGated` and `fields.properties.groupGated` keep the shape of the product refusal and stay empty, since no plan or access group limits a component property type.
+// A property type id naming no property type refuses the whole write with 422 `COMPONENT_PROPERTIES_REFUSED`, and no component is created; the message names each id, `fields.properties.unknown` lists them as sent. `fields.properties.planGated` and `fields.properties.groupGated` keep the shape of the product refusal and stay empty, since no plan or access group limits a component property type. A link value naming a file by `file:<id>` lists the file on the component; an id naming no file of the library refuses the whole write with 422 `FILE_REFERENCE_UNKNOWN`, and no component is created.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -8372,7 +9187,7 @@ func (c *Client) GetComponent(ctx context.Context, id Id, reqEditors ...RequestE
 
 // UpdateComponentWithBody Update a component
 //
-// Renames the component and applies property and template changes in the shape the application manager form sends. The write is a patch, so the properties it does not name stay as they are. `properties.existing` maps a property type id to the properties to change by id, an empty value removes one; `properties.new` adds values; `templateIds` replaces the template set. The caller must own the component, or hold `component_write`. A property type id naming no property type refuses the whole write with 422 `COMPONENT_PROPERTIES_REFUSED`, whose message names each; `fields.properties.unknown` lists them as sent, `planGated` and `groupGated` stay empty.
+// Renames the component and applies property and template changes in the shape the Application Manager form sends. The write is a patch, so the properties it does not name stay as they are. `properties.existing` maps a property type id to the properties to change by id, an empty value removes one; `properties.new` adds values; `templateIds` replaces the template set. The caller must own the component, or hold `component_write`. A property type id naming no property type refuses the whole write with 422 `COMPONENT_PROPERTIES_REFUSED`, whose message names each; `fields.properties.unknown` lists them as sent, `planGated` and `groupGated` stay empty. A link value naming a file by `file:<id>` lists the file on the component; an id naming no file of the library refuses the whole write with 422 `FILE_REFERENCE_UNKNOWN`.
 //
 // Takes any type of body and a specified content type.
 //
@@ -8391,7 +9206,7 @@ func (c *Client) UpdateComponentWithBody(ctx context.Context, id Id, contentType
 
 // UpdateComponent Update a component
 //
-// Renames the component and applies property and template changes in the shape the application manager form sends. The write is a patch, so the properties it does not name stay as they are. `properties.existing` maps a property type id to the properties to change by id, an empty value removes one; `properties.new` adds values; `templateIds` replaces the template set. The caller must own the component, or hold `component_write`. A property type id naming no property type refuses the whole write with 422 `COMPONENT_PROPERTIES_REFUSED`, whose message names each; `fields.properties.unknown` lists them as sent, `planGated` and `groupGated` stay empty.
+// Renames the component and applies property and template changes in the shape the Application Manager form sends. The write is a patch, so the properties it does not name stay as they are. `properties.existing` maps a property type id to the properties to change by id, an empty value removes one; `properties.new` adds values; `templateIds` replaces the template set. The caller must own the component, or hold `component_write`. A property type id naming no property type refuses the whole write with 422 `COMPONENT_PROPERTIES_REFUSED`, whose message names each; `fields.properties.unknown` lists them as sent, `planGated` and `groupGated` stay empty. A link value naming a file by `file:<id>` lists the file on the component; an id naming no file of the library refuses the whole write with 422 `FILE_REFERENCE_UNKNOWN`.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -8461,7 +9276,7 @@ func (c *Client) GetConfig(ctx context.Context, reqEditors ...RequestEditorFn) (
 
 // ConfirmSignup Confirm user email after signup
 //
-// Confirms a user's email address using the token sent during registration.
+// Confirms a user's email address using the token sent during registration. A signup link older than 24 hours on an unconfirmed account answers 422 with `TOKEN_PARAM_EXPIRED`.
 //
 // Corresponds with PUT /confirm_signup (the `ConfirmSignup` operationId).
 func (c *Client) ConfirmSignup(ctx context.Context, params *ConfirmSignupParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -8533,11 +9348,15 @@ func (c *Client) ListDpps(ctx context.Context, params *ListDppsParams, reqEditor
 //
 // `granularity` says which unit the passport stands for and therefore which identifiers it needs: `model` needs none of its own, `batch` needs a `batchIdentifier`, `item` needs a `serialIdentifier` as well. The lot is created from the product as it stands the first time its identifier is used and reused by every later passport of the same lot. A new lot is taken only of a product that passes every other required readiness check; until then the create answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`.
 //
-// A lot takes one `batch` passport and a unit one `item` passport. A second one is refused with 422 `DPP_BATCH_TAKEN` on `batch`, or `DPP_SERIAL_IDENTIFIER_TAKEN` on `serialIdentifier` for a serial the lot has already, and the message names the passport that stands for it. A voided or superseded passport still stands for its lot, and so does a draft, which is published instead. Item passports of a lot and its `batch` passport do not count against each other.
+// A product takes one `model` passport, a lot one `batch` passport and a unit one `item` passport. A second one is refused with 422 `DPP_UNLOCKABLE_ID_TAKEN` on `unlockableId`, `DPP_BATCH_TAKEN` on `batch`, or `DPP_SERIAL_IDENTIFIER_TAKEN` on `serialIdentifier` for a serial the lot has already, and the message names the passport that stands for it. A voided or superseded passport still stands for its product, lot or unit, and so does a draft, which is published instead, and a model passport the workspace issued by itself. Passports at different granularities do not count against each other.
+//
+// A product with variants gets no passport of its own: its passports go to the products at the ends of its family, the variants that have no variants themselves. A create naming one is refused with 422 `DPP_UNLOCKABLE_ID_HAS_VARIANTS` on `unlockableId`, and no lot is taken of it. A passport the product held before its first variant came stays as it is.
+//
+// A passport is issued of a product the caller writes: its own, or one its access groups give it to write. Any other product is refused with 422 `DPP_UNLOCKABLE_NOT_EDITABLE` on `unlockable`. A refused create writes nothing, the lot it names included.
 //
 // The answer carries `validation` and `publishBlocked` alongside the passport: the same report `POST /dpps/validate` produces, over the record that was just written, so a caller that skipped the dry run still sees what a publish would refuse or warn about.
 //
-// `propertyTypeIds` names the property types the passport carries, and it carries those alone. An entry naming no product property type refuses the whole write with 422 `DPP_PROPERTY_TYPES_REFUSED`, and no passport is created; the message names each, `fields.propertyTypeIds.unknown` lists them as sent.
+// `propertyTypeIds` names the property types the passport carries, and it carries those alone. An entry naming no product property type refuses the whole write with 422 `DPP_PROPERTY_TYPES_REFUSED`, and no passport is created; the message names each, `fields.propertyTypeIds.unknown` lists them as sent. A selection sent as no list, a single id among them, would carry every type, so it is refused with 422 `DPP_KEYS_REFUSED` and `fields.propertyTypeIds.error` `DPP_KEY_LIST_REQUIRED`.
 //
 // Takes any type of body and a specified content type.
 //
@@ -8560,11 +9379,15 @@ func (c *Client) CreateDppWithBody(ctx context.Context, params *CreateDppParams,
 //
 // `granularity` says which unit the passport stands for and therefore which identifiers it needs: `model` needs none of its own, `batch` needs a `batchIdentifier`, `item` needs a `serialIdentifier` as well. The lot is created from the product as it stands the first time its identifier is used and reused by every later passport of the same lot. A new lot is taken only of a product that passes every other required readiness check; until then the create answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`.
 //
-// A lot takes one `batch` passport and a unit one `item` passport. A second one is refused with 422 `DPP_BATCH_TAKEN` on `batch`, or `DPP_SERIAL_IDENTIFIER_TAKEN` on `serialIdentifier` for a serial the lot has already, and the message names the passport that stands for it. A voided or superseded passport still stands for its lot, and so does a draft, which is published instead. Item passports of a lot and its `batch` passport do not count against each other.
+// A product takes one `model` passport, a lot one `batch` passport and a unit one `item` passport. A second one is refused with 422 `DPP_UNLOCKABLE_ID_TAKEN` on `unlockableId`, `DPP_BATCH_TAKEN` on `batch`, or `DPP_SERIAL_IDENTIFIER_TAKEN` on `serialIdentifier` for a serial the lot has already, and the message names the passport that stands for it. A voided or superseded passport still stands for its product, lot or unit, and so does a draft, which is published instead, and a model passport the workspace issued by itself. Passports at different granularities do not count against each other.
+//
+// A product with variants gets no passport of its own: its passports go to the products at the ends of its family, the variants that have no variants themselves. A create naming one is refused with 422 `DPP_UNLOCKABLE_ID_HAS_VARIANTS` on `unlockableId`, and no lot is taken of it. A passport the product held before its first variant came stays as it is.
+//
+// A passport is issued of a product the caller writes: its own, or one its access groups give it to write. Any other product is refused with 422 `DPP_UNLOCKABLE_NOT_EDITABLE` on `unlockable`. A refused create writes nothing, the lot it names included.
 //
 // The answer carries `validation` and `publishBlocked` alongside the passport: the same report `POST /dpps/validate` produces, over the record that was just written, so a caller that skipped the dry run still sees what a publish would refuse or warn about.
 //
-// `propertyTypeIds` names the property types the passport carries, and it carries those alone. An entry naming no product property type refuses the whole write with 422 `DPP_PROPERTY_TYPES_REFUSED`, and no passport is created; the message names each, `fields.propertyTypeIds.unknown` lists them as sent.
+// `propertyTypeIds` names the property types the passport carries, and it carries those alone. An entry naming no product property type refuses the whole write with 422 `DPP_PROPERTY_TYPES_REFUSED`, and no passport is created; the message names each, `fields.propertyTypeIds.unknown` lists them as sent. A selection sent as no list, a single id among them, would carry every type, so it is refused with 422 `DPP_KEYS_REFUSED` and `fields.propertyTypeIds.error` `DPP_KEY_LIST_REQUIRED`.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -8585,13 +9408,15 @@ func (c *Client) CreateDpp(ctx context.Context, params *CreateDppParams, body Cr
 //
 // Streams passports in as newline-delimited JSON, one passport per line, so a line of production writes one request instead of thousands. Each row is created and its first version published at the workspace's publish stage, as `POST /dpps/{code}/publish` signs a draft; the response reports one result line per input row.
 //
-// An optional first line `{"shared": {...}}` carries batch-wide defaults that each following row deep-merges over (a nested `"__replace__": true` opts a sub-tree out of the merge). An unsupported `shared.granularity` is rejected before any row is processed; per-row problems never abort the batch. A new row whose `propertyTypeIds` names no product property type comes back as `error` with `DPP_PROPERTY_TYPES_REFUSED`, the message naming each and `fields.propertyTypeIds.unknown` listing them, and nothing is created for it.
+// An optional first line `{"shared": {...}}` carries batch-wide defaults that each following row deep-merges over (a nested `"__replace__": true` opts a sub-tree out of the merge). An unsupported `shared.granularity` is rejected before any row is processed; per-row problems never abort the batch. A new row whose `propertyTypeIds` names no product property type comes back as `error` with `DPP_PROPERTY_TYPES_REFUSED`, the message naming each and `fields.propertyTypeIds.unknown` listing them, and nothing is created for it. A new row whose `propertyTypeIds` is no list comes back as `error` with `DPP_KEYS_REFUSED`; one in `shared` reaches every row it merges into, and each answers for itself.
 //
 // Row keys may be written in camelCase (`unlockableId`, `modelIdentifier`, `serialIdentifier`) or as the snake_case attribute names; `tenantData` is an alias for `dynamicData`. The keys inside `dynamicData` are left as they are.
 //
-// Resubmission is safe. Rows are deduplicated by natural key rather than by `Idempotency-Key`: at `model` granularity that is `modelIdentifier`, at `batch` it adds `batchIdentifier`, at `item` it adds `serialIdentifier`. A key that already maps to a published passport comes back as `duplicate`; one that maps to a passport that never published is resumed and published, so a retry after a partial failure finishes the job instead of duplicating it. A row whose key misses a passport its lot or unit already has (a row naming no `modelIdentifier`) is refused as `POST /dpps` refuses it, with `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`.
+// Resubmission is safe. Rows are deduplicated by natural key rather than by `Idempotency-Key`: at `model` granularity that is `modelIdentifier`, at `batch` it adds `batchIdentifier`, at `item` it adds `serialIdentifier`. A key that already maps to a published passport comes back as `duplicate`; one that maps to a passport that never published is resumed and published, so a retry after a partial failure finishes the job instead of duplicating it. A row whose key misses a passport its product, lot or unit already has (a row naming no `modelIdentifier`, or no `granularity` in itself or in `shared`) is refused as `POST /dpps` refuses it, with `DPP_UNLOCKABLE_ID_TAKEN`, `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`. A row naming a product with variants is refused with `DPP_UNLOCKABLE_ID_HAS_VARIANTS`, and the rest of the run goes on.
 //
-// Synchronous by default, capped at 500 rows and 5 MB. Send `Prefer: respond-async` to have the body persisted and processed by a background task instead: the response is `202` with a polling URL, and the caps rise to 50000 rows and 25 MB. Beyond that, batch across requests.
+// Synchronous by default, capped at 500 rows and 5 MB. Send `Prefer: respond-async` to have the body persisted and processed by a background task instead: the response is `202` with a polling URL, and the caps rise to 100000 rows and 50 MB, what a spreadsheet import takes. Beyond that, batch across requests.
+//
+// The rows count against the credential's bulk pace, `bulkItemsPerMinute` of `GET /me`, shared by all of its bulk calls and imports. The background task takes its rows at that pace and waits, with `pacedUntil` in its status, while the credential is past it. A synchronous call takes its rows before it writes any: where the pace has no room for them it answers 429 `DPP_BULK_RATE_LIMITED`, writes nothing, and `Retry-After` says in how many seconds they fit. A pace of 0 means none.
 //
 // Every row it creates is signed, so the call needs `dpp_publish` as well; without it the answer is 403 and nothing is created. Where the workspace reviews every publish through a review flow, the answer is 409 `DPP_REVIEW_REQUIRED` and nothing is created.
 //
@@ -8614,7 +9439,7 @@ func (c *Client) BulkCreateDppsWithBody(ctx context.Context, params *BulkCreateD
 //
 // The dry run of `POST /dpps/bulk`: the same newline-delimited JSON in, one result line per input row out, and nothing written. Rows are read exactly as the create reads them - the optional `{"shared": {...}}` envelope, the deep merge, the camelCase aliases - so a batch that validates here is the batch that will be created.
 //
-// Each row comes back as `valid`, `invalid`, `duplicate` or `error`, numbered from one in input order. No passport, lot or version is written, and the rows do not count against the consumer's bulk item cap, so a batch may be validated as often as it takes to get it right.
+// Each row comes back as `valid`, `invalid`, `duplicate` or `error`, numbered from one in input order. No passport, lot or version is written, and the rows do not count against the consumer's bulk pace, so a batch may be validated as often as it takes to get it right.
 //
 // Synchronous only, capped at 500 rows and 5 MB like the synchronous create. There is no asynchronous mode; `Prefer: respond-async` has no effect here.
 //
@@ -8635,7 +9460,7 @@ func (c *Client) ValidateDppsBulkWithBody(ctx context.Context, contentType strin
 
 // GetBulkTask Poll an asynchronous bulk create
 //
-// Reports the status and progress of a bulk-create task, and once it completes the aggregate counts plus the detail of every rejected row. Only the consumer that submitted the task can read it; another consumer's task answers 404.
+// Reports the status and progress of a bulk-create task, and once it completes the aggregate counts plus the detail of every rejected row. While the task waits for the credential's bulk pace it is `pending` and `pacedUntil` says until when. Only the consumer that submitted the task can read it; another consumer's task answers 404.
 //
 // Corresponds with GET /dpps/bulk/{taskId} (the `GetBulkTask` operationId).
 func (c *Client) GetBulkTask(ctx context.Context, taskId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -8654,9 +9479,9 @@ func (c *Client) GetBulkTask(ctx context.Context, taskId string, reqEditors ...R
 //
 // What a passport of the product would need at the requested granularity, and what the product still lacks, before anything is written: the identifiers each granularity keys on, the fields of the lot a batch or item passport freezes from, the property types whose values ride on the dynamic surface instead of the signed snapshot, the properties a passport inherits from the product, the report a publish would produce today, and bodies ready to fill for a create and for a bulk row.
 //
-// `missing` lists what the product still lacks, one entry per open check, each naming where its answer is sent (the product field, such as `gtin` or `propertiesInput` keyed by `propertyTypeId`, with the operation that takes it, or the workspace), and `ready` says whether nothing required is open. Both are read off the check a new lot is refused by, so a product answered ready is one whose passport saves and publishes as the product stands.
+// `missing` lists what the product still lacks, one entry per open check, each naming where its answer is sent (the product field, such as `gtin` or `propertiesInput` keyed by `propertyTypeId`, with the operation that takes it, or the workspace), and `ready` says whether nothing required is open. Both are read off the check a new lot is refused by, so a product answered ready is one whose passport saves and publishes as the product stands. A product with variants gets no passport of its own and is never ready: `missing` holds one entry, with the code `DPP_UNLOCKABLE_ID_HAS_VARIANTS` the create answers, naming under `productIds` the variants that take its passports.
 //
-// Field names throughout are the wire names, so a program copies them as they are. Reading requirements writes nothing.
+// Field names throughout are the wire names, so a program copies them as they are. Reading requirements writes nothing. A product the caller may not issue a passport of answers 404, as an unknown one does.
 //
 // Corresponds with GET /dpps/requirements (the `GetDppRequirements` operationId).
 func (c *Client) GetDppRequirements(ctx context.Context, params *GetDppRequirementsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -8673,7 +9498,7 @@ func (c *Client) GetDppRequirements(ctx context.Context, params *GetDppRequireme
 
 // ValidateDppWithBody Validate a DPP payload
 //
-// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot; a lot or a unit that has a passport already shows as `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`, and a new lot its product may not have yet as `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, beside the report that names the checks the product still fails. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.
+// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot; a product that has its model passport already shows as `DPP_UNLOCKABLE_ID_TAKEN`, a lot or a unit that has its passport as `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`, a product with variants as `DPP_UNLOCKABLE_ID_HAS_VARIANTS`, and a new lot its product may not have yet as `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, beside the report that names the checks the product still fails. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.
 //
 // A payload the platform would refuse is a plain `200` with `valid: false` - the request succeeded, the passport would not. Only a missing permission, a missing `dpp` object, an unreadable body, a granularity the workspace does not issue and a `propertyTypeIds` entry naming no property type answer with an error status, the last two as the create answers them.
 //
@@ -8694,7 +9519,7 @@ func (c *Client) ValidateDppWithBody(ctx context.Context, contentType string, bo
 
 // ValidateDpp Validate a DPP payload
 //
-// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot; a lot or a unit that has a passport already shows as `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`, and a new lot its product may not have yet as `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, beside the report that names the checks the product still fails. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.
+// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot; a product that has its model passport already shows as `DPP_UNLOCKABLE_ID_TAKEN`, a lot or a unit that has its passport as `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`, a product with variants as `DPP_UNLOCKABLE_ID_HAS_VARIANTS`, and a new lot its product may not have yet as `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, beside the report that names the checks the product still fails. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.
 //
 // A payload the platform would refuse is a plain `200` with `valid: false` - the request succeeded, the passport would not. Only a missing permission, a missing `dpp` object, an unreadable body, a granularity the workspace does not issue and a `propertyTypeIds` entry naming no property type answer with an error status, the last two as the create answers them.
 //
@@ -8713,9 +9538,26 @@ func (c *Client) ValidateDpp(ctx context.Context, body ValidateDppJSONRequestBod
 	return c.Client.Do(req)
 }
 
+// GetDppFile Read a restricted file of a passport
+//
+// The copy of a file a restricted field of the passport names, at the address the signed `href` of that field's Link points to. A reader opens it where one of the passport's versions holds a restricted row the reader may see whose Link names the file by its digest and type, the newest version first; the read is entered in the passport's access log. A program sends its user token or consumer token and any Accept header but HTML; a browser without a reader is sent to the passport sign-in page and back. The type comes from the extension; images and PDFs come inline, every other kind as an attachment, under the document's name in the reader's language.
+//
+// Corresponds with GET /dpps/{code}/files/{name} (the `GetDppFile` operationId).
+func (c *Client) GetDppFile(ctx context.Context, code string, name string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetDppFileRequest(c.Server, code, name)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 // GetDppPrivateDynamicData Read the restricted dynamic data
 //
-// The passport's live readings in the legitimate-interest tier that this reader may see. The public dynamic-data document carries the public tier only; this answer has the same shape, holds only the restricted rows, and is signed with the same platform key, so a reader verifies it the same way and merges the two. A key is served when it names a published property type in the legitimate-interest tier, no property type sharing its vocabulary term sits in the authorities or internal tier, and the reader belongs to an access group of every legitimate-interest type sharing it. An authority consumer reads without a group. A passport holding no such key answers 404; an authenticated reader who may see none of them gets 204. An unauthenticated request answers 401 with the `X-Auth-Fields` challenge the passport page uses to sign a reader in.
+// The passport's live readings in the legitimate-interest tier that this reader may see. The public dynamic-data document carries the public tier only; this answer has the same shape, holds only the restricted rows, and is signed with the same platform key, so a reader verifies it the same way and merges the two. A key is served when it names a published property type in the legitimate-interest tier, no property type sharing its vocabulary term sits in the authorities or internal tier, and the reader belongs to an access group of every legitimate-interest type sharing it. An authority consumer reads without a group. A passport holding no such key answers 404; an authenticated reader who may see none of them gets 204. A reader signs in with a user token, a consumer token, or the session of the workspace's passport sign-in page; an unauthenticated request answers 401 with an `X-Auth-Url` header naming that page on the host the request came to.
 //
 // Corresponds with GET /dpps/{code}/private_dynamic_data (the `GetDppPrivateDynamicData` operationId).
 func (c *Client) GetDppPrivateDynamicData(ctx context.Context, code string, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -8732,7 +9574,7 @@ func (c *Client) GetDppPrivateDynamicData(ctx context.Context, code string, reqE
 
 // GetDppPrivateProperties Read the private properties of several versions
 //
-// The reader-derived confidential rows for several versions of one passport in a single round-trip. Name the versions with `?versions=1,3,7`; at most 50 are derived per request. A version is left out when it carries no confidential rows or the reader may see none of them, so the answer only contains versions where the reader gains rows beyond the public passport. An unauthenticated request answers 401 with the `X-Auth-Fields` challenge the passport page uses to sign a reader in.
+// The reader-derived confidential rows for several versions of one passport in a single round-trip. Name the versions with `?versions=1,3,7`; at most 50 are derived per request. A version is left out when it carries no legitimate-interest or on-demand rows, the workspace keeps no copy of them, or the reader may see none of them, so the answer only contains versions where the reader gains rows beyond the public passport. A reader signs in with a user token, a consumer token, or the session of the workspace's passport sign-in page; an unauthenticated request answers 401 with an `X-Auth-Url` header naming that page on the host the request came to.
 //
 // Corresponds with GET /dpps/{code}/private_properties (the `GetDppPrivateProperties` operationId).
 func (c *Client) GetDppPrivateProperties(ctx context.Context, code string, params *GetDppPrivatePropertiesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -8749,7 +9591,7 @@ func (c *Client) GetDppPrivateProperties(ctx context.Context, code string, param
 
 // GetDppVersionPrivateProperties Read the private properties of one version
 //
-// The confidential rows of one passport version, as an ecdsa-sd-2023 derived Verifiable Credential carrying only what this reader is entitled to see. This is the address the public manifest's `privateProperties.url` points at. A reader who is authenticated but entitled to none of this version's restricted rows gets 204, which is deliberately distinct from an empty document. An unauthenticated request answers 401 with the `X-Auth-Fields` challenge the passport page uses to sign a reader in.
+// The confidential rows of one passport version, as an ecdsa-sd-2023 derived Verifiable Credential carrying only what this reader is entitled to see. This is the address the public manifest's `privateProperties.url` points at. A reader who is authenticated but entitled to none of this version's restricted rows gets 204, which is deliberately distinct from an empty document. A reader signs in with a user token, a consumer token, or the session of the workspace's passport sign-in page; an unauthenticated request answers 401 with an `X-Auth-Url` header naming that page on the host the request came to.
 //
 // Corresponds with GET /dpps/{code}/private_properties/{version} (the `GetDppVersionPrivateProperties` operationId).
 func (c *Client) GetDppVersionPrivateProperties(ctx context.Context, code string, version int, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -8766,7 +9608,7 @@ func (c *Client) GetDppVersionPrivateProperties(ctx context.Context, code string
 
 // PublishDppWithBody Publish a DPP
 //
-// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. A `draft` that has not published moves to the workspace's publish stage first (`manufactured` or `placed_on_market`, a setting of the workspace), so the version signs that status and `GET /dpps/{code}` answers it; a refused publish leaves it at `draft`. Every other passport keeps its status. Publishing needs `dpp_publish` beside `dpp_write`; without it the answer is 403. A passport whose publish review was approved waits ready to publish, and the person who asked for the review publishes it here through a credential of theirs with `dpp_write` alone, and so does any caller with `dpp_publish`. That publish carries the reason the request gave, and `reason` is not read. The approval stands until the product changes; after that the call is judged like any other publish. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
+// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. A `draft` that has not published moves to the workspace's publish stage first (`manufactured` or `placed_on_market`, a setting of the workspace), so the version signs that status and `GET /dpps/{code}` answers it; a refused publish leaves it at `draft`. Every other passport keeps its status. Publishing needs `dpp_publish` beside `dpp_write`; without it the answer is 403, as it is for a passport the caller does not write. Approving a publish review signs the passport at once (`POST /tasks/{id}/approve`). A passport may still keep an approval a review stored without signing; the person who asked for that review publishes it here through a credential of theirs with `dpp_write` alone, and so does any caller with `dpp_publish`. That publish carries the reason the request gave, and `reason` is not read. The approval stands until the product changes; after that the call is judged like any other publish. Publishing is refused when the snapshot fails a mandatory validation rule, when the signing key or the workspace context is missing, and for a passport that has not published once the workspace has published as many passports as its plan includes; a new version of a published passport takes no slot. While the workspace's plan is unpaid, after a failed payment or once the plan ended, every publish is refused, new versions included. On a paid plan the publish also seals a copy in the Vault that cannot be changed or deleted for ten years; a version published during a trial is sealed there once the workspace moves to a paid plan.
 //
 // Takes any type of body and a specified content type.
 //
@@ -8785,7 +9627,7 @@ func (c *Client) PublishDppWithBody(ctx context.Context, code string, params *Pu
 
 // PublishDpp Publish a DPP
 //
-// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. A `draft` that has not published moves to the workspace's publish stage first (`manufactured` or `placed_on_market`, a setting of the workspace), so the version signs that status and `GET /dpps/{code}` answers it; a refused publish leaves it at `draft`. Every other passport keeps its status. Publishing needs `dpp_publish` beside `dpp_write`; without it the answer is 403. A passport whose publish review was approved waits ready to publish, and the person who asked for the review publishes it here through a credential of theirs with `dpp_write` alone, and so does any caller with `dpp_publish`. That publish carries the reason the request gave, and `reason` is not read. The approval stands until the product changes; after that the call is judged like any other publish. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
+// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. A `draft` that has not published moves to the workspace's publish stage first (`manufactured` or `placed_on_market`, a setting of the workspace), so the version signs that status and `GET /dpps/{code}` answers it; a refused publish leaves it at `draft`. Every other passport keeps its status. Publishing needs `dpp_publish` beside `dpp_write`; without it the answer is 403, as it is for a passport the caller does not write. Approving a publish review signs the passport at once (`POST /tasks/{id}/approve`). A passport may still keep an approval a review stored without signing; the person who asked for that review publishes it here through a credential of theirs with `dpp_write` alone, and so does any caller with `dpp_publish`. That publish carries the reason the request gave, and `reason` is not read. The approval stands until the product changes; after that the call is judged like any other publish. Publishing is refused when the snapshot fails a mandatory validation rule, when the signing key or the workspace context is missing, and for a passport that has not published once the workspace has published as many passports as its plan includes; a new version of a published passport takes no slot. While the workspace's plan is unpaid, after a failed payment or once the plan ended, every publish is refused, new versions included. On a paid plan the publish also seals a copy in the Vault that cannot be changed or deleted for ten years; a version published during a trial is sealed there once the workspace moves to a paid plan.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -8804,7 +9646,7 @@ func (c *Client) PublishDpp(ctx context.Context, code string, params *PublishDpp
 
 // DeleteDpp Delete a DPP
 //
-// Deletes a never-published draft you own. A published DPP cannot be deleted - its signed snapshot stays in the ten-year archive and its URL may already be printed on QR codes - and answers 422 instead. The lifecycle exit for a published DPP is void or supersede.
+// Deletes a never-published draft you own. A published DPP cannot be deleted - its signed snapshot stays on record and its URL may already be printed on QR codes - and answers 422 `DPP_PUBLISHED` instead, the message naming the reason. The lifecycle exit for a published DPP is void or supersede. A test workspace keeps nothing on record, so there a published DPP is deleted as well, together with its versions, its events and its public copies, and its slot of the plan comes free; one the EU DPP registry knows still answers 422.
 //
 // Corresponds with DELETE /dpps/{id} (the `DeleteDpp` operationId).
 func (c *Client) DeleteDpp(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -8838,11 +9680,11 @@ func (c *Client) GetDpp(ctx context.Context, id Id, params *GetDppParams, reqEdi
 
 // UpdateDppWithBody Update a DPP
 //
-// Updates a DPP you own. Admins can update any DPP.
+// Updates a passport the caller writes: one it issued, or one its access groups give it to write. Any other answers 403. Admins can update any DPP.
 //
 // The answer carries `validation` and `publishBlocked` alongside the passport: the same report `POST /dpps/validate` produces, over the record as it now stands, so an update that would block the next publish says so at once.
 //
-// A `propertyTypeIds` entry naming no product property type refuses the whole update with 422 `DPP_PROPERTY_TYPES_REFUSED`, and the passport keeps the types it had.
+// A `propertyTypeIds` entry naming no product property type refuses the whole update with 422 `DPP_PROPERTY_TYPES_REFUSED`, and the passport keeps the types it had; a selection sent as no list with 422 `DPP_KEYS_REFUSED`.
 //
 // Takes any type of body and a specified content type.
 //
@@ -8861,11 +9703,11 @@ func (c *Client) UpdateDppWithBody(ctx context.Context, id Id, contentType strin
 
 // UpdateDpp Update a DPP
 //
-// Updates a DPP you own. Admins can update any DPP.
+// Updates a passport the caller writes: one it issued, or one its access groups give it to write. Any other answers 403. Admins can update any DPP.
 //
 // The answer carries `validation` and `publishBlocked` alongside the passport: the same report `POST /dpps/validate` produces, over the record as it now stands, so an update that would block the next publish says so at once.
 //
-// A `propertyTypeIds` entry naming no product property type refuses the whole update with 422 `DPP_PROPERTY_TYPES_REFUSED`, and the passport keeps the types it had.
+// A `propertyTypeIds` entry naming no product property type refuses the whole update with 422 `DPP_PROPERTY_TYPES_REFUSED`, and the passport keeps the types it had; a selection sent as no list with 422 `DPP_KEYS_REFUSED`.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -8920,9 +9762,9 @@ func (c *Client) CorrectDpp(ctx context.Context, id Id, params *CorrectDppParams
 	return c.Client.Do(req)
 }
 
-// UpdateDppDynamicDataWithBody Update dynamic data
+// UpdateDppDynamicDataWithBody Update changing values (e.g. battery health)
 //
-// Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none). A key naming a published legitimate-interest type is served to the readers its access groups admit by `GET /dpps/{code}/private_dynamic_data`; every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.
+// Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none). A key naming a published legitimate-interest type is served to the readers its access groups admit by `GET /dpps/{code}/private_dynamic_data`; every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission. A credential sets values on the passports the group granting `dpp_dynamic` gives it to write, by the group's reach, and one acting for a person on the passports that person writes; any other passport answers 403 `DPP_FORBIDDEN`, one the credential reads included.
 //
 // Takes any type of body and a specified content type.
 //
@@ -8939,9 +9781,9 @@ func (c *Client) UpdateDppDynamicDataWithBody(ctx context.Context, id Id, conten
 	return c.Client.Do(req)
 }
 
-// UpdateDppDynamicData Update dynamic data
+// UpdateDppDynamicData Update changing values (e.g. battery health)
 //
-// Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none). A key naming a published legitimate-interest type is served to the readers its access groups admit by `GET /dpps/{code}/private_dynamic_data`; every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.
+// Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none). A key naming a published legitimate-interest type is served to the readers its access groups admit by `GET /dpps/{code}/private_dynamic_data`; every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission. A credential sets values on the passports the group granting `dpp_dynamic` gives it to write, by the group's reach, and one acting for a person on the passports that person writes; any other passport answers 403 `DPP_FORBIDDEN`, one the credential reads included.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -8981,9 +9823,13 @@ func (c *Client) ListDppEvents(ctx context.Context, id Id, params *ListDppEvents
 //
 // Recalling a unit is a status change to `suspended`. The passport stays readable and keeps answering a scan, which is the point: whoever holds the unit learns of the recall when they scan its code. Voiding is a different operation, for a unit that no longer exists.
 //
-// An event is a pending draft until it is sealed. Send `publish: true` to seal it into the Vault at once (a status change is sealed into a new registered version, which needs `dpp_publish` as well); leave it out to keep the draft open. At most one pending event exists per passport, so a second call while one is open answers 409 until it is sealed or discarded.
+// An event is a pending draft until it is sealed. Send `publish: true` to seal it at once: a status change is sealed into a new registered version, which needs `dpp_publish` as well; any other event is sealed as it stands, and on a paid plan written to the Vault. Leave it out to keep the draft open. A refused seal takes the status change back, so the passport stays as it was and the same call can be sent again once the cause is settled. At most one pending event exists per passport, so a second call while one is open answers 409 until it is sealed or discarded.
 //
 // Versioned event types are rejected here: they stand for operations that mint a version, and those have their own endpoints (void, supersede, reissue, publish).
+//
+// The note (`description`) of a status change is a note on a passport event: it appears on the public passport in every language and cannot be changed or removed once saved, so it must contain no personal data (names, email addresses, phone numbers). The note of any other type here stays internal. `descriptionLocale` names the language the note is written in; without it the note takes the language of the request.
+//
+// A credential records on the passports the group granting `dpp_events` gives it to write: under **Own and team's** its own and those of the group's members, under **All** every passport, under **Selected** the picked ones, and a partner grant on its one passport. One acting for a person records on the passports that person writes. Any other passport answers 403 `DPP_FORBIDDEN`, one the credential reads included.
 //
 // Takes any type of body and a specified content type.
 //
@@ -9006,9 +9852,13 @@ func (c *Client) AppendDppEventWithBody(ctx context.Context, id Id, contentType 
 //
 // Recalling a unit is a status change to `suspended`. The passport stays readable and keeps answering a scan, which is the point: whoever holds the unit learns of the recall when they scan its code. Voiding is a different operation, for a unit that no longer exists.
 //
-// An event is a pending draft until it is sealed. Send `publish: true` to seal it into the Vault at once (a status change is sealed into a new registered version, which needs `dpp_publish` as well); leave it out to keep the draft open. At most one pending event exists per passport, so a second call while one is open answers 409 until it is sealed or discarded.
+// An event is a pending draft until it is sealed. Send `publish: true` to seal it at once: a status change is sealed into a new registered version, which needs `dpp_publish` as well; any other event is sealed as it stands, and on a paid plan written to the Vault. Leave it out to keep the draft open. A refused seal takes the status change back, so the passport stays as it was and the same call can be sent again once the cause is settled. At most one pending event exists per passport, so a second call while one is open answers 409 until it is sealed or discarded.
 //
 // Versioned event types are rejected here: they stand for operations that mint a version, and those have their own endpoints (void, supersede, reissue, publish).
+//
+// The note (`description`) of a status change is a note on a passport event: it appears on the public passport in every language and cannot be changed or removed once saved, so it must contain no personal data (names, email addresses, phone numbers). The note of any other type here stays internal. `descriptionLocale` names the language the note is written in; without it the note takes the language of the request.
+//
+// A credential records on the passports the group granting `dpp_events` gives it to write: under **Own and team's** its own and those of the group's members, under **All** every passport, under **Selected** the picked ones, and a partner grant on its one passport. One acting for a person records on the passports that person writes. Any other passport answers 403 `DPP_FORBIDDEN`, one the credential reads included.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -9082,7 +9932,7 @@ func (c *Client) GetDppStats(ctx context.Context, id Id, params *GetDppStatsPara
 
 // SupersedeDppWithBody Supersede a DPP
 //
-// Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. Superseding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
+// Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. A product, a lot or a unit takes one passport at each granularity (see `POST /dpps`), so the successor stands for another product, lot or unit. Superseding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
 //
 // Takes any type of body and a specified content type.
 //
@@ -9101,7 +9951,7 @@ func (c *Client) SupersedeDppWithBody(ctx context.Context, id Id, params *Supers
 
 // SupersedeDpp Supersede a DPP
 //
-// Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. Superseding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
+// Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. A product, a lot or a unit takes one passport at each granularity (see `POST /dpps`), so the successor stands for another product, lot or unit. Superseding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
 //
 // Takes a body of the `application/json` content type.
 //
@@ -9137,7 +9987,7 @@ func (c *Client) ListDppVersions(ctx context.Context, id Id, reqEditors ...Reque
 
 // VoidDppWithBody Void a DPP
 //
-// Marks the passport as voided - the unit it stands for no longer exists: it was destroyed, never shipped, or scrapped after a recall. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. This is not how a unit is recalled: a unit still out there is moved to `suspended` through a status change, so its passport goes on answering a scan with the recall. Voiding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
+// Marks the passport as voided - the unit it stands for no longer exists: it was destroyed, never shipped, or scrapped after a recall. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. This is not how a unit is recalled: a unit still out there is moved to `suspended` through a status change, so its passport goes on answering a scan with the recall. Voiding cannot be undone, and a voided passport still stands for its product, lot or unit, which never takes another passport at its granularity (see `POST /dpps`). A consumer also needs write access to the passport itself (`dpp_write`).
 //
 // Takes any type of body and a specified content type.
 //
@@ -9156,7 +10006,7 @@ func (c *Client) VoidDppWithBody(ctx context.Context, id Id, params *VoidDppPara
 
 // VoidDpp Void a DPP
 //
-// Marks the passport as voided - the unit it stands for no longer exists: it was destroyed, never shipped, or scrapped after a recall. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. This is not how a unit is recalled: a unit still out there is moved to `suspended` through a status change, so its passport goes on answering a scan with the recall. Voiding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
+// Marks the passport as voided - the unit it stands for no longer exists: it was destroyed, never shipped, or scrapped after a recall. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. This is not how a unit is recalled: a unit still out there is moved to `suspended` through a status change, so its passport goes on answering a scan with the recall. Voiding cannot be undone, and a voided passport still stands for its product, lot or unit, which never takes another passport at its granularity (see `POST /dpps`). A consumer also needs write access to the passport itself (`dpp_write`).
 //
 // Takes a body of the `application/json` content type.
 //
@@ -9464,7 +10314,7 @@ func (c *Client) CreateFormSubmission(ctx context.Context, code string, body Cre
 //
 // Turns a scanned QR code into credentials that can write to that one passport. A workshop, certifier or recycler registered as a long-lived API consumer with no passports of its own calls this with the code it scanned and gets back the client credentials of a short-lived child consumer, exchanged for a bearer token exactly like its own. The child may act on that single passport for 24 hours; the caller keeps its own workspace-wide standing.
 //
-// The child inherits only the event-write permissions the caller itself holds, out of `dpp_events`, `dpp_history` and `dpp_dynamic`, so a grant can never widen access. A caller that holds none of them is refused. A caller already confined to a set of passports can only grant one from that set.
+// The child inherits only the event-write permissions the caller itself holds, out of `dpp_events`, `dpp_history` and `dpp_dynamic`, and of those the ones the caller may use on that passport: `dpp_history` where it reads the passport, `dpp_events` and `dpp_dynamic` where it records on it itself. So a grant can never widen access. A caller that holds none of them is refused, and so is one holding `dpp_events` or `dpp_dynamic` for a passport it records on with neither (403 `SCOPE_FORBIDDEN`). A caller already confined to a set of passports can only grant one from that set.
 //
 // Regulator consumers do not use this flow - their access is platform-issued and workspace-wide - and are refused.
 //
@@ -9487,7 +10337,7 @@ func (c *Client) CreateGrantWithBody(ctx context.Context, params *CreateGrantPar
 //
 // Turns a scanned QR code into credentials that can write to that one passport. A workshop, certifier or recycler registered as a long-lived API consumer with no passports of its own calls this with the code it scanned and gets back the client credentials of a short-lived child consumer, exchanged for a bearer token exactly like its own. The child may act on that single passport for 24 hours; the caller keeps its own workspace-wide standing.
 //
-// The child inherits only the event-write permissions the caller itself holds, out of `dpp_events`, `dpp_history` and `dpp_dynamic`, so a grant can never widen access. A caller that holds none of them is refused. A caller already confined to a set of passports can only grant one from that set.
+// The child inherits only the event-write permissions the caller itself holds, out of `dpp_events`, `dpp_history` and `dpp_dynamic`, and of those the ones the caller may use on that passport: `dpp_history` where it reads the passport, `dpp_events` and `dpp_dynamic` where it records on it itself. So a grant can never widen access. A caller that holds none of them is refused, and so is one holding `dpp_events` or `dpp_dynamic` for a passport it records on with neither (403 `SCOPE_FORBIDDEN`). A caller already confined to a set of passports can only grant one from that set.
 //
 // Regulator consumers do not use this flow - their access is platform-issued and workspace-wide - and are refused.
 //
@@ -9508,7 +10358,7 @@ func (c *Client) CreateGrant(ctx context.Context, params *CreateGrantParams, bod
 
 // ListHelp Search the help articles
 //
-// The articles the application manager shows a person: where a setting lives, what a button does, which step comes before which. Give `term` the question in the reader's own words: every word is matched on its own and the words a question is phrased with are dropped, so a whole sentence finds what a keyword would. Hits come back best first, a title match ahead of one in the body.
+// The articles the Application Manager shows a person: where a setting lives, what a button does, which step comes before which. Give `term` the question in the reader's own words: every word is matched on its own and the words a question is phrased with are dropped, so a whole sentence finds what a keyword would. Hits come back best first, a title match ahead of one in the body.
 //
 // An answer with no hits says the articles cover nothing by that name. To tell that apart from a workspace whose help content has not arrived yet, call again with no `term`: the total is then the whole set this workspace can read.
 //
@@ -9567,9 +10417,9 @@ func (c *Client) ListImports(ctx context.Context, params *ListImportsParams, req
 
 // CreateImportWithBody Upload a spreadsheet to import
 //
-// One multipart request, the shape every upload API has: `curl -F file=@catalogue.xlsx -F dataType=components`. The importer reads xlsx, csv, ods and json. When every column resolves on its own (the canonical headers of the template `GET /imports/example` serves, or a JSON file whose entries carry the canonical keys) the import comes back `mapped`. Otherwise it is `fresh` and the answer carries the `preview` to write the mapping from; send that with `PUT /imports/{id}/mappings`, or along with the file as `mappings`.
+// One multipart request, the shape every upload API has: `curl -F file=@catalogue.xlsx -F dataType=components`. The importer reads xlsx, csv, ods and json. When every column resolves on its own (the canonical headers of the template `GET /imports/example` serves, or a JSON file whose entries carry the canonical keys) the import comes back `mapped`. Otherwise it is `fresh` and waits for a mapping, sent with `PUT /imports/{id}/mappings` or along with the file as `mappings`. Either way the answer carries the `preview`: every column with its header, the key a mapping names it by and what the upload found, so a caller sees what was mapped and can override a column it finds by its header.
 //
-// `options[auto]=true` imports straight away: the upload takes the mapping the mapping form would prefill, a column nothing matches becoming a property type under its own heading, and comes back `validating`; a clean validation goes on into the import on its own, one with errors stops at `validated` for the caller to decide. An automatic run publishes what it imports unless `options[published]=false` says otherwise. Poll the import until `status` is `completed`, `validated` or `failed`. A required attribute no column covers answers 422 `IMPORT_MAPPING_INCOMPLETE` with nothing saved.
+// `options[auto]=true` imports straight away: the upload takes the mapping the mapping form would prefill, a column nothing matches becoming a property type under its own heading (named in the workspace's default language when the file is written in another one and the translation answers within a few seconds, with the heading kept as its name in the file's language), and comes back `validating`; a clean validation goes on into the import on its own, one with errors stops at `validated` for the caller to decide. An automatic run publishes what it imports unless `options[published]=false` says otherwise. Poll the import until `status` is `completed`, `validated` or `failed`. A required attribute no column covers answers 422 `IMPORT_MAPPING_INCOMPLETE` with nothing saved.
 //
 // The upload is held for a limited time; once it is gone, the run endpoints answer 410 `IMPORT_EXPIRED`.
 //
@@ -9624,7 +10474,7 @@ func (c *Client) GetImportSupplierForm(ctx context.Context, params *GetImportSup
 
 // GetImport Poll an import
 //
-// The status, the counts, the preview while the import is `fresh`, the progress while a task runs, and the problems found so far, both grouped by cause and one entry per failing row. Another consumer's import answers 404.
+// The status, the counts, the preview while the import still takes a mapping (`fresh`, `mapped`, `validated`), the progress while a task runs, and the problems found so far, both grouped by cause and one entry per failing row. Another consumer's import answers 404.
 //
 // Corresponds with GET /imports/{id} (the `GetImport` operationId).
 func (c *Client) GetImport(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -9643,7 +10493,7 @@ func (c *Client) GetImport(ctx context.Context, id Id, reqEditors ...RequestEdit
 //
 // Writes the rows in the background, after a backup a revert can restore from. Send `options.backup` as `false` to run without one. A passport import takes no backup and cannot be reverted, since a passport's versions are signed and its way out is a void. Poll the `statusUrl` until `status` is `completed` or `failed`.
 //
-// Besides `import_access` this needs the write permission of the data type: `component_write` for components, `product_access` for products, `dpp_bulk_write` for passports. The rows count against the consumer's bulk item cap for the minute.
+// Besides `import_access` this needs the write permission of the data type: `component_write` for components, `product_access` for products, `dpp_bulk_write` for passports. The rows count against the consumer's bulk pace (`bulkItemsPerMinute` of `GET /me`): the run is never refused for it, and writes its rows at that pace.
 //
 // Takes any type of body and a specified content type.
 //
@@ -9664,7 +10514,7 @@ func (c *Client) ExecuteImportWithBody(ctx context.Context, id Id, contentType s
 //
 // Writes the rows in the background, after a backup a revert can restore from. Send `options.backup` as `false` to run without one. A passport import takes no backup and cannot be reverted, since a passport's versions are signed and its way out is a void. Poll the `statusUrl` until `status` is `completed` or `failed`.
 //
-// Besides `import_access` this needs the write permission of the data type: `component_write` for components, `product_access` for products, `dpp_bulk_write` for passports. The rows count against the consumer's bulk item cap for the minute.
+// Besides `import_access` this needs the write permission of the data type: `component_write` for components, `product_access` for products, `dpp_bulk_write` for passports. The rows count against the consumer's bulk pace (`bulkItemsPerMinute` of `GET /me`): the run is never refused for it, and writes its rows at that pace.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -9683,7 +10533,7 @@ func (c *Client) ExecuteImport(ctx context.Context, id Id, body ExecuteImportJSO
 
 // MapImportWithBody Map the columns of an import
 //
-// One action per column, in the vocabulary the preview lists. Every required attribute must be covered. `create_new` adds a property type to the workspace for good, so the API only creates one when the mapping says so. The import moves to `mapped`.
+// One action per column, in the vocabulary the preview lists, each under the preview's `column`. The mapping replaces the stored one whole, so it names every column to import, the ones the upload mapped on its own included, and overrides what the upload chose for any of them. Every required attribute must be covered. `create_new` adds a property type to the workspace for good, so the API only creates one when the mapping says so. The import moves to `mapped`.
 //
 // Takes any type of body and a specified content type.
 //
@@ -9702,13 +10552,32 @@ func (c *Client) MapImportWithBody(ctx context.Context, id Id, contentType strin
 
 // MapImport Map the columns of an import
 //
-// One action per column, in the vocabulary the preview lists. Every required attribute must be covered. `create_new` adds a property type to the workspace for good, so the API only creates one when the mapping says so. The import moves to `mapped`.
+// One action per column, in the vocabulary the preview lists, each under the preview's `column`. The mapping replaces the stored one whole, so it names every column to import, the ones the upload mapped on its own included, and overrides what the upload chose for any of them. Every required attribute must be covered. `create_new` adds a property type to the workspace for good, so the API only creates one when the mapping says so. The import moves to `mapped`.
 //
 // Takes a body of the `application/json` content type.
 //
 // Corresponds with PUT /imports/{id}/mappings (the `MapImport` operationId).
 func (c *Client) MapImport(ctx context.Context, id Id, body MapImportJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewMapImportRequest(c.Server, id, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// RerunImport Run an import again
+//
+// A finished import (`completed`, `failed` or `reverted`) keeps the mapping it ran with, so its counts, row errors, backup and revert stay the record of that run. Its file runs once more as a new import: a copy of the same file with the same column mapping, `contentLocale`, value separator, options and data type, `mapped` and ready for `POST /imports/{id}/validate` or a new mapping. The new import belongs to the caller and has its own counts, row errors, backup and revert.
+//
+// A row that runs again finds the record it wrote, so an unchanged row counts as unchanged and a record deleted since is created again. A passport already signed is left as it is.
+//
+// Corresponds with POST /imports/{id}/rerun (the `RerunImport` operationId).
+func (c *Client) RerunImport(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewRerunImportRequest(c.Server, id)
 	if err != nil {
 		return nil, err
 	}
@@ -9791,9 +10660,9 @@ func (c *Client) ListLanguages(ctx context.Context, reqEditors ...RequestEditorF
 	return c.Client.Do(req)
 }
 
-// ListLeadgens List lead generation campaigns
+// ListLeadgens List campaigns
 //
-// Returns leadgen campaigns owned by the authenticated user. Campaigns belong to people, not to API consumers, so this is a user-token surface.
+// Returns campaigns owned by the authenticated user. Campaigns belong to people, not to API consumers, so this is a user-token surface.
 //
 // Corresponds with GET /leadgens (the `ListLeadgens` operationId).
 func (c *Client) ListLeadgens(ctx context.Context, params *ListLeadgensParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -9808,9 +10677,9 @@ func (c *Client) ListLeadgens(ctx context.Context, params *ListLeadgensParams, r
 	return c.Client.Do(req)
 }
 
-// CreateLeadgenWithBody Create a leadgen campaign
+// CreateLeadgenWithBody Create a campaign
 //
-// Creates a new lead generation campaign with an overlay and form.
+// Creates a new campaign with its copy and, for the form action, a form it names by formId or a new one.
 //
 // Takes any type of body and a specified content type.
 //
@@ -9827,9 +10696,9 @@ func (c *Client) CreateLeadgenWithBody(ctx context.Context, contentType string, 
 	return c.Client.Do(req)
 }
 
-// CreateLeadgen Create a leadgen campaign
+// CreateLeadgen Create a campaign
 //
-// Creates a new lead generation campaign with an overlay and form.
+// Creates a new campaign with its copy and, for the form action, a form it names by formId or a new one.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -9846,7 +10715,7 @@ func (c *Client) CreateLeadgen(ctx context.Context, body CreateLeadgenJSONReques
 	return c.Client.Do(req)
 }
 
-// DeleteLeadgen Delete a leadgen campaign
+// DeleteLeadgen Delete a campaign
 //
 // Corresponds with DELETE /leadgens/{id} (the `DeleteLeadgen` operationId).
 func (c *Client) DeleteLeadgen(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -9861,7 +10730,9 @@ func (c *Client) DeleteLeadgen(ctx context.Context, id Id, reqEditors ...Request
 	return c.Client.Do(req)
 }
 
-// UpdateLeadgenWithBody Update a leadgen campaign
+// UpdateLeadgenWithBody Update a campaign
+//
+// Writes the fields the body names. With a picture (imageId) the introduction may stay empty.
 //
 // Takes any type of body and a specified content type.
 //
@@ -9878,7 +10749,9 @@ func (c *Client) UpdateLeadgenWithBody(ctx context.Context, id Id, contentType s
 	return c.Client.Do(req)
 }
 
-// UpdateLeadgen Update a leadgen campaign
+// UpdateLeadgen Update a campaign
+//
+// Writes the fields the body names. With a picture (imageId) the introduction may stay empty.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -9895,9 +10768,9 @@ func (c *Client) UpdateLeadgen(ctx context.Context, id Id, body UpdateLeadgenJSO
 	return c.Client.Do(req)
 }
 
-// GetLeadgenRequests Export leadgen form requests
+// GetLeadgenRequests Export a campaign's form requests
 //
-// Exports form submissions for a leadgen campaign as CSV or XLSX.
+// Exports form submissions for a campaign as CSV or XLSX.
 //
 // Corresponds with GET /leadgens/{id}/requests (the `GetLeadgenRequests` operationId).
 func (c *Client) GetLeadgenRequests(ctx context.Context, id Id, params *GetLeadgenRequestsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -9933,7 +10806,7 @@ func (c *Client) GetLocalization(ctx context.Context, reqEditors ...RequestEdito
 //
 // The lots batch and item passports freeze from, newest first. A lot is created with the first passport that names its identifier and reused by every later passport of the same lot, so there is nothing to create here: to issue a passport of a new lot, name the lot in `batchIdentifier` on `POST /dpps` or in the shared line of a bulk create. A new lot is taken only of a product that passes every other required readiness check; until then that create answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, and `GET /dpps/requirements` shows what the product still lacks.
 //
-// Narrow the list with `product_id` to see which lots a product already has, or with `identifier` to find the lot a passport names. `sort`, `created_since` and `updated_since` order and bound it for a poll.
+// Narrow the list with `product_id` to see which lots a product already has, or with `identifier` to find the lot a passport names. `product_id` and `serial` together answer the lot holding a serial number, the one a scan of that unit's tag opens; `serial` without `product_id` answers 422 `PARAMETER_MISSING`, since a serial number is unique only within its product's GTIN. `sort`, `created_since` and `updated_since` order and bound it for a poll.
 //
 // Corresponds with GET /lots (the `ListLots` operationId).
 func (c *Client) ListLots(ctx context.Context, params *ListLotsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -9955,6 +10828,115 @@ func (c *Client) ListLots(ctx context.Context, params *ListLotsParams, reqEditor
 // Corresponds with GET /lots/{id} (the `GetLot` operationId).
 func (c *Client) GetLot(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetLotRequest(c.Server, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// ListLotCodes List the codes of a lot's tags
+//
+// What a label converter encodes on each tag of the lot, one row per serial number the lot holds, in the order they were given, then one per unit passport of the lot no serial number covers. A unit passport the caller does not read is left out, and a serial number it covers gets the serial number's own link. Pages take up to 1000 rows.
+//
+// Corresponds with GET /lots/{id}/codes (the `ListLotCodes` operationId).
+func (c *Client) ListLotCodes(ctx context.Context, id int, params *ListLotCodesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListLotCodesRequest(c.Server, id, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// ListLotSerials List the serial numbers of a lot
+//
+// The entries of serial numbers the lot holds, in the order they were given, each a range as written or a list of single serial numbers. A scan of a tag carrying the product's GTIN and one of these serial numbers opens the lot's passport.
+//
+// Corresponds with GET /lots/{id}/serials (the `ListLotSerials` operationId).
+func (c *Client) ListLotSerials(ctx context.Context, id int, params *ListLotSerialsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListLotSerialsRequest(c.Server, id, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CreateLotSerialsWithBody Add serial numbers to a lot
+//
+// Gives the lot the serial numbers its units carry, the ones the ERP or the label supplier reserved for the run. Each element of `serials` is one entry, in one of three forms:
+//
+// - a range, the counting part in square brackets and the rest kept as written: `NW-[000001-100000]` is NW-000001 to NW-100000, zeros kept; `LOT7-[1-5000]-B` counts without padding;
+// - a first and a last serial number with a spaced hyphen between, differing in one run of digits: `NW-000001 - NW-100000`;
+// - a single serial number, or the EPC URN of one naming the product's GTIN: `NW-000412`, `urn:epc:id:sgtin:4012345.067890.412`.
+//
+// A serial number takes the characters of GS1 AI 21, letters, digits and “!"%&'()*+,-./:;<=>?_“, up to 20 of them. A line holds at most 1000000 serial numbers and a call at most 100000 lines. The product needs a GTIN, since a scan finds the lot by GTIN and serial number.
+//
+// The call is taken whole or not at all. A serial number held by another lot of the product, a range overlapping the serial numbers of any lot, this one included, and a serial number with a unit passport in another lot refuse it with 422 `SERIALS_INVALID`, and `fields.serials.lines` names each refused line with its place in `serials`, counted from 1, the entry as sent and why: the first 1000 of them, `count` all. A single serial number the lot holds already is skipped and counted in `skippedCount`. While another change to the product's serial numbers runs the answer is 409 `SERIALS_BUSY`; try again a moment later.
+//
+// Whoever writes the lot's product adds and removes its serial numbers, as in the Application Manager: a credential with `product_access` at the full tier of its access group, on a product its group gives it to write, and a person with backend access whose groups open to the API give them the product. A repeated range is refused as overlapping its own lot, so send an `Idempotency-Key` to repeat a call safely.
+//
+// Takes any type of body and a specified content type.
+//
+// Corresponds with POST /lots/{id}/serials (the `CreateLotSerials` operationId).
+func (c *Client) CreateLotSerialsWithBody(ctx context.Context, id int, params *CreateLotSerialsParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateLotSerialsRequestWithBody(c.Server, id, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CreateLotSerials Add serial numbers to a lot
+//
+// Gives the lot the serial numbers its units carry, the ones the ERP or the label supplier reserved for the run. Each element of `serials` is one entry, in one of three forms:
+//
+// - a range, the counting part in square brackets and the rest kept as written: `NW-[000001-100000]` is NW-000001 to NW-100000, zeros kept; `LOT7-[1-5000]-B` counts without padding;
+// - a first and a last serial number with a spaced hyphen between, differing in one run of digits: `NW-000001 - NW-100000`;
+// - a single serial number, or the EPC URN of one naming the product's GTIN: `NW-000412`, `urn:epc:id:sgtin:4012345.067890.412`.
+//
+// A serial number takes the characters of GS1 AI 21, letters, digits and “!"%&'()*+,-./:;<=>?_“, up to 20 of them. A line holds at most 1000000 serial numbers and a call at most 100000 lines. The product needs a GTIN, since a scan finds the lot by GTIN and serial number.
+//
+// The call is taken whole or not at all. A serial number held by another lot of the product, a range overlapping the serial numbers of any lot, this one included, and a serial number with a unit passport in another lot refuse it with 422 `SERIALS_INVALID`, and `fields.serials.lines` names each refused line with its place in `serials`, counted from 1, the entry as sent and why: the first 1000 of them, `count` all. A single serial number the lot holds already is skipped and counted in `skippedCount`. While another change to the product's serial numbers runs the answer is 409 `SERIALS_BUSY`; try again a moment later.
+//
+// Whoever writes the lot's product adds and removes its serial numbers, as in the Application Manager: a credential with `product_access` at the full tier of its access group, on a product its group gives it to write, and a person with backend access whose groups open to the API give them the product. A repeated range is refused as overlapping its own lot, so send an `Idempotency-Key` to repeat a call safely.
+//
+// Takes a body of the `application/json` content type.
+//
+// Corresponds with POST /lots/{id}/serials (the `CreateLotSerials` operationId).
+func (c *Client) CreateLotSerials(ctx context.Context, id int, params *CreateLotSerialsParams, body CreateLotSerialsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateLotSerialsRequest(c.Server, id, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// DeleteLotSerials Remove serial numbers from a lot
+//
+// Removes one entry of serial numbers from the lot. A scan of a tag carrying one of them then opens the product's newest lot, as a serial number no lot holds does. Allowed on a lot whose passport is published, so a mistake can be put right; nothing signed depends on it. The same rights as adding them.
+//
+// Corresponds with DELETE /lots/{id}/serials/{entryId} (the `DeleteLotSerials` operationId).
+func (c *Client) DeleteLotSerials(ctx context.Context, id int, entryId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteLotSerialsRequest(c.Server, id, entryId)
 	if err != nil {
 		return nil, err
 	}
@@ -10001,13 +10983,17 @@ func (c *Client) ListMediafiles(ctx context.Context, params *ListMediafilesParam
 
 // CreateMediafileWithBody Upload a mediafile
 //
-// Uploads a new image file. Requires the product mediafiles feature. Any valid credential reaches it; the upload is owned by the caller.
+// Uploads a new file: a picture for a gallery, or a document such as a certificate that a link field of a product or a component names by its token `file:<id>`. Requires the product mediafiles feature. Any valid credential reaches it; the upload is owned by the caller.
+//
+// The bytes are public unless `public` is false: then they go to the protected store, which only the Application Manager reaches, and the answer carries no `url`. A gallery takes pictures alone and shows them wherever the record is public, so a file meant for a gallery stays public. A protected file is named in a link field, or put in a gallery, by the caller that uploaded it, and by a credential acting for the person who did; a public file by anyone.
 //
 // A browser and the command line send the file itself as `multipart/form-data`. A caller that can only send JSON sends the bytes as base64 instead, bare or as a `data:` URI, in a body of the shape `{"mediafile": {"data": "iVBORw0KGgo...", "name": "Rain shell hero shot"}}`.
 //
 // A caller holding a link sends `mediafile.url` and the server reads the bytes itself, which is the practical way in for anything larger than a small image. Only https, only an address outside this network, at most three redirects, and the same size cap; a refusal says which of those it was.
 //
 // The kind of file is read from the bytes, not from anything the caller says about them, and the same size, readability and content rules apply whichever way it arrived.
+//
+// A document's details may come along: its type, issuer, number and validity. `PUT /mediafiles/{id}` changes them later.
 //
 // Takes any type of body and a specified content type.
 //
@@ -10026,13 +11012,17 @@ func (c *Client) CreateMediafileWithBody(ctx context.Context, contentType string
 
 // CreateMediafile Upload a mediafile
 //
-// Uploads a new image file. Requires the product mediafiles feature. Any valid credential reaches it; the upload is owned by the caller.
+// Uploads a new file: a picture for a gallery, or a document such as a certificate that a link field of a product or a component names by its token `file:<id>`. Requires the product mediafiles feature. Any valid credential reaches it; the upload is owned by the caller.
+//
+// The bytes are public unless `public` is false: then they go to the protected store, which only the Application Manager reaches, and the answer carries no `url`. A gallery takes pictures alone and shows them wherever the record is public, so a file meant for a gallery stays public. A protected file is named in a link field, or put in a gallery, by the caller that uploaded it, and by a credential acting for the person who did; a public file by anyone.
 //
 // A browser and the command line send the file itself as `multipart/form-data`. A caller that can only send JSON sends the bytes as base64 instead, bare or as a `data:` URI, in a body of the shape `{"mediafile": {"data": "iVBORw0KGgo...", "name": "Rain shell hero shot"}}`.
 //
 // A caller holding a link sends `mediafile.url` and the server reads the bytes itself, which is the practical way in for anything larger than a small image. Only https, only an address outside this network, at most three redirects, and the same size cap; a refusal says which of those it was.
 //
 // The kind of file is read from the bytes, not from anything the caller says about them, and the same size, readability and content rules apply whichever way it arrived.
+//
+// A document's details may come along: its type, issuer, number and validity. `PUT /mediafiles/{id}` changes them later.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -10051,11 +11041,53 @@ func (c *Client) CreateMediafile(ctx context.Context, body CreateMediafileJSONRe
 
 // DeleteMediafile Delete a mediafile
 //
-// Takes the file out of the library. The row is trashed rather than destroyed, so a person can restore it in the application manager. A file a record still shows answers 409 `MEDIAFILE_IN_USE` and names those records; take it off them first. The caller must own the file.
+// Takes the file out of the library. The row is trashed rather than destroyed, so a person can restore it in the Application Manager. A file a record's gallery still shows answers 409 `MEDIAFILE_IN_USE` and names those records; take it out of them first. A file a link field of a product or a component names, in place of a web address, answers 409 `MEDIAFILE_DELETE_REFUSED`, ahead of the galleries showing it; point those fields elsewhere first. The caller must own the file.
 //
 // Corresponds with DELETE /mediafiles/{id} (the `DeleteMediafile` operationId).
 func (c *Client) DeleteMediafile(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewDeleteMediafileRequest(c.Server, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// UpdateMediafileWithBody Update a mediafile
+//
+// Changes the name of a file and a document's details: its type, issuer, number and validity, such as a renewed certificate's new end. The bytes stay as they are. Requires the product mediafiles feature, and the caller must own the file.
+//
+// A language version, a file of a key restricted to some languages, shows the details of the file of its key for every language and takes none of its own: details sent for it answer 422. A field sent as null or an empty string is cleared.
+//
+// Takes any type of body and a specified content type.
+//
+// Corresponds with PUT /mediafiles/{id} (the `UpdateMediafile` operationId).
+func (c *Client) UpdateMediafileWithBody(ctx context.Context, id Id, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateMediafileRequestWithBody(c.Server, id, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// UpdateMediafile Update a mediafile
+//
+// Changes the name of a file and a document's details: its type, issuer, number and validity, such as a renewed certificate's new end. The bytes stay as they are. Requires the product mediafiles feature, and the caller must own the file.
+//
+// A language version, a file of a key restricted to some languages, shows the details of the file of its key for every language and takes none of its own: details sent for it answer 422. A field sent as null or an empty string is cleared.
+//
+// Takes a body of the `application/json` content type.
+//
+// Corresponds with PUT /mediafiles/{id} (the `UpdateMediafile` operationId).
+func (c *Client) UpdateMediafile(ctx context.Context, id Id, body UpdateMediafileJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateMediafileRequest(c.Server, id, body)
 	if err != nil {
 		return nil, err
 	}
@@ -10085,7 +11117,7 @@ func (c *Client) GetNavigation(ctx context.Context, reqEditors ...RequestEditorF
 
 // AuthorizeClient Ask a person in the workspace for access
 //
-// The authorization request (RFC 6749, section 4.1.1) with PKCE (RFC 7636). Open it in the person's browser. The server checks the request, writes it down, and sends the person to the consent screen of the application manager on this same host, where they sign in if they are not already and see the requested permissions named one by one. Allow sends them back to `redirect_uri` with a `code`; Refuse sends them back with `error=access_denied`.
+// The authorization request (RFC 6749, section 4.1.1) with PKCE (RFC 7636). Open it in the person's browser. The server checks the request, writes it down, and sends the person to the consent screen of the Application Manager on this same host, where they sign in if they are not already and see the requested permissions named one by one. Allow sends them back to `redirect_uri` with a `code`; Refuse sends them back with `error=access_denied`.
 //
 // PKCE is mandatory. `code_challenge` is required and `code_challenge_method` has to be `S256`; `plain` is refused. The code that comes back lives 60 seconds and is spent once, at the token endpoint, with the verifier the challenge was derived from.
 //
@@ -10445,7 +11477,7 @@ func (c *Client) ListProductCategories(ctx context.Context, reqEditors ...Reques
 
 // ListProductGtins Search products by GTIN
 //
-// Returns products matching a GTIN prefix. Requires the GTIN feature to be enabled.
+// Returns products matching a GTIN prefix, out of those `GET /products` answers the caller with. Requires the GTIN feature to be enabled. A credential holding `product_access` receives the products its access groups reach, drafts included; where the storefront shows its lists or analyses, every other reader receives the published products; where it shows neither, a credential without `product_access` answers 403 naming the key. A row carries no claim token.
 //
 // Corresponds with GET /product_gtins (the `ListProductGtins` operationId).
 func (c *Client) ListProductGtins(ctx context.Context, params *ListProductGtinsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -10502,7 +11534,7 @@ func (c *Client) ListProducts(ctx context.Context, params *ListProductsParams, r
 //
 // Creates a new product. The authenticated user or API consumer becomes the owner. A product needs a brand, named alongside it (an existing brand of that name is used, a new one created and owned by the caller), and at least one component under componentsInput. A consumer needs `product_access`, and to create the brand it names also `brand_access`, as `POST /brands` asks; without it a new brand name answers 403 `BRAND_FORBIDDEN`.
 //
-// A credential acting for a person (one granted on the consent screen, or the assistant's) names only the categories, the brand and the manufacturers that person reads in the application manager, and creates a brand only where that person may; anything else answers 422 naming `categories`, `brand` or `properties`.
+// A credential acting for a person (one granted on the consent screen, or the assistant's) names only the categories, the brand and the manufacturers that person reads in the Application Manager, and creates a brand only where that person may; anything else answers 422 naming `categories`, `brand` or `properties`.
 //
 // A product naming a parent under `parentId` is created as its variant: it starts as a copy of the parent, with its brand, categories, components, images and property values, and takes the parent's later changes. Such a body needs a name only. The brand, categories, components and property values it names besides become the variant's own where they differ from the parent's, and the variant's read marks them `pinned`. The parent is a product the caller may update, since a variant holds its parent's delete back: a parent the caller cannot read answers 422 `PRODUCT_PARENT_NOT_FOUND`, one it cannot update 403. A variant takes its mandatory values from its parent, so its create asks for none of them.
 //
@@ -10525,7 +11557,7 @@ func (c *Client) CreateProductWithBody(ctx context.Context, params *CreateProduc
 //
 // Creates a new product. The authenticated user or API consumer becomes the owner. A product needs a brand, named alongside it (an existing brand of that name is used, a new one created and owned by the caller), and at least one component under componentsInput. A consumer needs `product_access`, and to create the brand it names also `brand_access`, as `POST /brands` asks; without it a new brand name answers 403 `BRAND_FORBIDDEN`.
 //
-// A credential acting for a person (one granted on the consent screen, or the assistant's) names only the categories, the brand and the manufacturers that person reads in the application manager, and creates a brand only where that person may; anything else answers 422 naming `categories`, `brand` or `properties`.
+// A credential acting for a person (one granted on the consent screen, or the assistant's) names only the categories, the brand and the manufacturers that person reads in the Application Manager, and creates a brand only where that person may; anything else answers 422 naming `categories`, `brand` or `properties`.
 //
 // A product naming a parent under `parentId` is created as its variant: it starts as a copy of the parent, with its brand, categories, components, images and property values, and takes the parent's later changes. Such a body needs a name only. The brand, categories, components and property values it names besides become the variant's own where they differ from the parent's, and the variant's read marks them `pinned`. The parent is a product the caller may update, since a variant holds its parent's delete back: a parent the caller cannot read answers 422 `PRODUCT_PARENT_NOT_FOUND`, one it cannot update 403. A variant takes its mandatory values from its parent, so its create asks for none of them.
 //
@@ -10637,7 +11669,7 @@ func (c *Client) GetProduct(ctx context.Context, id Id, params *GetProductParams
 
 // UpdateProductWithBody Update a product
 //
-// Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are. A brand name no brand carries creates the brand, which asks a consumer for `brand_access` (403 `BRAND_FORBIDDEN` without it); a credential acting for a person names only what that person reads, as on create. On a variant, a value the body changes becomes the variant's own and a value it sends as it was read goes on following the parent. `parentId` is left out or names the parent the product has; any other answers 422 `PRODUCT_PARENT_READ_ONLY`, since a variant moves to another parent through a spreadsheet import only. A `propertiesInput` key naming no property type, or, for a credential, a type only the members of a plan edit, or a type of an access group the credential (or the person it acts for) is not in, refuses the whole write with 422 `PRODUCT_PROPERTIES_REFUSED`, whose message names each and why; `fields.propertiesInput.unknown`, `fields.propertiesInput.planGated` and `fields.propertiesInput.groupGated` list the keys as sent.
+// Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are. A brand name no brand carries creates the brand, which asks a consumer for `brand_access` (403 `BRAND_FORBIDDEN` without it); a credential acting for a person names only what that person reads, as on create. On a variant, a value the body changes becomes the variant's own and a value it sends as it was read goes on following the parent. `parentId` is left out or names the parent the product has; any other answers 422 `PRODUCT_PARENT_READ_ONLY`, since a variant moves to another parent through a spreadsheet import only. A `propertiesInput` key naming no property type, or, for a credential, a type only the members of a plan edit, or a type of an access group the credential (or the person it acts for) is not in, or is in through a membership whose record scope names other products, refuses the whole write with 422 `PRODUCT_PROPERTIES_REFUSED`, whose message names each and why; `fields.propertiesInput.unknown`, `fields.propertiesInput.planGated` and `fields.propertiesInput.groupGated` list the keys as sent. A link value naming a file by `file:<id>` lists the file on the product; an id naming no file of the library refuses the whole write with 422 `FILE_REFERENCE_UNKNOWN`. The product's read sent back under `product` passes as it was read; a key of it that differs from the product as it stands, a key the write takes nowhere, or a list or an object sent as something else refuses the whole write with 422 `PRODUCT_KEYS_REFUSED`, one field per key as on create, so a body read before another write changed the product names what moved.
 //
 // Takes any type of body and a specified content type.
 //
@@ -10656,7 +11688,7 @@ func (c *Client) UpdateProductWithBody(ctx context.Context, id Id, contentType s
 
 // UpdateProduct Update a product
 //
-// Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are. A brand name no brand carries creates the brand, which asks a consumer for `brand_access` (403 `BRAND_FORBIDDEN` without it); a credential acting for a person names only what that person reads, as on create. On a variant, a value the body changes becomes the variant's own and a value it sends as it was read goes on following the parent. `parentId` is left out or names the parent the product has; any other answers 422 `PRODUCT_PARENT_READ_ONLY`, since a variant moves to another parent through a spreadsheet import only. A `propertiesInput` key naming no property type, or, for a credential, a type only the members of a plan edit, or a type of an access group the credential (or the person it acts for) is not in, refuses the whole write with 422 `PRODUCT_PROPERTIES_REFUSED`, whose message names each and why; `fields.propertiesInput.unknown`, `fields.propertiesInput.planGated` and `fields.propertiesInput.groupGated` list the keys as sent.
+// Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are. A brand name no brand carries creates the brand, which asks a consumer for `brand_access` (403 `BRAND_FORBIDDEN` without it); a credential acting for a person names only what that person reads, as on create. On a variant, a value the body changes becomes the variant's own and a value it sends as it was read goes on following the parent. `parentId` is left out or names the parent the product has; any other answers 422 `PRODUCT_PARENT_READ_ONLY`, since a variant moves to another parent through a spreadsheet import only. A `propertiesInput` key naming no property type, or, for a credential, a type only the members of a plan edit, or a type of an access group the credential (or the person it acts for) is not in, or is in through a membership whose record scope names other products, refuses the whole write with 422 `PRODUCT_PROPERTIES_REFUSED`, whose message names each and why; `fields.propertiesInput.unknown`, `fields.propertiesInput.planGated` and `fields.propertiesInput.groupGated` list the keys as sent. A link value naming a file by `file:<id>` lists the file on the product; an id naming no file of the library refuses the whole write with 422 `FILE_REFERENCE_UNKNOWN`. The product's read sent back under `product` passes as it was read; a key of it that differs from the product as it stands, a key the write takes nowhere, or a list or an object sent as something else refuses the whole write with 422 `PRODUCT_KEYS_REFUSED`, one field per key as on create, so a body read before another write changed the product names what moved.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -10675,7 +11707,7 @@ func (c *Client) UpdateProduct(ctx context.Context, id Id, body UpdateProductJSO
 
 // UpdateProductMediafilesWithBody Update product mediafile assignments
 //
-// Replaces all mediafile assignments on a product with the given list in the specified order, as one change. On a variant, a list that differs from its parent's becomes the variant's own, and the list sent as it was read goes on following the parent. Requires the product mediafiles feature to be enabled.
+// Replaces all mediafile assignments on a product with the given list in the specified order, as one change. On a variant, a list that differs from its parent's becomes the variant's own, and the list sent as it was read goes on following the parent. The gallery takes pictures alone (images and SVG); a list naming any other file answers 422 `MEDIAFILE_NOT_A_PICTURE` and changes nothing. A list naming a picture held for review, or a protected one that the caller did not upload and the gallery does not hold already, answers 404 `MEDIAFILE_NOT_FOUND` and changes nothing; an id naming no file is left out. Requires the product mediafiles feature to be enabled.
 //
 // Takes any type of body and a specified content type.
 //
@@ -10694,7 +11726,7 @@ func (c *Client) UpdateProductMediafilesWithBody(ctx context.Context, id Id, con
 
 // UpdateProductMediafiles Update product mediafile assignments
 //
-// Replaces all mediafile assignments on a product with the given list in the specified order, as one change. On a variant, a list that differs from its parent's becomes the variant's own, and the list sent as it was read goes on following the parent. Requires the product mediafiles feature to be enabled.
+// Replaces all mediafile assignments on a product with the given list in the specified order, as one change. On a variant, a list that differs from its parent's becomes the variant's own, and the list sent as it was read goes on following the parent. The gallery takes pictures alone (images and SVG); a list naming any other file answers 422 `MEDIAFILE_NOT_A_PICTURE` and changes nothing. A list naming a picture held for review, or a protected one that the caller did not upload and the gallery does not hold already, answers 404 `MEDIAFILE_NOT_FOUND` and changes nothing; an id naming no file is left out. Requires the product mediafiles feature to be enabled.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -10911,7 +11943,7 @@ func (c *Client) LogoutSession(ctx context.Context, reqEditors ...RequestEditorF
 
 // LoginSessionWithBody Login (create session)
 //
-// Authenticates a user with email/alias and password. Returns a JWT bearer token for subsequent requests. Optionally assigns unclaimed products to the user via `productTokens`.
+// Authenticates a user with email/alias and password. Returns a JWT bearer token for subsequent requests. Optionally assigns unclaimed products to the user via `productTokens`. A user who set up a second factor sends its code as `otp`, from the authenticator app or one of the backup codes; without it the answer is 401 `MFA_REQUIRED`, with a wrong one 401 `MFA_INVALID`, and no token is issued. A user whose only second factor is a security key or a passkey, which this sign-in cannot ask for, gets 403 `MFA_METHOD_UNSUPPORTED` before any code is read; they sign in through OAuth or an API consumer, or add an authenticator app. Staff who owe a password of their own or the second factor the workspace demands get 403 `ACCOUNT_SETUP_REQUIRED` until they set it up in the Application Manager.
 //
 // Takes any type of body and a specified content type.
 //
@@ -10930,7 +11962,7 @@ func (c *Client) LoginSessionWithBody(ctx context.Context, contentType string, b
 
 // LoginSession Login (create session)
 //
-// Authenticates a user with email/alias and password. Returns a JWT bearer token for subsequent requests. Optionally assigns unclaimed products to the user via `productTokens`.
+// Authenticates a user with email/alias and password. Returns a JWT bearer token for subsequent requests. Optionally assigns unclaimed products to the user via `productTokens`. A user who set up a second factor sends its code as `otp`, from the authenticator app or one of the backup codes; without it the answer is 401 `MFA_REQUIRED`, with a wrong one 401 `MFA_INVALID`, and no token is issued. A user whose only second factor is a security key or a passkey, which this sign-in cannot ask for, gets 403 `MFA_METHOD_UNSUPPORTED` before any code is read; they sign in through OAuth or an API consumer, or add an authenticator app. Staff who owe a password of their own or the second factor the workspace demands get 403 `ACCOUNT_SETUP_REQUIRED` until they set it up in the Application Manager.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -10949,7 +11981,7 @@ func (c *Client) LoginSession(ctx context.Context, body LoginSessionJSONRequestB
 
 // RefreshSession Refresh session token
 //
-// Refreshes the session nonce and returns a new bearer token. Requires a valid existing token.
+// Refreshes the session nonce and returns a new bearer token. Requires a valid existing token. A user who owes the Application Manager a password of their own or a second factor renews none (403 `ACCOUNT_SETUP_REQUIRED`).
 //
 // Corresponds with PUT /session (the `RefreshSession` operationId).
 func (c *Client) RefreshSession(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -10968,7 +12000,7 @@ func (c *Client) RefreshSession(ctx context.Context, reqEditors ...RequestEditor
 //
 // The tasks of one list, newest first. A credential that acts for a person (a grant the person approved, or their assistant) reads the lists as that person. Any other credential reads them as itself: it finds the tasks it asked for under `requested` and `done`, and nothing waits on it.
 //
-// - `mine` (the default): what the person has to do: the tasks given to them, the ones they claimed, and the group tasks and reviews nobody has claimed yet. A request for information waiting for its supplier is left out. The number beside the bell in the application manager counts these.
+// - `mine` (the default): what the person has to do: the tasks given to them, the ones they claimed, and the group tasks and reviews nobody has claimed yet. A request for information waiting for its supplier is left out. The number beside the bell in the Application Manager counts these.
 // - `waiting`: the person's requests for information while they wait for the supplier, and the tasks they take part in that someone else has claimed.
 // - `requested`: the open tasks the caller asked of others.
 // - `done`: the finished and cancelled tasks the caller took part in.
@@ -10992,7 +12024,7 @@ func (c *Client) ListTasks(ctx context.Context, params *ListTasksParams, reqEdit
 
 // CreateTaskWithBody Create a task
 //
-// Asks a person or an access group for something. The task is a request (`kind` custom) whatever the body says, and names the caller as the one who asked: the person a grant or an assistant acts for, or the credential itself. Every person the task reaches sees it at once in the application manager and hears of it in the bell; the morning mail carries it too.
+// Asks a person or an access group for something. The task is a request (`kind` custom) whatever the body says, and names the caller as the one who asked: the person a grant or an assistant acts for, or the credential itself. Every person the task reaches sees it at once in the Application Manager and hears of it in the bell; the morning mail carries it too.
 //
 // Find the `assigneeKey` with `GET /tasks/assignees`. A task may link one record the caller reads (`subjectKey`) and carry a `priority`.
 //
@@ -11013,7 +12045,7 @@ func (c *Client) CreateTaskWithBody(ctx context.Context, params *CreateTaskParam
 
 // CreateTask Create a task
 //
-// Asks a person or an access group for something. The task is a request (`kind` custom) whatever the body says, and names the caller as the one who asked: the person a grant or an assistant acts for, or the credential itself. Every person the task reaches sees it at once in the application manager and hears of it in the bell; the morning mail carries it too.
+// Asks a person or an access group for something. The task is a request (`kind` custom) whatever the body says, and names the caller as the one who asked: the person a grant or an assistant acts for, or the credential itself. Every person the task reaches sees it at once in the Application Manager and hears of it in the bell; the morning mail carries it too.
 //
 // Find the `assigneeKey` with `GET /tasks/assignees`. A task may link one record the caller reads (`subjectKey`) and carry a `priority`.
 //
@@ -11034,7 +12066,7 @@ func (c *Client) CreateTask(ctx context.Context, params *CreateTaskParams, body 
 
 // ListTaskAssignees List task assignees
 //
-// Whom a task may go to, matching `term`, as the `key` `POST /tasks` takes and the name the application manager shows. Groups with access to the application manager come first, then the people who can open it; 25 at most.
+// Whom a task may go to, matching `term`, as the `key` `POST /tasks` takes and the name the Application Manager shows. Groups with access to the Application Manager come first, then the people who can open it; 25 at most.
 //
 // Corresponds with GET /tasks/assignees (the `ListTaskAssignees` operationId).
 func (c *Client) ListTaskAssignees(ctx context.Context, params *ListTaskAssigneesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -11106,7 +12138,7 @@ func (c *Client) UpdateTask(ctx context.Context, id Id, body UpdateTaskJSONReque
 
 // ApproveTaskWithBody Approve a review
 //
-// Approves the step a review stands at, as the person the credential acts for. A review walks the steps of the workspace's review flow, or the one step of everyone who may sign passports where no flow fits. Approving a middle step passes the request on to the next step and signs nothing. Approving the last step carries the request out in the person's name, which needs `dpp_publish` in the credential's scope beside `task_access`; without it the answer is 403 and the review stays open. A publish review then approves the passport, which waits ready to publish for the person who asked (`POST /dpps/{code}/publish`) until the product changes; a review of an event's seal or of a correction signs at once.
+// Approves the step a review stands at, as the person the credential acts for. A review walks the steps of the workspace's review flow, or the one step of everyone who may sign passports where no flow fits. Approving a middle step passes the request on to the next step and signs nothing. Approving the last step carries the request out in the person's name, which needs `dpp_publish` in the credential's scope beside `task_access`; without it the answer is 403 and the review stays open. A publish review signs the passport then, as a review of an event's seal or of a correction does. A publish review whose DPP or product changed after the request is refused (`TASK_SOURCE_CHANGED`), and so is one whose DPP recorded an event since (`TASK_EVENT_RECORDED`); the review stays open, and a new request to publish the DPP replaces it.
 //
 // Send the `step` the caller read, so a press on a review that moved on in between decides nothing (`TASK_STEP_MOVED`). The person who asked for a review decides no step of it (`TASK_OWN_REQUEST`). A publish the validator or the workspace refuses answers as `POST /dpps/{code}/publish` does, and the review stays open.
 //
@@ -11127,7 +12159,7 @@ func (c *Client) ApproveTaskWithBody(ctx context.Context, id Id, params *Approve
 
 // ApproveTask Approve a review
 //
-// Approves the step a review stands at, as the person the credential acts for. A review walks the steps of the workspace's review flow, or the one step of everyone who may sign passports where no flow fits. Approving a middle step passes the request on to the next step and signs nothing. Approving the last step carries the request out in the person's name, which needs `dpp_publish` in the credential's scope beside `task_access`; without it the answer is 403 and the review stays open. A publish review then approves the passport, which waits ready to publish for the person who asked (`POST /dpps/{code}/publish`) until the product changes; a review of an event's seal or of a correction signs at once.
+// Approves the step a review stands at, as the person the credential acts for. A review walks the steps of the workspace's review flow, or the one step of everyone who may sign passports where no flow fits. Approving a middle step passes the request on to the next step and signs nothing. Approving the last step carries the request out in the person's name, which needs `dpp_publish` in the credential's scope beside `task_access`; without it the answer is 403 and the review stays open. A publish review signs the passport then, as a review of an event's seal or of a correction does. A publish review whose DPP or product changed after the request is refused (`TASK_SOURCE_CHANGED`), and so is one whose DPP recorded an event since (`TASK_EVENT_RECORDED`); the review stays open, and a new request to publish the DPP replaces it.
 //
 // Send the `step` the caller read, so a press on a review that moved on in between decides nothing (`TASK_STEP_MOVED`). The person who asked for a review decides no step of it (`TASK_OWN_REQUEST`). A publish the validator or the workspace refuses answers as `POST /dpps/{code}/publish` does, and the review stays open.
 //
@@ -11148,7 +12180,7 @@ func (c *Client) ApproveTask(ctx context.Context, id Id, params *ApproveTaskPara
 
 // GetTaskAttachment Download a file of a task
 //
-// One of the files a task carries, the `url` its `attachments` name. Only those who see the task read its files, so a task the caller has no part in answers 404, and so does a file the task does not carry (`MEDIAFILE_NOT_FOUND`). Images and PDFs come inline, every other kind as an attachment. Files are added in the application manager.
+// One of the files a task carries, the `url` its `attachments` name. Only those who see the task read its files, so a task the caller has no part in answers 404, and so does a file the task does not carry (`MEDIAFILE_NOT_FOUND`). Images and PDFs come inline, every other kind as an attachment. Files are added in the Application Manager.
 //
 // Corresponds with GET /tasks/{id}/attachments/{attachmentId} (the `GetTaskAttachment` operationId).
 func (c *Client) GetTaskAttachment(ctx context.Context, id Id, attachmentId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -11197,13 +12229,34 @@ func (c *Client) ClaimTask(ctx context.Context, id Id, reqEditors ...RequestEdit
 	return c.Client.Do(req)
 }
 
-// CompleteTask Complete a task
+// CompleteTaskWithBody Complete a task
 //
-// Marks an open request as done. The person it is for may, or a current member of its group, who claims it in the same move; a task someone else holds stays theirs. Only a person works on a task, so a credential acting as itself is refused with `TASK_NOT_PERMITTED`, and a review ends in a decision in the application manager (`TASK_NOT_CUSTOM`). The one who asked hears of it in the bell.
+// Marks an open request as done. The person it is for may, or a current member of its group, who claims it in the same move; a task someone else holds stays theirs. Only a person works on a task, so a credential acting as itself is refused with `TASK_NOT_PERMITTED`, and a review ends in a decision in the Application Manager (`TASK_NOT_CUSTOM`). The one who asked hears of it in the bell, with the optional `note` as the reply.
+//
+// Takes any type of body and a specified content type.
 //
 // Corresponds with POST /tasks/{id}/complete (the `CompleteTask` operationId).
-func (c *Client) CompleteTask(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCompleteTaskRequest(c.Server, id)
+func (c *Client) CompleteTaskWithBody(ctx context.Context, id Id, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCompleteTaskRequestWithBody(c.Server, id, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CompleteTask Complete a task
+//
+// Marks an open request as done. The person it is for may, or a current member of its group, who claims it in the same move; a task someone else holds stays theirs. Only a person works on a task, so a credential acting as itself is refused with `TASK_NOT_PERMITTED`, and a review ends in a decision in the Application Manager (`TASK_NOT_CUSTOM`). The one who asked hears of it in the bell, with the optional `note` as the reply.
+//
+// Takes a body of the `application/json` content type.
+//
+// Corresponds with POST /tasks/{id}/complete (the `CompleteTask` operationId).
+func (c *Client) CompleteTask(ctx context.Context, id Id, body CompleteTaskJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCompleteTaskRequest(c.Server, id, body)
 	if err != nil {
 		return nil, err
 	}
@@ -13048,6 +14101,47 @@ func NewValidateDppRequestWithBody(server string, contentType string, body io.Re
 	}
 
 	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewGetDppFileRequest constructs an http.Request for the GetDppFile method
+func NewGetDppFileRequest(server string, code string, name string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "code", code, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "name", name, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/dpps/%s/files/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
 
 	return req, nil
 }
@@ -14969,6 +16063,40 @@ func NewMapImportRequestWithBody(server string, id Id, contentType string, body 
 	return req, nil
 }
 
+// NewRerunImportRequest constructs an http.Request for the RerunImport method
+func NewRerunImportRequest(server string, id Id) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/imports/%s/rerun", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewRevertImportRequest calls the generic RevertImport builder with application/json body
 func NewRevertImportRequest(server string, id Id, body RevertImportJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
@@ -15388,6 +16516,18 @@ func NewListLotsRequest(server string, params *ListLotsParams) (*http.Request, e
 
 		}
 
+		if params.Serial != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "serial", *params.Serial, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
 		if params.Page != nil {
 
 			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "page", *params.Page, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
@@ -15489,6 +16629,255 @@ func NewGetLotRequest(server string, id int) (*http.Request, error) {
 	}
 
 	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewListLotCodesRequest constructs an http.Request for the ListLotCodes method
+func NewListLotCodesRequest(server string, id int, params *ListLotCodesParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/lots/%s/codes", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.Page != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "page", *params.Page, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.PerPage != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "per_page", *params.PerPage, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewListLotSerialsRequest constructs an http.Request for the ListLotSerials method
+func NewListLotSerialsRequest(server string, id int, params *ListLotSerialsParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/lots/%s/serials", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.Page != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "page", *params.Page, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.PerPage != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "per_page", *params.PerPage, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewCreateLotSerialsRequest calls the generic CreateLotSerials builder with application/json body
+func NewCreateLotSerialsRequest(server string, id int, params *CreateLotSerialsParams, body CreateLotSerialsJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateLotSerialsRequestWithBody(server, id, params, "application/json", bodyReader)
+}
+
+// NewCreateLotSerialsRequestWithBody constructs an http.Request for the CreateLotSerials method, with any body, and a specified content type
+func NewCreateLotSerialsRequestWithBody(server string, id int, params *CreateLotSerialsParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/lots/%s/serials", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		if params.IdempotencyKey != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Idempotency-Key", *params.IdempotencyKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Idempotency-Key", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewDeleteLotSerialsRequest constructs an http.Request for the DeleteLotSerials method
+func NewDeleteLotSerialsRequest(server string, id int, entryId int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "entryId", entryId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/lots/%s/serials/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -15671,6 +17060,53 @@ func NewDeleteMediafileRequest(server string, id Id) (*http.Request, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	return req, nil
+}
+
+// NewUpdateMediafileRequest calls the generic UpdateMediafile builder with application/json body
+func NewUpdateMediafileRequest(server string, id Id, body UpdateMediafileJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateMediafileRequestWithBody(server, id, "application/json", bodyReader)
+}
+
+// NewUpdateMediafileRequestWithBody constructs an http.Request for the UpdateMediafile method, with any body, and a specified content type
+func NewUpdateMediafileRequestWithBody(server string, id Id, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/mediafiles/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPut, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
 
 	return req, nil
 }
@@ -17845,8 +19281,19 @@ func NewClaimTaskRequest(server string, id Id) (*http.Request, error) {
 	return req, nil
 }
 
-// NewCompleteTaskRequest constructs an http.Request for the CompleteTask method
-func NewCompleteTaskRequest(server string, id Id) (*http.Request, error) {
+// NewCompleteTaskRequest calls the generic CompleteTask builder with application/json body
+func NewCompleteTaskRequest(server string, id Id, body CompleteTaskJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCompleteTaskRequestWithBody(server, id, "application/json", bodyReader)
+}
+
+// NewCompleteTaskRequestWithBody constructs an http.Request for the CompleteTask method, with any body, and a specified content type
+func NewCompleteTaskRequestWithBody(server string, id Id, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -17871,10 +19318,12 @@ func NewCompleteTaskRequest(server string, id Id) (*http.Request, error) {
 		return nil, err
 	}
 
-	req, err := http.NewRequest(http.MethodPost, queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
+
+	req.Header.Add("Content-Type", contentType)
 
 	return req, nil
 }
@@ -18701,7 +20150,7 @@ type ClientWithResponsesInterface interface {
 
 	// CreateBrandWithBodyWithResponse Create a brand
 	//
-	// Creates a brand owned by the caller, or answers 200 with the brand of that name when one exists, since a brand is one row per name across the workspace. Names are harmonised the way the application manager does it. A brand is published on its own once it has products, so there is nothing to publish by hand.
+	// Creates a brand owned by the caller, or answers 200 with the brand of that name when one exists, since a brand is one row per name across the workspace. Names are harmonised the way the Application Manager does it. A brand is published on its own once it has products, so there is nothing to publish by hand.
 	//
 	// A consumer needs `brand_access` or `brand_write`; a signed-in person needs a confirmed account.
 	//
@@ -18712,7 +20161,7 @@ type ClientWithResponsesInterface interface {
 
 	// CreateBrandWithResponse Create a brand
 	//
-	// Creates a brand owned by the caller, or answers 200 with the brand of that name when one exists, since a brand is one row per name across the workspace. Names are harmonised the way the application manager does it. A brand is published on its own once it has products, so there is nothing to publish by hand.
+	// Creates a brand owned by the caller, or answers 200 with the brand of that name when one exists, since a brand is one row per name across the workspace. Names are harmonised the way the Application Manager does it. A brand is published on its own once it has products, so there is nothing to publish by hand.
 	//
 	// A consumer needs `brand_access` or `brand_write`; a signed-in person needs a confirmed account.
 	//
@@ -18806,11 +20255,11 @@ type ClientWithResponsesInterface interface {
 
 	// CreateComponentWithBodyWithResponse Create a component
 	//
-	// Creates a component, unpublished, owned by the caller. Properties and template ids ride beside it in the shape the application manager's form sends: `properties.new` maps a property type id to the values to add, `templateIds` names the components whose properties the new one inherits.
+	// Creates a component, unpublished, owned by the caller. Properties and template ids ride beside it in the shape the Application Manager's form sends: `properties.new` maps a property type id to the values to add, `templateIds` names the components whose properties the new one inherits.
 	//
 	// A consumer needs `component_access` or `component_write`; a signed-in person needs a confirmed account. The answer is the same document as `GET /components/{id}`.
 	//
-	// A property type id naming no property type refuses the whole write with 422 `COMPONENT_PROPERTIES_REFUSED`, and no component is created; the message names each id, `fields.properties.unknown` lists them as sent. `fields.properties.planGated` and `fields.properties.groupGated` keep the shape of the product refusal and stay empty, since no plan or access group limits a component property type.
+	// A property type id naming no property type refuses the whole write with 422 `COMPONENT_PROPERTIES_REFUSED`, and no component is created; the message names each id, `fields.properties.unknown` lists them as sent. `fields.properties.planGated` and `fields.properties.groupGated` keep the shape of the product refusal and stay empty, since no plan or access group limits a component property type. A link value naming a file by `file:<id>` lists the file on the component; an id naming no file of the library refuses the whole write with 422 `FILE_REFERENCE_UNKNOWN`, and no component is created.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -18819,11 +20268,11 @@ type ClientWithResponsesInterface interface {
 
 	// CreateComponentWithResponse Create a component
 	//
-	// Creates a component, unpublished, owned by the caller. Properties and template ids ride beside it in the shape the application manager's form sends: `properties.new` maps a property type id to the values to add, `templateIds` names the components whose properties the new one inherits.
+	// Creates a component, unpublished, owned by the caller. Properties and template ids ride beside it in the shape the Application Manager's form sends: `properties.new` maps a property type id to the values to add, `templateIds` names the components whose properties the new one inherits.
 	//
 	// A consumer needs `component_access` or `component_write`; a signed-in person needs a confirmed account. The answer is the same document as `GET /components/{id}`.
 	//
-	// A property type id naming no property type refuses the whole write with 422 `COMPONENT_PROPERTIES_REFUSED`, and no component is created; the message names each id, `fields.properties.unknown` lists them as sent. `fields.properties.planGated` and `fields.properties.groupGated` keep the shape of the product refusal and stay empty, since no plan or access group limits a component property type.
+	// A property type id naming no property type refuses the whole write with 422 `COMPONENT_PROPERTIES_REFUSED`, and no component is created; the message names each id, `fields.properties.unknown` lists them as sent. `fields.properties.planGated` and `fields.properties.groupGated` keep the shape of the product refusal and stay empty, since no plan or access group limits a component property type. A link value naming a file by `file:<id>` lists the file on the component; an id naming no file of the library refuses the whole write with 422 `FILE_REFERENCE_UNKNOWN`, and no component is created.
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -18850,7 +20299,7 @@ type ClientWithResponsesInterface interface {
 
 	// UpdateComponentWithBodyWithResponse Update a component
 	//
-	// Renames the component and applies property and template changes in the shape the application manager form sends. The write is a patch, so the properties it does not name stay as they are. `properties.existing` maps a property type id to the properties to change by id, an empty value removes one; `properties.new` adds values; `templateIds` replaces the template set. The caller must own the component, or hold `component_write`. A property type id naming no property type refuses the whole write with 422 `COMPONENT_PROPERTIES_REFUSED`, whose message names each; `fields.properties.unknown` lists them as sent, `planGated` and `groupGated` stay empty.
+	// Renames the component and applies property and template changes in the shape the Application Manager form sends. The write is a patch, so the properties it does not name stay as they are. `properties.existing` maps a property type id to the properties to change by id, an empty value removes one; `properties.new` adds values; `templateIds` replaces the template set. The caller must own the component, or hold `component_write`. A property type id naming no property type refuses the whole write with 422 `COMPONENT_PROPERTIES_REFUSED`, whose message names each; `fields.properties.unknown` lists them as sent, `planGated` and `groupGated` stay empty. A link value naming a file by `file:<id>` lists the file on the component; an id naming no file of the library refuses the whole write with 422 `FILE_REFERENCE_UNKNOWN`.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -18859,7 +20308,7 @@ type ClientWithResponsesInterface interface {
 
 	// UpdateComponentWithResponse Update a component
 	//
-	// Renames the component and applies property and template changes in the shape the application manager form sends. The write is a patch, so the properties it does not name stay as they are. `properties.existing` maps a property type id to the properties to change by id, an empty value removes one; `properties.new` adds values; `templateIds` replaces the template set. The caller must own the component, or hold `component_write`. A property type id naming no property type refuses the whole write with 422 `COMPONENT_PROPERTIES_REFUSED`, whose message names each; `fields.properties.unknown` lists them as sent, `planGated` and `groupGated` stay empty.
+	// Renames the component and applies property and template changes in the shape the Application Manager form sends. The write is a patch, so the properties it does not name stay as they are. `properties.existing` maps a property type id to the properties to change by id, an empty value removes one; `properties.new` adds values; `templateIds` replaces the template set. The caller must own the component, or hold `component_write`. A property type id naming no property type refuses the whole write with 422 `COMPONENT_PROPERTIES_REFUSED`, whose message names each; `fields.properties.unknown` lists them as sent, `planGated` and `groupGated` stay empty. A link value naming a file by `file:<id>` lists the file on the component; an id naming no file of the library refuses the whole write with 422 `FILE_REFERENCE_UNKNOWN`.
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -18895,7 +20344,7 @@ type ClientWithResponsesInterface interface {
 
 	// ConfirmSignupWithResponse Confirm user email after signup
 	//
-	// Confirms a user's email address using the token sent during registration.
+	// Confirms a user's email address using the token sent during registration. A signup link older than 24 hours on an unconfirmed account answers 422 with `TOKEN_PARAM_EXPIRED`.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
@@ -18935,11 +20384,15 @@ type ClientWithResponsesInterface interface {
 	//
 	// `granularity` says which unit the passport stands for and therefore which identifiers it needs: `model` needs none of its own, `batch` needs a `batchIdentifier`, `item` needs a `serialIdentifier` as well. The lot is created from the product as it stands the first time its identifier is used and reused by every later passport of the same lot. A new lot is taken only of a product that passes every other required readiness check; until then the create answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`.
 	//
-	// A lot takes one `batch` passport and a unit one `item` passport. A second one is refused with 422 `DPP_BATCH_TAKEN` on `batch`, or `DPP_SERIAL_IDENTIFIER_TAKEN` on `serialIdentifier` for a serial the lot has already, and the message names the passport that stands for it. A voided or superseded passport still stands for its lot, and so does a draft, which is published instead. Item passports of a lot and its `batch` passport do not count against each other.
+	// A product takes one `model` passport, a lot one `batch` passport and a unit one `item` passport. A second one is refused with 422 `DPP_UNLOCKABLE_ID_TAKEN` on `unlockableId`, `DPP_BATCH_TAKEN` on `batch`, or `DPP_SERIAL_IDENTIFIER_TAKEN` on `serialIdentifier` for a serial the lot has already, and the message names the passport that stands for it. A voided or superseded passport still stands for its product, lot or unit, and so does a draft, which is published instead, and a model passport the workspace issued by itself. Passports at different granularities do not count against each other.
+	//
+	// A product with variants gets no passport of its own: its passports go to the products at the ends of its family, the variants that have no variants themselves. A create naming one is refused with 422 `DPP_UNLOCKABLE_ID_HAS_VARIANTS` on `unlockableId`, and no lot is taken of it. A passport the product held before its first variant came stays as it is.
+	//
+	// A passport is issued of a product the caller writes: its own, or one its access groups give it to write. Any other product is refused with 422 `DPP_UNLOCKABLE_NOT_EDITABLE` on `unlockable`. A refused create writes nothing, the lot it names included.
 	//
 	// The answer carries `validation` and `publishBlocked` alongside the passport: the same report `POST /dpps/validate` produces, over the record that was just written, so a caller that skipped the dry run still sees what a publish would refuse or warn about.
 	//
-	// `propertyTypeIds` names the property types the passport carries, and it carries those alone. An entry naming no product property type refuses the whole write with 422 `DPP_PROPERTY_TYPES_REFUSED`, and no passport is created; the message names each, `fields.propertyTypeIds.unknown` lists them as sent.
+	// `propertyTypeIds` names the property types the passport carries, and it carries those alone. An entry naming no product property type refuses the whole write with 422 `DPP_PROPERTY_TYPES_REFUSED`, and no passport is created; the message names each, `fields.propertyTypeIds.unknown` lists them as sent. A selection sent as no list, a single id among them, would carry every type, so it is refused with 422 `DPP_KEYS_REFUSED` and `fields.propertyTypeIds.error` `DPP_KEY_LIST_REQUIRED`.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -18952,11 +20405,15 @@ type ClientWithResponsesInterface interface {
 	//
 	// `granularity` says which unit the passport stands for and therefore which identifiers it needs: `model` needs none of its own, `batch` needs a `batchIdentifier`, `item` needs a `serialIdentifier` as well. The lot is created from the product as it stands the first time its identifier is used and reused by every later passport of the same lot. A new lot is taken only of a product that passes every other required readiness check; until then the create answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`.
 	//
-	// A lot takes one `batch` passport and a unit one `item` passport. A second one is refused with 422 `DPP_BATCH_TAKEN` on `batch`, or `DPP_SERIAL_IDENTIFIER_TAKEN` on `serialIdentifier` for a serial the lot has already, and the message names the passport that stands for it. A voided or superseded passport still stands for its lot, and so does a draft, which is published instead. Item passports of a lot and its `batch` passport do not count against each other.
+	// A product takes one `model` passport, a lot one `batch` passport and a unit one `item` passport. A second one is refused with 422 `DPP_UNLOCKABLE_ID_TAKEN` on `unlockableId`, `DPP_BATCH_TAKEN` on `batch`, or `DPP_SERIAL_IDENTIFIER_TAKEN` on `serialIdentifier` for a serial the lot has already, and the message names the passport that stands for it. A voided or superseded passport still stands for its product, lot or unit, and so does a draft, which is published instead, and a model passport the workspace issued by itself. Passports at different granularities do not count against each other.
+	//
+	// A product with variants gets no passport of its own: its passports go to the products at the ends of its family, the variants that have no variants themselves. A create naming one is refused with 422 `DPP_UNLOCKABLE_ID_HAS_VARIANTS` on `unlockableId`, and no lot is taken of it. A passport the product held before its first variant came stays as it is.
+	//
+	// A passport is issued of a product the caller writes: its own, or one its access groups give it to write. Any other product is refused with 422 `DPP_UNLOCKABLE_NOT_EDITABLE` on `unlockable`. A refused create writes nothing, the lot it names included.
 	//
 	// The answer carries `validation` and `publishBlocked` alongside the passport: the same report `POST /dpps/validate` produces, over the record that was just written, so a caller that skipped the dry run still sees what a publish would refuse or warn about.
 	//
-	// `propertyTypeIds` names the property types the passport carries, and it carries those alone. An entry naming no product property type refuses the whole write with 422 `DPP_PROPERTY_TYPES_REFUSED`, and no passport is created; the message names each, `fields.propertyTypeIds.unknown` lists them as sent.
+	// `propertyTypeIds` names the property types the passport carries, and it carries those alone. An entry naming no product property type refuses the whole write with 422 `DPP_PROPERTY_TYPES_REFUSED`, and no passport is created; the message names each, `fields.propertyTypeIds.unknown` lists them as sent. A selection sent as no list, a single id among them, would carry every type, so it is refused with 422 `DPP_KEYS_REFUSED` and `fields.propertyTypeIds.error` `DPP_KEY_LIST_REQUIRED`.
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -18967,13 +20424,15 @@ type ClientWithResponsesInterface interface {
 	//
 	// Streams passports in as newline-delimited JSON, one passport per line, so a line of production writes one request instead of thousands. Each row is created and its first version published at the workspace's publish stage, as `POST /dpps/{code}/publish` signs a draft; the response reports one result line per input row.
 	//
-	// An optional first line `{"shared": {...}}` carries batch-wide defaults that each following row deep-merges over (a nested `"__replace__": true` opts a sub-tree out of the merge). An unsupported `shared.granularity` is rejected before any row is processed; per-row problems never abort the batch. A new row whose `propertyTypeIds` names no product property type comes back as `error` with `DPP_PROPERTY_TYPES_REFUSED`, the message naming each and `fields.propertyTypeIds.unknown` listing them, and nothing is created for it.
+	// An optional first line `{"shared": {...}}` carries batch-wide defaults that each following row deep-merges over (a nested `"__replace__": true` opts a sub-tree out of the merge). An unsupported `shared.granularity` is rejected before any row is processed; per-row problems never abort the batch. A new row whose `propertyTypeIds` names no product property type comes back as `error` with `DPP_PROPERTY_TYPES_REFUSED`, the message naming each and `fields.propertyTypeIds.unknown` listing them, and nothing is created for it. A new row whose `propertyTypeIds` is no list comes back as `error` with `DPP_KEYS_REFUSED`; one in `shared` reaches every row it merges into, and each answers for itself.
 	//
 	// Row keys may be written in camelCase (`unlockableId`, `modelIdentifier`, `serialIdentifier`) or as the snake_case attribute names; `tenantData` is an alias for `dynamicData`. The keys inside `dynamicData` are left as they are.
 	//
-	// Resubmission is safe. Rows are deduplicated by natural key rather than by `Idempotency-Key`: at `model` granularity that is `modelIdentifier`, at `batch` it adds `batchIdentifier`, at `item` it adds `serialIdentifier`. A key that already maps to a published passport comes back as `duplicate`; one that maps to a passport that never published is resumed and published, so a retry after a partial failure finishes the job instead of duplicating it. A row whose key misses a passport its lot or unit already has (a row naming no `modelIdentifier`) is refused as `POST /dpps` refuses it, with `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`.
+	// Resubmission is safe. Rows are deduplicated by natural key rather than by `Idempotency-Key`: at `model` granularity that is `modelIdentifier`, at `batch` it adds `batchIdentifier`, at `item` it adds `serialIdentifier`. A key that already maps to a published passport comes back as `duplicate`; one that maps to a passport that never published is resumed and published, so a retry after a partial failure finishes the job instead of duplicating it. A row whose key misses a passport its product, lot or unit already has (a row naming no `modelIdentifier`, or no `granularity` in itself or in `shared`) is refused as `POST /dpps` refuses it, with `DPP_UNLOCKABLE_ID_TAKEN`, `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`. A row naming a product with variants is refused with `DPP_UNLOCKABLE_ID_HAS_VARIANTS`, and the rest of the run goes on.
 	//
-	// Synchronous by default, capped at 500 rows and 5 MB. Send `Prefer: respond-async` to have the body persisted and processed by a background task instead: the response is `202` with a polling URL, and the caps rise to 50000 rows and 25 MB. Beyond that, batch across requests.
+	// Synchronous by default, capped at 500 rows and 5 MB. Send `Prefer: respond-async` to have the body persisted and processed by a background task instead: the response is `202` with a polling URL, and the caps rise to 100000 rows and 50 MB, what a spreadsheet import takes. Beyond that, batch across requests.
+	//
+	// The rows count against the credential's bulk pace, `bulkItemsPerMinute` of `GET /me`, shared by all of its bulk calls and imports. The background task takes its rows at that pace and waits, with `pacedUntil` in its status, while the credential is past it. A synchronous call takes its rows before it writes any: where the pace has no room for them it answers 429 `DPP_BULK_RATE_LIMITED`, writes nothing, and `Retry-After` says in how many seconds they fit. A pace of 0 means none.
 	//
 	// Every row it creates is signed, so the call needs `dpp_publish` as well; without it the answer is 403 and nothing is created. Where the workspace reviews every publish through a review flow, the answer is 409 `DPP_REVIEW_REQUIRED` and nothing is created.
 	//
@@ -18986,7 +20445,7 @@ type ClientWithResponsesInterface interface {
 	//
 	// The dry run of `POST /dpps/bulk`: the same newline-delimited JSON in, one result line per input row out, and nothing written. Rows are read exactly as the create reads them - the optional `{"shared": {...}}` envelope, the deep merge, the camelCase aliases - so a batch that validates here is the batch that will be created.
 	//
-	// Each row comes back as `valid`, `invalid`, `duplicate` or `error`, numbered from one in input order. No passport, lot or version is written, and the rows do not count against the consumer's bulk item cap, so a batch may be validated as often as it takes to get it right.
+	// Each row comes back as `valid`, `invalid`, `duplicate` or `error`, numbered from one in input order. No passport, lot or version is written, and the rows do not count against the consumer's bulk pace, so a batch may be validated as often as it takes to get it right.
 	//
 	// Synchronous only, capped at 500 rows and 5 MB like the synchronous create. There is no asynchronous mode; `Prefer: respond-async` has no effect here.
 	//
@@ -18997,7 +20456,7 @@ type ClientWithResponsesInterface interface {
 
 	// GetBulkTaskWithResponse Poll an asynchronous bulk create
 	//
-	// Reports the status and progress of a bulk-create task, and once it completes the aggregate counts plus the detail of every rejected row. Only the consumer that submitted the task can read it; another consumer's task answers 404.
+	// Reports the status and progress of a bulk-create task, and once it completes the aggregate counts plus the detail of every rejected row. While the task waits for the credential's bulk pace it is `pending` and `pacedUntil` says until when. Only the consumer that submitted the task can read it; another consumer's task answers 404.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
@@ -19008,9 +20467,9 @@ type ClientWithResponsesInterface interface {
 	//
 	// What a passport of the product would need at the requested granularity, and what the product still lacks, before anything is written: the identifiers each granularity keys on, the fields of the lot a batch or item passport freezes from, the property types whose values ride on the dynamic surface instead of the signed snapshot, the properties a passport inherits from the product, the report a publish would produce today, and bodies ready to fill for a create and for a bulk row.
 	//
-	// `missing` lists what the product still lacks, one entry per open check, each naming where its answer is sent (the product field, such as `gtin` or `propertiesInput` keyed by `propertyTypeId`, with the operation that takes it, or the workspace), and `ready` says whether nothing required is open. Both are read off the check a new lot is refused by, so a product answered ready is one whose passport saves and publishes as the product stands.
+	// `missing` lists what the product still lacks, one entry per open check, each naming where its answer is sent (the product field, such as `gtin` or `propertiesInput` keyed by `propertyTypeId`, with the operation that takes it, or the workspace), and `ready` says whether nothing required is open. Both are read off the check a new lot is refused by, so a product answered ready is one whose passport saves and publishes as the product stands. A product with variants gets no passport of its own and is never ready: `missing` holds one entry, with the code `DPP_UNLOCKABLE_ID_HAS_VARIANTS` the create answers, naming under `productIds` the variants that take its passports.
 	//
-	// Field names throughout are the wire names, so a program copies them as they are. Reading requirements writes nothing.
+	// Field names throughout are the wire names, so a program copies them as they are. Reading requirements writes nothing. A product the caller may not issue a passport of answers 404, as an unknown one does.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
@@ -19019,7 +20478,7 @@ type ClientWithResponsesInterface interface {
 
 	// ValidateDppWithBodyWithResponse Validate a DPP payload
 	//
-	// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot; a lot or a unit that has a passport already shows as `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`, and a new lot its product may not have yet as `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, beside the report that names the checks the product still fails. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.
+	// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot; a product that has its model passport already shows as `DPP_UNLOCKABLE_ID_TAKEN`, a lot or a unit that has its passport as `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`, a product with variants as `DPP_UNLOCKABLE_ID_HAS_VARIANTS`, and a new lot its product may not have yet as `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, beside the report that names the checks the product still fails. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.
 	//
 	// A payload the platform would refuse is a plain `200` with `valid: false` - the request succeeded, the passport would not. Only a missing permission, a missing `dpp` object, an unreadable body, a granularity the workspace does not issue and a `propertyTypeIds` entry naming no property type answer with an error status, the last two as the create answers them.
 	//
@@ -19030,7 +20489,7 @@ type ClientWithResponsesInterface interface {
 
 	// ValidateDppWithResponse Validate a DPP payload
 	//
-	// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot; a lot or a unit that has a passport already shows as `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`, and a new lot its product may not have yet as `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, beside the report that names the checks the product still fails. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.
+	// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot; a product that has its model passport already shows as `DPP_UNLOCKABLE_ID_TAKEN`, a lot or a unit that has its passport as `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`, a product with variants as `DPP_UNLOCKABLE_ID_HAS_VARIANTS`, and a new lot its product may not have yet as `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, beside the report that names the checks the product still fails. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.
 	//
 	// A payload the platform would refuse is a plain `200` with `valid: false` - the request succeeded, the passport would not. Only a missing permission, a missing `dpp` object, an unreadable body, a granularity the workspace does not issue and a `propertyTypeIds` entry naming no property type answer with an error status, the last two as the create answers them.
 	//
@@ -19039,9 +20498,18 @@ type ClientWithResponsesInterface interface {
 	// Corresponds with POST /dpps/validate (the `ValidateDpp` operationId).
 	ValidateDppWithResponse(ctx context.Context, body ValidateDppJSONRequestBody, reqEditors ...RequestEditorFn) (*ValidateDppResponse, error)
 
+	// GetDppFileWithResponse Read a restricted file of a passport
+	//
+	// The copy of a file a restricted field of the passport names, at the address the signed `href` of that field's Link points to. A reader opens it where one of the passport's versions holds a restricted row the reader may see whose Link names the file by its digest and type, the newest version first; the read is entered in the passport's access log. A program sends its user token or consumer token and any Accept header but HTML; a browser without a reader is sent to the passport sign-in page and back. The type comes from the extension; images and PDFs come inline, every other kind as an attachment, under the document's name in the reader's language.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /dpps/{code}/files/{name} (the `GetDppFile` operationId).
+	GetDppFileWithResponse(ctx context.Context, code string, name string, reqEditors ...RequestEditorFn) (*GetDppFileResponse, error)
+
 	// GetDppPrivateDynamicDataWithResponse Read the restricted dynamic data
 	//
-	// The passport's live readings in the legitimate-interest tier that this reader may see. The public dynamic-data document carries the public tier only; this answer has the same shape, holds only the restricted rows, and is signed with the same platform key, so a reader verifies it the same way and merges the two. A key is served when it names a published property type in the legitimate-interest tier, no property type sharing its vocabulary term sits in the authorities or internal tier, and the reader belongs to an access group of every legitimate-interest type sharing it. An authority consumer reads without a group. A passport holding no such key answers 404; an authenticated reader who may see none of them gets 204. An unauthenticated request answers 401 with the `X-Auth-Fields` challenge the passport page uses to sign a reader in.
+	// The passport's live readings in the legitimate-interest tier that this reader may see. The public dynamic-data document carries the public tier only; this answer has the same shape, holds only the restricted rows, and is signed with the same platform key, so a reader verifies it the same way and merges the two. A key is served when it names a published property type in the legitimate-interest tier, no property type sharing its vocabulary term sits in the authorities or internal tier, and the reader belongs to an access group of every legitimate-interest type sharing it. An authority consumer reads without a group. A passport holding no such key answers 404; an authenticated reader who may see none of them gets 204. A reader signs in with a user token, a consumer token, or the session of the workspace's passport sign-in page; an unauthenticated request answers 401 with an `X-Auth-Url` header naming that page on the host the request came to.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
@@ -19050,7 +20518,7 @@ type ClientWithResponsesInterface interface {
 
 	// GetDppPrivatePropertiesWithResponse Read the private properties of several versions
 	//
-	// The reader-derived confidential rows for several versions of one passport in a single round-trip. Name the versions with `?versions=1,3,7`; at most 50 are derived per request. A version is left out when it carries no confidential rows or the reader may see none of them, so the answer only contains versions where the reader gains rows beyond the public passport. An unauthenticated request answers 401 with the `X-Auth-Fields` challenge the passport page uses to sign a reader in.
+	// The reader-derived confidential rows for several versions of one passport in a single round-trip. Name the versions with `?versions=1,3,7`; at most 50 are derived per request. A version is left out when it carries no legitimate-interest or on-demand rows, the workspace keeps no copy of them, or the reader may see none of them, so the answer only contains versions where the reader gains rows beyond the public passport. A reader signs in with a user token, a consumer token, or the session of the workspace's passport sign-in page; an unauthenticated request answers 401 with an `X-Auth-Url` header naming that page on the host the request came to.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
@@ -19059,7 +20527,7 @@ type ClientWithResponsesInterface interface {
 
 	// GetDppVersionPrivatePropertiesWithResponse Read the private properties of one version
 	//
-	// The confidential rows of one passport version, as an ecdsa-sd-2023 derived Verifiable Credential carrying only what this reader is entitled to see. This is the address the public manifest's `privateProperties.url` points at. A reader who is authenticated but entitled to none of this version's restricted rows gets 204, which is deliberately distinct from an empty document. An unauthenticated request answers 401 with the `X-Auth-Fields` challenge the passport page uses to sign a reader in.
+	// The confidential rows of one passport version, as an ecdsa-sd-2023 derived Verifiable Credential carrying only what this reader is entitled to see. This is the address the public manifest's `privateProperties.url` points at. A reader who is authenticated but entitled to none of this version's restricted rows gets 204, which is deliberately distinct from an empty document. A reader signs in with a user token, a consumer token, or the session of the workspace's passport sign-in page; an unauthenticated request answers 401 with an `X-Auth-Url` header naming that page on the host the request came to.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
@@ -19068,7 +20536,7 @@ type ClientWithResponsesInterface interface {
 
 	// PublishDppWithBodyWithResponse Publish a DPP
 	//
-	// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. A `draft` that has not published moves to the workspace's publish stage first (`manufactured` or `placed_on_market`, a setting of the workspace), so the version signs that status and `GET /dpps/{code}` answers it; a refused publish leaves it at `draft`. Every other passport keeps its status. Publishing needs `dpp_publish` beside `dpp_write`; without it the answer is 403. A passport whose publish review was approved waits ready to publish, and the person who asked for the review publishes it here through a credential of theirs with `dpp_write` alone, and so does any caller with `dpp_publish`. That publish carries the reason the request gave, and `reason` is not read. The approval stands until the product changes; after that the call is judged like any other publish. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
+	// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. A `draft` that has not published moves to the workspace's publish stage first (`manufactured` or `placed_on_market`, a setting of the workspace), so the version signs that status and `GET /dpps/{code}` answers it; a refused publish leaves it at `draft`. Every other passport keeps its status. Publishing needs `dpp_publish` beside `dpp_write`; without it the answer is 403, as it is for a passport the caller does not write. Approving a publish review signs the passport at once (`POST /tasks/{id}/approve`). A passport may still keep an approval a review stored without signing; the person who asked for that review publishes it here through a credential of theirs with `dpp_write` alone, and so does any caller with `dpp_publish`. That publish carries the reason the request gave, and `reason` is not read. The approval stands until the product changes; after that the call is judged like any other publish. Publishing is refused when the snapshot fails a mandatory validation rule, when the signing key or the workspace context is missing, and for a passport that has not published once the workspace has published as many passports as its plan includes; a new version of a published passport takes no slot. While the workspace's plan is unpaid, after a failed payment or once the plan ended, every publish is refused, new versions included. On a paid plan the publish also seals a copy in the Vault that cannot be changed or deleted for ten years; a version published during a trial is sealed there once the workspace moves to a paid plan.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -19077,7 +20545,7 @@ type ClientWithResponsesInterface interface {
 
 	// PublishDppWithResponse Publish a DPP
 	//
-	// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. A `draft` that has not published moves to the workspace's publish stage first (`manufactured` or `placed_on_market`, a setting of the workspace), so the version signs that status and `GET /dpps/{code}` answers it; a refused publish leaves it at `draft`. Every other passport keeps its status. Publishing needs `dpp_publish` beside `dpp_write`; without it the answer is 403. A passport whose publish review was approved waits ready to publish, and the person who asked for the review publishes it here through a credential of theirs with `dpp_write` alone, and so does any caller with `dpp_publish`. That publish carries the reason the request gave, and `reason` is not read. The approval stands until the product changes; after that the call is judged like any other publish. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
+	// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. A `draft` that has not published moves to the workspace's publish stage first (`manufactured` or `placed_on_market`, a setting of the workspace), so the version signs that status and `GET /dpps/{code}` answers it; a refused publish leaves it at `draft`. Every other passport keeps its status. Publishing needs `dpp_publish` beside `dpp_write`; without it the answer is 403, as it is for a passport the caller does not write. Approving a publish review signs the passport at once (`POST /tasks/{id}/approve`). A passport may still keep an approval a review stored without signing; the person who asked for that review publishes it here through a credential of theirs with `dpp_write` alone, and so does any caller with `dpp_publish`. That publish carries the reason the request gave, and `reason` is not read. The approval stands until the product changes; after that the call is judged like any other publish. Publishing is refused when the snapshot fails a mandatory validation rule, when the signing key or the workspace context is missing, and for a passport that has not published once the workspace has published as many passports as its plan includes; a new version of a published passport takes no slot. While the workspace's plan is unpaid, after a failed payment or once the plan ended, every publish is refused, new versions included. On a paid plan the publish also seals a copy in the Vault that cannot be changed or deleted for ten years; a version published during a trial is sealed there once the workspace moves to a paid plan.
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -19086,7 +20554,7 @@ type ClientWithResponsesInterface interface {
 
 	// DeleteDppWithResponse Delete a DPP
 	//
-	// Deletes a never-published draft you own. A published DPP cannot be deleted - its signed snapshot stays in the ten-year archive and its URL may already be printed on QR codes - and answers 422 instead. The lifecycle exit for a published DPP is void or supersede.
+	// Deletes a never-published draft you own. A published DPP cannot be deleted - its signed snapshot stays on record and its URL may already be printed on QR codes - and answers 422 `DPP_PUBLISHED` instead, the message naming the reason. The lifecycle exit for a published DPP is void or supersede. A test workspace keeps nothing on record, so there a published DPP is deleted as well, together with its versions, its events and its public copies, and its slot of the plan comes free; one the EU DPP registry knows still answers 422.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
@@ -19104,11 +20572,11 @@ type ClientWithResponsesInterface interface {
 
 	// UpdateDppWithBodyWithResponse Update a DPP
 	//
-	// Updates a DPP you own. Admins can update any DPP.
+	// Updates a passport the caller writes: one it issued, or one its access groups give it to write. Any other answers 403. Admins can update any DPP.
 	//
 	// The answer carries `validation` and `publishBlocked` alongside the passport: the same report `POST /dpps/validate` produces, over the record as it now stands, so an update that would block the next publish says so at once.
 	//
-	// A `propertyTypeIds` entry naming no product property type refuses the whole update with 422 `DPP_PROPERTY_TYPES_REFUSED`, and the passport keeps the types it had.
+	// A `propertyTypeIds` entry naming no product property type refuses the whole update with 422 `DPP_PROPERTY_TYPES_REFUSED`, and the passport keeps the types it had; a selection sent as no list with 422 `DPP_KEYS_REFUSED`.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -19117,11 +20585,11 @@ type ClientWithResponsesInterface interface {
 
 	// UpdateDppWithResponse Update a DPP
 	//
-	// Updates a DPP you own. Admins can update any DPP.
+	// Updates a passport the caller writes: one it issued, or one its access groups give it to write. Any other answers 403. Admins can update any DPP.
 	//
 	// The answer carries `validation` and `publishBlocked` alongside the passport: the same report `POST /dpps/validate` produces, over the record as it now stands, so an update that would block the next publish says so at once.
 	//
-	// A `propertyTypeIds` entry naming no product property type refuses the whole update with 422 `DPP_PROPERTY_TYPES_REFUSED`, and the passport keeps the types it had.
+	// A `propertyTypeIds` entry naming no product property type refuses the whole update with 422 `DPP_PROPERTY_TYPES_REFUSED`, and the passport keeps the types it had; a selection sent as no list with 422 `DPP_KEYS_REFUSED`.
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -19146,18 +20614,18 @@ type ClientWithResponsesInterface interface {
 	// Corresponds with POST /dpps/{id}/correct (the `CorrectDpp` operationId).
 	CorrectDppWithResponse(ctx context.Context, id Id, params *CorrectDppParams, body CorrectDppJSONRequestBody, reqEditors ...RequestEditorFn) (*CorrectDppResponse, error)
 
-	// UpdateDppDynamicDataWithBodyWithResponse Update dynamic data
+	// UpdateDppDynamicDataWithBodyWithResponse Update changing values (e.g. battery health)
 	//
-	// Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none). A key naming a published legitimate-interest type is served to the readers its access groups admit by `GET /dpps/{code}/private_dynamic_data`; every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.
+	// Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none). A key naming a published legitimate-interest type is served to the readers its access groups admit by `GET /dpps/{code}/private_dynamic_data`; every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission. A credential sets values on the passports the group granting `dpp_dynamic` gives it to write, by the group's reach, and one acting for a person on the passports that person writes; any other passport answers 403 `DPP_FORBIDDEN`, one the credential reads included.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with PATCH /dpps/{id}/dynamic_data (the `UpdateDppDynamicData` operationId).
 	UpdateDppDynamicDataWithBodyWithResponse(ctx context.Context, id Id, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateDppDynamicDataResponse, error)
 
-	// UpdateDppDynamicDataWithResponse Update dynamic data
+	// UpdateDppDynamicDataWithResponse Update changing values (e.g. battery health)
 	//
-	// Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none). A key naming a published legitimate-interest type is served to the readers its access groups admit by `GET /dpps/{code}/private_dynamic_data`; every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.
+	// Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none). A key naming a published legitimate-interest type is served to the readers its access groups admit by `GET /dpps/{code}/private_dynamic_data`; every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission. A credential sets values on the passports the group granting `dpp_dynamic` gives it to write, by the group's reach, and one acting for a person on the passports that person writes; any other passport answers 403 `DPP_FORBIDDEN`, one the credential reads included.
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -19179,9 +20647,13 @@ type ClientWithResponsesInterface interface {
 	//
 	// Recalling a unit is a status change to `suspended`. The passport stays readable and keeps answering a scan, which is the point: whoever holds the unit learns of the recall when they scan its code. Voiding is a different operation, for a unit that no longer exists.
 	//
-	// An event is a pending draft until it is sealed. Send `publish: true` to seal it into the Vault at once (a status change is sealed into a new registered version, which needs `dpp_publish` as well); leave it out to keep the draft open. At most one pending event exists per passport, so a second call while one is open answers 409 until it is sealed or discarded.
+	// An event is a pending draft until it is sealed. Send `publish: true` to seal it at once: a status change is sealed into a new registered version, which needs `dpp_publish` as well; any other event is sealed as it stands, and on a paid plan written to the Vault. Leave it out to keep the draft open. A refused seal takes the status change back, so the passport stays as it was and the same call can be sent again once the cause is settled. At most one pending event exists per passport, so a second call while one is open answers 409 until it is sealed or discarded.
 	//
 	// Versioned event types are rejected here: they stand for operations that mint a version, and those have their own endpoints (void, supersede, reissue, publish).
+	//
+	// The note (`description`) of a status change is a note on a passport event: it appears on the public passport in every language and cannot be changed or removed once saved, so it must contain no personal data (names, email addresses, phone numbers). The note of any other type here stays internal. `descriptionLocale` names the language the note is written in; without it the note takes the language of the request.
+	//
+	// A credential records on the passports the group granting `dpp_events` gives it to write: under **Own and team's** its own and those of the group's members, under **All** every passport, under **Selected** the picked ones, and a partner grant on its one passport. One acting for a person records on the passports that person writes. Any other passport answers 403 `DPP_FORBIDDEN`, one the credential reads included.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -19194,9 +20666,13 @@ type ClientWithResponsesInterface interface {
 	//
 	// Recalling a unit is a status change to `suspended`. The passport stays readable and keeps answering a scan, which is the point: whoever holds the unit learns of the recall when they scan its code. Voiding is a different operation, for a unit that no longer exists.
 	//
-	// An event is a pending draft until it is sealed. Send `publish: true` to seal it into the Vault at once (a status change is sealed into a new registered version, which needs `dpp_publish` as well); leave it out to keep the draft open. At most one pending event exists per passport, so a second call while one is open answers 409 until it is sealed or discarded.
+	// An event is a pending draft until it is sealed. Send `publish: true` to seal it at once: a status change is sealed into a new registered version, which needs `dpp_publish` as well; any other event is sealed as it stands, and on a paid plan written to the Vault. Leave it out to keep the draft open. A refused seal takes the status change back, so the passport stays as it was and the same call can be sent again once the cause is settled. At most one pending event exists per passport, so a second call while one is open answers 409 until it is sealed or discarded.
 	//
 	// Versioned event types are rejected here: they stand for operations that mint a version, and those have their own endpoints (void, supersede, reissue, publish).
+	//
+	// The note (`description`) of a status change is a note on a passport event: it appears on the public passport in every language and cannot be changed or removed once saved, so it must contain no personal data (names, email addresses, phone numbers). The note of any other type here stays internal. `descriptionLocale` names the language the note is written in; without it the note takes the language of the request.
+	//
+	// A credential records on the passports the group granting `dpp_events` gives it to write: under **Own and team's** its own and those of the group's members, under **All** every passport, under **Selected** the picked ones, and a partner grant on its one passport. One acting for a person records on the passports that person writes. Any other passport answers 403 `DPP_FORBIDDEN`, one the credential reads included.
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -19232,7 +20708,7 @@ type ClientWithResponsesInterface interface {
 
 	// SupersedeDppWithBodyWithResponse Supersede a DPP
 	//
-	// Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. Superseding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
+	// Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. A product, a lot or a unit takes one passport at each granularity (see `POST /dpps`), so the successor stands for another product, lot or unit. Superseding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -19241,7 +20717,7 @@ type ClientWithResponsesInterface interface {
 
 	// SupersedeDppWithResponse Supersede a DPP
 	//
-	// Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. Superseding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
+	// Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. A product, a lot or a unit takes one passport at each granularity (see `POST /dpps`), so the successor stands for another product, lot or unit. Superseding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -19259,7 +20735,7 @@ type ClientWithResponsesInterface interface {
 
 	// VoidDppWithBodyWithResponse Void a DPP
 	//
-	// Marks the passport as voided - the unit it stands for no longer exists: it was destroyed, never shipped, or scrapped after a recall. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. This is not how a unit is recalled: a unit still out there is moved to `suspended` through a status change, so its passport goes on answering a scan with the recall. Voiding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
+	// Marks the passport as voided - the unit it stands for no longer exists: it was destroyed, never shipped, or scrapped after a recall. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. This is not how a unit is recalled: a unit still out there is moved to `suspended` through a status change, so its passport goes on answering a scan with the recall. Voiding cannot be undone, and a voided passport still stands for its product, lot or unit, which never takes another passport at its granularity (see `POST /dpps`). A consumer also needs write access to the passport itself (`dpp_write`).
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -19268,7 +20744,7 @@ type ClientWithResponsesInterface interface {
 
 	// VoidDppWithResponse Void a DPP
 	//
-	// Marks the passport as voided - the unit it stands for no longer exists: it was destroyed, never shipped, or scrapped after a recall. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. This is not how a unit is recalled: a unit still out there is moved to `suspended` through a status change, so its passport goes on answering a scan with the recall. Voiding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
+	// Marks the passport as voided - the unit it stands for no longer exists: it was destroyed, never shipped, or scrapped after a recall. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. This is not how a unit is recalled: a unit still out there is moved to `suspended` through a status change, so its passport goes on answering a scan with the recall. Voiding cannot be undone, and a voided passport still stands for its product, lot or unit, which never takes another passport at its granularity (see `POST /dpps`). A consumer also needs write access to the passport itself (`dpp_write`).
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -19430,7 +20906,7 @@ type ClientWithResponsesInterface interface {
 	//
 	// Turns a scanned QR code into credentials that can write to that one passport. A workshop, certifier or recycler registered as a long-lived API consumer with no passports of its own calls this with the code it scanned and gets back the client credentials of a short-lived child consumer, exchanged for a bearer token exactly like its own. The child may act on that single passport for 24 hours; the caller keeps its own workspace-wide standing.
 	//
-	// The child inherits only the event-write permissions the caller itself holds, out of `dpp_events`, `dpp_history` and `dpp_dynamic`, so a grant can never widen access. A caller that holds none of them is refused. A caller already confined to a set of passports can only grant one from that set.
+	// The child inherits only the event-write permissions the caller itself holds, out of `dpp_events`, `dpp_history` and `dpp_dynamic`, and of those the ones the caller may use on that passport: `dpp_history` where it reads the passport, `dpp_events` and `dpp_dynamic` where it records on it itself. So a grant can never widen access. A caller that holds none of them is refused, and so is one holding `dpp_events` or `dpp_dynamic` for a passport it records on with neither (403 `SCOPE_FORBIDDEN`). A caller already confined to a set of passports can only grant one from that set.
 	//
 	// Regulator consumers do not use this flow - their access is platform-issued and workspace-wide - and are refused.
 	//
@@ -19443,7 +20919,7 @@ type ClientWithResponsesInterface interface {
 	//
 	// Turns a scanned QR code into credentials that can write to that one passport. A workshop, certifier or recycler registered as a long-lived API consumer with no passports of its own calls this with the code it scanned and gets back the client credentials of a short-lived child consumer, exchanged for a bearer token exactly like its own. The child may act on that single passport for 24 hours; the caller keeps its own workspace-wide standing.
 	//
-	// The child inherits only the event-write permissions the caller itself holds, out of `dpp_events`, `dpp_history` and `dpp_dynamic`, so a grant can never widen access. A caller that holds none of them is refused. A caller already confined to a set of passports can only grant one from that set.
+	// The child inherits only the event-write permissions the caller itself holds, out of `dpp_events`, `dpp_history` and `dpp_dynamic`, and of those the ones the caller may use on that passport: `dpp_history` where it reads the passport, `dpp_events` and `dpp_dynamic` where it records on it itself. So a grant can never widen access. A caller that holds none of them is refused, and so is one holding `dpp_events` or `dpp_dynamic` for a passport it records on with neither (403 `SCOPE_FORBIDDEN`). A caller already confined to a set of passports can only grant one from that set.
 	//
 	// Regulator consumers do not use this flow - their access is platform-issued and workspace-wide - and are refused.
 	//
@@ -19454,7 +20930,7 @@ type ClientWithResponsesInterface interface {
 
 	// ListHelpWithResponse Search the help articles
 	//
-	// The articles the application manager shows a person: where a setting lives, what a button does, which step comes before which. Give `term` the question in the reader's own words: every word is matched on its own and the words a question is phrased with are dropped, so a whole sentence finds what a keyword would. Hits come back best first, a title match ahead of one in the body.
+	// The articles the Application Manager shows a person: where a setting lives, what a button does, which step comes before which. Give `term` the question in the reader's own words: every word is matched on its own and the words a question is phrased with are dropped, so a whole sentence finds what a keyword would. Hits come back best first, a title match ahead of one in the body.
 	//
 	// An answer with no hits says the articles cover nothing by that name. To tell that apart from a workspace whose help content has not arrived yet, call again with no `term`: the total is then the whole set this workspace can read.
 	//
@@ -19489,9 +20965,9 @@ type ClientWithResponsesInterface interface {
 
 	// CreateImportWithBodyWithResponse Upload a spreadsheet to import
 	//
-	// One multipart request, the shape every upload API has: `curl -F file=@catalogue.xlsx -F dataType=components`. The importer reads xlsx, csv, ods and json. When every column resolves on its own (the canonical headers of the template `GET /imports/example` serves, or a JSON file whose entries carry the canonical keys) the import comes back `mapped`. Otherwise it is `fresh` and the answer carries the `preview` to write the mapping from; send that with `PUT /imports/{id}/mappings`, or along with the file as `mappings`.
+	// One multipart request, the shape every upload API has: `curl -F file=@catalogue.xlsx -F dataType=components`. The importer reads xlsx, csv, ods and json. When every column resolves on its own (the canonical headers of the template `GET /imports/example` serves, or a JSON file whose entries carry the canonical keys) the import comes back `mapped`. Otherwise it is `fresh` and waits for a mapping, sent with `PUT /imports/{id}/mappings` or along with the file as `mappings`. Either way the answer carries the `preview`: every column with its header, the key a mapping names it by and what the upload found, so a caller sees what was mapped and can override a column it finds by its header.
 	//
-	// `options[auto]=true` imports straight away: the upload takes the mapping the mapping form would prefill, a column nothing matches becoming a property type under its own heading, and comes back `validating`; a clean validation goes on into the import on its own, one with errors stops at `validated` for the caller to decide. An automatic run publishes what it imports unless `options[published]=false` says otherwise. Poll the import until `status` is `completed`, `validated` or `failed`. A required attribute no column covers answers 422 `IMPORT_MAPPING_INCOMPLETE` with nothing saved.
+	// `options[auto]=true` imports straight away: the upload takes the mapping the mapping form would prefill, a column nothing matches becoming a property type under its own heading (named in the workspace's default language when the file is written in another one and the translation answers within a few seconds, with the heading kept as its name in the file's language), and comes back `validating`; a clean validation goes on into the import on its own, one with errors stops at `validated` for the caller to decide. An automatic run publishes what it imports unless `options[published]=false` says otherwise. Poll the import until `status` is `completed`, `validated` or `failed`. A required attribute no column covers answers 422 `IMPORT_MAPPING_INCOMPLETE` with nothing saved.
 	//
 	// The upload is held for a limited time; once it is gone, the run endpoints answer 410 `IMPORT_EXPIRED`.
 	//
@@ -19520,7 +20996,7 @@ type ClientWithResponsesInterface interface {
 
 	// GetImportWithResponse Poll an import
 	//
-	// The status, the counts, the preview while the import is `fresh`, the progress while a task runs, and the problems found so far, both grouped by cause and one entry per failing row. Another consumer's import answers 404.
+	// The status, the counts, the preview while the import still takes a mapping (`fresh`, `mapped`, `validated`), the progress while a task runs, and the problems found so far, both grouped by cause and one entry per failing row. Another consumer's import answers 404.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
@@ -19531,7 +21007,7 @@ type ClientWithResponsesInterface interface {
 	//
 	// Writes the rows in the background, after a backup a revert can restore from. Send `options.backup` as `false` to run without one. A passport import takes no backup and cannot be reverted, since a passport's versions are signed and its way out is a void. Poll the `statusUrl` until `status` is `completed` or `failed`.
 	//
-	// Besides `import_access` this needs the write permission of the data type: `component_write` for components, `product_access` for products, `dpp_bulk_write` for passports. The rows count against the consumer's bulk item cap for the minute.
+	// Besides `import_access` this needs the write permission of the data type: `component_write` for components, `product_access` for products, `dpp_bulk_write` for passports. The rows count against the consumer's bulk pace (`bulkItemsPerMinute` of `GET /me`): the run is never refused for it, and writes its rows at that pace.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -19542,7 +21018,7 @@ type ClientWithResponsesInterface interface {
 	//
 	// Writes the rows in the background, after a backup a revert can restore from. Send `options.backup` as `false` to run without one. A passport import takes no backup and cannot be reverted, since a passport's versions are signed and its way out is a void. Poll the `statusUrl` until `status` is `completed` or `failed`.
 	//
-	// Besides `import_access` this needs the write permission of the data type: `component_write` for components, `product_access` for products, `dpp_bulk_write` for passports. The rows count against the consumer's bulk item cap for the minute.
+	// Besides `import_access` this needs the write permission of the data type: `component_write` for components, `product_access` for products, `dpp_bulk_write` for passports. The rows count against the consumer's bulk pace (`bulkItemsPerMinute` of `GET /me`): the run is never refused for it, and writes its rows at that pace.
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -19551,7 +21027,7 @@ type ClientWithResponsesInterface interface {
 
 	// MapImportWithBodyWithResponse Map the columns of an import
 	//
-	// One action per column, in the vocabulary the preview lists. Every required attribute must be covered. `create_new` adds a property type to the workspace for good, so the API only creates one when the mapping says so. The import moves to `mapped`.
+	// One action per column, in the vocabulary the preview lists, each under the preview's `column`. The mapping replaces the stored one whole, so it names every column to import, the ones the upload mapped on its own included, and overrides what the upload chose for any of them. Every required attribute must be covered. `create_new` adds a property type to the workspace for good, so the API only creates one when the mapping says so. The import moves to `mapped`.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -19560,12 +21036,23 @@ type ClientWithResponsesInterface interface {
 
 	// MapImportWithResponse Map the columns of an import
 	//
-	// One action per column, in the vocabulary the preview lists. Every required attribute must be covered. `create_new` adds a property type to the workspace for good, so the API only creates one when the mapping says so. The import moves to `mapped`.
+	// One action per column, in the vocabulary the preview lists, each under the preview's `column`. The mapping replaces the stored one whole, so it names every column to import, the ones the upload mapped on its own included, and overrides what the upload chose for any of them. Every required attribute must be covered. `create_new` adds a property type to the workspace for good, so the API only creates one when the mapping says so. The import moves to `mapped`.
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with PUT /imports/{id}/mappings (the `MapImport` operationId).
 	MapImportWithResponse(ctx context.Context, id Id, body MapImportJSONRequestBody, reqEditors ...RequestEditorFn) (*MapImportResponse, error)
+
+	// RerunImportWithResponse Run an import again
+	//
+	// A finished import (`completed`, `failed` or `reverted`) keeps the mapping it ran with, so its counts, row errors, backup and revert stay the record of that run. Its file runs once more as a new import: a copy of the same file with the same column mapping, `contentLocale`, value separator, options and data type, `mapped` and ready for `POST /imports/{id}/validate` or a new mapping. The new import belongs to the caller and has its own counts, row errors, backup and revert.
+	//
+	// A row that runs again finds the record it wrote, so an unchanged row counts as unchanged and a record deleted since is created again. A passport already signed is left as it is.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /imports/{id}/rerun (the `RerunImport` operationId).
+	RerunImportWithResponse(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*RerunImportResponse, error)
 
 	// RevertImportWithBodyWithResponse Revert an import
 	//
@@ -19603,57 +21090,61 @@ type ClientWithResponsesInterface interface {
 	// Corresponds with GET /languages (the `ListLanguages` operationId).
 	ListLanguagesWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ListLanguagesResponse, error)
 
-	// ListLeadgensWithResponse List lead generation campaigns
+	// ListLeadgensWithResponse List campaigns
 	//
-	// Returns leadgen campaigns owned by the authenticated user. Campaigns belong to people, not to API consumers, so this is a user-token surface.
+	// Returns campaigns owned by the authenticated user. Campaigns belong to people, not to API consumers, so this is a user-token surface.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with GET /leadgens (the `ListLeadgens` operationId).
 	ListLeadgensWithResponse(ctx context.Context, params *ListLeadgensParams, reqEditors ...RequestEditorFn) (*ListLeadgensResponse, error)
 
-	// CreateLeadgenWithBodyWithResponse Create a leadgen campaign
+	// CreateLeadgenWithBodyWithResponse Create a campaign
 	//
-	// Creates a new lead generation campaign with an overlay and form.
+	// Creates a new campaign with its copy and, for the form action, a form it names by formId or a new one.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with POST /leadgens (the `CreateLeadgen` operationId).
 	CreateLeadgenWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateLeadgenResponse, error)
 
-	// CreateLeadgenWithResponse Create a leadgen campaign
+	// CreateLeadgenWithResponse Create a campaign
 	//
-	// Creates a new lead generation campaign with an overlay and form.
+	// Creates a new campaign with its copy and, for the form action, a form it names by formId or a new one.
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with POST /leadgens (the `CreateLeadgen` operationId).
 	CreateLeadgenWithResponse(ctx context.Context, body CreateLeadgenJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateLeadgenResponse, error)
 
-	// DeleteLeadgenWithResponse Delete a leadgen campaign
+	// DeleteLeadgenWithResponse Delete a campaign
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with DELETE /leadgens/{id} (the `DeleteLeadgen` operationId).
 	DeleteLeadgenWithResponse(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*DeleteLeadgenResponse, error)
 
-	// UpdateLeadgenWithBodyWithResponse Update a leadgen campaign
+	// UpdateLeadgenWithBodyWithResponse Update a campaign
+	//
+	// Writes the fields the body names. With a picture (imageId) the introduction may stay empty.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with PUT /leadgens/{id} (the `UpdateLeadgen` operationId).
 	UpdateLeadgenWithBodyWithResponse(ctx context.Context, id Id, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateLeadgenResponse, error)
 
-	// UpdateLeadgenWithResponse Update a leadgen campaign
+	// UpdateLeadgenWithResponse Update a campaign
+	//
+	// Writes the fields the body names. With a picture (imageId) the introduction may stay empty.
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with PUT /leadgens/{id} (the `UpdateLeadgen` operationId).
 	UpdateLeadgenWithResponse(ctx context.Context, id Id, body UpdateLeadgenJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateLeadgenResponse, error)
 
-	// GetLeadgenRequestsWithResponse Export leadgen form requests
+	// GetLeadgenRequestsWithResponse Export a campaign's form requests
 	//
-	// Exports form submissions for a leadgen campaign as CSV or XLSX.
+	// Exports form submissions for a campaign as CSV or XLSX.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
@@ -19673,7 +21164,7 @@ type ClientWithResponsesInterface interface {
 	//
 	// The lots batch and item passports freeze from, newest first. A lot is created with the first passport that names its identifier and reused by every later passport of the same lot, so there is nothing to create here: to issue a passport of a new lot, name the lot in `batchIdentifier` on `POST /dpps` or in the shared line of a bulk create. A new lot is taken only of a product that passes every other required readiness check; until then that create answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, and `GET /dpps/requirements` shows what the product still lacks.
 	//
-	// Narrow the list with `product_id` to see which lots a product already has, or with `identifier` to find the lot a passport names. `sort`, `created_since` and `updated_since` order and bound it for a poll.
+	// Narrow the list with `product_id` to see which lots a product already has, or with `identifier` to find the lot a passport names. `product_id` and `serial` together answer the lot holding a serial number, the one a scan of that unit's tag opens; `serial` without `product_id` answers 422 `PARAMETER_MISSING`, since a serial number is unique only within its product's GTIN. `sort`, `created_since` and `updated_since` order and bound it for a poll.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
@@ -19688,6 +21179,71 @@ type ClientWithResponsesInterface interface {
 	//
 	// Corresponds with GET /lots/{id} (the `GetLot` operationId).
 	GetLotWithResponse(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*GetLotResponse, error)
+
+	// ListLotCodesWithResponse List the codes of a lot's tags
+	//
+	// What a label converter encodes on each tag of the lot, one row per serial number the lot holds, in the order they were given, then one per unit passport of the lot no serial number covers. A unit passport the caller does not read is left out, and a serial number it covers gets the serial number's own link. Pages take up to 1000 rows.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /lots/{id}/codes (the `ListLotCodes` operationId).
+	ListLotCodesWithResponse(ctx context.Context, id int, params *ListLotCodesParams, reqEditors ...RequestEditorFn) (*ListLotCodesResponse, error)
+
+	// ListLotSerialsWithResponse List the serial numbers of a lot
+	//
+	// The entries of serial numbers the lot holds, in the order they were given, each a range as written or a list of single serial numbers. A scan of a tag carrying the product's GTIN and one of these serial numbers opens the lot's passport.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /lots/{id}/serials (the `ListLotSerials` operationId).
+	ListLotSerialsWithResponse(ctx context.Context, id int, params *ListLotSerialsParams, reqEditors ...RequestEditorFn) (*ListLotSerialsResponse, error)
+
+	// CreateLotSerialsWithBodyWithResponse Add serial numbers to a lot
+	//
+	// Gives the lot the serial numbers its units carry, the ones the ERP or the label supplier reserved for the run. Each element of `serials` is one entry, in one of three forms:
+	//
+	// - a range, the counting part in square brackets and the rest kept as written: `NW-[000001-100000]` is NW-000001 to NW-100000, zeros kept; `LOT7-[1-5000]-B` counts without padding;
+	// - a first and a last serial number with a spaced hyphen between, differing in one run of digits: `NW-000001 - NW-100000`;
+	// - a single serial number, or the EPC URN of one naming the product's GTIN: `NW-000412`, `urn:epc:id:sgtin:4012345.067890.412`.
+	//
+	// A serial number takes the characters of GS1 AI 21, letters, digits and ``!"%&'()*+,-./:;<=>?_``, up to 20 of them. A line holds at most 1000000 serial numbers and a call at most 100000 lines. The product needs a GTIN, since a scan finds the lot by GTIN and serial number.
+	//
+	// The call is taken whole or not at all. A serial number held by another lot of the product, a range overlapping the serial numbers of any lot, this one included, and a serial number with a unit passport in another lot refuse it with 422 `SERIALS_INVALID`, and `fields.serials.lines` names each refused line with its place in `serials`, counted from 1, the entry as sent and why: the first 1000 of them, `count` all. A single serial number the lot holds already is skipped and counted in `skippedCount`. While another change to the product's serial numbers runs the answer is 409 `SERIALS_BUSY`; try again a moment later.
+	//
+	// Whoever writes the lot's product adds and removes its serial numbers, as in the Application Manager: a credential with `product_access` at the full tier of its access group, on a product its group gives it to write, and a person with backend access whose groups open to the API give them the product. A repeated range is refused as overlapping its own lot, so send an `Idempotency-Key` to repeat a call safely.
+	//
+	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /lots/{id}/serials (the `CreateLotSerials` operationId).
+	CreateLotSerialsWithBodyWithResponse(ctx context.Context, id int, params *CreateLotSerialsParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateLotSerialsResponse, error)
+
+	// CreateLotSerialsWithResponse Add serial numbers to a lot
+	//
+	// Gives the lot the serial numbers its units carry, the ones the ERP or the label supplier reserved for the run. Each element of `serials` is one entry, in one of three forms:
+	//
+	// - a range, the counting part in square brackets and the rest kept as written: `NW-[000001-100000]` is NW-000001 to NW-100000, zeros kept; `LOT7-[1-5000]-B` counts without padding;
+	// - a first and a last serial number with a spaced hyphen between, differing in one run of digits: `NW-000001 - NW-100000`;
+	// - a single serial number, or the EPC URN of one naming the product's GTIN: `NW-000412`, `urn:epc:id:sgtin:4012345.067890.412`.
+	//
+	// A serial number takes the characters of GS1 AI 21, letters, digits and ``!"%&'()*+,-./:;<=>?_``, up to 20 of them. A line holds at most 1000000 serial numbers and a call at most 100000 lines. The product needs a GTIN, since a scan finds the lot by GTIN and serial number.
+	//
+	// The call is taken whole or not at all. A serial number held by another lot of the product, a range overlapping the serial numbers of any lot, this one included, and a serial number with a unit passport in another lot refuse it with 422 `SERIALS_INVALID`, and `fields.serials.lines` names each refused line with its place in `serials`, counted from 1, the entry as sent and why: the first 1000 of them, `count` all. A single serial number the lot holds already is skipped and counted in `skippedCount`. While another change to the product's serial numbers runs the answer is 409 `SERIALS_BUSY`; try again a moment later.
+	//
+	// Whoever writes the lot's product adds and removes its serial numbers, as in the Application Manager: a credential with `product_access` at the full tier of its access group, on a product its group gives it to write, and a person with backend access whose groups open to the API give them the product. A repeated range is refused as overlapping its own lot, so send an `Idempotency-Key` to repeat a call safely.
+	//
+	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /lots/{id}/serials (the `CreateLotSerials` operationId).
+	CreateLotSerialsWithResponse(ctx context.Context, id int, params *CreateLotSerialsParams, body CreateLotSerialsJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateLotSerialsResponse, error)
+
+	// DeleteLotSerialsWithResponse Remove serial numbers from a lot
+	//
+	// Removes one entry of serial numbers from the lot. A scan of a tag carrying one of them then opens the product's newest lot, as a serial number no lot holds does. Allowed on a lot whose passport is published, so a mistake can be put right; nothing signed depends on it. The same rights as adding them.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with DELETE /lots/{id}/serials/{entryId} (the `DeleteLotSerials` operationId).
+	DeleteLotSerialsWithResponse(ctx context.Context, id int, entryId int, reqEditors ...RequestEditorFn) (*DeleteLotSerialsResponse, error)
 
 	// GetMeWithResponse What the presented token allows
 	//
@@ -19709,13 +21265,17 @@ type ClientWithResponsesInterface interface {
 
 	// CreateMediafileWithBodyWithResponse Upload a mediafile
 	//
-	// Uploads a new image file. Requires the product mediafiles feature. Any valid credential reaches it; the upload is owned by the caller.
+	// Uploads a new file: a picture for a gallery, or a document such as a certificate that a link field of a product or a component names by its token `file:<id>`. Requires the product mediafiles feature. Any valid credential reaches it; the upload is owned by the caller.
+	//
+	// The bytes are public unless `public` is false: then they go to the protected store, which only the Application Manager reaches, and the answer carries no `url`. A gallery takes pictures alone and shows them wherever the record is public, so a file meant for a gallery stays public. A protected file is named in a link field, or put in a gallery, by the caller that uploaded it, and by a credential acting for the person who did; a public file by anyone.
 	//
 	// A browser and the command line send the file itself as `multipart/form-data`. A caller that can only send JSON sends the bytes as base64 instead, bare or as a `data:` URI, in a body of the shape `{"mediafile": {"data": "iVBORw0KGgo...", "name": "Rain shell hero shot"}}`.
 	//
 	// A caller holding a link sends `mediafile.url` and the server reads the bytes itself, which is the practical way in for anything larger than a small image. Only https, only an address outside this network, at most three redirects, and the same size cap; a refusal says which of those it was.
 	//
 	// The kind of file is read from the bytes, not from anything the caller says about them, and the same size, readability and content rules apply whichever way it arrived.
+	//
+	// A document's details may come along: its type, issuer, number and validity. `PUT /mediafiles/{id}` changes them later.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -19724,13 +21284,17 @@ type ClientWithResponsesInterface interface {
 
 	// CreateMediafileWithResponse Upload a mediafile
 	//
-	// Uploads a new image file. Requires the product mediafiles feature. Any valid credential reaches it; the upload is owned by the caller.
+	// Uploads a new file: a picture for a gallery, or a document such as a certificate that a link field of a product or a component names by its token `file:<id>`. Requires the product mediafiles feature. Any valid credential reaches it; the upload is owned by the caller.
+	//
+	// The bytes are public unless `public` is false: then they go to the protected store, which only the Application Manager reaches, and the answer carries no `url`. A gallery takes pictures alone and shows them wherever the record is public, so a file meant for a gallery stays public. A protected file is named in a link field, or put in a gallery, by the caller that uploaded it, and by a credential acting for the person who did; a public file by anyone.
 	//
 	// A browser and the command line send the file itself as `multipart/form-data`. A caller that can only send JSON sends the bytes as base64 instead, bare or as a `data:` URI, in a body of the shape `{"mediafile": {"data": "iVBORw0KGgo...", "name": "Rain shell hero shot"}}`.
 	//
 	// A caller holding a link sends `mediafile.url` and the server reads the bytes itself, which is the practical way in for anything larger than a small image. Only https, only an address outside this network, at most three redirects, and the same size cap; a refusal says which of those it was.
 	//
 	// The kind of file is read from the bytes, not from anything the caller says about them, and the same size, readability and content rules apply whichever way it arrived.
+	//
+	// A document's details may come along: its type, issuer, number and validity. `PUT /mediafiles/{id}` changes them later.
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -19739,12 +21303,34 @@ type ClientWithResponsesInterface interface {
 
 	// DeleteMediafileWithResponse Delete a mediafile
 	//
-	// Takes the file out of the library. The row is trashed rather than destroyed, so a person can restore it in the application manager. A file a record still shows answers 409 `MEDIAFILE_IN_USE` and names those records; take it off them first. The caller must own the file.
+	// Takes the file out of the library. The row is trashed rather than destroyed, so a person can restore it in the Application Manager. A file a record's gallery still shows answers 409 `MEDIAFILE_IN_USE` and names those records; take it out of them first. A file a link field of a product or a component names, in place of a web address, answers 409 `MEDIAFILE_DELETE_REFUSED`, ahead of the galleries showing it; point those fields elsewhere first. The caller must own the file.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with DELETE /mediafiles/{id} (the `DeleteMediafile` operationId).
 	DeleteMediafileWithResponse(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*DeleteMediafileResponse, error)
+
+	// UpdateMediafileWithBodyWithResponse Update a mediafile
+	//
+	// Changes the name of a file and a document's details: its type, issuer, number and validity, such as a renewed certificate's new end. The bytes stay as they are. Requires the product mediafiles feature, and the caller must own the file.
+	//
+	// A language version, a file of a key restricted to some languages, shows the details of the file of its key for every language and takes none of its own: details sent for it answer 422. A field sent as null or an empty string is cleared.
+	//
+	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with PUT /mediafiles/{id} (the `UpdateMediafile` operationId).
+	UpdateMediafileWithBodyWithResponse(ctx context.Context, id Id, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateMediafileResponse, error)
+
+	// UpdateMediafileWithResponse Update a mediafile
+	//
+	// Changes the name of a file and a document's details: its type, issuer, number and validity, such as a renewed certificate's new end. The bytes stay as they are. Requires the product mediafiles feature, and the caller must own the file.
+	//
+	// A language version, a file of a key restricted to some languages, shows the details of the file of its key for every language and takes none of its own: details sent for it answer 422. A field sent as null or an empty string is cleared.
+	//
+	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with PUT /mediafiles/{id} (the `UpdateMediafile` operationId).
+	UpdateMediafileWithResponse(ctx context.Context, id Id, body UpdateMediafileJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateMediafileResponse, error)
 
 	// GetNavigationWithResponse Get navigation items
 	//
@@ -19757,7 +21343,7 @@ type ClientWithResponsesInterface interface {
 
 	// AuthorizeClientWithResponse Ask a person in the workspace for access
 	//
-	// The authorization request (RFC 6749, section 4.1.1) with PKCE (RFC 7636). Open it in the person's browser. The server checks the request, writes it down, and sends the person to the consent screen of the application manager on this same host, where they sign in if they are not already and see the requested permissions named one by one. Allow sends them back to `redirect_uri` with a `code`; Refuse sends them back with `error=access_denied`.
+	// The authorization request (RFC 6749, section 4.1.1) with PKCE (RFC 7636). Open it in the person's browser. The server checks the request, writes it down, and sends the person to the consent screen of the Application Manager on this same host, where they sign in if they are not already and see the requested permissions named one by one. Allow sends them back to `redirect_uri` with a `code`; Refuse sends them back with `error=access_denied`.
 	//
 	// PKCE is mandatory. `code_challenge` is required and `code_challenge_method` has to be `S256`; `plain` is refused. The code that comes back lives 60 seconds and is spent once, at the token endpoint, with the verifier the challenge was derived from.
 	//
@@ -19953,7 +21539,7 @@ type ClientWithResponsesInterface interface {
 
 	// ListProductGtinsWithResponse Search products by GTIN
 	//
-	// Returns products matching a GTIN prefix. Requires the GTIN feature to be enabled.
+	// Returns products matching a GTIN prefix, out of those `GET /products` answers the caller with. Requires the GTIN feature to be enabled. A credential holding `product_access` receives the products its access groups reach, drafts included; where the storefront shows its lists or analyses, every other reader receives the published products; where it shows neither, a credential without `product_access` answers 403 naming the key. A row carries no claim token.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
@@ -19986,7 +21572,7 @@ type ClientWithResponsesInterface interface {
 	//
 	// Creates a new product. The authenticated user or API consumer becomes the owner. A product needs a brand, named alongside it (an existing brand of that name is used, a new one created and owned by the caller), and at least one component under componentsInput. A consumer needs `product_access`, and to create the brand it names also `brand_access`, as `POST /brands` asks; without it a new brand name answers 403 `BRAND_FORBIDDEN`.
 	//
-	// A credential acting for a person (one granted on the consent screen, or the assistant's) names only the categories, the brand and the manufacturers that person reads in the application manager, and creates a brand only where that person may; anything else answers 422 naming `categories`, `brand` or `properties`.
+	// A credential acting for a person (one granted on the consent screen, or the assistant's) names only the categories, the brand and the manufacturers that person reads in the Application Manager, and creates a brand only where that person may; anything else answers 422 naming `categories`, `brand` or `properties`.
 	//
 	// A product naming a parent under `parentId` is created as its variant: it starts as a copy of the parent, with its brand, categories, components, images and property values, and takes the parent's later changes. Such a body needs a name only. The brand, categories, components and property values it names besides become the variant's own where they differ from the parent's, and the variant's read marks them `pinned`. The parent is a product the caller may update, since a variant holds its parent's delete back: a parent the caller cannot read answers 422 `PRODUCT_PARENT_NOT_FOUND`, one it cannot update 403. A variant takes its mandatory values from its parent, so its create asks for none of them.
 	//
@@ -19999,7 +21585,7 @@ type ClientWithResponsesInterface interface {
 	//
 	// Creates a new product. The authenticated user or API consumer becomes the owner. A product needs a brand, named alongside it (an existing brand of that name is used, a new one created and owned by the caller), and at least one component under componentsInput. A consumer needs `product_access`, and to create the brand it names also `brand_access`, as `POST /brands` asks; without it a new brand name answers 403 `BRAND_FORBIDDEN`.
 	//
-	// A credential acting for a person (one granted on the consent screen, or the assistant's) names only the categories, the brand and the manufacturers that person reads in the application manager, and creates a brand only where that person may; anything else answers 422 naming `categories`, `brand` or `properties`.
+	// A credential acting for a person (one granted on the consent screen, or the assistant's) names only the categories, the brand and the manufacturers that person reads in the Application Manager, and creates a brand only where that person may; anything else answers 422 naming `categories`, `brand` or `properties`.
 	//
 	// A product naming a parent under `parentId` is created as its variant: it starts as a copy of the parent, with its brand, categories, components, images and property values, and takes the parent's later changes. Such a body needs a name only. The brand, categories, components and property values it names besides become the variant's own where they differ from the parent's, and the variant's read marks them `pinned`. The parent is a product the caller may update, since a variant holds its parent's delete back: a parent the caller cannot read answers 422 `PRODUCT_PARENT_NOT_FOUND`, one it cannot update 403. A variant takes its mandatory values from its parent, so its create asks for none of them.
 	//
@@ -20057,7 +21643,7 @@ type ClientWithResponsesInterface interface {
 
 	// UpdateProductWithBodyWithResponse Update a product
 	//
-	// Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are. A brand name no brand carries creates the brand, which asks a consumer for `brand_access` (403 `BRAND_FORBIDDEN` without it); a credential acting for a person names only what that person reads, as on create. On a variant, a value the body changes becomes the variant's own and a value it sends as it was read goes on following the parent. `parentId` is left out or names the parent the product has; any other answers 422 `PRODUCT_PARENT_READ_ONLY`, since a variant moves to another parent through a spreadsheet import only. A `propertiesInput` key naming no property type, or, for a credential, a type only the members of a plan edit, or a type of an access group the credential (or the person it acts for) is not in, refuses the whole write with 422 `PRODUCT_PROPERTIES_REFUSED`, whose message names each and why; `fields.propertiesInput.unknown`, `fields.propertiesInput.planGated` and `fields.propertiesInput.groupGated` list the keys as sent.
+	// Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are. A brand name no brand carries creates the brand, which asks a consumer for `brand_access` (403 `BRAND_FORBIDDEN` without it); a credential acting for a person names only what that person reads, as on create. On a variant, a value the body changes becomes the variant's own and a value it sends as it was read goes on following the parent. `parentId` is left out or names the parent the product has; any other answers 422 `PRODUCT_PARENT_READ_ONLY`, since a variant moves to another parent through a spreadsheet import only. A `propertiesInput` key naming no property type, or, for a credential, a type only the members of a plan edit, or a type of an access group the credential (or the person it acts for) is not in, or is in through a membership whose record scope names other products, refuses the whole write with 422 `PRODUCT_PROPERTIES_REFUSED`, whose message names each and why; `fields.propertiesInput.unknown`, `fields.propertiesInput.planGated` and `fields.propertiesInput.groupGated` list the keys as sent. A link value naming a file by `file:<id>` lists the file on the product; an id naming no file of the library refuses the whole write with 422 `FILE_REFERENCE_UNKNOWN`. The product's read sent back under `product` passes as it was read; a key of it that differs from the product as it stands, a key the write takes nowhere, or a list or an object sent as something else refuses the whole write with 422 `PRODUCT_KEYS_REFUSED`, one field per key as on create, so a body read before another write changed the product names what moved.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -20066,7 +21652,7 @@ type ClientWithResponsesInterface interface {
 
 	// UpdateProductWithResponse Update a product
 	//
-	// Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are. A brand name no brand carries creates the brand, which asks a consumer for `brand_access` (403 `BRAND_FORBIDDEN` without it); a credential acting for a person names only what that person reads, as on create. On a variant, a value the body changes becomes the variant's own and a value it sends as it was read goes on following the parent. `parentId` is left out or names the parent the product has; any other answers 422 `PRODUCT_PARENT_READ_ONLY`, since a variant moves to another parent through a spreadsheet import only. A `propertiesInput` key naming no property type, or, for a credential, a type only the members of a plan edit, or a type of an access group the credential (or the person it acts for) is not in, refuses the whole write with 422 `PRODUCT_PROPERTIES_REFUSED`, whose message names each and why; `fields.propertiesInput.unknown`, `fields.propertiesInput.planGated` and `fields.propertiesInput.groupGated` list the keys as sent.
+	// Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are. A brand name no brand carries creates the brand, which asks a consumer for `brand_access` (403 `BRAND_FORBIDDEN` without it); a credential acting for a person names only what that person reads, as on create. On a variant, a value the body changes becomes the variant's own and a value it sends as it was read goes on following the parent. `parentId` is left out or names the parent the product has; any other answers 422 `PRODUCT_PARENT_READ_ONLY`, since a variant moves to another parent through a spreadsheet import only. A `propertiesInput` key naming no property type, or, for a credential, a type only the members of a plan edit, or a type of an access group the credential (or the person it acts for) is not in, or is in through a membership whose record scope names other products, refuses the whole write with 422 `PRODUCT_PROPERTIES_REFUSED`, whose message names each and why; `fields.propertiesInput.unknown`, `fields.propertiesInput.planGated` and `fields.propertiesInput.groupGated` list the keys as sent. A link value naming a file by `file:<id>` lists the file on the product; an id naming no file of the library refuses the whole write with 422 `FILE_REFERENCE_UNKNOWN`. The product's read sent back under `product` passes as it was read; a key of it that differs from the product as it stands, a key the write takes nowhere, or a list or an object sent as something else refuses the whole write with 422 `PRODUCT_KEYS_REFUSED`, one field per key as on create, so a body read before another write changed the product names what moved.
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -20075,7 +21661,7 @@ type ClientWithResponsesInterface interface {
 
 	// UpdateProductMediafilesWithBodyWithResponse Update product mediafile assignments
 	//
-	// Replaces all mediafile assignments on a product with the given list in the specified order, as one change. On a variant, a list that differs from its parent's becomes the variant's own, and the list sent as it was read goes on following the parent. Requires the product mediafiles feature to be enabled.
+	// Replaces all mediafile assignments on a product with the given list in the specified order, as one change. On a variant, a list that differs from its parent's becomes the variant's own, and the list sent as it was read goes on following the parent. The gallery takes pictures alone (images and SVG); a list naming any other file answers 422 `MEDIAFILE_NOT_A_PICTURE` and changes nothing. A list naming a picture held for review, or a protected one that the caller did not upload and the gallery does not hold already, answers 404 `MEDIAFILE_NOT_FOUND` and changes nothing; an id naming no file is left out. Requires the product mediafiles feature to be enabled.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -20084,7 +21670,7 @@ type ClientWithResponsesInterface interface {
 
 	// UpdateProductMediafilesWithResponse Update product mediafile assignments
 	//
-	// Replaces all mediafile assignments on a product with the given list in the specified order, as one change. On a variant, a list that differs from its parent's becomes the variant's own, and the list sent as it was read goes on following the parent. Requires the product mediafiles feature to be enabled.
+	// Replaces all mediafile assignments on a product with the given list in the specified order, as one change. On a variant, a list that differs from its parent's becomes the variant's own, and the list sent as it was read goes on following the parent. The gallery takes pictures alone (images and SVG); a list naming any other file answers 422 `MEDIAFILE_NOT_A_PICTURE` and changes nothing. A list naming a picture held for review, or a protected one that the caller did not upload and the gallery does not hold already, answers 404 `MEDIAFILE_NOT_FOUND` and changes nothing; an id naming no file is left out. Requires the product mediafiles feature to be enabled.
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -20199,7 +21785,7 @@ type ClientWithResponsesInterface interface {
 
 	// LoginSessionWithBodyWithResponse Login (create session)
 	//
-	// Authenticates a user with email/alias and password. Returns a JWT bearer token for subsequent requests. Optionally assigns unclaimed products to the user via `productTokens`.
+	// Authenticates a user with email/alias and password. Returns a JWT bearer token for subsequent requests. Optionally assigns unclaimed products to the user via `productTokens`. A user who set up a second factor sends its code as `otp`, from the authenticator app or one of the backup codes; without it the answer is 401 `MFA_REQUIRED`, with a wrong one 401 `MFA_INVALID`, and no token is issued. A user whose only second factor is a security key or a passkey, which this sign-in cannot ask for, gets 403 `MFA_METHOD_UNSUPPORTED` before any code is read; they sign in through OAuth or an API consumer, or add an authenticator app. Staff who owe a password of their own or the second factor the workspace demands get 403 `ACCOUNT_SETUP_REQUIRED` until they set it up in the Application Manager.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -20208,7 +21794,7 @@ type ClientWithResponsesInterface interface {
 
 	// LoginSessionWithResponse Login (create session)
 	//
-	// Authenticates a user with email/alias and password. Returns a JWT bearer token for subsequent requests. Optionally assigns unclaimed products to the user via `productTokens`.
+	// Authenticates a user with email/alias and password. Returns a JWT bearer token for subsequent requests. Optionally assigns unclaimed products to the user via `productTokens`. A user who set up a second factor sends its code as `otp`, from the authenticator app or one of the backup codes; without it the answer is 401 `MFA_REQUIRED`, with a wrong one 401 `MFA_INVALID`, and no token is issued. A user whose only second factor is a security key or a passkey, which this sign-in cannot ask for, gets 403 `MFA_METHOD_UNSUPPORTED` before any code is read; they sign in through OAuth or an API consumer, or add an authenticator app. Staff who owe a password of their own or the second factor the workspace demands get 403 `ACCOUNT_SETUP_REQUIRED` until they set it up in the Application Manager.
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -20217,7 +21803,7 @@ type ClientWithResponsesInterface interface {
 
 	// RefreshSessionWithResponse Refresh session token
 	//
-	// Refreshes the session nonce and returns a new bearer token. Requires a valid existing token.
+	// Refreshes the session nonce and returns a new bearer token. Requires a valid existing token. A user who owes the Application Manager a password of their own or a second factor renews none (403 `ACCOUNT_SETUP_REQUIRED`).
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
@@ -20228,7 +21814,7 @@ type ClientWithResponsesInterface interface {
 	//
 	// The tasks of one list, newest first. A credential that acts for a person (a grant the person approved, or their assistant) reads the lists as that person. Any other credential reads them as itself: it finds the tasks it asked for under `requested` and `done`, and nothing waits on it.
 	//
-	// - `mine` (the default): what the person has to do: the tasks given to them, the ones they claimed, and the group tasks and reviews nobody has claimed yet. A request for information waiting for its supplier is left out. The number beside the bell in the application manager counts these.
+	// - `mine` (the default): what the person has to do: the tasks given to them, the ones they claimed, and the group tasks and reviews nobody has claimed yet. A request for information waiting for its supplier is left out. The number beside the bell in the Application Manager counts these.
 	// - `waiting`: the person's requests for information while they wait for the supplier, and the tasks they take part in that someone else has claimed.
 	// - `requested`: the open tasks the caller asked of others.
 	// - `done`: the finished and cancelled tasks the caller took part in.
@@ -20244,7 +21830,7 @@ type ClientWithResponsesInterface interface {
 
 	// CreateTaskWithBodyWithResponse Create a task
 	//
-	// Asks a person or an access group for something. The task is a request (`kind` custom) whatever the body says, and names the caller as the one who asked: the person a grant or an assistant acts for, or the credential itself. Every person the task reaches sees it at once in the application manager and hears of it in the bell; the morning mail carries it too.
+	// Asks a person or an access group for something. The task is a request (`kind` custom) whatever the body says, and names the caller as the one who asked: the person a grant or an assistant acts for, or the credential itself. Every person the task reaches sees it at once in the Application Manager and hears of it in the bell; the morning mail carries it too.
 	//
 	// Find the `assigneeKey` with `GET /tasks/assignees`. A task may link one record the caller reads (`subjectKey`) and carry a `priority`.
 	//
@@ -20255,7 +21841,7 @@ type ClientWithResponsesInterface interface {
 
 	// CreateTaskWithResponse Create a task
 	//
-	// Asks a person or an access group for something. The task is a request (`kind` custom) whatever the body says, and names the caller as the one who asked: the person a grant or an assistant acts for, or the credential itself. Every person the task reaches sees it at once in the application manager and hears of it in the bell; the morning mail carries it too.
+	// Asks a person or an access group for something. The task is a request (`kind` custom) whatever the body says, and names the caller as the one who asked: the person a grant or an assistant acts for, or the credential itself. Every person the task reaches sees it at once in the Application Manager and hears of it in the bell; the morning mail carries it too.
 	//
 	// Find the `assigneeKey` with `GET /tasks/assignees`. A task may link one record the caller reads (`subjectKey`) and carry a `priority`.
 	//
@@ -20266,7 +21852,7 @@ type ClientWithResponsesInterface interface {
 
 	// ListTaskAssigneesWithResponse List task assignees
 	//
-	// Whom a task may go to, matching `term`, as the `key` `POST /tasks` takes and the name the application manager shows. Groups with access to the application manager come first, then the people who can open it; 25 at most.
+	// Whom a task may go to, matching `term`, as the `key` `POST /tasks` takes and the name the Application Manager shows. Groups with access to the Application Manager come first, then the people who can open it; 25 at most.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
@@ -20302,7 +21888,7 @@ type ClientWithResponsesInterface interface {
 
 	// ApproveTaskWithBodyWithResponse Approve a review
 	//
-	// Approves the step a review stands at, as the person the credential acts for. A review walks the steps of the workspace's review flow, or the one step of everyone who may sign passports where no flow fits. Approving a middle step passes the request on to the next step and signs nothing. Approving the last step carries the request out in the person's name, which needs `dpp_publish` in the credential's scope beside `task_access`; without it the answer is 403 and the review stays open. A publish review then approves the passport, which waits ready to publish for the person who asked (`POST /dpps/{code}/publish`) until the product changes; a review of an event's seal or of a correction signs at once.
+	// Approves the step a review stands at, as the person the credential acts for. A review walks the steps of the workspace's review flow, or the one step of everyone who may sign passports where no flow fits. Approving a middle step passes the request on to the next step and signs nothing. Approving the last step carries the request out in the person's name, which needs `dpp_publish` in the credential's scope beside `task_access`; without it the answer is 403 and the review stays open. A publish review signs the passport then, as a review of an event's seal or of a correction does. A publish review whose DPP or product changed after the request is refused (`TASK_SOURCE_CHANGED`), and so is one whose DPP recorded an event since (`TASK_EVENT_RECORDED`); the review stays open, and a new request to publish the DPP replaces it.
 	//
 	// Send the `step` the caller read, so a press on a review that moved on in between decides nothing (`TASK_STEP_MOVED`). The person who asked for a review decides no step of it (`TASK_OWN_REQUEST`). A publish the validator or the workspace refuses answers as `POST /dpps/{code}/publish` does, and the review stays open.
 	//
@@ -20313,7 +21899,7 @@ type ClientWithResponsesInterface interface {
 
 	// ApproveTaskWithResponse Approve a review
 	//
-	// Approves the step a review stands at, as the person the credential acts for. A review walks the steps of the workspace's review flow, or the one step of everyone who may sign passports where no flow fits. Approving a middle step passes the request on to the next step and signs nothing. Approving the last step carries the request out in the person's name, which needs `dpp_publish` in the credential's scope beside `task_access`; without it the answer is 403 and the review stays open. A publish review then approves the passport, which waits ready to publish for the person who asked (`POST /dpps/{code}/publish`) until the product changes; a review of an event's seal or of a correction signs at once.
+	// Approves the step a review stands at, as the person the credential acts for. A review walks the steps of the workspace's review flow, or the one step of everyone who may sign passports where no flow fits. Approving a middle step passes the request on to the next step and signs nothing. Approving the last step carries the request out in the person's name, which needs `dpp_publish` in the credential's scope beside `task_access`; without it the answer is 403 and the review stays open. A publish review signs the passport then, as a review of an event's seal or of a correction does. A publish review whose DPP or product changed after the request is refused (`TASK_SOURCE_CHANGED`), and so is one whose DPP recorded an event since (`TASK_EVENT_RECORDED`); the review stays open, and a new request to publish the DPP replaces it.
 	//
 	// Send the `step` the caller read, so a press on a review that moved on in between decides nothing (`TASK_STEP_MOVED`). The person who asked for a review decides no step of it (`TASK_OWN_REQUEST`). A publish the validator or the workspace refuses answers as `POST /dpps/{code}/publish` does, and the review stays open.
 	//
@@ -20324,7 +21910,7 @@ type ClientWithResponsesInterface interface {
 
 	// GetTaskAttachmentWithResponse Download a file of a task
 	//
-	// One of the files a task carries, the `url` its `attachments` name. Only those who see the task read its files, so a task the caller has no part in answers 404, and so does a file the task does not carry (`MEDIAFILE_NOT_FOUND`). Images and PDFs come inline, every other kind as an attachment. Files are added in the application manager.
+	// One of the files a task carries, the `url` its `attachments` name. Only those who see the task read its files, so a task the caller has no part in answers 404, and so does a file the task does not carry (`MEDIAFILE_NOT_FOUND`). Images and PDFs come inline, every other kind as an attachment. Files are added in the Application Manager.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
@@ -20349,14 +21935,23 @@ type ClientWithResponsesInterface interface {
 	// Corresponds with POST /tasks/{id}/claim (the `ClaimTask` operationId).
 	ClaimTaskWithResponse(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*ClaimTaskResponse, error)
 
-	// CompleteTaskWithResponse Complete a task
+	// CompleteTaskWithBodyWithResponse Complete a task
 	//
-	// Marks an open request as done. The person it is for may, or a current member of its group, who claims it in the same move; a task someone else holds stays theirs. Only a person works on a task, so a credential acting as itself is refused with `TASK_NOT_PERMITTED`, and a review ends in a decision in the application manager (`TASK_NOT_CUSTOM`). The one who asked hears of it in the bell.
+	// Marks an open request as done. The person it is for may, or a current member of its group, who claims it in the same move; a task someone else holds stays theirs. Only a person works on a task, so a credential acting as itself is refused with `TASK_NOT_PERMITTED`, and a review ends in a decision in the Application Manager (`TASK_NOT_CUSTOM`). The one who asked hears of it in the bell, with the optional `note` as the reply.
 	//
-	// Returns a wrapper object for the known response body format(s).
+	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with POST /tasks/{id}/complete (the `CompleteTask` operationId).
-	CompleteTaskWithResponse(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*CompleteTaskResponse, error)
+	CompleteTaskWithBodyWithResponse(ctx context.Context, id Id, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CompleteTaskResponse, error)
+
+	// CompleteTaskWithResponse Complete a task
+	//
+	// Marks an open request as done. The person it is for may, or a current member of its group, who claims it in the same move; a task someone else holds stays theirs. Only a person works on a task, so a credential acting as itself is refused with `TASK_NOT_PERMITTED`, and a review ends in a decision in the Application Manager (`TASK_NOT_CUSTOM`). The one who asked hears of it in the bell, with the optional `note` as the reply.
+	//
+	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /tasks/{id}/complete (the `CompleteTask` operationId).
+	CompleteTaskWithResponse(ctx context.Context, id Id, body CompleteTaskJSONRequestBody, reqEditors ...RequestEditorFn) (*CompleteTaskResponse, error)
 
 	// RejectTaskWithBodyWithResponse Reject a review
 	//
@@ -22352,6 +23947,47 @@ func (r ValidateDppResponse) ContentType() string {
 	return ""
 }
 
+// GetDppFileResponse200Headers the declared response headers of an HTTP 200 response for GetDppFile
+type GetDppFileResponse200Headers struct {
+	CacheControl *string
+}
+
+type GetDppFileResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// Headers200 the parsed response headers for an HTTP 200 response
+	Headers200 *GetDppFileResponse200Headers
+}
+
+// GetBody returns the raw response body bytes
+func (r GetDppFileResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r GetDppFileResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetDppFileResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetDppFileResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
 // GetDppPrivateDynamicDataResponse200Headers the declared response headers of an HTTP 200 response for GetDppPrivateDynamicData
 type GetDppPrivateDynamicDataResponse200Headers struct {
 	CacheControl *string
@@ -22479,7 +24115,7 @@ type GetDppVersionPrivatePropertiesResponse struct {
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *PrivateProperties
 	// JSON404 the response for an HTTP 404 `application/json` response
-	JSON404 *NotFound
+	JSON404 *Error
 	// Headers200 the parsed response headers for an HTTP 200 response
 	Headers200 *GetDppVersionPrivatePropertiesResponse200Headers
 }
@@ -22490,7 +24126,7 @@ func (r GetDppVersionPrivatePropertiesResponse) GetJSON200() *PrivateProperties 
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
-func (r GetDppVersionPrivatePropertiesResponse) GetJSON404() *NotFound {
+func (r GetDppVersionPrivatePropertiesResponse) GetJSON404() *Error {
 	return r.JSON404
 }
 
@@ -23105,7 +24741,7 @@ type AppendDppEventResponse struct {
 	JSON201 *struct {
 		// Event One entry of a passport's event log. Versioned types ride a registered DppVersion and carry `dppVersionNumber`; local types are recorded in the passport's own log and carry none.
 		//
-		// Example: {"actorLabel":"Workshop Meier","actorType":"ApiConsumer","data":{"workshopId":"DE-4711"},"description":"Annual safety inspection passed","dppVersionNumber":3,"eventType":"inspection","occurredAt":"2026-09-08T09:12:44Z"}
+		// Example: {"actorLabel":"Workshop Meier","actorType":"ApiConsumer","data":{"workshopId":"DE-4711"},"description":"Annual safety inspection passed","descriptionLocale":"en","dppVersionNumber":3,"eventType":"inspection","occurredAt":"2026-09-08T09:12:44Z"}
 		Event *DppEvent `json:"event,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
@@ -23124,7 +24760,7 @@ type AppendDppEventResponse struct {
 func (r AppendDppEventResponse) GetJSON201() *struct {
 	// Event One entry of a passport's event log. Versioned types ride a registered DppVersion and carry `dppVersionNumber`; local types are recorded in the passport's own log and carry none.
 	//
-	// Example: {"actorLabel":"Workshop Meier","actorType":"ApiConsumer","data":{"workshopId":"DE-4711"},"description":"Annual safety inspection passed","dppVersionNumber":3,"eventType":"inspection","occurredAt":"2026-09-08T09:12:44Z"}
+	// Example: {"actorLabel":"Workshop Meier","actorType":"ApiConsumer","data":{"workshopId":"DE-4711"},"description":"Annual safety inspection passed","descriptionLocale":"en","dppVersionNumber":3,"eventType":"inspection","occurredAt":"2026-09-08T09:12:44Z"}
 	Event *DppEvent `json:"event,omitempty"`
 } {
 	return r.JSON201
@@ -23197,6 +24833,8 @@ type ReissueDppResponse struct {
 	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *Error
+	// JSON422 the response for an HTTP 422 `application/json` response
+	JSON422 *Error
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -23222,6 +24860,11 @@ func (r ReissueDppResponse) GetJSON403() *Forbidden {
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
 func (r ReissueDppResponse) GetJSON404() *Error {
 	return r.JSON404
+}
+
+// GetJSON422 returns the response for an HTTP 422 `application/json` response
+func (r ReissueDppResponse) GetJSON422() *Error {
+	return r.JSON422
 }
 
 // GetBody returns the raw response body bytes
@@ -24544,6 +26187,8 @@ type CreateImportResponse struct {
 	JSON401 *Unauthorized
 	// JSON403 the response for an HTTP 403 `application/json` response
 	JSON403 *WriteForbidden
+	// JSON409 the response for an HTTP 409 `application/json` response
+	JSON409 *Error
 	// JSON413 the response for an HTTP 413 `application/json` response
 	JSON413 *Error
 	// JSON422 the response for an HTTP 422 `application/json` response
@@ -24563,6 +26208,11 @@ func (r CreateImportResponse) GetJSON401() *Unauthorized {
 // GetJSON403 returns the response for an HTTP 403 `application/json` response
 func (r CreateImportResponse) GetJSON403() *WriteForbidden {
 	return r.JSON403
+}
+
+// GetJSON409 returns the response for an HTTP 409 `application/json` response
+func (r CreateImportResponse) GetJSON409() *Error {
+	return r.JSON409
 }
 
 // GetJSON413 returns the response for an HTTP 413 `application/json` response
@@ -24777,8 +26427,6 @@ type ExecuteImportResponse struct {
 	JSON409 *Error
 	// JSON410 the response for an HTTP 410 `application/json` response
 	JSON410 *Error
-	// JSON429 the response for an HTTP 429 `application/json` response
-	JSON429 *Error
 }
 
 // GetJSON202 returns the response for an HTTP 202 `application/json` response
@@ -24809,11 +26457,6 @@ func (r ExecuteImportResponse) GetJSON409() *Error {
 // GetJSON410 returns the response for an HTTP 410 `application/json` response
 func (r ExecuteImportResponse) GetJSON410() *Error {
 	return r.JSON410
-}
-
-// GetJSON429 returns the response for an HTTP 429 `application/json` response
-func (r ExecuteImportResponse) GetJSON429() *Error {
-	return r.JSON429
 }
 
 // GetBody returns the raw response body bytes
@@ -24856,6 +26499,8 @@ type MapImportResponse struct {
 	JSON403 *WriteForbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
+	// JSON409 the response for an HTTP 409 `application/json` response
+	JSON409 *Error
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *Error
 }
@@ -24878,6 +26523,11 @@ func (r MapImportResponse) GetJSON403() *WriteForbidden {
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
 func (r MapImportResponse) GetJSON404() *NotFound {
 	return r.JSON404
+}
+
+// GetJSON409 returns the response for an HTTP 409 `application/json` response
+func (r MapImportResponse) GetJSON409() *Error {
+	return r.JSON409
 }
 
 // GetJSON422 returns the response for an HTTP 422 `application/json` response
@@ -24908,6 +26558,82 @@ func (r MapImportResponse) StatusCode() int {
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
 func (r MapImportResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type RerunImportResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON201 the response for an HTTP 201 `application/json` response
+	JSON201 *Import
+	// JSON401 the response for an HTTP 401 `application/json` response
+	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *WriteForbidden
+	// JSON404 the response for an HTTP 404 `application/json` response
+	JSON404 *NotFound
+	// JSON409 the response for an HTTP 409 `application/json` response
+	JSON409 *Error
+	// JSON410 the response for an HTTP 410 `application/json` response
+	JSON410 *Error
+}
+
+// GetJSON201 returns the response for an HTTP 201 `application/json` response
+func (r RerunImportResponse) GetJSON201() *Import {
+	return r.JSON201
+}
+
+// GetJSON401 returns the response for an HTTP 401 `application/json` response
+func (r RerunImportResponse) GetJSON401() *Unauthorized {
+	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r RerunImportResponse) GetJSON403() *WriteForbidden {
+	return r.JSON403
+}
+
+// GetJSON404 returns the response for an HTTP 404 `application/json` response
+func (r RerunImportResponse) GetJSON404() *NotFound {
+	return r.JSON404
+}
+
+// GetJSON409 returns the response for an HTTP 409 `application/json` response
+func (r RerunImportResponse) GetJSON409() *Error {
+	return r.JSON409
+}
+
+// GetJSON410 returns the response for an HTTP 410 `application/json` response
+func (r RerunImportResponse) GetJSON410() *Error {
+	return r.JSON410
+}
+
+// GetBody returns the raw response body bytes
+func (r RerunImportResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r RerunImportResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r RerunImportResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r RerunImportResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
@@ -25647,6 +27373,364 @@ func (r GetLotResponse) ContentType() string {
 	return ""
 }
 
+// ListLotCodesResponse200Headers the declared response headers of an HTTP 200 response for ListLotCodes
+type ListLotCodesResponse200Headers struct {
+	APICount   *int
+	APIOffset  *int
+	APIPage    *int
+	APIPerPage *int
+	APITotal   *int
+	Link       *string
+}
+
+type ListLotCodesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *struct {
+		Codes *[]LotCode `json:"codes,omitempty"`
+	}
+	// JSON401 the response for an HTTP 401 `application/json` response
+	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
+	// JSON404 the response for an HTTP 404 `application/json` response
+	JSON404 *NotFound
+	// Headers200 the parsed response headers for an HTTP 200 response
+	Headers200 *ListLotCodesResponse200Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r ListLotCodesResponse) GetJSON200() *struct {
+	Codes *[]LotCode `json:"codes,omitempty"`
+} {
+	return r.JSON200
+}
+
+// GetJSON401 returns the response for an HTTP 401 `application/json` response
+func (r ListLotCodesResponse) GetJSON401() *Unauthorized {
+	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r ListLotCodesResponse) GetJSON403() *Forbidden {
+	return r.JSON403
+}
+
+// GetJSON404 returns the response for an HTTP 404 `application/json` response
+func (r ListLotCodesResponse) GetJSON404() *NotFound {
+	return r.JSON404
+}
+
+// GetBody returns the raw response body bytes
+func (r ListLotCodesResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r ListLotCodesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListLotCodesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r ListLotCodesResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// ListLotSerialsResponse200Headers the declared response headers of an HTTP 200 response for ListLotSerials
+type ListLotSerialsResponse200Headers struct {
+	APICount   *int
+	APIOffset  *int
+	APIPage    *int
+	APIPerPage *int
+	APITotal   *int
+	Link       *string
+}
+
+type ListLotSerialsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *struct {
+		Entries *[]LotSerialEntry `json:"entries,omitempty"`
+	}
+	// JSON401 the response for an HTTP 401 `application/json` response
+	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
+	// JSON404 the response for an HTTP 404 `application/json` response
+	JSON404 *NotFound
+	// Headers200 the parsed response headers for an HTTP 200 response
+	Headers200 *ListLotSerialsResponse200Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r ListLotSerialsResponse) GetJSON200() *struct {
+	Entries *[]LotSerialEntry `json:"entries,omitempty"`
+} {
+	return r.JSON200
+}
+
+// GetJSON401 returns the response for an HTTP 401 `application/json` response
+func (r ListLotSerialsResponse) GetJSON401() *Unauthorized {
+	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r ListLotSerialsResponse) GetJSON403() *Forbidden {
+	return r.JSON403
+}
+
+// GetJSON404 returns the response for an HTTP 404 `application/json` response
+func (r ListLotSerialsResponse) GetJSON404() *NotFound {
+	return r.JSON404
+}
+
+// GetBody returns the raw response body bytes
+func (r ListLotSerialsResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r ListLotSerialsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListLotSerialsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r ListLotSerialsResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type CreateLotSerialsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON201 the response for an HTTP 201 `application/json` response
+	JSON201 *struct {
+		Entries      *[]LotSerialEntry `json:"entries,omitempty"`
+		SkippedCount *int              `json:"skippedCount,omitempty"`
+	}
+	// JSON401 the response for an HTTP 401 `application/json` response
+	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *WriteForbidden
+	// JSON404 the response for an HTTP 404 `application/json` response
+	JSON404 *NotFound
+	// JSON409 the response for an HTTP 409 `application/json` response
+	JSON409 *Error
+	// JSON422 the response for an HTTP 422 `application/json` response
+	JSON422 *struct {
+		DocsUrl *string `json:"docsUrl,omitempty"`
+		Error   *string `json:"error,omitempty"`
+		Fields  *struct {
+			Serials *struct {
+				// Count The refused lines, all of them
+				Count *int    `json:"count,omitempty"`
+				Error *string `json:"error,omitempty"`
+
+				// Lines The first 1000 refused lines
+				Lines *[]struct {
+					// Error Why, as `SERIAL_` and the reason, for example `SERIAL_CHARACTER`, `SERIAL_ORDER`, `SERIAL_PADDING`, `SERIAL_OTHER_BATCH`, `SERIAL_UNIT_PASSPORT` or `SERIAL_NO_GTIN`
+					Error *string `json:"error,omitempty"`
+
+					// Line The place of the element in `serials`, counted from 1; null where the call as a whole is refused, for a product without a GTIN or more than 100000 lines
+					Line    *int    `json:"line,omitempty"`
+					Message *string `json:"message,omitempty"`
+
+					// Value The element as sent
+					Value *string `json:"value,omitempty"`
+				} `json:"lines,omitempty"`
+				Message *string `json:"message,omitempty"`
+			} `json:"serials,omitempty"`
+		} `json:"fields,omitempty"`
+		Hint    *string `json:"hint,omitempty"`
+		Message *string `json:"message,omitempty"`
+	}
+}
+
+// GetJSON201 returns the response for an HTTP 201 `application/json` response
+func (r CreateLotSerialsResponse) GetJSON201() *struct {
+	Entries      *[]LotSerialEntry `json:"entries,omitempty"`
+	SkippedCount *int              `json:"skippedCount,omitempty"`
+} {
+	return r.JSON201
+}
+
+// GetJSON401 returns the response for an HTTP 401 `application/json` response
+func (r CreateLotSerialsResponse) GetJSON401() *Unauthorized {
+	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r CreateLotSerialsResponse) GetJSON403() *WriteForbidden {
+	return r.JSON403
+}
+
+// GetJSON404 returns the response for an HTTP 404 `application/json` response
+func (r CreateLotSerialsResponse) GetJSON404() *NotFound {
+	return r.JSON404
+}
+
+// GetJSON409 returns the response for an HTTP 409 `application/json` response
+func (r CreateLotSerialsResponse) GetJSON409() *Error {
+	return r.JSON409
+}
+
+// GetJSON422 returns the response for an HTTP 422 `application/json` response
+func (r CreateLotSerialsResponse) GetJSON422() *struct {
+	DocsUrl *string `json:"docsUrl,omitempty"`
+	Error   *string `json:"error,omitempty"`
+	Fields  *struct {
+		Serials *struct {
+			// Count The refused lines, all of them
+			Count *int    `json:"count,omitempty"`
+			Error *string `json:"error,omitempty"`
+
+			// Lines The first 1000 refused lines
+			Lines *[]struct {
+				// Error Why, as `SERIAL_` and the reason, for example `SERIAL_CHARACTER`, `SERIAL_ORDER`, `SERIAL_PADDING`, `SERIAL_OTHER_BATCH`, `SERIAL_UNIT_PASSPORT` or `SERIAL_NO_GTIN`
+				Error *string `json:"error,omitempty"`
+
+				// Line The place of the element in `serials`, counted from 1; null where the call as a whole is refused, for a product without a GTIN or more than 100000 lines
+				Line    *int    `json:"line,omitempty"`
+				Message *string `json:"message,omitempty"`
+
+				// Value The element as sent
+				Value *string `json:"value,omitempty"`
+			} `json:"lines,omitempty"`
+			Message *string `json:"message,omitempty"`
+		} `json:"serials,omitempty"`
+	} `json:"fields,omitempty"`
+	Hint    *string `json:"hint,omitempty"`
+	Message *string `json:"message,omitempty"`
+} {
+	return r.JSON422
+}
+
+// GetBody returns the raw response body bytes
+func (r CreateLotSerialsResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateLotSerialsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateLotSerialsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r CreateLotSerialsResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type DeleteLotSerialsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *struct {
+		// Status Example: OK
+		Status *string `json:"status,omitempty"`
+	}
+	// JSON401 the response for an HTTP 401 `application/json` response
+	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *WriteForbidden
+	// JSON404 the response for an HTTP 404 `application/json` response
+	JSON404 *NotFound
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r DeleteLotSerialsResponse) GetJSON200() *struct {
+	// Status Example: OK
+	Status *string `json:"status,omitempty"`
+} {
+	return r.JSON200
+}
+
+// GetJSON401 returns the response for an HTTP 401 `application/json` response
+func (r DeleteLotSerialsResponse) GetJSON401() *Unauthorized {
+	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r DeleteLotSerialsResponse) GetJSON403() *WriteForbidden {
+	return r.JSON403
+}
+
+// GetJSON404 returns the response for an HTTP 404 `application/json` response
+func (r DeleteLotSerialsResponse) GetJSON404() *NotFound {
+	return r.JSON404
+}
+
+// GetBody returns the raw response body bytes
+func (r DeleteLotSerialsResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteLotSerialsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteLotSerialsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r DeleteLotSerialsResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
 type GetMeResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -25901,6 +27985,79 @@ func (r DeleteMediafileResponse) StatusCode() int {
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
 func (r DeleteMediafileResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type UpdateMediafileResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *struct {
+		Mediafile *Mediafile `json:"mediafile,omitempty"`
+	}
+	// JSON401 the response for an HTTP 401 `application/json` response
+	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
+	// JSON404 the response for an HTTP 404 `application/json` response
+	JSON404 *NotFound
+	// JSON422 the response for an HTTP 422 `application/json` response
+	JSON422 *ValidationError
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r UpdateMediafileResponse) GetJSON200() *struct {
+	Mediafile *Mediafile `json:"mediafile,omitempty"`
+} {
+	return r.JSON200
+}
+
+// GetJSON401 returns the response for an HTTP 401 `application/json` response
+func (r UpdateMediafileResponse) GetJSON401() *Unauthorized {
+	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r UpdateMediafileResponse) GetJSON403() *Forbidden {
+	return r.JSON403
+}
+
+// GetJSON404 returns the response for an HTTP 404 `application/json` response
+func (r UpdateMediafileResponse) GetJSON404() *NotFound {
+	return r.JSON404
+}
+
+// GetJSON422 returns the response for an HTTP 422 `application/json` response
+func (r UpdateMediafileResponse) GetJSON422() *ValidationError {
+	return r.JSON422
+}
+
+// GetBody returns the raw response body bytes
+func (r UpdateMediafileResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateMediafileResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateMediafileResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r UpdateMediafileResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
@@ -26793,6 +28950,10 @@ type ListProductGtinsResponse struct {
 	JSON200 *struct {
 		ProductGtins *[]Product `json:"productGtins,omitempty"`
 	}
+	// JSON401 the response for an HTTP 401 `application/json` response
+	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Error
 	// Headers200 the parsed response headers for an HTTP 200 response
 	Headers200 *ListProductGtinsResponse200Headers
 }
@@ -26802,6 +28963,16 @@ func (r ListProductGtinsResponse) GetJSON200() *struct {
 	ProductGtins *[]Product `json:"productGtins,omitempty"`
 } {
 	return r.JSON200
+}
+
+// GetJSON401 returns the response for an HTTP 401 `application/json` response
+func (r ListProductGtinsResponse) GetJSON401() *Unauthorized {
+	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r ListProductGtinsResponse) GetJSON403() *Error {
+	return r.JSON403
 }
 
 // GetBody returns the raw response body bytes
@@ -29843,7 +32014,7 @@ func (c *ClientWithResponses) ListBrandsWithResponse(ctx context.Context, params
 
 // CreateBrandWithBodyWithResponse Create a brand
 //
-// Creates a brand owned by the caller, or answers 200 with the brand of that name when one exists, since a brand is one row per name across the workspace. Names are harmonised the way the application manager does it. A brand is published on its own once it has products, so there is nothing to publish by hand.
+// Creates a brand owned by the caller, or answers 200 with the brand of that name when one exists, since a brand is one row per name across the workspace. Names are harmonised the way the Application Manager does it. A brand is published on its own once it has products, so there is nothing to publish by hand.
 //
 // A consumer needs `brand_access` or `brand_write`; a signed-in person needs a confirmed account.
 //
@@ -29860,7 +32031,7 @@ func (c *ClientWithResponses) CreateBrandWithBodyWithResponse(ctx context.Contex
 
 // CreateBrandWithResponse Create a brand
 //
-// Creates a brand owned by the caller, or answers 200 with the brand of that name when one exists, since a brand is one row per name across the workspace. Names are harmonised the way the application manager does it. A brand is published on its own once it has products, so there is nothing to publish by hand.
+// Creates a brand owned by the caller, or answers 200 with the brand of that name when one exists, since a brand is one row per name across the workspace. Names are harmonised the way the Application Manager does it. A brand is published on its own once it has products, so there is nothing to publish by hand.
 //
 // A consumer needs `brand_access` or `brand_write`; a signed-in person needs a confirmed account.
 //
@@ -30014,11 +32185,11 @@ func (c *ClientWithResponses) ListComponentsWithResponse(ctx context.Context, pa
 
 // CreateComponentWithBodyWithResponse Create a component
 //
-// Creates a component, unpublished, owned by the caller. Properties and template ids ride beside it in the shape the application manager's form sends: `properties.new` maps a property type id to the values to add, `templateIds` names the components whose properties the new one inherits.
+// Creates a component, unpublished, owned by the caller. Properties and template ids ride beside it in the shape the Application Manager's form sends: `properties.new` maps a property type id to the values to add, `templateIds` names the components whose properties the new one inherits.
 //
 // A consumer needs `component_access` or `component_write`; a signed-in person needs a confirmed account. The answer is the same document as `GET /components/{id}`.
 //
-// A property type id naming no property type refuses the whole write with 422 `COMPONENT_PROPERTIES_REFUSED`, and no component is created; the message names each id, `fields.properties.unknown` lists them as sent. `fields.properties.planGated` and `fields.properties.groupGated` keep the shape of the product refusal and stay empty, since no plan or access group limits a component property type.
+// A property type id naming no property type refuses the whole write with 422 `COMPONENT_PROPERTIES_REFUSED`, and no component is created; the message names each id, `fields.properties.unknown` lists them as sent. `fields.properties.planGated` and `fields.properties.groupGated` keep the shape of the product refusal and stay empty, since no plan or access group limits a component property type. A link value naming a file by `file:<id>` lists the file on the component; an id naming no file of the library refuses the whole write with 422 `FILE_REFERENCE_UNKNOWN`, and no component is created.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -30033,11 +32204,11 @@ func (c *ClientWithResponses) CreateComponentWithBodyWithResponse(ctx context.Co
 
 // CreateComponentWithResponse Create a component
 //
-// Creates a component, unpublished, owned by the caller. Properties and template ids ride beside it in the shape the application manager's form sends: `properties.new` maps a property type id to the values to add, `templateIds` names the components whose properties the new one inherits.
+// Creates a component, unpublished, owned by the caller. Properties and template ids ride beside it in the shape the Application Manager's form sends: `properties.new` maps a property type id to the values to add, `templateIds` names the components whose properties the new one inherits.
 //
 // A consumer needs `component_access` or `component_write`; a signed-in person needs a confirmed account. The answer is the same document as `GET /components/{id}`.
 //
-// A property type id naming no property type refuses the whole write with 422 `COMPONENT_PROPERTIES_REFUSED`, and no component is created; the message names each id, `fields.properties.unknown` lists them as sent. `fields.properties.planGated` and `fields.properties.groupGated` keep the shape of the product refusal and stay empty, since no plan or access group limits a component property type.
+// A property type id naming no property type refuses the whole write with 422 `COMPONENT_PROPERTIES_REFUSED`, and no component is created; the message names each id, `fields.properties.unknown` lists them as sent. `fields.properties.planGated` and `fields.properties.groupGated` keep the shape of the product refusal and stay empty, since no plan or access group limits a component property type. A link value naming a file by `file:<id>` lists the file on the component; an id naming no file of the library refuses the whole write with 422 `FILE_REFERENCE_UNKNOWN`, and no component is created.
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
@@ -30082,7 +32253,7 @@ func (c *ClientWithResponses) GetComponentWithResponse(ctx context.Context, id I
 
 // UpdateComponentWithBodyWithResponse Update a component
 //
-// Renames the component and applies property and template changes in the shape the application manager form sends. The write is a patch, so the properties it does not name stay as they are. `properties.existing` maps a property type id to the properties to change by id, an empty value removes one; `properties.new` adds values; `templateIds` replaces the template set. The caller must own the component, or hold `component_write`. A property type id naming no property type refuses the whole write with 422 `COMPONENT_PROPERTIES_REFUSED`, whose message names each; `fields.properties.unknown` lists them as sent, `planGated` and `groupGated` stay empty.
+// Renames the component and applies property and template changes in the shape the Application Manager form sends. The write is a patch, so the properties it does not name stay as they are. `properties.existing` maps a property type id to the properties to change by id, an empty value removes one; `properties.new` adds values; `templateIds` replaces the template set. The caller must own the component, or hold `component_write`. A property type id naming no property type refuses the whole write with 422 `COMPONENT_PROPERTIES_REFUSED`, whose message names each; `fields.properties.unknown` lists them as sent, `planGated` and `groupGated` stay empty. A link value naming a file by `file:<id>` lists the file on the component; an id naming no file of the library refuses the whole write with 422 `FILE_REFERENCE_UNKNOWN`.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -30097,7 +32268,7 @@ func (c *ClientWithResponses) UpdateComponentWithBodyWithResponse(ctx context.Co
 
 // UpdateComponentWithResponse Update a component
 //
-// Renames the component and applies property and template changes in the shape the application manager form sends. The write is a patch, so the properties it does not name stay as they are. `properties.existing` maps a property type id to the properties to change by id, an empty value removes one; `properties.new` adds values; `templateIds` replaces the template set. The caller must own the component, or hold `component_write`. A property type id naming no property type refuses the whole write with 422 `COMPONENT_PROPERTIES_REFUSED`, whose message names each; `fields.properties.unknown` lists them as sent, `planGated` and `groupGated` stay empty.
+// Renames the component and applies property and template changes in the shape the Application Manager form sends. The write is a patch, so the properties it does not name stay as they are. `properties.existing` maps a property type id to the properties to change by id, an empty value removes one; `properties.new` adds values; `templateIds` replaces the template set. The caller must own the component, or hold `component_write`. A property type id naming no property type refuses the whole write with 422 `COMPONENT_PROPERTIES_REFUSED`, whose message names each; `fields.properties.unknown` lists them as sent, `planGated` and `groupGated` stay empty. A link value naming a file by `file:<id>` lists the file on the component; an id naming no file of the library refuses the whole write with 422 `FILE_REFERENCE_UNKNOWN`.
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
@@ -30157,7 +32328,7 @@ func (c *ClientWithResponses) GetConfigWithResponse(ctx context.Context, reqEdit
 
 // ConfirmSignupWithResponse Confirm user email after signup
 //
-// Confirms a user's email address using the token sent during registration.
+// Confirms a user's email address using the token sent during registration. A signup link older than 24 hours on an unconfirmed account answers 422 with `TOKEN_PARAM_EXPIRED`.
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -30221,11 +32392,15 @@ func (c *ClientWithResponses) ListDppsWithResponse(ctx context.Context, params *
 //
 // `granularity` says which unit the passport stands for and therefore which identifiers it needs: `model` needs none of its own, `batch` needs a `batchIdentifier`, `item` needs a `serialIdentifier` as well. The lot is created from the product as it stands the first time its identifier is used and reused by every later passport of the same lot. A new lot is taken only of a product that passes every other required readiness check; until then the create answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`.
 //
-// A lot takes one `batch` passport and a unit one `item` passport. A second one is refused with 422 `DPP_BATCH_TAKEN` on `batch`, or `DPP_SERIAL_IDENTIFIER_TAKEN` on `serialIdentifier` for a serial the lot has already, and the message names the passport that stands for it. A voided or superseded passport still stands for its lot, and so does a draft, which is published instead. Item passports of a lot and its `batch` passport do not count against each other.
+// A product takes one `model` passport, a lot one `batch` passport and a unit one `item` passport. A second one is refused with 422 `DPP_UNLOCKABLE_ID_TAKEN` on `unlockableId`, `DPP_BATCH_TAKEN` on `batch`, or `DPP_SERIAL_IDENTIFIER_TAKEN` on `serialIdentifier` for a serial the lot has already, and the message names the passport that stands for it. A voided or superseded passport still stands for its product, lot or unit, and so does a draft, which is published instead, and a model passport the workspace issued by itself. Passports at different granularities do not count against each other.
+//
+// A product with variants gets no passport of its own: its passports go to the products at the ends of its family, the variants that have no variants themselves. A create naming one is refused with 422 `DPP_UNLOCKABLE_ID_HAS_VARIANTS` on `unlockableId`, and no lot is taken of it. A passport the product held before its first variant came stays as it is.
+//
+// A passport is issued of a product the caller writes: its own, or one its access groups give it to write. Any other product is refused with 422 `DPP_UNLOCKABLE_NOT_EDITABLE` on `unlockable`. A refused create writes nothing, the lot it names included.
 //
 // The answer carries `validation` and `publishBlocked` alongside the passport: the same report `POST /dpps/validate` produces, over the record that was just written, so a caller that skipped the dry run still sees what a publish would refuse or warn about.
 //
-// `propertyTypeIds` names the property types the passport carries, and it carries those alone. An entry naming no product property type refuses the whole write with 422 `DPP_PROPERTY_TYPES_REFUSED`, and no passport is created; the message names each, `fields.propertyTypeIds.unknown` lists them as sent.
+// `propertyTypeIds` names the property types the passport carries, and it carries those alone. An entry naming no product property type refuses the whole write with 422 `DPP_PROPERTY_TYPES_REFUSED`, and no passport is created; the message names each, `fields.propertyTypeIds.unknown` lists them as sent. A selection sent as no list, a single id among them, would carry every type, so it is refused with 422 `DPP_KEYS_REFUSED` and `fields.propertyTypeIds.error` `DPP_KEY_LIST_REQUIRED`.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -30244,11 +32419,15 @@ func (c *ClientWithResponses) CreateDppWithBodyWithResponse(ctx context.Context,
 //
 // `granularity` says which unit the passport stands for and therefore which identifiers it needs: `model` needs none of its own, `batch` needs a `batchIdentifier`, `item` needs a `serialIdentifier` as well. The lot is created from the product as it stands the first time its identifier is used and reused by every later passport of the same lot. A new lot is taken only of a product that passes every other required readiness check; until then the create answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`.
 //
-// A lot takes one `batch` passport and a unit one `item` passport. A second one is refused with 422 `DPP_BATCH_TAKEN` on `batch`, or `DPP_SERIAL_IDENTIFIER_TAKEN` on `serialIdentifier` for a serial the lot has already, and the message names the passport that stands for it. A voided or superseded passport still stands for its lot, and so does a draft, which is published instead. Item passports of a lot and its `batch` passport do not count against each other.
+// A product takes one `model` passport, a lot one `batch` passport and a unit one `item` passport. A second one is refused with 422 `DPP_UNLOCKABLE_ID_TAKEN` on `unlockableId`, `DPP_BATCH_TAKEN` on `batch`, or `DPP_SERIAL_IDENTIFIER_TAKEN` on `serialIdentifier` for a serial the lot has already, and the message names the passport that stands for it. A voided or superseded passport still stands for its product, lot or unit, and so does a draft, which is published instead, and a model passport the workspace issued by itself. Passports at different granularities do not count against each other.
+//
+// A product with variants gets no passport of its own: its passports go to the products at the ends of its family, the variants that have no variants themselves. A create naming one is refused with 422 `DPP_UNLOCKABLE_ID_HAS_VARIANTS` on `unlockableId`, and no lot is taken of it. A passport the product held before its first variant came stays as it is.
+//
+// A passport is issued of a product the caller writes: its own, or one its access groups give it to write. Any other product is refused with 422 `DPP_UNLOCKABLE_NOT_EDITABLE` on `unlockable`. A refused create writes nothing, the lot it names included.
 //
 // The answer carries `validation` and `publishBlocked` alongside the passport: the same report `POST /dpps/validate` produces, over the record that was just written, so a caller that skipped the dry run still sees what a publish would refuse or warn about.
 //
-// `propertyTypeIds` names the property types the passport carries, and it carries those alone. An entry naming no product property type refuses the whole write with 422 `DPP_PROPERTY_TYPES_REFUSED`, and no passport is created; the message names each, `fields.propertyTypeIds.unknown` lists them as sent.
+// `propertyTypeIds` names the property types the passport carries, and it carries those alone. An entry naming no product property type refuses the whole write with 422 `DPP_PROPERTY_TYPES_REFUSED`, and no passport is created; the message names each, `fields.propertyTypeIds.unknown` lists them as sent. A selection sent as no list, a single id among them, would carry every type, so it is refused with 422 `DPP_KEYS_REFUSED` and `fields.propertyTypeIds.error` `DPP_KEY_LIST_REQUIRED`.
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
@@ -30265,13 +32444,15 @@ func (c *ClientWithResponses) CreateDppWithResponse(ctx context.Context, params 
 //
 // Streams passports in as newline-delimited JSON, one passport per line, so a line of production writes one request instead of thousands. Each row is created and its first version published at the workspace's publish stage, as `POST /dpps/{code}/publish` signs a draft; the response reports one result line per input row.
 //
-// An optional first line `{"shared": {...}}` carries batch-wide defaults that each following row deep-merges over (a nested `"__replace__": true` opts a sub-tree out of the merge). An unsupported `shared.granularity` is rejected before any row is processed; per-row problems never abort the batch. A new row whose `propertyTypeIds` names no product property type comes back as `error` with `DPP_PROPERTY_TYPES_REFUSED`, the message naming each and `fields.propertyTypeIds.unknown` listing them, and nothing is created for it.
+// An optional first line `{"shared": {...}}` carries batch-wide defaults that each following row deep-merges over (a nested `"__replace__": true` opts a sub-tree out of the merge). An unsupported `shared.granularity` is rejected before any row is processed; per-row problems never abort the batch. A new row whose `propertyTypeIds` names no product property type comes back as `error` with `DPP_PROPERTY_TYPES_REFUSED`, the message naming each and `fields.propertyTypeIds.unknown` listing them, and nothing is created for it. A new row whose `propertyTypeIds` is no list comes back as `error` with `DPP_KEYS_REFUSED`; one in `shared` reaches every row it merges into, and each answers for itself.
 //
 // Row keys may be written in camelCase (`unlockableId`, `modelIdentifier`, `serialIdentifier`) or as the snake_case attribute names; `tenantData` is an alias for `dynamicData`. The keys inside `dynamicData` are left as they are.
 //
-// Resubmission is safe. Rows are deduplicated by natural key rather than by `Idempotency-Key`: at `model` granularity that is `modelIdentifier`, at `batch` it adds `batchIdentifier`, at `item` it adds `serialIdentifier`. A key that already maps to a published passport comes back as `duplicate`; one that maps to a passport that never published is resumed and published, so a retry after a partial failure finishes the job instead of duplicating it. A row whose key misses a passport its lot or unit already has (a row naming no `modelIdentifier`) is refused as `POST /dpps` refuses it, with `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`.
+// Resubmission is safe. Rows are deduplicated by natural key rather than by `Idempotency-Key`: at `model` granularity that is `modelIdentifier`, at `batch` it adds `batchIdentifier`, at `item` it adds `serialIdentifier`. A key that already maps to a published passport comes back as `duplicate`; one that maps to a passport that never published is resumed and published, so a retry after a partial failure finishes the job instead of duplicating it. A row whose key misses a passport its product, lot or unit already has (a row naming no `modelIdentifier`, or no `granularity` in itself or in `shared`) is refused as `POST /dpps` refuses it, with `DPP_UNLOCKABLE_ID_TAKEN`, `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`. A row naming a product with variants is refused with `DPP_UNLOCKABLE_ID_HAS_VARIANTS`, and the rest of the run goes on.
 //
-// Synchronous by default, capped at 500 rows and 5 MB. Send `Prefer: respond-async` to have the body persisted and processed by a background task instead: the response is `202` with a polling URL, and the caps rise to 50000 rows and 25 MB. Beyond that, batch across requests.
+// Synchronous by default, capped at 500 rows and 5 MB. Send `Prefer: respond-async` to have the body persisted and processed by a background task instead: the response is `202` with a polling URL, and the caps rise to 100000 rows and 50 MB, what a spreadsheet import takes. Beyond that, batch across requests.
+//
+// The rows count against the credential's bulk pace, `bulkItemsPerMinute` of `GET /me`, shared by all of its bulk calls and imports. The background task takes its rows at that pace and waits, with `pacedUntil` in its status, while the credential is past it. A synchronous call takes its rows before it writes any: where the pace has no room for them it answers 429 `DPP_BULK_RATE_LIMITED`, writes nothing, and `Retry-After` says in how many seconds they fit. A pace of 0 means none.
 //
 // Every row it creates is signed, so the call needs `dpp_publish` as well; without it the answer is 403 and nothing is created. Where the workspace reviews every publish through a review flow, the answer is 409 `DPP_REVIEW_REQUIRED` and nothing is created.
 //
@@ -30290,7 +32471,7 @@ func (c *ClientWithResponses) BulkCreateDppsWithBodyWithResponse(ctx context.Con
 //
 // The dry run of `POST /dpps/bulk`: the same newline-delimited JSON in, one result line per input row out, and nothing written. Rows are read exactly as the create reads them - the optional `{"shared": {...}}` envelope, the deep merge, the camelCase aliases - so a batch that validates here is the batch that will be created.
 //
-// Each row comes back as `valid`, `invalid`, `duplicate` or `error`, numbered from one in input order. No passport, lot or version is written, and the rows do not count against the consumer's bulk item cap, so a batch may be validated as often as it takes to get it right.
+// Each row comes back as `valid`, `invalid`, `duplicate` or `error`, numbered from one in input order. No passport, lot or version is written, and the rows do not count against the consumer's bulk pace, so a batch may be validated as often as it takes to get it right.
 //
 // Synchronous only, capped at 500 rows and 5 MB like the synchronous create. There is no asynchronous mode; `Prefer: respond-async` has no effect here.
 //
@@ -30307,7 +32488,7 @@ func (c *ClientWithResponses) ValidateDppsBulkWithBodyWithResponse(ctx context.C
 
 // GetBulkTaskWithResponse Poll an asynchronous bulk create
 //
-// Reports the status and progress of a bulk-create task, and once it completes the aggregate counts plus the detail of every rejected row. Only the consumer that submitted the task can read it; another consumer's task answers 404.
+// Reports the status and progress of a bulk-create task, and once it completes the aggregate counts plus the detail of every rejected row. While the task waits for the credential's bulk pace it is `pending` and `pacedUntil` says until when. Only the consumer that submitted the task can read it; another consumer's task answers 404.
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -30324,9 +32505,9 @@ func (c *ClientWithResponses) GetBulkTaskWithResponse(ctx context.Context, taskI
 //
 // What a passport of the product would need at the requested granularity, and what the product still lacks, before anything is written: the identifiers each granularity keys on, the fields of the lot a batch or item passport freezes from, the property types whose values ride on the dynamic surface instead of the signed snapshot, the properties a passport inherits from the product, the report a publish would produce today, and bodies ready to fill for a create and for a bulk row.
 //
-// `missing` lists what the product still lacks, one entry per open check, each naming where its answer is sent (the product field, such as `gtin` or `propertiesInput` keyed by `propertyTypeId`, with the operation that takes it, or the workspace), and `ready` says whether nothing required is open. Both are read off the check a new lot is refused by, so a product answered ready is one whose passport saves and publishes as the product stands.
+// `missing` lists what the product still lacks, one entry per open check, each naming where its answer is sent (the product field, such as `gtin` or `propertiesInput` keyed by `propertyTypeId`, with the operation that takes it, or the workspace), and `ready` says whether nothing required is open. Both are read off the check a new lot is refused by, so a product answered ready is one whose passport saves and publishes as the product stands. A product with variants gets no passport of its own and is never ready: `missing` holds one entry, with the code `DPP_UNLOCKABLE_ID_HAS_VARIANTS` the create answers, naming under `productIds` the variants that take its passports.
 //
-// Field names throughout are the wire names, so a program copies them as they are. Reading requirements writes nothing.
+// Field names throughout are the wire names, so a program copies them as they are. Reading requirements writes nothing. A product the caller may not issue a passport of answers 404, as an unknown one does.
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -30341,7 +32522,7 @@ func (c *ClientWithResponses) GetDppRequirementsWithResponse(ctx context.Context
 
 // ValidateDppWithBodyWithResponse Validate a DPP payload
 //
-// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot; a lot or a unit that has a passport already shows as `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`, and a new lot its product may not have yet as `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, beside the report that names the checks the product still fails. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.
+// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot; a product that has its model passport already shows as `DPP_UNLOCKABLE_ID_TAKEN`, a lot or a unit that has its passport as `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`, a product with variants as `DPP_UNLOCKABLE_ID_HAS_VARIANTS`, and a new lot its product may not have yet as `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, beside the report that names the checks the product still fails. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.
 //
 // A payload the platform would refuse is a plain `200` with `valid: false` - the request succeeded, the passport would not. Only a missing permission, a missing `dpp` object, an unreadable body, a granularity the workspace does not issue and a `propertyTypeIds` entry naming no property type answer with an error status, the last two as the create answers them.
 //
@@ -30358,7 +32539,7 @@ func (c *ClientWithResponses) ValidateDppWithBodyWithResponse(ctx context.Contex
 
 // ValidateDppWithResponse Validate a DPP payload
 //
-// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot; a lot or a unit that has a passport already shows as `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`, and a new lot its product may not have yet as `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, beside the report that names the checks the product still fails. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.
+// The dry run of `POST /dpps`: the same body, answered with the model errors the payload carries and the report a publish would produce, and nothing written. A separate path rather than a flag on the create, so a misspelled option can never mint a signed passport. A batch or item payload is checked against the lot it would freeze from without creating that lot; a product that has its model passport already shows as `DPP_UNLOCKABLE_ID_TAKEN`, a lot or a unit that has its passport as `DPP_BATCH_TAKEN` or `DPP_SERIAL_IDENTIFIER_TAKEN`, a product with variants as `DPP_UNLOCKABLE_ID_HAS_VARIANTS`, and a new lot its product may not have yet as `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, beside the report that names the checks the product still fails. A passport that has not published is read against the product as it stands, which is the copy a publish would freeze.
 //
 // A payload the platform would refuse is a plain `200` with `valid: false` - the request succeeded, the passport would not. Only a missing permission, a missing `dpp` object, an unreadable body, a granularity the workspace does not issue and a `propertyTypeIds` entry naming no property type answer with an error status, the last two as the create answers them.
 //
@@ -30373,9 +32554,24 @@ func (c *ClientWithResponses) ValidateDppWithResponse(ctx context.Context, body 
 	return ParseValidateDppResponse(rsp)
 }
 
+// GetDppFileWithResponse Read a restricted file of a passport
+//
+// The copy of a file a restricted field of the passport names, at the address the signed `href` of that field's Link points to. A reader opens it where one of the passport's versions holds a restricted row the reader may see whose Link names the file by its digest and type, the newest version first; the read is entered in the passport's access log. A program sends its user token or consumer token and any Accept header but HTML; a browser without a reader is sent to the passport sign-in page and back. The type comes from the extension; images and PDFs come inline, every other kind as an attachment, under the document's name in the reader's language.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /dpps/{code}/files/{name} (the `GetDppFile` operationId).
+func (c *ClientWithResponses) GetDppFileWithResponse(ctx context.Context, code string, name string, reqEditors ...RequestEditorFn) (*GetDppFileResponse, error) {
+	rsp, err := c.GetDppFile(ctx, code, name, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetDppFileResponse(rsp)
+}
+
 // GetDppPrivateDynamicDataWithResponse Read the restricted dynamic data
 //
-// The passport's live readings in the legitimate-interest tier that this reader may see. The public dynamic-data document carries the public tier only; this answer has the same shape, holds only the restricted rows, and is signed with the same platform key, so a reader verifies it the same way and merges the two. A key is served when it names a published property type in the legitimate-interest tier, no property type sharing its vocabulary term sits in the authorities or internal tier, and the reader belongs to an access group of every legitimate-interest type sharing it. An authority consumer reads without a group. A passport holding no such key answers 404; an authenticated reader who may see none of them gets 204. An unauthenticated request answers 401 with the `X-Auth-Fields` challenge the passport page uses to sign a reader in.
+// The passport's live readings in the legitimate-interest tier that this reader may see. The public dynamic-data document carries the public tier only; this answer has the same shape, holds only the restricted rows, and is signed with the same platform key, so a reader verifies it the same way and merges the two. A key is served when it names a published property type in the legitimate-interest tier, no property type sharing its vocabulary term sits in the authorities or internal tier, and the reader belongs to an access group of every legitimate-interest type sharing it. An authority consumer reads without a group. A passport holding no such key answers 404; an authenticated reader who may see none of them gets 204. A reader signs in with a user token, a consumer token, or the session of the workspace's passport sign-in page; an unauthenticated request answers 401 with an `X-Auth-Url` header naming that page on the host the request came to.
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -30390,7 +32586,7 @@ func (c *ClientWithResponses) GetDppPrivateDynamicDataWithResponse(ctx context.C
 
 // GetDppPrivatePropertiesWithResponse Read the private properties of several versions
 //
-// The reader-derived confidential rows for several versions of one passport in a single round-trip. Name the versions with `?versions=1,3,7`; at most 50 are derived per request. A version is left out when it carries no confidential rows or the reader may see none of them, so the answer only contains versions where the reader gains rows beyond the public passport. An unauthenticated request answers 401 with the `X-Auth-Fields` challenge the passport page uses to sign a reader in.
+// The reader-derived confidential rows for several versions of one passport in a single round-trip. Name the versions with `?versions=1,3,7`; at most 50 are derived per request. A version is left out when it carries no legitimate-interest or on-demand rows, the workspace keeps no copy of them, or the reader may see none of them, so the answer only contains versions where the reader gains rows beyond the public passport. A reader signs in with a user token, a consumer token, or the session of the workspace's passport sign-in page; an unauthenticated request answers 401 with an `X-Auth-Url` header naming that page on the host the request came to.
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -30405,7 +32601,7 @@ func (c *ClientWithResponses) GetDppPrivatePropertiesWithResponse(ctx context.Co
 
 // GetDppVersionPrivatePropertiesWithResponse Read the private properties of one version
 //
-// The confidential rows of one passport version, as an ecdsa-sd-2023 derived Verifiable Credential carrying only what this reader is entitled to see. This is the address the public manifest's `privateProperties.url` points at. A reader who is authenticated but entitled to none of this version's restricted rows gets 204, which is deliberately distinct from an empty document. An unauthenticated request answers 401 with the `X-Auth-Fields` challenge the passport page uses to sign a reader in.
+// The confidential rows of one passport version, as an ecdsa-sd-2023 derived Verifiable Credential carrying only what this reader is entitled to see. This is the address the public manifest's `privateProperties.url` points at. A reader who is authenticated but entitled to none of this version's restricted rows gets 204, which is deliberately distinct from an empty document. A reader signs in with a user token, a consumer token, or the session of the workspace's passport sign-in page; an unauthenticated request answers 401 with an `X-Auth-Url` header naming that page on the host the request came to.
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -30420,7 +32616,7 @@ func (c *ClientWithResponses) GetDppVersionPrivatePropertiesWithResponse(ctx con
 
 // PublishDppWithBodyWithResponse Publish a DPP
 //
-// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. A `draft` that has not published moves to the workspace's publish stage first (`manufactured` or `placed_on_market`, a setting of the workspace), so the version signs that status and `GET /dpps/{code}` answers it; a refused publish leaves it at `draft`. Every other passport keeps its status. Publishing needs `dpp_publish` beside `dpp_write`; without it the answer is 403. A passport whose publish review was approved waits ready to publish, and the person who asked for the review publishes it here through a credential of theirs with `dpp_write` alone, and so does any caller with `dpp_publish`. That publish carries the reason the request gave, and `reason` is not read. The approval stands until the product changes; after that the call is judged like any other publish. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
+// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. A `draft` that has not published moves to the workspace's publish stage first (`manufactured` or `placed_on_market`, a setting of the workspace), so the version signs that status and `GET /dpps/{code}` answers it; a refused publish leaves it at `draft`. Every other passport keeps its status. Publishing needs `dpp_publish` beside `dpp_write`; without it the answer is 403, as it is for a passport the caller does not write. Approving a publish review signs the passport at once (`POST /tasks/{id}/approve`). A passport may still keep an approval a review stored without signing; the person who asked for that review publishes it here through a credential of theirs with `dpp_write` alone, and so does any caller with `dpp_publish`. That publish carries the reason the request gave, and `reason` is not read. The approval stands until the product changes; after that the call is judged like any other publish. Publishing is refused when the snapshot fails a mandatory validation rule, when the signing key or the workspace context is missing, and for a passport that has not published once the workspace has published as many passports as its plan includes; a new version of a published passport takes no slot. While the workspace's plan is unpaid, after a failed payment or once the plan ended, every publish is refused, new versions included. On a paid plan the publish also seals a copy in the Vault that cannot be changed or deleted for ten years; a version published during a trial is sealed there once the workspace moves to a paid plan.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -30435,7 +32631,7 @@ func (c *ClientWithResponses) PublishDppWithBodyWithResponse(ctx context.Context
 
 // PublishDppWithResponse Publish a DPP
 //
-// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. A `draft` that has not published moves to the workspace's publish stage first (`manufactured` or `placed_on_market`, a setting of the workspace), so the version signs that status and `GET /dpps/{code}` answers it; a refused publish leaves it at `draft`. Every other passport keeps its status. Publishing needs `dpp_publish` beside `dpp_write`; without it the answer is 403. A passport whose publish review was approved waits ready to publish, and the person who asked for the review publishes it here through a credential of theirs with `dpp_write` alone, and so does any caller with `dpp_publish`. That publish carries the reason the request gave, and `reason` is not read. The approval stands until the product changes; after that the call is judged like any other publish. Publishing is refused when the snapshot fails a mandatory validation rule, and when the signing key or the workspace context is missing.
+// Mints a fresh signed snapshot for the passport and registers it as the next version. Addressed by the public passport code printed on QR codes, not by the record id. A passport that has not published takes the product as it stands before it signs, and the copy freezes there, so a product corrected afterwards reaches the passport through a correction. A `draft` that has not published moves to the workspace's publish stage first (`manufactured` or `placed_on_market`, a setting of the workspace), so the version signs that status and `GET /dpps/{code}` answers it; a refused publish leaves it at `draft`. Every other passport keeps its status. Publishing needs `dpp_publish` beside `dpp_write`; without it the answer is 403, as it is for a passport the caller does not write. Approving a publish review signs the passport at once (`POST /tasks/{id}/approve`). A passport may still keep an approval a review stored without signing; the person who asked for that review publishes it here through a credential of theirs with `dpp_write` alone, and so does any caller with `dpp_publish`. That publish carries the reason the request gave, and `reason` is not read. The approval stands until the product changes; after that the call is judged like any other publish. Publishing is refused when the snapshot fails a mandatory validation rule, when the signing key or the workspace context is missing, and for a passport that has not published once the workspace has published as many passports as its plan includes; a new version of a published passport takes no slot. While the workspace's plan is unpaid, after a failed payment or once the plan ended, every publish is refused, new versions included. On a paid plan the publish also seals a copy in the Vault that cannot be changed or deleted for ten years; a version published during a trial is sealed there once the workspace moves to a paid plan.
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
@@ -30450,7 +32646,7 @@ func (c *ClientWithResponses) PublishDppWithResponse(ctx context.Context, code s
 
 // DeleteDppWithResponse Delete a DPP
 //
-// Deletes a never-published draft you own. A published DPP cannot be deleted - its signed snapshot stays in the ten-year archive and its URL may already be printed on QR codes - and answers 422 instead. The lifecycle exit for a published DPP is void or supersede.
+// Deletes a never-published draft you own. A published DPP cannot be deleted - its signed snapshot stays on record and its URL may already be printed on QR codes - and answers 422 `DPP_PUBLISHED` instead, the message naming the reason. The lifecycle exit for a published DPP is void or supersede. A test workspace keeps nothing on record, so there a published DPP is deleted as well, together with its versions, its events and its public copies, and its slot of the plan comes free; one the EU DPP registry knows still answers 422.
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -30480,11 +32676,11 @@ func (c *ClientWithResponses) GetDppWithResponse(ctx context.Context, id Id, par
 
 // UpdateDppWithBodyWithResponse Update a DPP
 //
-// Updates a DPP you own. Admins can update any DPP.
+// Updates a passport the caller writes: one it issued, or one its access groups give it to write. Any other answers 403. Admins can update any DPP.
 //
 // The answer carries `validation` and `publishBlocked` alongside the passport: the same report `POST /dpps/validate` produces, over the record as it now stands, so an update that would block the next publish says so at once.
 //
-// A `propertyTypeIds` entry naming no product property type refuses the whole update with 422 `DPP_PROPERTY_TYPES_REFUSED`, and the passport keeps the types it had.
+// A `propertyTypeIds` entry naming no product property type refuses the whole update with 422 `DPP_PROPERTY_TYPES_REFUSED`, and the passport keeps the types it had; a selection sent as no list with 422 `DPP_KEYS_REFUSED`.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -30499,11 +32695,11 @@ func (c *ClientWithResponses) UpdateDppWithBodyWithResponse(ctx context.Context,
 
 // UpdateDppWithResponse Update a DPP
 //
-// Updates a DPP you own. Admins can update any DPP.
+// Updates a passport the caller writes: one it issued, or one its access groups give it to write. Any other answers 403. Admins can update any DPP.
 //
 // The answer carries `validation` and `publishBlocked` alongside the passport: the same report `POST /dpps/validate` produces, over the record as it now stands, so an update that would block the next publish says so at once.
 //
-// A `propertyTypeIds` entry naming no product property type refuses the whole update with 422 `DPP_PROPERTY_TYPES_REFUSED`, and the passport keeps the types it had.
+// A `propertyTypeIds` entry naming no product property type refuses the whole update with 422 `DPP_PROPERTY_TYPES_REFUSED`, and the passport keeps the types it had; a selection sent as no list with 422 `DPP_KEYS_REFUSED`.
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
@@ -30546,9 +32742,9 @@ func (c *ClientWithResponses) CorrectDppWithResponse(ctx context.Context, id Id,
 	return ParseCorrectDppResponse(rsp)
 }
 
-// UpdateDppDynamicDataWithBodyWithResponse Update dynamic data
+// UpdateDppDynamicDataWithBodyWithResponse Update changing values (e.g. battery health)
 //
-// Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none). A key naming a published legitimate-interest type is served to the readers its access groups admit by `GET /dpps/{code}/private_dynamic_data`; every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.
+// Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none). A key naming a published legitimate-interest type is served to the readers its access groups admit by `GET /dpps/{code}/private_dynamic_data`; every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission. A credential sets values on the passports the group granting `dpp_dynamic` gives it to write, by the group's reach, and one acting for a person on the passports that person writes; any other passport answers 403 `DPP_FORBIDDEN`, one the credential reads included.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -30561,9 +32757,9 @@ func (c *ClientWithResponses) UpdateDppDynamicDataWithBodyWithResponse(ctx conte
 	return ParseUpdateDppDynamicDataResponse(rsp)
 }
 
-// UpdateDppDynamicDataWithResponse Update dynamic data
+// UpdateDppDynamicDataWithResponse Update changing values (e.g. battery health)
 //
-// Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none). A key naming a published legitimate-interest type is served to the readers its access groups admit by `GET /dpps/{code}/private_dynamic_data`; every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission.
+// Writes high-frequency telemetry (state of health, cycle count, and similar) onto the passport. Dynamic data is mutable state: it is carried on a separately signed surface, so a write mints no version and records no lifecycle event. A version seals only the reading the passport holds when its copy of the product data is frozen (its first publish, or a correction), as a property row whose `dynamic` flag is true. Keys you send are merged into the stored set; a key sent as an explicit null is removed. Every key is stored, and the public dynamic-data document carries only the keys that name a published property type in the public tier, by its vocabulary term (or its id when it has none). A key naming a published legitimate-interest type is served to the readers its access groups admit by `GET /dpps/{code}/private_dynamic_data`; every other key stays with the API. At most 250 keys per passport and 4096 bytes per value, both measured on the result of the merge - so removing keys in the same request frees room under the cap. Requires the dpp_dynamic permission. A credential sets values on the passports the group granting `dpp_dynamic` gives it to write, by the group's reach, and one acting for a person on the passports that person writes; any other passport answers 403 `DPP_FORBIDDEN`, one the credential reads included.
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
@@ -30597,9 +32793,13 @@ func (c *ClientWithResponses) ListDppEventsWithResponse(ctx context.Context, id 
 //
 // Recalling a unit is a status change to `suspended`. The passport stays readable and keeps answering a scan, which is the point: whoever holds the unit learns of the recall when they scan its code. Voiding is a different operation, for a unit that no longer exists.
 //
-// An event is a pending draft until it is sealed. Send `publish: true` to seal it into the Vault at once (a status change is sealed into a new registered version, which needs `dpp_publish` as well); leave it out to keep the draft open. At most one pending event exists per passport, so a second call while one is open answers 409 until it is sealed or discarded.
+// An event is a pending draft until it is sealed. Send `publish: true` to seal it at once: a status change is sealed into a new registered version, which needs `dpp_publish` as well; any other event is sealed as it stands, and on a paid plan written to the Vault. Leave it out to keep the draft open. A refused seal takes the status change back, so the passport stays as it was and the same call can be sent again once the cause is settled. At most one pending event exists per passport, so a second call while one is open answers 409 until it is sealed or discarded.
 //
 // Versioned event types are rejected here: they stand for operations that mint a version, and those have their own endpoints (void, supersede, reissue, publish).
+//
+// The note (`description`) of a status change is a note on a passport event: it appears on the public passport in every language and cannot be changed or removed once saved, so it must contain no personal data (names, email addresses, phone numbers). The note of any other type here stays internal. `descriptionLocale` names the language the note is written in; without it the note takes the language of the request.
+//
+// A credential records on the passports the group granting `dpp_events` gives it to write: under **Own and team's** its own and those of the group's members, under **All** every passport, under **Selected** the picked ones, and a partner grant on its one passport. One acting for a person records on the passports that person writes. Any other passport answers 403 `DPP_FORBIDDEN`, one the credential reads included.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -30618,9 +32818,13 @@ func (c *ClientWithResponses) AppendDppEventWithBodyWithResponse(ctx context.Con
 //
 // Recalling a unit is a status change to `suspended`. The passport stays readable and keeps answering a scan, which is the point: whoever holds the unit learns of the recall when they scan its code. Voiding is a different operation, for a unit that no longer exists.
 //
-// An event is a pending draft until it is sealed. Send `publish: true` to seal it into the Vault at once (a status change is sealed into a new registered version, which needs `dpp_publish` as well); leave it out to keep the draft open. At most one pending event exists per passport, so a second call while one is open answers 409 until it is sealed or discarded.
+// An event is a pending draft until it is sealed. Send `publish: true` to seal it at once: a status change is sealed into a new registered version, which needs `dpp_publish` as well; any other event is sealed as it stands, and on a paid plan written to the Vault. Leave it out to keep the draft open. A refused seal takes the status change back, so the passport stays as it was and the same call can be sent again once the cause is settled. At most one pending event exists per passport, so a second call while one is open answers 409 until it is sealed or discarded.
 //
 // Versioned event types are rejected here: they stand for operations that mint a version, and those have their own endpoints (void, supersede, reissue, publish).
+//
+// The note (`description`) of a status change is a note on a passport event: it appears on the public passport in every language and cannot be changed or removed once saved, so it must contain no personal data (names, email addresses, phone numbers). The note of any other type here stays internal. `descriptionLocale` names the language the note is written in; without it the note takes the language of the request.
+//
+// A credential records on the passports the group granting `dpp_events` gives it to write: under **Own and team's** its own and those of the group's members, under **All** every passport, under **Selected** the picked ones, and a partner grant on its one passport. One acting for a person records on the passports that person writes. Any other passport answers 403 `DPP_FORBIDDEN`, one the credential reads included.
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
@@ -30680,7 +32884,7 @@ func (c *ClientWithResponses) GetDppStatsWithResponse(ctx context.Context, id Id
 
 // SupersedeDppWithBodyWithResponse Supersede a DPP
 //
-// Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. Superseding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
+// Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. A product, a lot or a unit takes one passport at each granularity (see `POST /dpps`), so the successor stands for another product, lot or unit. Superseding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -30695,7 +32899,7 @@ func (c *ClientWithResponses) SupersedeDppWithBodyWithResponse(ctx context.Conte
 
 // SupersedeDppWithResponse Supersede a DPP
 //
-// Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. Superseding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
+// Points this passport at the successor that replaced it - a warranty exchange, a replacement issue, a re-serialised unit. The successor must already exist and be visible to the same workspace. A product, a lot or a unit takes one passport at each granularity (see `POST /dpps`), so the successor stands for another product, lot or unit. Superseding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
@@ -30725,7 +32929,7 @@ func (c *ClientWithResponses) ListDppVersionsWithResponse(ctx context.Context, i
 
 // VoidDppWithBodyWithResponse Void a DPP
 //
-// Marks the passport as voided - the unit it stands for no longer exists: it was destroyed, never shipped, or scrapped after a recall. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. This is not how a unit is recalled: a unit still out there is moved to `suspended` through a status change, so its passport goes on answering a scan with the recall. Voiding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
+// Marks the passport as voided - the unit it stands for no longer exists: it was destroyed, never shipped, or scrapped after a recall. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. This is not how a unit is recalled: a unit still out there is moved to `suspended` through a status change, so its passport goes on answering a scan with the recall. Voiding cannot be undone, and a voided passport still stands for its product, lot or unit, which never takes another passport at its granularity (see `POST /dpps`). A consumer also needs write access to the passport itself (`dpp_write`).
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -30740,7 +32944,7 @@ func (c *ClientWithResponses) VoidDppWithBodyWithResponse(ctx context.Context, i
 
 // VoidDppWithResponse Void a DPP
 //
-// Marks the passport as voided - the unit it stands for no longer exists: it was destroyed, never shipped, or scrapped after a recall. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. This is not how a unit is recalled: a unit still out there is moved to `suspended` through a status change, so its passport goes on answering a scan with the recall. Voiding cannot be undone. A consumer also needs write access to the passport itself (`dpp_write`).
+// Marks the passport as voided - the unit it stands for no longer exists: it was destroyed, never shipped, or scrapped after a recall. The passport and its published snapshots stay readable; readers see that it no longer describes a unit in the field. This is not how a unit is recalled: a unit still out there is moved to `suspended` through a status change, so its passport goes on answering a scan with the recall. Voiding cannot be undone, and a voided passport still stands for its product, lot or unit, which never takes another passport at its granularity (see `POST /dpps`). A consumer also needs write access to the passport itself (`dpp_write`).
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
@@ -30998,7 +33202,7 @@ func (c *ClientWithResponses) CreateFormSubmissionWithResponse(ctx context.Conte
 //
 // Turns a scanned QR code into credentials that can write to that one passport. A workshop, certifier or recycler registered as a long-lived API consumer with no passports of its own calls this with the code it scanned and gets back the client credentials of a short-lived child consumer, exchanged for a bearer token exactly like its own. The child may act on that single passport for 24 hours; the caller keeps its own workspace-wide standing.
 //
-// The child inherits only the event-write permissions the caller itself holds, out of `dpp_events`, `dpp_history` and `dpp_dynamic`, so a grant can never widen access. A caller that holds none of them is refused. A caller already confined to a set of passports can only grant one from that set.
+// The child inherits only the event-write permissions the caller itself holds, out of `dpp_events`, `dpp_history` and `dpp_dynamic`, and of those the ones the caller may use on that passport: `dpp_history` where it reads the passport, `dpp_events` and `dpp_dynamic` where it records on it itself. So a grant can never widen access. A caller that holds none of them is refused, and so is one holding `dpp_events` or `dpp_dynamic` for a passport it records on with neither (403 `SCOPE_FORBIDDEN`). A caller already confined to a set of passports can only grant one from that set.
 //
 // Regulator consumers do not use this flow - their access is platform-issued and workspace-wide - and are refused.
 //
@@ -31017,7 +33221,7 @@ func (c *ClientWithResponses) CreateGrantWithBodyWithResponse(ctx context.Contex
 //
 // Turns a scanned QR code into credentials that can write to that one passport. A workshop, certifier or recycler registered as a long-lived API consumer with no passports of its own calls this with the code it scanned and gets back the client credentials of a short-lived child consumer, exchanged for a bearer token exactly like its own. The child may act on that single passport for 24 hours; the caller keeps its own workspace-wide standing.
 //
-// The child inherits only the event-write permissions the caller itself holds, out of `dpp_events`, `dpp_history` and `dpp_dynamic`, so a grant can never widen access. A caller that holds none of them is refused. A caller already confined to a set of passports can only grant one from that set.
+// The child inherits only the event-write permissions the caller itself holds, out of `dpp_events`, `dpp_history` and `dpp_dynamic`, and of those the ones the caller may use on that passport: `dpp_history` where it reads the passport, `dpp_events` and `dpp_dynamic` where it records on it itself. So a grant can never widen access. A caller that holds none of them is refused, and so is one holding `dpp_events` or `dpp_dynamic` for a passport it records on with neither (403 `SCOPE_FORBIDDEN`). A caller already confined to a set of passports can only grant one from that set.
 //
 // Regulator consumers do not use this flow - their access is platform-issued and workspace-wide - and are refused.
 //
@@ -31034,7 +33238,7 @@ func (c *ClientWithResponses) CreateGrantWithResponse(ctx context.Context, param
 
 // ListHelpWithResponse Search the help articles
 //
-// The articles the application manager shows a person: where a setting lives, what a button does, which step comes before which. Give `term` the question in the reader's own words: every word is matched on its own and the words a question is phrased with are dropped, so a whole sentence finds what a keyword would. Hits come back best first, a title match ahead of one in the body.
+// The articles the Application Manager shows a person: where a setting lives, what a button does, which step comes before which. Give `term` the question in the reader's own words: every word is matched on its own and the words a question is phrased with are dropped, so a whole sentence finds what a keyword would. Hits come back best first, a title match ahead of one in the body.
 //
 // An answer with no hits says the articles cover nothing by that name. To tell that apart from a workspace whose help content has not arrived yet, call again with no `term`: the total is then the whole set this workspace can read.
 //
@@ -31087,9 +33291,9 @@ func (c *ClientWithResponses) ListImportsWithResponse(ctx context.Context, param
 
 // CreateImportWithBodyWithResponse Upload a spreadsheet to import
 //
-// One multipart request, the shape every upload API has: `curl -F file=@catalogue.xlsx -F dataType=components`. The importer reads xlsx, csv, ods and json. When every column resolves on its own (the canonical headers of the template `GET /imports/example` serves, or a JSON file whose entries carry the canonical keys) the import comes back `mapped`. Otherwise it is `fresh` and the answer carries the `preview` to write the mapping from; send that with `PUT /imports/{id}/mappings`, or along with the file as `mappings`.
+// One multipart request, the shape every upload API has: `curl -F file=@catalogue.xlsx -F dataType=components`. The importer reads xlsx, csv, ods and json. When every column resolves on its own (the canonical headers of the template `GET /imports/example` serves, or a JSON file whose entries carry the canonical keys) the import comes back `mapped`. Otherwise it is `fresh` and waits for a mapping, sent with `PUT /imports/{id}/mappings` or along with the file as `mappings`. Either way the answer carries the `preview`: every column with its header, the key a mapping names it by and what the upload found, so a caller sees what was mapped and can override a column it finds by its header.
 //
-// `options[auto]=true` imports straight away: the upload takes the mapping the mapping form would prefill, a column nothing matches becoming a property type under its own heading, and comes back `validating`; a clean validation goes on into the import on its own, one with errors stops at `validated` for the caller to decide. An automatic run publishes what it imports unless `options[published]=false` says otherwise. Poll the import until `status` is `completed`, `validated` or `failed`. A required attribute no column covers answers 422 `IMPORT_MAPPING_INCOMPLETE` with nothing saved.
+// `options[auto]=true` imports straight away: the upload takes the mapping the mapping form would prefill, a column nothing matches becoming a property type under its own heading (named in the workspace's default language when the file is written in another one and the translation answers within a few seconds, with the heading kept as its name in the file's language), and comes back `validating`; a clean validation goes on into the import on its own, one with errors stops at `validated` for the caller to decide. An automatic run publishes what it imports unless `options[published]=false` says otherwise. Poll the import until `status` is `completed`, `validated` or `failed`. A required attribute no column covers answers 422 `IMPORT_MAPPING_INCOMPLETE` with nothing saved.
 //
 // The upload is held for a limited time; once it is gone, the run endpoints answer 410 `IMPORT_EXPIRED`.
 //
@@ -31136,7 +33340,7 @@ func (c *ClientWithResponses) GetImportSupplierFormWithResponse(ctx context.Cont
 
 // GetImportWithResponse Poll an import
 //
-// The status, the counts, the preview while the import is `fresh`, the progress while a task runs, and the problems found so far, both grouped by cause and one entry per failing row. Another consumer's import answers 404.
+// The status, the counts, the preview while the import still takes a mapping (`fresh`, `mapped`, `validated`), the progress while a task runs, and the problems found so far, both grouped by cause and one entry per failing row. Another consumer's import answers 404.
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -31153,7 +33357,7 @@ func (c *ClientWithResponses) GetImportWithResponse(ctx context.Context, id Id, 
 //
 // Writes the rows in the background, after a backup a revert can restore from. Send `options.backup` as `false` to run without one. A passport import takes no backup and cannot be reverted, since a passport's versions are signed and its way out is a void. Poll the `statusUrl` until `status` is `completed` or `failed`.
 //
-// Besides `import_access` this needs the write permission of the data type: `component_write` for components, `product_access` for products, `dpp_bulk_write` for passports. The rows count against the consumer's bulk item cap for the minute.
+// Besides `import_access` this needs the write permission of the data type: `component_write` for components, `product_access` for products, `dpp_bulk_write` for passports. The rows count against the consumer's bulk pace (`bulkItemsPerMinute` of `GET /me`): the run is never refused for it, and writes its rows at that pace.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -31170,7 +33374,7 @@ func (c *ClientWithResponses) ExecuteImportWithBodyWithResponse(ctx context.Cont
 //
 // Writes the rows in the background, after a backup a revert can restore from. Send `options.backup` as `false` to run without one. A passport import takes no backup and cannot be reverted, since a passport's versions are signed and its way out is a void. Poll the `statusUrl` until `status` is `completed` or `failed`.
 //
-// Besides `import_access` this needs the write permission of the data type: `component_write` for components, `product_access` for products, `dpp_bulk_write` for passports. The rows count against the consumer's bulk item cap for the minute.
+// Besides `import_access` this needs the write permission of the data type: `component_write` for components, `product_access` for products, `dpp_bulk_write` for passports. The rows count against the consumer's bulk pace (`bulkItemsPerMinute` of `GET /me`): the run is never refused for it, and writes its rows at that pace.
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
@@ -31185,7 +33389,7 @@ func (c *ClientWithResponses) ExecuteImportWithResponse(ctx context.Context, id 
 
 // MapImportWithBodyWithResponse Map the columns of an import
 //
-// One action per column, in the vocabulary the preview lists. Every required attribute must be covered. `create_new` adds a property type to the workspace for good, so the API only creates one when the mapping says so. The import moves to `mapped`.
+// One action per column, in the vocabulary the preview lists, each under the preview's `column`. The mapping replaces the stored one whole, so it names every column to import, the ones the upload mapped on its own included, and overrides what the upload chose for any of them. Every required attribute must be covered. `create_new` adds a property type to the workspace for good, so the API only creates one when the mapping says so. The import moves to `mapped`.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -31200,7 +33404,7 @@ func (c *ClientWithResponses) MapImportWithBodyWithResponse(ctx context.Context,
 
 // MapImportWithResponse Map the columns of an import
 //
-// One action per column, in the vocabulary the preview lists. Every required attribute must be covered. `create_new` adds a property type to the workspace for good, so the API only creates one when the mapping says so. The import moves to `mapped`.
+// One action per column, in the vocabulary the preview lists, each under the preview's `column`. The mapping replaces the stored one whole, so it names every column to import, the ones the upload mapped on its own included, and overrides what the upload chose for any of them. Every required attribute must be covered. `create_new` adds a property type to the workspace for good, so the API only creates one when the mapping says so. The import moves to `mapped`.
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
@@ -31211,6 +33415,23 @@ func (c *ClientWithResponses) MapImportWithResponse(ctx context.Context, id Id, 
 		return nil, err
 	}
 	return ParseMapImportResponse(rsp)
+}
+
+// RerunImportWithResponse Run an import again
+//
+// A finished import (`completed`, `failed` or `reverted`) keeps the mapping it ran with, so its counts, row errors, backup and revert stay the record of that run. Its file runs once more as a new import: a copy of the same file with the same column mapping, `contentLocale`, value separator, options and data type, `mapped` and ready for `POST /imports/{id}/validate` or a new mapping. The new import belongs to the caller and has its own counts, row errors, backup and revert.
+//
+// A row that runs again finds the record it wrote, so an unchanged row counts as unchanged and a record deleted since is created again. A passport already signed is left as it is.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /imports/{id}/rerun (the `RerunImport` operationId).
+func (c *ClientWithResponses) RerunImportWithResponse(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*RerunImportResponse, error) {
+	rsp, err := c.RerunImport(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseRerunImportResponse(rsp)
 }
 
 // RevertImportWithBodyWithResponse Revert an import
@@ -31273,9 +33494,9 @@ func (c *ClientWithResponses) ListLanguagesWithResponse(ctx context.Context, req
 	return ParseListLanguagesResponse(rsp)
 }
 
-// ListLeadgensWithResponse List lead generation campaigns
+// ListLeadgensWithResponse List campaigns
 //
-// Returns leadgen campaigns owned by the authenticated user. Campaigns belong to people, not to API consumers, so this is a user-token surface.
+// Returns campaigns owned by the authenticated user. Campaigns belong to people, not to API consumers, so this is a user-token surface.
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -31288,9 +33509,9 @@ func (c *ClientWithResponses) ListLeadgensWithResponse(ctx context.Context, para
 	return ParseListLeadgensResponse(rsp)
 }
 
-// CreateLeadgenWithBodyWithResponse Create a leadgen campaign
+// CreateLeadgenWithBodyWithResponse Create a campaign
 //
-// Creates a new lead generation campaign with an overlay and form.
+// Creates a new campaign with its copy and, for the form action, a form it names by formId or a new one.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -31303,9 +33524,9 @@ func (c *ClientWithResponses) CreateLeadgenWithBodyWithResponse(ctx context.Cont
 	return ParseCreateLeadgenResponse(rsp)
 }
 
-// CreateLeadgenWithResponse Create a leadgen campaign
+// CreateLeadgenWithResponse Create a campaign
 //
-// Creates a new lead generation campaign with an overlay and form.
+// Creates a new campaign with its copy and, for the form action, a form it names by formId or a new one.
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
@@ -31318,7 +33539,7 @@ func (c *ClientWithResponses) CreateLeadgenWithResponse(ctx context.Context, bod
 	return ParseCreateLeadgenResponse(rsp)
 }
 
-// DeleteLeadgenWithResponse Delete a leadgen campaign
+// DeleteLeadgenWithResponse Delete a campaign
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -31331,7 +33552,9 @@ func (c *ClientWithResponses) DeleteLeadgenWithResponse(ctx context.Context, id 
 	return ParseDeleteLeadgenResponse(rsp)
 }
 
-// UpdateLeadgenWithBodyWithResponse Update a leadgen campaign
+// UpdateLeadgenWithBodyWithResponse Update a campaign
+//
+// Writes the fields the body names. With a picture (imageId) the introduction may stay empty.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -31344,7 +33567,9 @@ func (c *ClientWithResponses) UpdateLeadgenWithBodyWithResponse(ctx context.Cont
 	return ParseUpdateLeadgenResponse(rsp)
 }
 
-// UpdateLeadgenWithResponse Update a leadgen campaign
+// UpdateLeadgenWithResponse Update a campaign
+//
+// Writes the fields the body names. With a picture (imageId) the introduction may stay empty.
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
@@ -31357,9 +33582,9 @@ func (c *ClientWithResponses) UpdateLeadgenWithResponse(ctx context.Context, id 
 	return ParseUpdateLeadgenResponse(rsp)
 }
 
-// GetLeadgenRequestsWithResponse Export leadgen form requests
+// GetLeadgenRequestsWithResponse Export a campaign's form requests
 //
-// Exports form submissions for a leadgen campaign as CSV or XLSX.
+// Exports form submissions for a campaign as CSV or XLSX.
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -31391,7 +33616,7 @@ func (c *ClientWithResponses) GetLocalizationWithResponse(ctx context.Context, r
 //
 // The lots batch and item passports freeze from, newest first. A lot is created with the first passport that names its identifier and reused by every later passport of the same lot, so there is nothing to create here: to issue a passport of a new lot, name the lot in `batchIdentifier` on `POST /dpps` or in the shared line of a bulk create. A new lot is taken only of a product that passes every other required readiness check; until then that create answers `DPP_BATCH_PRODUCT_NOT_READY` on `batch`, and `GET /dpps/requirements` shows what the product still lacks.
 //
-// Narrow the list with `product_id` to see which lots a product already has, or with `identifier` to find the lot a passport names. `sort`, `created_since` and `updated_since` order and bound it for a poll.
+// Narrow the list with `product_id` to see which lots a product already has, or with `identifier` to find the lot a passport names. `product_id` and `serial` together answer the lot holding a serial number, the one a scan of that unit's tag opens; `serial` without `product_id` answers 422 `PARAMETER_MISSING`, since a serial number is unique only within its product's GTIN. `sort`, `created_since` and `updated_since` order and bound it for a poll.
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -31417,6 +33642,101 @@ func (c *ClientWithResponses) GetLotWithResponse(ctx context.Context, id int, re
 		return nil, err
 	}
 	return ParseGetLotResponse(rsp)
+}
+
+// ListLotCodesWithResponse List the codes of a lot's tags
+//
+// What a label converter encodes on each tag of the lot, one row per serial number the lot holds, in the order they were given, then one per unit passport of the lot no serial number covers. A unit passport the caller does not read is left out, and a serial number it covers gets the serial number's own link. Pages take up to 1000 rows.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /lots/{id}/codes (the `ListLotCodes` operationId).
+func (c *ClientWithResponses) ListLotCodesWithResponse(ctx context.Context, id int, params *ListLotCodesParams, reqEditors ...RequestEditorFn) (*ListLotCodesResponse, error) {
+	rsp, err := c.ListLotCodes(ctx, id, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListLotCodesResponse(rsp)
+}
+
+// ListLotSerialsWithResponse List the serial numbers of a lot
+//
+// The entries of serial numbers the lot holds, in the order they were given, each a range as written or a list of single serial numbers. A scan of a tag carrying the product's GTIN and one of these serial numbers opens the lot's passport.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /lots/{id}/serials (the `ListLotSerials` operationId).
+func (c *ClientWithResponses) ListLotSerialsWithResponse(ctx context.Context, id int, params *ListLotSerialsParams, reqEditors ...RequestEditorFn) (*ListLotSerialsResponse, error) {
+	rsp, err := c.ListLotSerials(ctx, id, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListLotSerialsResponse(rsp)
+}
+
+// CreateLotSerialsWithBodyWithResponse Add serial numbers to a lot
+//
+// Gives the lot the serial numbers its units carry, the ones the ERP or the label supplier reserved for the run. Each element of `serials` is one entry, in one of three forms:
+//
+// - a range, the counting part in square brackets and the rest kept as written: `NW-[000001-100000]` is NW-000001 to NW-100000, zeros kept; `LOT7-[1-5000]-B` counts without padding;
+// - a first and a last serial number with a spaced hyphen between, differing in one run of digits: `NW-000001 - NW-100000`;
+// - a single serial number, or the EPC URN of one naming the product's GTIN: `NW-000412`, `urn:epc:id:sgtin:4012345.067890.412`.
+//
+// A serial number takes the characters of GS1 AI 21, letters, digits and “!"%&'()*+,-./:;<=>?_“, up to 20 of them. A line holds at most 1000000 serial numbers and a call at most 100000 lines. The product needs a GTIN, since a scan finds the lot by GTIN and serial number.
+//
+// The call is taken whole or not at all. A serial number held by another lot of the product, a range overlapping the serial numbers of any lot, this one included, and a serial number with a unit passport in another lot refuse it with 422 `SERIALS_INVALID`, and `fields.serials.lines` names each refused line with its place in `serials`, counted from 1, the entry as sent and why: the first 1000 of them, `count` all. A single serial number the lot holds already is skipped and counted in `skippedCount`. While another change to the product's serial numbers runs the answer is 409 `SERIALS_BUSY`; try again a moment later.
+//
+// Whoever writes the lot's product adds and removes its serial numbers, as in the Application Manager: a credential with `product_access` at the full tier of its access group, on a product its group gives it to write, and a person with backend access whose groups open to the API give them the product. A repeated range is refused as overlapping its own lot, so send an `Idempotency-Key` to repeat a call safely.
+//
+// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /lots/{id}/serials (the `CreateLotSerials` operationId).
+func (c *ClientWithResponses) CreateLotSerialsWithBodyWithResponse(ctx context.Context, id int, params *CreateLotSerialsParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateLotSerialsResponse, error) {
+	rsp, err := c.CreateLotSerialsWithBody(ctx, id, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateLotSerialsResponse(rsp)
+}
+
+// CreateLotSerialsWithResponse Add serial numbers to a lot
+//
+// Gives the lot the serial numbers its units carry, the ones the ERP or the label supplier reserved for the run. Each element of `serials` is one entry, in one of three forms:
+//
+// - a range, the counting part in square brackets and the rest kept as written: `NW-[000001-100000]` is NW-000001 to NW-100000, zeros kept; `LOT7-[1-5000]-B` counts without padding;
+// - a first and a last serial number with a spaced hyphen between, differing in one run of digits: `NW-000001 - NW-100000`;
+// - a single serial number, or the EPC URN of one naming the product's GTIN: `NW-000412`, `urn:epc:id:sgtin:4012345.067890.412`.
+//
+// A serial number takes the characters of GS1 AI 21, letters, digits and “!"%&'()*+,-./:;<=>?_“, up to 20 of them. A line holds at most 1000000 serial numbers and a call at most 100000 lines. The product needs a GTIN, since a scan finds the lot by GTIN and serial number.
+//
+// The call is taken whole or not at all. A serial number held by another lot of the product, a range overlapping the serial numbers of any lot, this one included, and a serial number with a unit passport in another lot refuse it with 422 `SERIALS_INVALID`, and `fields.serials.lines` names each refused line with its place in `serials`, counted from 1, the entry as sent and why: the first 1000 of them, `count` all. A single serial number the lot holds already is skipped and counted in `skippedCount`. While another change to the product's serial numbers runs the answer is 409 `SERIALS_BUSY`; try again a moment later.
+//
+// Whoever writes the lot's product adds and removes its serial numbers, as in the Application Manager: a credential with `product_access` at the full tier of its access group, on a product its group gives it to write, and a person with backend access whose groups open to the API give them the product. A repeated range is refused as overlapping its own lot, so send an `Idempotency-Key` to repeat a call safely.
+//
+// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /lots/{id}/serials (the `CreateLotSerials` operationId).
+func (c *ClientWithResponses) CreateLotSerialsWithResponse(ctx context.Context, id int, params *CreateLotSerialsParams, body CreateLotSerialsJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateLotSerialsResponse, error) {
+	rsp, err := c.CreateLotSerials(ctx, id, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateLotSerialsResponse(rsp)
+}
+
+// DeleteLotSerialsWithResponse Remove serial numbers from a lot
+//
+// Removes one entry of serial numbers from the lot. A scan of a tag carrying one of them then opens the product's newest lot, as a serial number no lot holds does. Allowed on a lot whose passport is published, so a mistake can be put right; nothing signed depends on it. The same rights as adding them.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with DELETE /lots/{id}/serials/{entryId} (the `DeleteLotSerials` operationId).
+func (c *ClientWithResponses) DeleteLotSerialsWithResponse(ctx context.Context, id int, entryId int, reqEditors ...RequestEditorFn) (*DeleteLotSerialsResponse, error) {
+	rsp, err := c.DeleteLotSerials(ctx, id, entryId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteLotSerialsResponse(rsp)
 }
 
 // GetMeWithResponse What the presented token allows
@@ -31451,13 +33771,17 @@ func (c *ClientWithResponses) ListMediafilesWithResponse(ctx context.Context, pa
 
 // CreateMediafileWithBodyWithResponse Upload a mediafile
 //
-// Uploads a new image file. Requires the product mediafiles feature. Any valid credential reaches it; the upload is owned by the caller.
+// Uploads a new file: a picture for a gallery, or a document such as a certificate that a link field of a product or a component names by its token `file:<id>`. Requires the product mediafiles feature. Any valid credential reaches it; the upload is owned by the caller.
+//
+// The bytes are public unless `public` is false: then they go to the protected store, which only the Application Manager reaches, and the answer carries no `url`. A gallery takes pictures alone and shows them wherever the record is public, so a file meant for a gallery stays public. A protected file is named in a link field, or put in a gallery, by the caller that uploaded it, and by a credential acting for the person who did; a public file by anyone.
 //
 // A browser and the command line send the file itself as `multipart/form-data`. A caller that can only send JSON sends the bytes as base64 instead, bare or as a `data:` URI, in a body of the shape `{"mediafile": {"data": "iVBORw0KGgo...", "name": "Rain shell hero shot"}}`.
 //
 // A caller holding a link sends `mediafile.url` and the server reads the bytes itself, which is the practical way in for anything larger than a small image. Only https, only an address outside this network, at most three redirects, and the same size cap; a refusal says which of those it was.
 //
 // The kind of file is read from the bytes, not from anything the caller says about them, and the same size, readability and content rules apply whichever way it arrived.
+//
+// A document's details may come along: its type, issuer, number and validity. `PUT /mediafiles/{id}` changes them later.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -31472,13 +33796,17 @@ func (c *ClientWithResponses) CreateMediafileWithBodyWithResponse(ctx context.Co
 
 // CreateMediafileWithResponse Upload a mediafile
 //
-// Uploads a new image file. Requires the product mediafiles feature. Any valid credential reaches it; the upload is owned by the caller.
+// Uploads a new file: a picture for a gallery, or a document such as a certificate that a link field of a product or a component names by its token `file:<id>`. Requires the product mediafiles feature. Any valid credential reaches it; the upload is owned by the caller.
+//
+// The bytes are public unless `public` is false: then they go to the protected store, which only the Application Manager reaches, and the answer carries no `url`. A gallery takes pictures alone and shows them wherever the record is public, so a file meant for a gallery stays public. A protected file is named in a link field, or put in a gallery, by the caller that uploaded it, and by a credential acting for the person who did; a public file by anyone.
 //
 // A browser and the command line send the file itself as `multipart/form-data`. A caller that can only send JSON sends the bytes as base64 instead, bare or as a `data:` URI, in a body of the shape `{"mediafile": {"data": "iVBORw0KGgo...", "name": "Rain shell hero shot"}}`.
 //
 // A caller holding a link sends `mediafile.url` and the server reads the bytes itself, which is the practical way in for anything larger than a small image. Only https, only an address outside this network, at most three redirects, and the same size cap; a refusal says which of those it was.
 //
 // The kind of file is read from the bytes, not from anything the caller says about them, and the same size, readability and content rules apply whichever way it arrived.
+//
+// A document's details may come along: its type, issuer, number and validity. `PUT /mediafiles/{id}` changes them later.
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
@@ -31493,7 +33821,7 @@ func (c *ClientWithResponses) CreateMediafileWithResponse(ctx context.Context, b
 
 // DeleteMediafileWithResponse Delete a mediafile
 //
-// Takes the file out of the library. The row is trashed rather than destroyed, so a person can restore it in the application manager. A file a record still shows answers 409 `MEDIAFILE_IN_USE` and names those records; take it off them first. The caller must own the file.
+// Takes the file out of the library. The row is trashed rather than destroyed, so a person can restore it in the Application Manager. A file a record's gallery still shows answers 409 `MEDIAFILE_IN_USE` and names those records; take it out of them first. A file a link field of a product or a component names, in place of a web address, answers 409 `MEDIAFILE_DELETE_REFUSED`, ahead of the galleries showing it; point those fields elsewhere first. The caller must own the file.
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -31504,6 +33832,40 @@ func (c *ClientWithResponses) DeleteMediafileWithResponse(ctx context.Context, i
 		return nil, err
 	}
 	return ParseDeleteMediafileResponse(rsp)
+}
+
+// UpdateMediafileWithBodyWithResponse Update a mediafile
+//
+// Changes the name of a file and a document's details: its type, issuer, number and validity, such as a renewed certificate's new end. The bytes stay as they are. Requires the product mediafiles feature, and the caller must own the file.
+//
+// A language version, a file of a key restricted to some languages, shows the details of the file of its key for every language and takes none of its own: details sent for it answer 422. A field sent as null or an empty string is cleared.
+//
+// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with PUT /mediafiles/{id} (the `UpdateMediafile` operationId).
+func (c *ClientWithResponses) UpdateMediafileWithBodyWithResponse(ctx context.Context, id Id, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateMediafileResponse, error) {
+	rsp, err := c.UpdateMediafileWithBody(ctx, id, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateMediafileResponse(rsp)
+}
+
+// UpdateMediafileWithResponse Update a mediafile
+//
+// Changes the name of a file and a document's details: its type, issuer, number and validity, such as a renewed certificate's new end. The bytes stay as they are. Requires the product mediafiles feature, and the caller must own the file.
+//
+// A language version, a file of a key restricted to some languages, shows the details of the file of its key for every language and takes none of its own: details sent for it answer 422. A field sent as null or an empty string is cleared.
+//
+// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with PUT /mediafiles/{id} (the `UpdateMediafile` operationId).
+func (c *ClientWithResponses) UpdateMediafileWithResponse(ctx context.Context, id Id, body UpdateMediafileJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateMediafileResponse, error) {
+	rsp, err := c.UpdateMediafile(ctx, id, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateMediafileResponse(rsp)
 }
 
 // GetNavigationWithResponse Get navigation items
@@ -31523,7 +33885,7 @@ func (c *ClientWithResponses) GetNavigationWithResponse(ctx context.Context, req
 
 // AuthorizeClientWithResponse Ask a person in the workspace for access
 //
-// The authorization request (RFC 6749, section 4.1.1) with PKCE (RFC 7636). Open it in the person's browser. The server checks the request, writes it down, and sends the person to the consent screen of the application manager on this same host, where they sign in if they are not already and see the requested permissions named one by one. Allow sends them back to `redirect_uri` with a `code`; Refuse sends them back with `error=access_denied`.
+// The authorization request (RFC 6749, section 4.1.1) with PKCE (RFC 7636). Open it in the person's browser. The server checks the request, writes it down, and sends the person to the consent screen of the Application Manager on this same host, where they sign in if they are not already and see the requested permissions named one by one. Allow sends them back to `redirect_uri` with a `code`; Refuse sends them back with `error=access_denied`.
 //
 // PKCE is mandatory. `code_challenge` is required and `code_challenge_method` has to be `S256`; `plain` is refused. The code that comes back lives 60 seconds and is spent once, at the token endpoint, with the verifier the challenge was derived from.
 //
@@ -31827,7 +34189,7 @@ func (c *ClientWithResponses) ListProductCategoriesWithResponse(ctx context.Cont
 
 // ListProductGtinsWithResponse Search products by GTIN
 //
-// Returns products matching a GTIN prefix. Requires the GTIN feature to be enabled.
+// Returns products matching a GTIN prefix, out of those `GET /products` answers the caller with. Requires the GTIN feature to be enabled. A credential holding `product_access` receives the products its access groups reach, drafts included; where the storefront shows its lists or analyses, every other reader receives the published products; where it shows neither, a credential without `product_access` answers 403 naming the key. A row carries no claim token.
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -31878,7 +34240,7 @@ func (c *ClientWithResponses) ListProductsWithResponse(ctx context.Context, para
 //
 // Creates a new product. The authenticated user or API consumer becomes the owner. A product needs a brand, named alongside it (an existing brand of that name is used, a new one created and owned by the caller), and at least one component under componentsInput. A consumer needs `product_access`, and to create the brand it names also `brand_access`, as `POST /brands` asks; without it a new brand name answers 403 `BRAND_FORBIDDEN`.
 //
-// A credential acting for a person (one granted on the consent screen, or the assistant's) names only the categories, the brand and the manufacturers that person reads in the application manager, and creates a brand only where that person may; anything else answers 422 naming `categories`, `brand` or `properties`.
+// A credential acting for a person (one granted on the consent screen, or the assistant's) names only the categories, the brand and the manufacturers that person reads in the Application Manager, and creates a brand only where that person may; anything else answers 422 naming `categories`, `brand` or `properties`.
 //
 // A product naming a parent under `parentId` is created as its variant: it starts as a copy of the parent, with its brand, categories, components, images and property values, and takes the parent's later changes. Such a body needs a name only. The brand, categories, components and property values it names besides become the variant's own where they differ from the parent's, and the variant's read marks them `pinned`. The parent is a product the caller may update, since a variant holds its parent's delete back: a parent the caller cannot read answers 422 `PRODUCT_PARENT_NOT_FOUND`, one it cannot update 403. A variant takes its mandatory values from its parent, so its create asks for none of them.
 //
@@ -31897,7 +34259,7 @@ func (c *ClientWithResponses) CreateProductWithBodyWithResponse(ctx context.Cont
 //
 // Creates a new product. The authenticated user or API consumer becomes the owner. A product needs a brand, named alongside it (an existing brand of that name is used, a new one created and owned by the caller), and at least one component under componentsInput. A consumer needs `product_access`, and to create the brand it names also `brand_access`, as `POST /brands` asks; without it a new brand name answers 403 `BRAND_FORBIDDEN`.
 //
-// A credential acting for a person (one granted on the consent screen, or the assistant's) names only the categories, the brand and the manufacturers that person reads in the application manager, and creates a brand only where that person may; anything else answers 422 naming `categories`, `brand` or `properties`.
+// A credential acting for a person (one granted on the consent screen, or the assistant's) names only the categories, the brand and the manufacturers that person reads in the Application Manager, and creates a brand only where that person may; anything else answers 422 naming `categories`, `brand` or `properties`.
 //
 // A product naming a parent under `parentId` is created as its variant: it starts as a copy of the parent, with its brand, categories, components, images and property values, and takes the parent's later changes. Such a body needs a name only. The brand, categories, components and property values it names besides become the variant's own where they differ from the parent's, and the variant's read marks them `pinned`. The parent is a product the caller may update, since a variant holds its parent's delete back: a parent the caller cannot read answers 422 `PRODUCT_PARENT_NOT_FOUND`, one it cannot update 403. A variant takes its mandatory values from its parent, so its create asks for none of them.
 //
@@ -31991,7 +34353,7 @@ func (c *ClientWithResponses) GetProductWithResponse(ctx context.Context, id Id,
 
 // UpdateProductWithBodyWithResponse Update a product
 //
-// Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are. A brand name no brand carries creates the brand, which asks a consumer for `brand_access` (403 `BRAND_FORBIDDEN` without it); a credential acting for a person names only what that person reads, as on create. On a variant, a value the body changes becomes the variant's own and a value it sends as it was read goes on following the parent. `parentId` is left out or names the parent the product has; any other answers 422 `PRODUCT_PARENT_READ_ONLY`, since a variant moves to another parent through a spreadsheet import only. A `propertiesInput` key naming no property type, or, for a credential, a type only the members of a plan edit, or a type of an access group the credential (or the person it acts for) is not in, refuses the whole write with 422 `PRODUCT_PROPERTIES_REFUSED`, whose message names each and why; `fields.propertiesInput.unknown`, `fields.propertiesInput.planGated` and `fields.propertiesInput.groupGated` list the keys as sent.
+// Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are. A brand name no brand carries creates the brand, which asks a consumer for `brand_access` (403 `BRAND_FORBIDDEN` without it); a credential acting for a person names only what that person reads, as on create. On a variant, a value the body changes becomes the variant's own and a value it sends as it was read goes on following the parent. `parentId` is left out or names the parent the product has; any other answers 422 `PRODUCT_PARENT_READ_ONLY`, since a variant moves to another parent through a spreadsheet import only. A `propertiesInput` key naming no property type, or, for a credential, a type only the members of a plan edit, or a type of an access group the credential (or the person it acts for) is not in, or is in through a membership whose record scope names other products, refuses the whole write with 422 `PRODUCT_PROPERTIES_REFUSED`, whose message names each and why; `fields.propertiesInput.unknown`, `fields.propertiesInput.planGated` and `fields.propertiesInput.groupGated` list the keys as sent. A link value naming a file by `file:<id>` lists the file on the product; an id naming no file of the library refuses the whole write with 422 `FILE_REFERENCE_UNKNOWN`. The product's read sent back under `product` passes as it was read; a key of it that differs from the product as it stands, a key the write takes nowhere, or a list or an object sent as something else refuses the whole write with 422 `PRODUCT_KEYS_REFUSED`, one field per key as on create, so a body read before another write changed the product names what moved.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -32006,7 +34368,7 @@ func (c *ClientWithResponses) UpdateProductWithBodyWithResponse(ctx context.Cont
 
 // UpdateProductWithResponse Update a product
 //
-// Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are. A brand name no brand carries creates the brand, which asks a consumer for `brand_access` (403 `BRAND_FORBIDDEN` without it); a credential acting for a person names only what that person reads, as on create. On a variant, a value the body changes becomes the variant's own and a value it sends as it was read goes on following the parent. `parentId` is left out or names the parent the product has; any other answers 422 `PRODUCT_PARENT_READ_ONLY`, since a variant moves to another parent through a spreadsheet import only. A `propertiesInput` key naming no property type, or, for a credential, a type only the members of a plan edit, or a type of an access group the credential (or the person it acts for) is not in, refuses the whole write with 422 `PRODUCT_PROPERTIES_REFUSED`, whose message names each and why; `fields.propertiesInput.unknown`, `fields.propertiesInput.planGated` and `fields.propertiesInput.groupGated` list the keys as sent.
+// Updates a product you own. Admins can update any product. `propertiesInput` replaces the values of every property type it names and leaves the types it does not name as they are. A brand name no brand carries creates the brand, which asks a consumer for `brand_access` (403 `BRAND_FORBIDDEN` without it); a credential acting for a person names only what that person reads, as on create. On a variant, a value the body changes becomes the variant's own and a value it sends as it was read goes on following the parent. `parentId` is left out or names the parent the product has; any other answers 422 `PRODUCT_PARENT_READ_ONLY`, since a variant moves to another parent through a spreadsheet import only. A `propertiesInput` key naming no property type, or, for a credential, a type only the members of a plan edit, or a type of an access group the credential (or the person it acts for) is not in, or is in through a membership whose record scope names other products, refuses the whole write with 422 `PRODUCT_PROPERTIES_REFUSED`, whose message names each and why; `fields.propertiesInput.unknown`, `fields.propertiesInput.planGated` and `fields.propertiesInput.groupGated` list the keys as sent. A link value naming a file by `file:<id>` lists the file on the product; an id naming no file of the library refuses the whole write with 422 `FILE_REFERENCE_UNKNOWN`. The product's read sent back under `product` passes as it was read; a key of it that differs from the product as it stands, a key the write takes nowhere, or a list or an object sent as something else refuses the whole write with 422 `PRODUCT_KEYS_REFUSED`, one field per key as on create, so a body read before another write changed the product names what moved.
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
@@ -32021,7 +34383,7 @@ func (c *ClientWithResponses) UpdateProductWithResponse(ctx context.Context, id 
 
 // UpdateProductMediafilesWithBodyWithResponse Update product mediafile assignments
 //
-// Replaces all mediafile assignments on a product with the given list in the specified order, as one change. On a variant, a list that differs from its parent's becomes the variant's own, and the list sent as it was read goes on following the parent. Requires the product mediafiles feature to be enabled.
+// Replaces all mediafile assignments on a product with the given list in the specified order, as one change. On a variant, a list that differs from its parent's becomes the variant's own, and the list sent as it was read goes on following the parent. The gallery takes pictures alone (images and SVG); a list naming any other file answers 422 `MEDIAFILE_NOT_A_PICTURE` and changes nothing. A list naming a picture held for review, or a protected one that the caller did not upload and the gallery does not hold already, answers 404 `MEDIAFILE_NOT_FOUND` and changes nothing; an id naming no file is left out. Requires the product mediafiles feature to be enabled.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -32036,7 +34398,7 @@ func (c *ClientWithResponses) UpdateProductMediafilesWithBodyWithResponse(ctx co
 
 // UpdateProductMediafilesWithResponse Update product mediafile assignments
 //
-// Replaces all mediafile assignments on a product with the given list in the specified order, as one change. On a variant, a list that differs from its parent's becomes the variant's own, and the list sent as it was read goes on following the parent. Requires the product mediafiles feature to be enabled.
+// Replaces all mediafile assignments on a product with the given list in the specified order, as one change. On a variant, a list that differs from its parent's becomes the variant's own, and the list sent as it was read goes on following the parent. The gallery takes pictures alone (images and SVG); a list naming any other file answers 422 `MEDIAFILE_NOT_A_PICTURE` and changes nothing. A list naming a picture held for review, or a protected one that the caller did not upload and the gallery does not hold already, answers 404 `MEDIAFILE_NOT_FOUND` and changes nothing; an id naming no file is left out. Requires the product mediafiles feature to be enabled.
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
@@ -32217,7 +34579,7 @@ func (c *ClientWithResponses) LogoutSessionWithResponse(ctx context.Context, req
 
 // LoginSessionWithBodyWithResponse Login (create session)
 //
-// Authenticates a user with email/alias and password. Returns a JWT bearer token for subsequent requests. Optionally assigns unclaimed products to the user via `productTokens`.
+// Authenticates a user with email/alias and password. Returns a JWT bearer token for subsequent requests. Optionally assigns unclaimed products to the user via `productTokens`. A user who set up a second factor sends its code as `otp`, from the authenticator app or one of the backup codes; without it the answer is 401 `MFA_REQUIRED`, with a wrong one 401 `MFA_INVALID`, and no token is issued. A user whose only second factor is a security key or a passkey, which this sign-in cannot ask for, gets 403 `MFA_METHOD_UNSUPPORTED` before any code is read; they sign in through OAuth or an API consumer, or add an authenticator app. Staff who owe a password of their own or the second factor the workspace demands get 403 `ACCOUNT_SETUP_REQUIRED` until they set it up in the Application Manager.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -32232,7 +34594,7 @@ func (c *ClientWithResponses) LoginSessionWithBodyWithResponse(ctx context.Conte
 
 // LoginSessionWithResponse Login (create session)
 //
-// Authenticates a user with email/alias and password. Returns a JWT bearer token for subsequent requests. Optionally assigns unclaimed products to the user via `productTokens`.
+// Authenticates a user with email/alias and password. Returns a JWT bearer token for subsequent requests. Optionally assigns unclaimed products to the user via `productTokens`. A user who set up a second factor sends its code as `otp`, from the authenticator app or one of the backup codes; without it the answer is 401 `MFA_REQUIRED`, with a wrong one 401 `MFA_INVALID`, and no token is issued. A user whose only second factor is a security key or a passkey, which this sign-in cannot ask for, gets 403 `MFA_METHOD_UNSUPPORTED` before any code is read; they sign in through OAuth or an API consumer, or add an authenticator app. Staff who owe a password of their own or the second factor the workspace demands get 403 `ACCOUNT_SETUP_REQUIRED` until they set it up in the Application Manager.
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
@@ -32247,7 +34609,7 @@ func (c *ClientWithResponses) LoginSessionWithResponse(ctx context.Context, body
 
 // RefreshSessionWithResponse Refresh session token
 //
-// Refreshes the session nonce and returns a new bearer token. Requires a valid existing token.
+// Refreshes the session nonce and returns a new bearer token. Requires a valid existing token. A user who owes the Application Manager a password of their own or a second factor renews none (403 `ACCOUNT_SETUP_REQUIRED`).
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -32264,7 +34626,7 @@ func (c *ClientWithResponses) RefreshSessionWithResponse(ctx context.Context, re
 //
 // The tasks of one list, newest first. A credential that acts for a person (a grant the person approved, or their assistant) reads the lists as that person. Any other credential reads them as itself: it finds the tasks it asked for under `requested` and `done`, and nothing waits on it.
 //
-// - `mine` (the default): what the person has to do: the tasks given to them, the ones they claimed, and the group tasks and reviews nobody has claimed yet. A request for information waiting for its supplier is left out. The number beside the bell in the application manager counts these.
+// - `mine` (the default): what the person has to do: the tasks given to them, the ones they claimed, and the group tasks and reviews nobody has claimed yet. A request for information waiting for its supplier is left out. The number beside the bell in the Application Manager counts these.
 // - `waiting`: the person's requests for information while they wait for the supplier, and the tasks they take part in that someone else has claimed.
 // - `requested`: the open tasks the caller asked of others.
 // - `done`: the finished and cancelled tasks the caller took part in.
@@ -32286,7 +34648,7 @@ func (c *ClientWithResponses) ListTasksWithResponse(ctx context.Context, params 
 
 // CreateTaskWithBodyWithResponse Create a task
 //
-// Asks a person or an access group for something. The task is a request (`kind` custom) whatever the body says, and names the caller as the one who asked: the person a grant or an assistant acts for, or the credential itself. Every person the task reaches sees it at once in the application manager and hears of it in the bell; the morning mail carries it too.
+// Asks a person or an access group for something. The task is a request (`kind` custom) whatever the body says, and names the caller as the one who asked: the person a grant or an assistant acts for, or the credential itself. Every person the task reaches sees it at once in the Application Manager and hears of it in the bell; the morning mail carries it too.
 //
 // Find the `assigneeKey` with `GET /tasks/assignees`. A task may link one record the caller reads (`subjectKey`) and carry a `priority`.
 //
@@ -32303,7 +34665,7 @@ func (c *ClientWithResponses) CreateTaskWithBodyWithResponse(ctx context.Context
 
 // CreateTaskWithResponse Create a task
 //
-// Asks a person or an access group for something. The task is a request (`kind` custom) whatever the body says, and names the caller as the one who asked: the person a grant or an assistant acts for, or the credential itself. Every person the task reaches sees it at once in the application manager and hears of it in the bell; the morning mail carries it too.
+// Asks a person or an access group for something. The task is a request (`kind` custom) whatever the body says, and names the caller as the one who asked: the person a grant or an assistant acts for, or the credential itself. Every person the task reaches sees it at once in the Application Manager and hears of it in the bell; the morning mail carries it too.
 //
 // Find the `assigneeKey` with `GET /tasks/assignees`. A task may link one record the caller reads (`subjectKey`) and carry a `priority`.
 //
@@ -32320,7 +34682,7 @@ func (c *ClientWithResponses) CreateTaskWithResponse(ctx context.Context, params
 
 // ListTaskAssigneesWithResponse List task assignees
 //
-// Whom a task may go to, matching `term`, as the `key` `POST /tasks` takes and the name the application manager shows. Groups with access to the application manager come first, then the people who can open it; 25 at most.
+// Whom a task may go to, matching `term`, as the `key` `POST /tasks` takes and the name the Application Manager shows. Groups with access to the Application Manager come first, then the people who can open it; 25 at most.
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -32380,7 +34742,7 @@ func (c *ClientWithResponses) UpdateTaskWithResponse(ctx context.Context, id Id,
 
 // ApproveTaskWithBodyWithResponse Approve a review
 //
-// Approves the step a review stands at, as the person the credential acts for. A review walks the steps of the workspace's review flow, or the one step of everyone who may sign passports where no flow fits. Approving a middle step passes the request on to the next step and signs nothing. Approving the last step carries the request out in the person's name, which needs `dpp_publish` in the credential's scope beside `task_access`; without it the answer is 403 and the review stays open. A publish review then approves the passport, which waits ready to publish for the person who asked (`POST /dpps/{code}/publish`) until the product changes; a review of an event's seal or of a correction signs at once.
+// Approves the step a review stands at, as the person the credential acts for. A review walks the steps of the workspace's review flow, or the one step of everyone who may sign passports where no flow fits. Approving a middle step passes the request on to the next step and signs nothing. Approving the last step carries the request out in the person's name, which needs `dpp_publish` in the credential's scope beside `task_access`; without it the answer is 403 and the review stays open. A publish review signs the passport then, as a review of an event's seal or of a correction does. A publish review whose DPP or product changed after the request is refused (`TASK_SOURCE_CHANGED`), and so is one whose DPP recorded an event since (`TASK_EVENT_RECORDED`); the review stays open, and a new request to publish the DPP replaces it.
 //
 // Send the `step` the caller read, so a press on a review that moved on in between decides nothing (`TASK_STEP_MOVED`). The person who asked for a review decides no step of it (`TASK_OWN_REQUEST`). A publish the validator or the workspace refuses answers as `POST /dpps/{code}/publish` does, and the review stays open.
 //
@@ -32397,7 +34759,7 @@ func (c *ClientWithResponses) ApproveTaskWithBodyWithResponse(ctx context.Contex
 
 // ApproveTaskWithResponse Approve a review
 //
-// Approves the step a review stands at, as the person the credential acts for. A review walks the steps of the workspace's review flow, or the one step of everyone who may sign passports where no flow fits. Approving a middle step passes the request on to the next step and signs nothing. Approving the last step carries the request out in the person's name, which needs `dpp_publish` in the credential's scope beside `task_access`; without it the answer is 403 and the review stays open. A publish review then approves the passport, which waits ready to publish for the person who asked (`POST /dpps/{code}/publish`) until the product changes; a review of an event's seal or of a correction signs at once.
+// Approves the step a review stands at, as the person the credential acts for. A review walks the steps of the workspace's review flow, or the one step of everyone who may sign passports where no flow fits. Approving a middle step passes the request on to the next step and signs nothing. Approving the last step carries the request out in the person's name, which needs `dpp_publish` in the credential's scope beside `task_access`; without it the answer is 403 and the review stays open. A publish review signs the passport then, as a review of an event's seal or of a correction does. A publish review whose DPP or product changed after the request is refused (`TASK_SOURCE_CHANGED`), and so is one whose DPP recorded an event since (`TASK_EVENT_RECORDED`); the review stays open, and a new request to publish the DPP replaces it.
 //
 // Send the `step` the caller read, so a press on a review that moved on in between decides nothing (`TASK_STEP_MOVED`). The person who asked for a review decides no step of it (`TASK_OWN_REQUEST`). A publish the validator or the workspace refuses answers as `POST /dpps/{code}/publish` does, and the review stays open.
 //
@@ -32414,7 +34776,7 @@ func (c *ClientWithResponses) ApproveTaskWithResponse(ctx context.Context, id Id
 
 // GetTaskAttachmentWithResponse Download a file of a task
 //
-// One of the files a task carries, the `url` its `attachments` name. Only those who see the task read its files, so a task the caller has no part in answers 404, and so does a file the task does not carry (`MEDIAFILE_NOT_FOUND`). Images and PDFs come inline, every other kind as an attachment. Files are added in the application manager.
+// One of the files a task carries, the `url` its `attachments` name. Only those who see the task read its files, so a task the caller has no part in answers 404, and so does a file the task does not carry (`MEDIAFILE_NOT_FOUND`). Images and PDFs come inline, every other kind as an attachment. Files are added in the Application Manager.
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -32457,15 +34819,30 @@ func (c *ClientWithResponses) ClaimTaskWithResponse(ctx context.Context, id Id, 
 	return ParseClaimTaskResponse(rsp)
 }
 
-// CompleteTaskWithResponse Complete a task
+// CompleteTaskWithBodyWithResponse Complete a task
 //
-// Marks an open request as done. The person it is for may, or a current member of its group, who claims it in the same move; a task someone else holds stays theirs. Only a person works on a task, so a credential acting as itself is refused with `TASK_NOT_PERMITTED`, and a review ends in a decision in the application manager (`TASK_NOT_CUSTOM`). The one who asked hears of it in the bell.
+// Marks an open request as done. The person it is for may, or a current member of its group, who claims it in the same move; a task someone else holds stays theirs. Only a person works on a task, so a credential acting as itself is refused with `TASK_NOT_PERMITTED`, and a review ends in a decision in the Application Manager (`TASK_NOT_CUSTOM`). The one who asked hears of it in the bell, with the optional `note` as the reply.
 //
-// Returns a wrapper object for the known response body format(s).
+// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
 // Corresponds with POST /tasks/{id}/complete (the `CompleteTask` operationId).
-func (c *ClientWithResponses) CompleteTaskWithResponse(ctx context.Context, id Id, reqEditors ...RequestEditorFn) (*CompleteTaskResponse, error) {
-	rsp, err := c.CompleteTask(ctx, id, reqEditors...)
+func (c *ClientWithResponses) CompleteTaskWithBodyWithResponse(ctx context.Context, id Id, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CompleteTaskResponse, error) {
+	rsp, err := c.CompleteTaskWithBody(ctx, id, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCompleteTaskResponse(rsp)
+}
+
+// CompleteTaskWithResponse Complete a task
+//
+// Marks an open request as done. The person it is for may, or a current member of its group, who claims it in the same move; a task someone else holds stays theirs. Only a person works on a task, so a credential acting as itself is refused with `TASK_NOT_PERMITTED`, and a review ends in a decision in the Application Manager (`TASK_NOT_CUSTOM`). The one who asked hears of it in the bell, with the optional `note` as the reply.
+//
+// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /tasks/{id}/complete (the `CompleteTask` operationId).
+func (c *ClientWithResponses) CompleteTaskWithResponse(ctx context.Context, id Id, body CompleteTaskJSONRequestBody, reqEditors ...RequestEditorFn) (*CompleteTaskResponse, error) {
+	rsp, err := c.CompleteTask(ctx, id, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -34393,6 +36770,35 @@ func ParseValidateDppResponse(rsp *http.Response) (*ValidateDppResponse, error) 
 	return response, nil
 }
 
+// ParseGetDppFileResponse parses an HTTP response from a GetDppFileWithResponse call
+func ParseGetDppFileResponse(rsp *http.Response) (*GetDppFileResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetDppFileResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case rsp.StatusCode == 200:
+		var headers GetDppFileResponse200Headers
+		if values := rsp.Header.Values("Cache-Control"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "Cache-Control", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.CacheControl = &value
+		}
+		response.Headers200 = &headers
+	}
+
+	return response, nil
+}
+
 // ParseGetDppPrivateDynamicDataResponse parses an HTTP response from a GetDppPrivateDynamicDataWithResponse call
 func ParseGetDppPrivateDynamicDataResponse(rsp *http.Response) (*GetDppPrivateDynamicDataResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -34525,7 +36931,7 @@ func ParseGetDppVersionPrivatePropertiesResponse(rsp *http.Response) (*GetDppVer
 		break // No content-type
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
-		var dest NotFound
+		var dest Error
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -35050,7 +37456,7 @@ func ParseAppendDppEventResponse(rsp *http.Response) (*AppendDppEventResponse, e
 		var dest struct {
 			// Event One entry of a passport's event log. Versioned types ride a registered DppVersion and carry `dppVersionNumber`; local types are recorded in the passport's own log and carry none.
 			//
-			// Example: {"actorLabel":"Workshop Meier","actorType":"ApiConsumer","data":{"workshopId":"DE-4711"},"description":"Annual safety inspection passed","dppVersionNumber":3,"eventType":"inspection","occurredAt":"2026-09-08T09:12:44Z"}
+			// Example: {"actorLabel":"Workshop Meier","actorType":"ApiConsumer","data":{"workshopId":"DE-4711"},"description":"Annual safety inspection passed","descriptionLocale":"en","dppVersionNumber":3,"eventType":"inspection","occurredAt":"2026-09-08T09:12:44Z"}
 			Event *DppEvent `json:"event,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -35146,6 +37552,13 @@ func ParseReissueDppResponse(rsp *http.Response) (*ReissueDppResponse, error) {
 			return nil, err
 		}
 		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
 
 	}
 
@@ -36280,6 +38693,13 @@ func ParseCreateImportResponse(rsp *http.Response) (*CreateImportResponse, error
 		}
 		response.JSON403 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 413:
 		var dest Error
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -36468,13 +38888,6 @@ func ParseExecuteImportResponse(rsp *http.Response) (*ExecuteImportResponse, err
 		}
 		response.JSON410 = &dest
 
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON429 = &dest
-
 	}
 
 	return response, nil
@@ -36522,12 +38935,80 @@ func ParseMapImportResponse(rsp *http.Response) (*MapImportResponse, error) {
 		}
 		response.JSON404 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
 		var dest Error
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON422 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseRerunImportResponse parses an HTTP response from a RerunImportWithResponse call
+func ParseRerunImportResponse(rsp *http.Response) (*RerunImportResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &RerunImportResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest Import
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest WriteForbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 410:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON410 = &dest
 
 	}
 
@@ -37150,6 +39631,340 @@ func ParseGetLotResponse(rsp *http.Response) (*GetLotResponse, error) {
 	return response, nil
 }
 
+// ParseListLotCodesResponse parses an HTTP response from a ListLotCodesWithResponse call
+func ParseListLotCodesResponse(rsp *http.Response) (*ListLotCodesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListLotCodesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			Codes *[]LotCode `json:"codes,omitempty"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 200:
+		var headers ListLotCodesResponse200Headers
+		if values := rsp.Header.Values("API-Count"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "API-Count", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.APICount = &value
+		}
+		if values := rsp.Header.Values("API-Offset"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "API-Offset", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.APIOffset = &value
+		}
+		if values := rsp.Header.Values("API-Page"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "API-Page", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.APIPage = &value
+		}
+		if values := rsp.Header.Values("API-Per-Page"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "API-Per-Page", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.APIPerPage = &value
+		}
+		if values := rsp.Header.Values("API-Total"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "API-Total", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.APITotal = &value
+		}
+		if values := rsp.Header.Values("Link"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "Link", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.Link = &value
+		}
+		response.Headers200 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseListLotSerialsResponse parses an HTTP response from a ListLotSerialsWithResponse call
+func ParseListLotSerialsResponse(rsp *http.Response) (*ListLotSerialsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListLotSerialsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			Entries *[]LotSerialEntry `json:"entries,omitempty"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 200:
+		var headers ListLotSerialsResponse200Headers
+		if values := rsp.Header.Values("API-Count"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "API-Count", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.APICount = &value
+		}
+		if values := rsp.Header.Values("API-Offset"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "API-Offset", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.APIOffset = &value
+		}
+		if values := rsp.Header.Values("API-Page"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "API-Page", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.APIPage = &value
+		}
+		if values := rsp.Header.Values("API-Per-Page"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "API-Per-Page", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.APIPerPage = &value
+		}
+		if values := rsp.Header.Values("API-Total"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "API-Total", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.APITotal = &value
+		}
+		if values := rsp.Header.Values("Link"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "Link", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.Link = &value
+		}
+		response.Headers200 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseCreateLotSerialsResponse parses an HTTP response from a CreateLotSerialsWithResponse call
+func ParseCreateLotSerialsResponse(rsp *http.Response) (*CreateLotSerialsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateLotSerialsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest struct {
+			Entries      *[]LotSerialEntry `json:"entries,omitempty"`
+			SkippedCount *int              `json:"skippedCount,omitempty"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest WriteForbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest struct {
+			DocsUrl *string `json:"docsUrl,omitempty"`
+			Error   *string `json:"error,omitempty"`
+			Fields  *struct {
+				Serials *struct {
+					// Count The refused lines, all of them
+					Count *int    `json:"count,omitempty"`
+					Error *string `json:"error,omitempty"`
+
+					// Lines The first 1000 refused lines
+					Lines *[]struct {
+						// Error Why, as `SERIAL_` and the reason, for example `SERIAL_CHARACTER`, `SERIAL_ORDER`, `SERIAL_PADDING`, `SERIAL_OTHER_BATCH`, `SERIAL_UNIT_PASSPORT` or `SERIAL_NO_GTIN`
+						Error *string `json:"error,omitempty"`
+
+						// Line The place of the element in `serials`, counted from 1; null where the call as a whole is refused, for a product without a GTIN or more than 100000 lines
+						Line    *int    `json:"line,omitempty"`
+						Message *string `json:"message,omitempty"`
+
+						// Value The element as sent
+						Value *string `json:"value,omitempty"`
+					} `json:"lines,omitempty"`
+					Message *string `json:"message,omitempty"`
+				} `json:"serials,omitempty"`
+			} `json:"fields,omitempty"`
+			Hint    *string `json:"hint,omitempty"`
+			Message *string `json:"message,omitempty"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseDeleteLotSerialsResponse parses an HTTP response from a DeleteLotSerialsWithResponse call
+func ParseDeleteLotSerialsResponse(rsp *http.Response) (*DeleteLotSerialsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteLotSerialsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			// Status Example: OK
+			Status *string `json:"status,omitempty"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest WriteForbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
 // ParseGetMeResponse parses an HTTP response from a GetMeWithResponse call
 func ParseGetMeResponse(rsp *http.Response) (*GetMeResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -37373,6 +40188,62 @@ func ParseDeleteMediafileResponse(rsp *http.Response) (*DeleteMediafileResponse,
 			return nil, err
 		}
 		response.JSON409 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseUpdateMediafileResponse parses an HTTP response from a UpdateMediafileWithResponse call
+func ParseUpdateMediafileResponse(rsp *http.Response) (*UpdateMediafileResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UpdateMediafileResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			Mediafile *Mediafile `json:"mediafile,omitempty"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest ValidationError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
 
 	}
 
@@ -38101,6 +40972,20 @@ func ParseListProductGtinsResponse(rsp *http.Response) (*ListProductGtinsRespons
 
 	case rsp.StatusCode == 204:
 		break // No content-type
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
 
 	}
 
