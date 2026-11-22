@@ -18,8 +18,12 @@
 //
 // The suite creates a brand, a product and two webhook
 // subscriptions named with a run id and deletes them at the end,
-// so a tenant it ran on carries nothing of it. A run that dies
-// before its cleanup leaves records behind, so the next run
+// so a tenant it ran on carries nothing of it. The passports it
+// publishes are deleted too where the tenant is a test workspace,
+// which frees their slots of the plan; elsewhere a published
+// passport stays. A product a passport named a lot of stays with
+// that lot, which no endpoint deletes. A run that
+// dies before its cleanup leaves records behind, so the next run
 // sweeps the ones older than an hour, which leaves a run beside
 // it alone. The consumer needs brand_access, product_access and
 // webhook_access.

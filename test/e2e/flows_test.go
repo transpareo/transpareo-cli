@@ -212,6 +212,13 @@ var withLot sync.Map
 // it, so this is also the name the lot endpoints answer under.
 const lotIdentifier = "L-e2e"
 
+// Every passport of this suite carries this model identifier and
+// this description, by which a sweep of later runs recognises it.
+const (
+	passportModel       = "CLI-E2E"
+	passportDescription = "cli e2e"
+)
+
 // passport is one this run created, with what the workspace said
 // about publishing it. A workspace whose templates block a
 // publish answers a documented refusal to everything downstream
@@ -224,7 +231,9 @@ type passport struct {
 
 // throwawayPassport fills the workspace's own create template for
 // the product and creates a passport from it. The passport names
-// lotIdentifier, which keeps the product past the run.
+// lotIdentifier, which keeps the product past the run. The passport
+// is deleted at the end; a published one goes only on a test
+// workspace, and elsewhere stays with its product.
 func throwawayPassport(t *testing.T, c *transpareo.Client,
 	productID json.Number) passport {
 	t.Helper()
@@ -249,11 +258,11 @@ func throwawayPassport(t *testing.T, c *transpareo.Client,
 	if dppTemplate == nil {
 		t.Fatalf("requirements carry no create template: %+v", requirements)
 	}
-	dppTemplate["modelIdentifier"] = "CLI-E2E"
+	dppTemplate["modelIdentifier"] = passportModel
 	dppTemplate["batchIdentifier"] = lotIdentifier
 	dppTemplate["serialIdentifier"] = fmt.Sprintf("%d",
 		time.Now().UnixNano()%1000000)
-	dppTemplate["description"] = "cli e2e"
+	dppTemplate["description"] = passportDescription
 	dpp := map[string]any{"dpp": dppTemplate}
 	// valid is false both for a model error, which fields names,
 	// and for a publish rule the workspace's templates impose; only
@@ -284,6 +293,17 @@ func throwawayPassport(t *testing.T, c *transpareo.Client,
 	if created.Code == "" || created.ID == "" {
 		t.Fatalf("created passport lacks an id or a code: %+v", created)
 	}
+	t.Cleanup(func() {
+		_, err := c.Delete(ctx, "/dpps/"+created.ID.String(), nil)
+		if err == nil {
+			return
+		}
+		if errorCode(err) == "DPP_PUBLISHED" {
+			t.Logf("passport %s stays: %v", created.Code, err)
+			return
+		}
+		t.Errorf("delete passport %s: %v", created.Code, err)
+	})
 	return passport{ID: created.ID, Code: created.Code,
 		PublishBlocked: requirements.Outlook.PublishBlocked ||
 			validation.PublishBlocked}

@@ -264,18 +264,60 @@ func staleRunID(name string, now time.Time) bool {
 // creates the first record.
 var sweptOnce sync.Once
 
-// sweepLeftovers removes the products and brands of runs that
-// died before their own cleanup could delete them. A record it
-// cannot delete, a product a passport was published against for
-// instance, is reported and left: this is tidying, and it never
-// fails a run of its own accord.
+// sweepLeftovers removes the passports, products and brands of
+// runs that died before their own cleanup could delete them. The
+// passports go first, so their slots of the plan come free; a
+// published one goes only on a test workspace. A record it cannot
+// delete, a product a lot was taken of for instance, is reported
+// and left: this is tidying, and it never fails a run of its own
+// accord.
 func sweepLeftovers(t *testing.T, c *transpareo.Client) {
 	t.Helper()
 	sweptOnce.Do(func() {
 		now := time.Now()
+		sweepPassports(t, c, now)
 		sweepLeftover[product](t, c, "/products", now)
 		sweepLeftover[brand](t, c, "/brands", now)
 	})
+}
+
+// leftoverPassport is what a sweep of earlier runs needs of a
+// passport. Its product may be in the trash already, so the
+// passport is recognised by what this suite writes into it.
+type leftoverPassport struct {
+	ID              json.Number `json:"id"`
+	Code            string      `json:"code"`
+	ModelIdentifier string      `json:"modelIdentifier"`
+	CreatedAt       time.Time   `json:"createdAt"`
+}
+
+// sweepPassports deletes the passports of runs older than
+// staleAfter, found by their exact description. They are collected
+// before the first delete, so the pages of the list hold still
+// under the walk.
+func sweepPassports(t *testing.T, c *transpareo.Client, now time.Time) {
+	t.Helper()
+	ctx := context.Background()
+	query := url.Values{"term": {"^" + passportDescription + "$"}}
+	var stale []leftoverPassport
+	for p, err := range transpareo.ListAll[leftoverPassport](ctx, c,
+		"/dpps", query) {
+		if err != nil {
+			t.Logf("listing /dpps to sweep: %v", err)
+			return
+		}
+		if p.ModelIdentifier == passportModel &&
+			now.Sub(p.CreatedAt) > staleAfter {
+			stale = append(stale, p)
+		}
+	}
+	for _, p := range stale {
+		if _, err := c.Delete(ctx, "/dpps/"+p.ID.String(), nil); err != nil {
+			t.Logf("leftover passport %s stays: %v", p.Code, err)
+			continue
+		}
+		t.Logf("swept passport %s of an earlier run", p.Code)
+	}
 }
 
 // named is a record this suite can recognise by its name and
